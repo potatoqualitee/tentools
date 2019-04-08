@@ -10,7 +10,7 @@ function New-AcasUser {
     Parameter description
 
     .PARAMETER Credential
-    Credentials for connecting to the Nessus Server
+    Credential for connecting to the Nessus Server
 
     .PARAMETER Permission
     Parameter description

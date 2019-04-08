@@ -12,10 +12,10 @@ function New-AcasSession {
     Port number of the Nessus web service. Default 8834
 
     .PARAMETER Credential
-    Credentials for connecting to the Nessus Server
+    Credential for connecting to the Nessus Server
 
     .EXAMPLE
-    An example
+    New-AcasSession -ComputerName acas -Credential admin
 
     .NOTES
     General notes
@@ -67,7 +67,7 @@ function New-AcasSession {
             $TokenResponse = Invoke-RestMethod @RestMethodParams
             if ($TokenResponse) {
                 $SessionProps.add('URI', $URI)
-                $SessionProps.Add('Credentials', $Credential)
+                $SessionProps.Add('Credential', $Credential)
                 $SessionProps.add('Token', $TokenResponse.token)
                 $SessionIndex = $Global:NessusConn.Count
                 $SessionProps.Add('SessionId', $SessionIndex)

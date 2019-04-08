@@ -118,7 +118,7 @@ function InvokeNessusRestRequest {
             $ReAuthParams = @{
                 'Method'        = 'Post'
                 'URI'           = "$($SessionObject.URI)/session"
-                'Body'          = @{'username' = $SessionObject.Credentials.UserName; 'password' = $SessionObject.Credentials.GetNetworkCredential().password}
+                'Body'          = @{'username' = $SessionObject.Credential.UserName; 'password' = $SessionObject.Credential.GetNetworkCredential().password}
                 'ErrorVariable' = 'NessusLoginError'
                 'ErrorAction'   = 'SilentlyContinue'
             }
@@ -136,7 +136,7 @@ function InvokeNessusRestRequest {
                 # Creating new object with updated token so as to replace in the array the old one.
                 $SessionProps = New-Object -TypeName System.Collections.Specialized.OrderedDictionary
                 $SessionProps.add('URI', $SessionObject.URI)
-                $SessionProps.Add('Credentials', $SessionObject.Credentials)
+                $SessionProps.Add('Credential', $SessionObject.Credential)
                 $SessionProps.add('Token', $TokenResponse.token)
                 $SessionProps.Add('SessionId', $SessionObject.SessionId)
                 $Sessionobj = New-Object -TypeName psobject -Property $SessionProps
