@@ -25,25 +25,13 @@ function Show-AcasScanDetail {
     [CmdletBinding()]
     Param
     (
-        # Nessus session Id
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory,
-            Position = 1,
-            ValueFromPipelineByPropertyName)]
-        [int32]
-        $ScanId,
-
-        [Parameter(Mandatory = $false,
-            Position = 2,
-            ValueFromPipelineByPropertyName)]
-        [Int32]
-        $HistoryId
+        [int32[]]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int32]$ScanId,
+        [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
+        [int32]$HistoryId
     )
 
     begin {

@@ -25,25 +25,13 @@ function Rename-AcasGroup {
     [CmdletBinding()]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory,
-            ValueFromPipelineByPropertyName,
-            Position = 1)]
-        [Int32]
-        $GroupId,
-
-        [Parameter(Mandatory,
-            ValueFromPipelineByPropertyName,
-            Position = 2)]
-        [string]
-        $Name
+        [int32[]]$SessionId,
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
+        [Int32]$GroupId,
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 2)]
+        [string]$Name
     )
 
     begin {
@@ -81,7 +69,5 @@ function Rename-AcasGroup {
                 Write-PSFMessage -Level Warning -Mesage "Server for session $($Connection.sessionid) is not licenced for multiple users."
             }
         }
-    }
-    end {
     }
 }

@@ -25,25 +25,13 @@ function Rename-AcasFolder {
     [CmdletBinding()]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory,
-            Position = 1,
-            ValueFromPipelineByPropertyName)]
-        [Int]
-        $FolderId,
-
-        [Parameter(Mandatory,
-            Position = 2,
-            ValueFromPipelineByPropertyName)]
-        [string]
-        $Name
+        [int32[]]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Int]$FolderId,
+        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
+        [string]$Name
     )
     process {
         $ToProcess = @()

@@ -28,31 +28,15 @@ function Show-AcasScanHostDetail {
     [CmdletBinding()]
     Param
     (
-        # Nessus session Id
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory,
-            Position = 1,
-            ValueFromPipelineByPropertyName)]
-        [int32]
-        $ScanId,
-
-        [Parameter(Mandatory,
-            Position = 2,
-            ValueFromPipelineByPropertyName)]
-        [int32]
-        $HostId,
-
-        [Parameter(Mandatory = $false,
-            Position = 3,
-            ValueFromPipelineByPropertyName)]
-        [Int32]
-        $HistoryId
+        [int32[]]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int32]$ScanId,
+        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
+        [int32]$HostId,
+        [Parameter(Position = 3, ValueFromPipelineByPropertyName)]
+        [int32]$HistoryId
     )
     process {
         $ToProcess = @()

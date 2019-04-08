@@ -18,14 +18,9 @@ function Remove-AcasSession {
 
     [CmdletBinding()]
     param(
-
-        # Nessus session Id
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId = @()
+        [int32[]]$SessionId = @()
     )
     process {
         # Finding and saving sessions in to a different Array so they can be
@@ -59,8 +54,7 @@ function Remove-AcasSession {
                 } catch {
                     Write-PSFMessage -Level Verbose -Mesage "Session with Id $($connection.SessionId) seems to have expired."
                 }
-
-
+                
                 Write-PSFMessage -Level Verbose -Mesage "Removing session from `$Global:NessusConn"
                 $Global:NessusConn.Remove($Connection)
                 Write-PSFMessage -Level Verbose -Mesage "Session $($i) removed."

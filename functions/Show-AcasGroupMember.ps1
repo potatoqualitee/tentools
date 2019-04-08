@@ -20,21 +20,13 @@ function Show-AcasGroupMember {
     #>
 
     [CmdletBinding()]
-    Param
+    param
     (
-        # Nessus session Id
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory,
-            ValueFromPipelineByPropertyName,
-            Position = 1)]
-        [Int32]
-        $GroupId
+        [int32[]]$SessionId,
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
+        [int32]$GroupId
     )
 
     begin {

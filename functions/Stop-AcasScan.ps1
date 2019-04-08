@@ -22,19 +22,11 @@ function Stop-AcasScan {
     [CmdletBinding()]
     Param
     (
-        # Nessus session Id
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory,
-            Position = 1,
-            ValueFromPipelineByPropertyName)]
-        [int32]
-        $ScanId
+        [int32[]]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int32]$ScanId
     )
 
     begin {
@@ -52,7 +44,6 @@ function Stop-AcasScan {
                 }
             }
         }
-
 
         foreach ($Connection in $ToProcess) {
             $Scans = InvokeNessusRestRequest -SessionObject $Connection -Path "/scans/$($ScanId)/stop" -Method 'Post'

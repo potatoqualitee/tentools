@@ -22,19 +22,11 @@ function Show-AcasPlugin {
     [CmdletBinding()]
     Param
     (
-        # Nessus session Id
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory,
-            Position = 1,
-            ValueFromPipelineByPropertyName)]
-        [int32]
-        $PluginId
+        [int32[]]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int32]$PluginId
     )
     process {
         $ToProcess = @()
@@ -75,7 +67,6 @@ function Show-AcasPlugin {
                     $PluginObj.pstypenames[0] = 'Nessus.Plugin'
                     $PluginObj
                 }
-
             }
         }
     }

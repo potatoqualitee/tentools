@@ -6,13 +6,13 @@ function New-AcasSession {
     Long description
 
     .PARAMETER ComputerName
-    Parameter description
+    Nessus Server IP Address or FQDN to connect to.
 
     .PARAMETER Port
-    Parameter description
+    Port number of the Nessus web service. Default 8834
 
     .PARAMETER Credentials
-    Parameter description
+    Credentials for connecting to the Nessus Server
 
     .EXAMPLE
     An example
@@ -24,26 +24,12 @@ function New-AcasSession {
     [CmdletBinding()]
     param
     (
-        # Nessus Server IP Address or FQDN to connect to.
-        [Parameter(Mandatory,
-            ValueFromPipelineByPropertyName,
-            Position = 0)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 0)]
         [string[]]$ComputerName,
-
-        # Port number of the Nessus web service. Default 8834
-        [int]
-        $Port = 8834,
-
-
-        # Credentials for connecting to the Nessus Server
-        [Parameter(Mandatory,
-            Position = 1)]
+        [int]$Port = 8834,
+        [Parameter(Mandatory,Position = 1)]
         [Management.Automation.PSCredential]$Credentials
     )
-
-    begin {
-
-    }
     process {
         if ([System.Net.ServicePointManager]::CertificatePolicy.ToString() -ne 'IgnoreCerts') {
             $Domain = [AppDomain]::CurrentDomain
@@ -93,7 +79,5 @@ function New-AcasSession {
                 $sessionobj
             }
         }
-    }
-    end {
     }
 }

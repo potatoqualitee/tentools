@@ -10,7 +10,7 @@ function New-AcasUser {
     Parameter description
 
     .PARAMETER Credential
-    Parameter description
+    Credentials for connecting to the Nessus Server
 
     .PARAMETER Permission
     Parameter description
@@ -34,42 +34,21 @@ function New-AcasUser {
     [CmdletBinding()]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        # Credentials for connecting to the Nessus Server
-        [Parameter(Mandatory,
-            Position = 1)]
-        [Management.Automation.PSCredential]
-        $Credential,
-
-        [Parameter(Mandatory,
-            Position = 2)]
+        [int32[]]$SessionId,
+        [Parameter(Mandatory, Position = 1)]
+        [Management.Automation.PSCredential]$Credential,
+        [Parameter(Mandatory, Position = 2)]
         [ValidateSet('Read-Only', 'Regular', 'Administrator', 'Sysadmin')]
-        [string]
-        $Permission,
-
-        [Parameter(Mandatory = $false,
-            ValueFromPipelineByPropertyName)]
+        [string]$Permission,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [ValidateSet('Local', 'LDAP')]
-        [string]
-        $Type = 'Local',
-
-        [Parameter(Mandatory = $false,
-            ValueFromPipelineByPropertyName)]
-        [string]
-        $Email,
-
-        [Parameter(Mandatory = $false,
-            ValueFromPipelineByPropertyName)]
-        [string]
-        $Name
-
+        [string]$Type = 'Local',
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string]$Email,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string]$Name
     )
 
     begin {

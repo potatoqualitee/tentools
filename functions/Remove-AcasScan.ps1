@@ -21,19 +21,11 @@ function Remove-AcasScan {
     [CmdletBinding()]
     Param
     (
-        # Nessus session Id
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory,
-            Position = 1,
-            ValueFromPipelineByPropertyName)]
-        [int32]
-        $ScanId
+        [int32[]]$SessionId,
+        [Parameter(Mandatory,Position = 1, ValueFromPipelineByPropertyName)]
+        [int32]$ScanId
     )
 
     process {
@@ -56,9 +48,6 @@ function Remove-AcasScan {
             if ($ScanDetails -eq 'null') {
                 Write-PSFMessage -Level Verbose -Mesage 'Scan Removed'
             }
-
-
         }
     }
-    end {}
 }

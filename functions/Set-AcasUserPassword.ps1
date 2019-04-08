@@ -25,26 +25,13 @@ function Set-AcasUserPassword {
     [CmdletBinding()]
     Param
     (
-        # Nessus session Id
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        # Nessus User Id
-        [Parameter(Mandatory,
-            Position = 1,
-            ValueFromPipelineByPropertyName)]
-        [int32[]]
-        $UserId,
-
-        [Parameter(Mandatory,
-            Position = 3,
-            ValueFromPipelineByPropertyName)]
-        [securestring]
-        $Password
+        [int32[]]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int32[]]$UserId,
+        [Parameter(Mandatory, Position = 3, ValueFromPipelineByPropertyName)]
+        [securestring]$Password
     )
 
     begin {

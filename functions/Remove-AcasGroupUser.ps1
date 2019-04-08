@@ -33,25 +33,13 @@ function Remove-AcasGroupUser {
     [CmdletBinding()]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory,
-            ValueFromPipelineByPropertyName,
-            Position = 1)]
-        [Int32]
-        $GroupId,
-
-        [Parameter(Mandatory,
-            ValueFromPipelineByPropertyName,
-            Position = 2)]
-        [Int32]
-        $UserId
+        [int32[]]$SessionId,
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
+        [Int32]$GroupId,
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 2)]
+        [Int32]$UserId
     )
 
     begin {

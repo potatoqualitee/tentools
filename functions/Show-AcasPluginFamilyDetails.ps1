@@ -20,25 +20,14 @@ function Show-AcasPluginFamilyDetails {
     #>
 
     [CmdletBinding()]
-    Param
+    param
     (
-        # Nessus session Id
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory,
-            Position = 1,
-            ValueFromPipelineByPropertyName)]
-        [int]
-        $FamilyId
+        [int32[]]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int]$FamilyId
     )
-
-    begin {
-    }
     process {
         $ToProcess = @()
 

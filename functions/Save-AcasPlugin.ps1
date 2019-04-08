@@ -17,8 +17,6 @@ function Save-AcasPlugin {
     #>
     [CmdletBinding()]
     param (
-        # Parameter help description
-        [Parameter()]
         [String]$Path = $PWD
     )
 

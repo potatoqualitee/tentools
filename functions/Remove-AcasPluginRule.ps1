@@ -33,17 +33,11 @@ function Remove-AcasPluginRule {
     [CmdletBinding()]
     Param
     (
-        # Nessus session Id
-        [Parameter(Mandatory, Position = 0,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32]
-        $SessionId,
-
-        [Parameter(Mandatory, Position = 1,
-            ValueFromPipelineByPropertyName)]
-        [int32]
-        $Id
+        [int32]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int32]$Id
     )
 
     begin {
@@ -64,9 +58,5 @@ function Remove-AcasPluginRule {
         foreach ($Connection in $ToProcess) {
             InvokeNessusRestRequest -SessionObject $Connection -Path ('/plugin-rules/{0}' -f $Id) -Method 'Delete'
         }
-    }
-
-    end {
-
     }
 }
