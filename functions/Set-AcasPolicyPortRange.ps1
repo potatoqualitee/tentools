@@ -24,7 +24,7 @@ function Set-AcasPolicyPortRange {
 
     [CmdletBinding()]
     [OutputType([int])]
-    Param
+    param
     (
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
