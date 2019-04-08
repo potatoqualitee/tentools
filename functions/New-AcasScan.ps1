@@ -51,7 +51,7 @@ function New-AcasScan {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId,
+        [int32[]]$SessionId = $Global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [string]$Name,
         [Parameter(Mandatory, Position = 2, ParameterSetName = 'Template', ValueFromPipelineByPropertyName)]

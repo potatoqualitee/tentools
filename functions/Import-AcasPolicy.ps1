@@ -24,7 +24,7 @@ function Import-AcasPolicy {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId,
+        [int32[]]$SessionId = $Global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [ValidateScript( {Test-Path -Path $_})]
         [string]$File

@@ -34,7 +34,7 @@ function New-AcasPolicy {
         [Parameter(ParameterSetName = 'ByName')]
         [Parameter(ParameterSetName = 'ByUUID')]
         [Alias('Index')]
-        [int32[]]$SessionId,
+        [int32[]]$SessionId = $Global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName = 'ByName')]
         [Parameter(ParameterSetName = 'ByUUID')]

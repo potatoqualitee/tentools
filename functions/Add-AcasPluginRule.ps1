@@ -36,7 +36,7 @@ function Add-AcasPluginRule {
         # Nessus session Id
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId,
+        [int32[]]$SessionId = $Global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [int32]$PluginId,
         [Parameter(Position = 2, ValueFromPipelineByPropertyName)]

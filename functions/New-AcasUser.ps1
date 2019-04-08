@@ -36,7 +36,7 @@ function New-AcasUser {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId,
+        [int32[]]$SessionId = $Global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1)]
         [Management.Automation.PSCredential]$Credential,
         [Parameter(Mandatory, Position = 2)]
