@@ -11,7 +11,7 @@ function New-AcasSession {
     .PARAMETER Port
     Port number of the Nessus web service. Default 8834
 
-    .PARAMETER Credentials
+    .PARAMETER Credential
     Credentials for connecting to the Nessus Server
 
     .EXAMPLE
