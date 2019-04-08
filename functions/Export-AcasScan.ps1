@@ -40,61 +40,28 @@ function Export-AcasScan {
     [CmdletBinding()]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory = $true,
-            Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
-        [int32]
-        $ScanId,
-
-        [Parameter(Mandatory = $true,
-            Position = 2,
-            ValueFromPipelineByPropertyName = $true)]
+        [int32]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int32]$ScanId,
+        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
         [ValidateSet('Nessus', 'HTML', 'PDF', 'CSV', 'DB')]
-        [string]
-        $Format,
-
-        [Parameter(Mandatory = $false,
-            ValueFromPipelineByPropertyName = $true)]
-        [String]
-        $OutFile,
-
-        [Parameter(Mandatory = $false,
-            ValueFromPipelineByPropertyName = $true)]
-        [Switch]
-        $PSObject,
-
-        [Parameter(Mandatory = $false,
-            Position = 3,
-            ValueFromPipelineByPropertyName = $true)]
+        [string]$Format,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [String]$OutFile,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [Switch]$PSObject,
+        [Parameter(Position = 3, ValueFromPipelineByPropertyName)]
         [ValidateSet('Vuln_Hosts_Summary', 'Vuln_By_Host',
             'Compliance_Exec', 'Remediations',
             'Vuln_By_Plugin', 'Compliance', 'All')]
-        [string[]]
-        $Chapters,
-
-        [Parameter(Mandatory = $false,
-            Position = 4,
-            ValueFromPipelineByPropertyName = $true)]
-        [Int32]
-        $HistoryID,
-
-        [Parameter(Mandatory = $false,
-            ValueFromPipelineByPropertyName = $true)]
-        [securestring]
-        $Password
-
+        [string[]]$Chapters,
+        [Parameter(Position = 4, ValueFromPipelineByPropertyName)]
+        [Int32]$HistoryID,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [securestring]$Password
     )
-
-    begin {
-    }
     process {
         $ToProcess = @()
 
@@ -134,29 +101,27 @@ function Export-AcasScan {
                 $path = "/scans/$($ScanId)/export"
             }
 
-            Write-Verbose -Message "Exporting scan with Id of $($ScanId) in $($Format) format."
+            Write-PSFMessage -Level Verbose -Mesage "Exporting scan with Id of $($ScanId) in $($Format) format."
             $FileID = InvokeNessusRestRequest -SessionObject $Connection -Path $path  -Method 'Post' -Parameter $ExportParams
             if ($FileID -is [psobject]) {
                 $FileStatus = ''
                 while ($FileStatus.status -ne 'ready') {
                     try {
                         $FileStatus = InvokeNessusRestRequest -SessionObject $Connection -Path "/scans/$($ScanId)/export/$($FileID.file)/status"  -Method 'Get'
-                        Write-Verbose -Message "Status of export is $($FileStatus.status)"
+                        Write-PSFMessage -Level Verbose -Mesage "Status of export is $($FileStatus.status)"
                     } catch {
                         break
                     }
                     Start-Sleep -Seconds 1
                 }
                 if ($FileStatus.status -eq 'ready' -and $Format -eq 'CSV' -and $PSObject.IsPresent) {
-                    Write-Verbose -Message "Converting report to PSObject"
+                    Write-PSFMessage -Level Verbose -Mesage "Converting report to PSObject"
                     InvokeNessusRestRequest -SessionObject $Connection -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' | ConvertFrom-CSV
                 } elseif ($FileStatus.status -eq 'ready') {
-                    Write-Verbose -Message "Downloading report to $($OutFile)"
+                    Write-PSFMessage -Level Verbose -Mesage "Downloading report to $($OutFile)"
                     InvokeNessusRestRequest -SessionObject $Connection -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' -OutFile $OutFile
                 }
             }
         }
-    }
-    end {
     }
 }

@@ -23,19 +23,11 @@ function Get-AcasPolicyLocalPortEnumeration {
     [OutputType([int])]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32]
-        $SessionId,
-
-        [Parameter(Mandatory = $true,
-            Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
-        [int32[]]
-        $PolicyId
+        [int32]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int32[]]$PolicyId
     )
 
     begin {
@@ -61,11 +53,9 @@ function Get-AcasPolicyLocalPortEnumeration {
                 $PolSettingsObj.pstypenames.insert(0, 'Nessus.PolicySetting')
                 $PolSettingsObj
             } catch {
-                throw $_
+                Stop-Function -Message "Failure" -ErrorRecord $_ -Continue
             }
 
         }
-    }
-    end {
     }
 }

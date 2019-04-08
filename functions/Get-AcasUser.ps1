@@ -19,13 +19,9 @@ function Get-AcasUser {
     [CmdletBinding()]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId = @()
+        [int32[]]$SessionId = @()
     )
 
     begin {

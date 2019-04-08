@@ -20,9 +20,9 @@ function Remove-AcasSession {
     param(
 
         # Nessus session Id
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]
         $SessionId = @()
@@ -36,7 +36,7 @@ function Remove-AcasSession {
 
         if ($SessionId.Count -gt 0) {
             foreach ($i in $SessionId) {
-                Write-Verbose -Message "Removing server session $($i)"
+                Write-PSFMessage -Level Verbose -Mesage "Removing server session $($i)"
 
                 foreach ($Connection in $connections) {
                     if ($Connection.SessionId -eq $i) {
@@ -46,7 +46,7 @@ function Remove-AcasSession {
             }
 
             foreach ($Connection in $toremove) {
-                Write-Verbose -Message 'Disposing of connection'
+                Write-PSFMessage -Level Verbose -Mesage 'Disposing of connection'
                 $RestMethodParams = @{
                     'Method'        = 'Delete'
                     'URI'           = "$($connection.URI)/session"
@@ -57,13 +57,13 @@ function Remove-AcasSession {
                 try {
                     $RemoveResponse = Invoke-RestMethod @RestMethodParams
                 } catch {
-                    Write-Verbose -Message "Session with Id $($connection.SessionId) seems to have expired."
+                    Write-PSFMessage -Level Verbose -Mesage "Session with Id $($connection.SessionId) seems to have expired."
                 }
 
 
-                Write-Verbose -message "Removing session from `$Global:NessusConn"
+                Write-PSFMessage -Level Verbose -Mesage "Removing session from `$Global:NessusConn"
                 $Global:NessusConn.Remove($Connection)
-                Write-Verbose -Message "Session $($i) removed."
+                Write-PSFMessage -Level Verbose -Mesage "Session $($i) removed."
             }
         }
     }

@@ -25,10 +25,9 @@ function Get-AcasPolicyTemplate {
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 0,
-            ValueFromPipelineByPropertyName = $true,
+            ValueFromPipelineByPropertyName,
             ParameterSetName = 'All')]
         [Parameter(ParameterSetName = 'ByName')]
         [Parameter(ParameterSetName = 'ByUUID')]
@@ -38,14 +37,14 @@ function Get-AcasPolicyTemplate {
 
         [Parameter(Mandatory = $false,
             Position = 1,
-            ValueFromPipelineByPropertyName = $true,
+            ValueFromPipelineByPropertyName,
             ParameterSetName = 'ByName')]
         [string]
         $Name,
 
         [Parameter(Mandatory = $false,
             Position = 1,
-            ValueFromPipelineByPropertyName = $true,
+            ValueFromPipelineByPropertyName,
             ParameterSetName = 'ByUUID')]
         [string]
         $PolicyUUID

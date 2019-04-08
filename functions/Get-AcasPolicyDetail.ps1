@@ -25,29 +25,15 @@ function Get-AcasPolicyDetail {
     [CmdletBinding(DefaultParameterSetName = 'ByName')]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName, ParameterSetName = 'All')]
         [Parameter(ParameterSetName = 'ByName')]
         [Parameter(ParameterSetName = 'ByID')]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory = $true,
-            Position = 1,
-            ValueFromPipelineByPropertyName = $true,
-            ParameterSetName = 'ByID')]
-        [int32]
-        $PolicyId,
-
-        [Parameter(Mandatory = $true,
-            Position = 1,
-            ValueFromPipelineByPropertyName = $true,
-            ParameterSetName = 'ByName')]
-        [string]
-        $Name
+        [int32[]]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByID')]
+        [int32]$PolicyId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
+        [string]$Name
     )
 
     begin {
@@ -64,8 +50,6 @@ function Get-AcasPolicyDetail {
         }
     }
     process {
-
-
         foreach ($Connection in $ToProcess) {
             switch ($PSCmdlet.ParameterSetName) {
                 'ByName' {
@@ -78,11 +62,9 @@ function Get-AcasPolicyDetail {
                 }
 
             }
-            Write-Verbose -Message "Getting details for policy with id $($PolicyId)."
+            Write-PSFMessage -Level Verbose -Mesage "Getting details for policy with id $($PolicyId)."
             $Policy = InvokeNessusRestRequest -SessionObject $Connection -Path "/policies/$($PolicyId)" -Method 'GET'
             $Policy
         }
-    }
-    end {
     }
 }

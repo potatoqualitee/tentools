@@ -25,30 +25,15 @@ function Export-AcasPolicy {
     [CmdletBinding()]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory = $true,
-            Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
-        [int32]
-        $PolicyId,
-
-        [Parameter(Mandatory = $false,
-            Position = 2,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]
-        $OutFile
-
+        [int32]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int32]$PolicyId,
+        [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
+        [string]$OutFile
     )
 
-    begin {
-    }
     process {
         $ToProcess = @()
 
@@ -63,17 +48,15 @@ function Export-AcasPolicy {
         }
 
         foreach ($Connection in $ToProcess) {
-            Write-Verbose -Message "Exporting policy with id $($PolicyId)."
+            Write-PSFMessage -Level Verbose -Mesage "Exporting policy with id $($PolicyId)."
             $Policy = InvokeNessusRestRequest -SessionObject $Connection -Path "/policies/$($PolicyId)/export" -Method 'GET'
             if ($OutFile.length -gt 0) {
-                Write-Verbose -Message "Saving policy as $($OutFile)"
+                Write-PSFMessage -Level Verbose -Mesage "Saving policy as $($OutFile)"
                 $Policy.Save($ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutFile))
             } else {
                 $Policy
             }
-            Write-Verbose -Message 'Policy exported.'
+            Write-PSFMessage -Level Verbose -Mesage 'Policy exported.'
         }
-    }
-    end {
     }
 }

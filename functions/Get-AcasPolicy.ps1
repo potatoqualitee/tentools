@@ -25,30 +25,15 @@ function Get-AcasPolicy {
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipelineByPropertyName = $true,
-            ParameterSetName = 'All')]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName, ParameterSetName = 'All')]
         [Parameter(ParameterSetName = 'ByName')]
         [Parameter(ParameterSetName = 'ByID')]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory = $false,
-            Position = 1,
-            ValueFromPipelineByPropertyName = $true,
-            ParameterSetName = 'ByName')]
-        [string]
-        $Name,
-
-        [Parameter(Mandatory = $false,
-            Position = 1,
-            ValueFromPipelineByPropertyName = $true,
-            ParameterSetName = 'ByID')]
-        [string]
-        $PolicyID
+        [int32[]]$SessionId,
+        [Parameter(Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
+        [string]$Name,
+        [Parameter(Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByID')]
+        [string]$PolicyID
     )
 
     begin {
@@ -66,8 +51,6 @@ function Get-AcasPolicy {
         }
     }
     process {
-
-
         foreach ($Connection in $ToProcess) {
             $Policies = InvokeNessusRestRequest -SessionObject $Connection -Path '/policies' -Method 'Get'
 
@@ -107,7 +90,5 @@ function Get-AcasPolicy {
                 }
             }
         }
-    }
-    end {
     }
 }

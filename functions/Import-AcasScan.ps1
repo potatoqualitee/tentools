@@ -28,31 +28,16 @@ function Import-AcasScan {
     [CmdletBinding()]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory = $true,
-            Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
+        [int32[]]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [ValidateScript( {Test-Path -Path $_})]
-        [string]
-        $File,
-
-        [Parameter(Mandatory = $false,
-            Position = 2,
-            ValueFromPipelineByPropertyName = $true)]
-        [switch]
-        $Encrypted,
-
-        [Parameter(Mandatory = $false,
-            ValueFromPipelineByPropertyName = $true)]
-        [securestring]
-        $Password
+        [string]$File,
+        [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
+        [switch]$Encrypted,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [securestring]$Password
     )
 
     begin {
@@ -149,5 +134,4 @@ function Import-AcasScan {
             }
         }
     }
-    end {}
 }

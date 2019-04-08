@@ -10,16 +10,16 @@ function New-AcasPolicy {
     Parameter description
 
     .PARAMETER Name
-    Parameter description
+    Name for new policy
 
     .PARAMETER PolicyUUID
-    Parameter description
+    Policy Template UUID to base new policy from.
 
     .PARAMETER TemplateName
-    Parameter description
+    Policy Template name to base new policy from.
 
     .PARAMETER Description
-    Parameter description
+    Description for new policy.
 
     .EXAMPLE
     An example
@@ -30,48 +30,23 @@ function New-AcasPolicy {
     [CmdletBinding(DefaultParameterSetName = 'ByName')]
     param
     (
-        # Nessus session Id.
-        [Parameter(Mandatory = $true,
-                   Position = 0,
-                   ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName = 'ByName')]
         [Parameter(ParameterSetName = 'ByUUID')]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        # Name for new policy.
-        [Parameter(Mandatory = $true,
-                   Position = 1,
-                   ValueFromPipelineByPropertyName = $true)]
+        [int32[]]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName = 'ByName')]
         [Parameter(ParameterSetName = 'ByUUID')]
-        [string]
-        $Name,
-
-        # Policy Template UUID to base new policy from.
-        [Parameter(Mandatory = $true,
-                   Position = 2,
-                   ValueFromPipelineByPropertyName = $true,
-                   ParameterSetName = 'ByUUID')]
-        [string]
-        $PolicyUUID,
-
-        # Policy Template name to base new policy from.
-        [Parameter(Mandatory = $true,
-                   Position = 2,
-                   ValueFromPipelineByPropertyName = $true,
-                   ParameterSetName = 'ByName')]
-        [string]
-        $TemplateName,
-
-        # Description for new policy.
-        [Parameter(Mandatory = $false,
-                   ValueFromPipelineByPropertyName = $true)]
+        [string]$Name,
+        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName, ParameterSetName = 'ByUUID')]
+        [string]$PolicyUUID,
+        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
+        [string]$TemplateName,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName = 'ByName')]
         [Parameter(ParameterSetName = 'ByUUID')]
-        [string]
-        $Description = ''
+        [string]$Description = ''
     )
 
     begin
@@ -134,8 +109,5 @@ function New-AcasPolicy {
             $NewPolicy = InvokeNessusRestRequest @RequestParams
             Get-AcasPolicy -PolicyID $NewPolicy.policy_id -SessionId $Connection.sessionid
         }
-    }
-    end
-    {
     }
 }

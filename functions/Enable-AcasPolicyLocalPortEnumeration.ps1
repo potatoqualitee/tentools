@@ -32,36 +32,18 @@ function Enable-AcasPolicyLocalPortEnumeration {
     [OutputType([int])]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32]
-        $SessionId,
-
-        [Parameter(Mandatory = $true,
-            Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
-        [int32[]]
-        $PolicyId,
-
-        [Parameter(Mandatory = $true,
-            Position = 2,
-            ValueFromPipelineByPropertyName = $true)]
+        [int32]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int32[]]$PolicyId,
+        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
         [ValidateSet('WMINetstat', 'SSHNetstat', 'SNMPScanner')]
-        [string[]]
-        $ScanMethods,
-
-        [Parameter(Mandatory = $false,
-            ValueFromPipelineByPropertyName = $true)]
-        [switch]
-        $VerifyOpenPorts,
-
-        [Parameter(Mandatory = $false,
-            ValueFromPipelineByPropertyName = $true)]
-        [switch]
-        $ScanOnlyIfLocalFails
+        [string[]]$ScanMethods,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [switch]$VerifyOpenPorts,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [switch]$ScanOnlyIfLocalFails
     )
 
     begin {
@@ -106,7 +88,5 @@ function Enable-AcasPolicyLocalPortEnumeration {
             Get-AcasPolicyLocalPortEnumeration -SessionId $SessionId -PolicyId $PolicyToChange
 
         }
-    }
-    end {
     }
 }

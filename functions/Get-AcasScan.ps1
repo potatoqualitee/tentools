@@ -25,26 +25,15 @@ function Get-AcasScan {
     [CmdletBinding()]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]
         $SessionId,
-
-        [Parameter(Mandatory = $false,
-            Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
-        [int32]
-        $FolderId,
-
-        [Parameter(Mandatory = $false,
-            Position = 2,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Position = 1, ValueFromPipelineByPropertyName)]
+        [int32]$FolderId,
+        [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
         [ValidateSet('Completed', 'Imported', 'Running', 'Paused', 'Canceled')]
-        [string]
-        $Status
+        [string]$Status
     )
 
     begin {
@@ -110,7 +99,5 @@ function Get-AcasScan {
                 }
             }
         }
-    }
-    end {
     }
 }

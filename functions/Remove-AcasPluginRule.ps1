@@ -34,14 +34,14 @@ function Remove-AcasPluginRule {
     Param
     (
         # Nessus session Id
-        [Parameter(Mandatory = $true, Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0,
+            ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32]
         $SessionId,
 
-        [Parameter(Mandatory = $true, Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 1,
+            ValueFromPipelineByPropertyName)]
         [int32]
         $Id
     )

@@ -11,7 +11,7 @@ function Import-ModuleFile {
 }
 
 # Detect whether at some level dotsourcing was enforced
-if ($acas_dotsourcemodule) { $script:doDotSource = $true }
+if ($acas_dotsourcemodule) { $script:doDotSource }
 
 # Import all internal functions
 foreach ($function in (Get-ChildItem "$ModuleRoot\internal\functions" -Filter "*.ps1" -Recurse -ErrorAction Ignore)) {
@@ -58,16 +58,16 @@ function InvokeNessusRestRequest {
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory)]
         $SessionObject,
 
         [Parameter(Mandatory = $false)]
         $Parameter,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory)]
         [string]$Path,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory)]
         [String]$Method,
 
         [Parameter(Mandatory = $false)]
@@ -114,7 +114,7 @@ function InvokeNessusRestRequest {
         if ($res -eq 401) {
             # Request failed. More than likely do to time-out.
             # Re-Authenticating using information from session.
-            write-verbose -Message 'The session has expired, Re-authenticating'
+            Write-PSFMessage -Level Verbose -Mesage 'The session has expired, Re-authenticating'
             $ReAuthParams = @{
                 'Method'        = 'Post'
                 'URI'           = "$($SessionObject.URI)/session"
@@ -131,7 +131,7 @@ function InvokeNessusRestRequest {
                 [void]$Global:NessusConn.Remove($FailedConnection)
             }
             else {
-                Write-Verbose -Message 'Updating session with new authentication token.'
+                Write-PSFMessage -Level Verbose -Mesage 'Updating session with new authentication token.'
 
                 # Creating new object with updated token so as to replace in the array the old one.
                 $SessionProps = New-Object -TypeName System.Collections.Specialized.OrderedDictionary

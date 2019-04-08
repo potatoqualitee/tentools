@@ -26,22 +26,22 @@ function Show-AcasScanDetail {
     Param
     (
         # Nessus session Id
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]
         $SessionId,
 
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [int32]
         $ScanId,
 
         [Parameter(Mandatory = $false,
             Position = 2,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [Int32]
         $HistoryId
     )

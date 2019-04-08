@@ -23,16 +23,16 @@ function Remove-AcasPolicy {
     Param
     (
         # Nessus session Id
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]
         $SessionId,
 
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [int32]
         $PolicyId
 
@@ -54,9 +54,9 @@ function Remove-AcasPolicy {
         }
 
         foreach ($Connection in $ToProcess) {
-            Write-Verbose -Message "Deleting policy with id $($PolicyId)."
+            Write-PSFMessage -Level Verbose -Mesage "Deleting policy with id $($PolicyId)."
             $RemovedPolicy = InvokeNessusRestRequest -SessionObject $Connection -Path "/policies/$($PolicyId)" -Method 'DELETE'
-            Write-Verbose -Message 'Policy deleted.'
+            Write-PSFMessage -Level Verbose -Mesage 'Policy deleted.'
         }
     }
     end {

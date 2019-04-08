@@ -22,20 +22,12 @@ function Import-AcasPolicy {
     [CmdletBinding()]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory = $true,
-            Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
+        [int32[]]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [ValidateScript( {Test-Path -Path $_})]
-        [string]
-        $File
+        [string]$File
     )
 
     begin {
@@ -121,5 +113,4 @@ function Import-AcasPolicy {
             }
         }
     }
-    end {}
 }

@@ -49,70 +49,29 @@ function New-AcasScan {
     [CmdletBinding(DefaultParameterSetName = 'Policy')]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory = $true,
-            Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]
-        $Name,
-
-        [Parameter(Mandatory = $true,
-            Position = 2,
-            ParameterSetName = 'Template',
-            ValueFromPipelineByPropertyName = $true)]
-        [string]
-        $PolicyUUID,
-
-        [Parameter(Mandatory = $true,
-            Position = 2,
-            ParameterSetName = 'Policy',
-            ValueFromPipelineByPropertyName = $true)]
-        [int]
-        $PolicyId,
-
-        [Parameter(Mandatory = $true,
-            Position = 3,
-            ValueFromPipelineByPropertyName = $true)]
-        [string[]]
-        $Target,
-
-        [Parameter(Mandatory = $true,
-            Position = 4,
-            ValueFromPipelineByPropertyName = $true)]
-        [bool]
-        $Enabled,
-
-        [Parameter(Mandatory = $False,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]
-        $Description,
-
-        [Parameter(Mandatory = $False,
-            ValueFromPipelineByPropertyName = $true)]
-        [Int]
-        $FolderId,
-
-        [Parameter(Mandatory = $False,
-            ValueFromPipelineByPropertyName = $true)]
-        [Int]
-        $ScannerId,
-
-        [Parameter(Mandatory = $False,
-            ValueFromPipelineByPropertyName = $true)]
-        [string[]]
-        $Email,
-
-        [Parameter(Mandatory = $False,
-            ValueFromPipelineByPropertyName = $true)]
-        [switch]
-        $CreateDashboard
+        [int32[]]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [string]$Name,
+        [Parameter(Mandatory, Position = 2, ParameterSetName = 'Template', ValueFromPipelineByPropertyName)]
+        [string]$PolicyUUID,
+        [Parameter(Mandatory, Position = 2, ParameterSetName = 'Policy', ValueFromPipelineByPropertyName)]
+        [int]$PolicyId,
+        [Parameter(Mandatory, Position = 3, ValueFromPipelineByPropertyName)]
+        [string[]]$Target,
+        [Parameter(Mandatory, Position = 4, ValueFromPipelineByPropertyName)]
+        [bool]$Enabled,
+        [Parameter(Mandatory = $False, ValueFromPipelineByPropertyName)]
+        [string]$Description,
+        [Parameter(Mandatory = $False, ValueFromPipelineByPropertyName)]
+        [Int]$FolderId,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [Int]$ScannerId,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$Email,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [switch]$CreateDashboard
     )
 
     begin {
@@ -127,11 +86,7 @@ function New-AcasScan {
                 }
             }
         }
-
-
-
-        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-
+        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0 
     }
     process {
         foreach ($Connection in $ToProcess) {
@@ -156,7 +111,7 @@ function New-AcasScan {
 
             switch ($PSCmdlet.ParameterSetName) {
                 'Template' {
-                    Write-Verbose -Message "Using Template with UUID of $($PolicyUUID)"
+                    Write-PSFMessage -Level Verbose -Mesage "Using Template with UUID of $($PolicyUUID)"
                     $scanhash = [ordered]@{
                         'uuid'     = $PolicyUUID
                         'settings' = $settings
@@ -168,7 +123,7 @@ function New-AcasScan {
                     $Policies = Get-AcasPolicy -SessionId $Connection.SessionId
                     foreach ($Policy in $Policies) {
                         if ($Policy.PolicyId -eq $PolicyId) {
-                            Write-Verbose -Message "Uising Poicy with UUID of $($Policy.PolicyUUID)"
+                            Write-PSFMessage -Level Verbose -Mesage "Uising Poicy with UUID of $($Policy.PolicyUUID)"
                             $polUUID = $Policy.PolicyUUID
                         }
                     }

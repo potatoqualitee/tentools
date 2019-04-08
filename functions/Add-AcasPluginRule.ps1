@@ -34,33 +34,19 @@ function Add-AcasPluginRule {
     param
     (
         # Nessus session Id
-        [Parameter(Mandatory = $true, Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory = $true, Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
-        [int32]
-        $PluginId,
-
-        [Parameter(Mandatory = $false, Position = 2,
-            ValueFromPipelineByPropertyName = $true)]
+        [int32[]]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int32]$PluginId,
+        [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
         [Alias('IPAddress', 'IP', 'Host')]
-        [String]
-        $ComputerName = '*',
-
-        [Parameter(Mandatory = $true, Position = 3,
-            ValueFromPipelineByPropertyName = $true)]
+        [String]$ComputerName = '*',
+        [Parameter(Mandatory, Position = 3, ValueFromPipelineByPropertyName)]
         [ValidateSet('Critical', 'High', 'Medium', 'Low', 'Info', 'Exclude')]
-        [String]
-        $Type,
-
-        [Parameter(Mandatory = $false, Position = 4,
-            ValueFromPipelineByPropertyName = $true)]
-        [datetime]
-        $Expiration
+        [String]$Type,
+        [Parameter(Position = 4, ValueFromPipelineByPropertyName)]
+        [datetime]$Expiration
     )
 
     begin {

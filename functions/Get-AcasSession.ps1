@@ -18,17 +18,10 @@ function Get-AcasSession {
 
     [CmdletBinding()]
     param(
-
-        # Nessus session Id
-        [Parameter(Mandatory = $false,
-            ParameterSetName = 'Index',
-            Position = 0)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId = @()
+        [int32[]]$SessionId
     )
-
-    begin {}
     process {
         if ($Index.Count -gt 0) {
             foreach ($i in $SessionId) {
@@ -44,5 +37,4 @@ function Get-AcasSession {
             foreach ($s in $Global:NessusConn) {$s}
         }
     }
-    end {}
 }

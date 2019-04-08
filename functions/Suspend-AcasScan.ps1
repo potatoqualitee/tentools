@@ -23,16 +23,16 @@ function Suspend-AcasScan {
     Param
     (
         # Nessus session Id
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]
         $SessionId,
 
         [Parameter(Mandatory = $false,
             Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [int32]
         $ScanId
     )

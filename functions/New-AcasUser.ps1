@@ -35,38 +35,38 @@ function New-AcasUser {
     param
     (
         # Nessus session Id
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]
         $SessionId,
 
         # Credentials for connecting to the Nessus Server
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 1)]
         [Management.Automation.PSCredential]
         $Credential,
 
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 2)]
         [ValidateSet('Read-Only', 'Regular', 'Administrator', 'Sysadmin')]
         [string]
         $Permission,
 
         [Parameter(Mandatory = $false,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [ValidateSet('Local', 'LDAP')]
         [string]
         $Type = 'Local',
 
         [Parameter(Mandatory = $false,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [string]
         $Email,
 
         [Parameter(Mandatory = $false,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [string]
         $Name
 

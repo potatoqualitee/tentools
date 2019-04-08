@@ -7,7 +7,7 @@ function Resolve-NetworkName {
 
     # resolve IP address
     try {
-        Write-Verbose -Message "Resolving $cName using .NET.Dns GetHostEntry"
+        Write-PSFMessage -Level Verbose -Mesage "Resolving $cName using .NET.Dns GetHostEntry"
         $resolved = [System.Net.Dns]::GetHostEntry($cName)
         $ipaddresses = $resolved.AddressList | Sort-Object -Property AddressFamily # prioritize IPv4
         $ipaddress = $ipaddresses[0].IPAddressToString
@@ -19,10 +19,10 @@ function Resolve-NetworkName {
 
     # try to resolve IP into a hostname
     try {
-        Write-Verbose -Message "Resolving $ipaddress using .NET.Dns GetHostByAddress"
+        Write-PSFMessage -Level Verbose -Mesage "Resolving $ipaddress using .NET.Dns GetHostByAddress"
         $fqdn = [System.Net.Dns]::GetHostByAddress($ipaddress).HostName
     } catch {
-        Write-Verbose -Message "Failed to resolve $ipaddress using .NET.Dns GetHostByAddress"
+        Write-PSFMessage -Level Verbose -Mesage "Failed to resolve $ipaddress using .NET.Dns GetHostByAddress"
         $fqdn = $resolved.HostName
     }
 

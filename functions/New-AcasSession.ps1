@@ -25,8 +25,8 @@ function New-AcasSession {
     param
     (
         # Nessus Server IP Address or FQDN to connect to.
-        [Parameter(Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true,
+        [Parameter(Mandatory,
+            ValueFromPipelineByPropertyName,
             Position = 0)]
         [string[]]$ComputerName,
 
@@ -36,7 +36,7 @@ function New-AcasSession {
 
 
         # Credentials for connecting to the Nessus Server
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 1)]
         [Management.Automation.PSCredential]$Credentials
     )

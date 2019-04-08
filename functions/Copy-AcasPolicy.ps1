@@ -22,24 +22,13 @@ function Copy-AcasPolicy {
     [CmdletBinding()]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory = $true,
-            Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
-        [int32]
-        $PolicyId
+        [int32[]]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int32]$PolicyId
 
     )
-
-    begin {
-    }
     process {
         $ToProcess = @()
 
@@ -63,7 +52,5 @@ function Copy-AcasPolicy {
             $CopiedObj.pstypenames.insert(0, 'Nessus.PolicyCopy')
             $CopiedObj
         }
-    }
-    end {
     }
 }

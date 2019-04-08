@@ -23,17 +23,17 @@ function Remove-AcasUser {
     Param
     (
         # Nessus session Id
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]
         $SessionId,
 
         # Nessus User Id
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [int32[]]
         $UserId
     )
@@ -53,7 +53,7 @@ function Remove-AcasUser {
     process {
         foreach ($Connection in $ToProcess) {
             foreach ($uid in $UserId) {
-                Write-Verbose -Message "Deleting user with Id $($uid)"
+                Write-PSFMessage -Level Verbose -Mesage "Deleting user with Id $($uid)"
                 InvokeNessusRestRequest -SessionObject $Connection -Path "/users/$($uid)" -Method 'Delete'
             }
         }

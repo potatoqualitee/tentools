@@ -24,16 +24,16 @@ function Get-AcasPolicyPortScanner {
     param
     (
         # Nessus session Id
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32]
         $SessionId,
 
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [int32[]]
         $PolicyId
     )
@@ -59,7 +59,7 @@ function Get-AcasPolicyPortScanner {
                 $PolSettingsObj.pstypenames.insert(0, 'Nessus.PolicySetting')
                 $PolSettingsObj
             } catch {
-                throw $_
+                Stop-Function -Message "Failure" -ErrorRecord $_ -Continue
             }
 
         }

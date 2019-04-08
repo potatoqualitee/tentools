@@ -26,32 +26,20 @@ function Enable-AcasPolicyPortScanner {
     [OutputType([int])]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32]
-        $SessionId,
-
-        [Parameter(Mandatory = $true,
-            Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
-        [int32[]]
-        $PolicyId,
-
-        [Parameter(Mandatory = $true,
-            Position = 2,
-            ValueFromPipelineByPropertyName = $true)]
+        [int32]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int32[]]$PolicyId,
+        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
         [ValidateSet('TCP', 'SYN', 'UDP')]
-        [string[]]
-        $ScanMethods
+        [string[]]$ScanMethods
     )
-
     begin {
         $sessions = Get-AcasSession | Select-Object -ExpandProperty sessionid
         if ($SessionId -notin $sessions) {
-            throw "SessionId $($SessionId) is not present in the current sessions."
+            Stop-PSFFunction -Message "SessionId $($SessionId) is not present in the current sessions."
+            return
         }
         $Session = Get-AcasSession -SessionId $SessionId
 
@@ -71,6 +59,7 @@ function Enable-AcasPolicyPortScanner {
         $SettingsJson = ConvertTo-Json -InputObject $Settings -Compress
     }
     process {
+        if (Test-PSFFunctionInterrupt) { return }
         foreach ($PolicyToChange in $PolicyId) {
             $RequestParams = @{
                 'SessionObject' = $Session

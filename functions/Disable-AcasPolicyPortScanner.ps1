@@ -27,25 +27,14 @@ function Disable-AcasPolicyPortScanner {
     param
     (
         # Nessus session Id
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32]
-        $SessionId,
-
-        [Parameter(Mandatory = $true,
-            Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
-        [int32[]]
-        $PolicyId,
-
-        [Parameter(Mandatory = $true,
-            Position = 2,
-            ValueFromPipelineByPropertyName = $true)]
+        [int32]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int32[]]$PolicyId,
+        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
         [ValidateSet('TCP', 'SYN', 'UDP')]
-        [string[]]
-        $ScanMethods
+        [string[]]$ScanMethods
     )
 
     begin {
@@ -84,7 +73,5 @@ function Disable-AcasPolicyPortScanner {
             Get-AcasPolicyPortScanner -SessionId $SessionId -PolicyId $PolicyToChange
 
         }
-    }
-    end {
     }
 }

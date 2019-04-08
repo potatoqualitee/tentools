@@ -19,9 +19,7 @@ function Get-AcasSessionInfo {
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = @()
     )
@@ -69,5 +67,4 @@ function Get-AcasSessionInfo {
             }
         }
     }
-    end {}
 }

@@ -22,16 +22,16 @@ function Remove-AcasScan {
     Param
     (
         # Nessus session Id
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]
         $SessionId,
 
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [int32]
         $ScanId
     )
@@ -50,11 +50,11 @@ function Remove-AcasScan {
         }
 
         foreach ($Connection in $ToProcess) {
-            Write-Verbose -Message "Removing scan with Id $($ScanId)"
+            Write-PSFMessage -Level Verbose -Mesage "Removing scan with Id $($ScanId)"
 
             $ScanDetails = InvokeNessusRestRequest -SessionObject $Connection -Path "/scans/$($ScanId)" -Method 'Delete' -Parameter $Params
             if ($ScanDetails -eq 'null') {
-                Write-Verbose -Message 'Scan Removed'
+                Write-PSFMessage -Level Verbose -Mesage 'Scan Removed'
             }
 
 

@@ -27,24 +27,13 @@ function Add-AcasPolicyPortRange {
     param
     (
         # Nessus session Id
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32]
-        $SessionId,
-
-        [Parameter(Mandatory = $true,
-            Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
-        [int32[]]
-        $PolicyId,
-
-        [Parameter(Mandatory = $true,
-            Position = 2,
-            ValueFromPipelineByPropertyName = $true)]
-        [string[]]
-        $Port
+        [int32]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int32[]]$PolicyId,
+        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
+        [string[]]$Port
     )
 
     begin {
@@ -70,10 +59,8 @@ function Add-AcasPolicyPortRange {
                 InvokeNessusRestRequest @RequestParams | Out-Null
                 Get-AcasPolicyPortRange -SessionId $SessionId -PolicyId $PolicyToChange
             } catch {
-                throw $_
+                Stop-Function -Message "Failure" -ErrorRecord $_ -Continue
             }
         }
-    }
-    end {
     }
 }

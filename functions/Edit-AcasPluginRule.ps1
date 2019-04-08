@@ -48,38 +48,21 @@ function Edit-AcasPluginRule {
     param
     (
         # Nessus session Id
-        [Parameter(Mandatory = $true, Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32]
-        $SessionId,
-
-        [Parameter(Mandatory = $true, Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
-        [int32]
-        $Id,
-
-        [Parameter(Mandatory = $true, Position = 2,
-            ValueFromPipelineByPropertyName = $true)]
-        [int32]
-        $PluginId,
-
-        [Parameter(Mandatory = $false, Position = 3,
-            ValueFromPipelineByPropertyName = $true)]
+        [int32]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int32]$Id,
+        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
+        [int32]$PluginId,
+        [Parameter(Position = 3, ValueFromPipelineByPropertyName)]
         [Alias('IPAddress', 'IP', 'Host')]
-        [String]
-        $ComputerName = '*',
-
-        [Parameter(Mandatory = $true, Position = 4,
-            ValueFromPipelineByPropertyName = $true)]
+        [String]$ComputerName = '*',
+        [Parameter(Mandatory, Position = 4, ValueFromPipelineByPropertyName)]
         [ValidateSet('Critical', 'High', 'Medium', 'Low', 'Info', 'Exclude')]
-        [String]
-        $Type,
-
-        [Parameter(Mandatory = $false, Position = 5,
-            ValueFromPipelineByPropertyName = $true)]
-        [Object] #TODO: Validate the Expiratoin date, but still allow nulls
-        $Expiration
+        [String]$Type,
+        [Parameter(Position = 5, ValueFromPipelineByPropertyName)]
+        [Object]$Expiration #TODO: Validate the Expiratoin date, but still allow nulls
     )
 
     begin {

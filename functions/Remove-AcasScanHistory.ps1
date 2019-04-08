@@ -26,22 +26,22 @@ function Remove-AcasScanHistory {
     Param
     (
         # Nessus session Id
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]
         $SessionId,
 
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [int32]
         $ScanId,
 
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 2,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [int32]
         $HistoryId
     )
@@ -59,12 +59,12 @@ function Remove-AcasScanHistory {
         }
 
         foreach ($Connection in $ToProcess) {
-            Write-Verbose -Message "Removing history Id ($HistoryId) from scan Id $($ScanId)"
+            Write-PSFMessage -Level Verbose -Mesage "Removing history Id ($HistoryId) from scan Id $($ScanId)"
 
             $ScanHistoryDetails = InvokeNessusRestRequest -SessionObject $Connection -Path "/scans/$($ScanId)/history/$($HistoryId)" -Method 'Delete' -Parameter $Params
 
             if ($ScanHistoryDetails -eq '') {
-                Write-Verbose -Message 'History Removed'
+                Write-PSFMessage -Level Verbose -Mesage 'History Removed'
             }
 
 

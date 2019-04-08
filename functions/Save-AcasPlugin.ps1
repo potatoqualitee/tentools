@@ -29,7 +29,7 @@ function Save-AcasPlugin {
         } catch {
             $message = "Failed to load module, PoshRSJob is required for this function.
                         Install the module by running: 'Install-Module -Name PoshRSJob -Scope CurrentUser'"
-            throw $_
+            Stop-Function -Message "Failure" -ErrorRecord $_ -Continue
         }
 
         #Enabling TLS 1.2

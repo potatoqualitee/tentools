@@ -26,23 +26,23 @@ function Set-AcasUserPassword {
     Param
     (
         # Nessus session Id
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]
         $SessionId,
 
         # Nessus User Id
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [int32[]]
         $UserId,
 
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 3,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [securestring]
         $Password
     )
@@ -62,7 +62,7 @@ function Set-AcasUserPassword {
     process {
         foreach ($Connection in $ToProcess) {
             foreach ($uid in $UserId) {
-                Write-Verbose -Message "Updating user with Id $($uid)"
+                Write-PSFMessage -Level Verbose -Mesage "Updating user with Id $($uid)"
                 $pass = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))
                 $params = @{'password' = $pass}
                 $paramJson = ConvertTo-Json -InputObject $params -Compress

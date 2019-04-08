@@ -20,13 +20,9 @@ function Get-AcasGroup {
     [OutputType([int])]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId = @()
+        [int32]$SessionId
     )
 
     begin {
@@ -70,10 +66,8 @@ function Get-AcasGroup {
                     $GroupObj
                 }
             } else {
-                Write-Warning -message "Server for session $($Connection.sessionid) is not licenced for multiple users."
+                Write-PSFMessage -Level Warning -Mesage "Server for session $($Connection.sessionid) is not licenced for multiple users."
             }
         }
-    }
-    end {
     }
 }

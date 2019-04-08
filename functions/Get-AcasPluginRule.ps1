@@ -28,21 +28,12 @@ function Get-AcasPluginRule {
     [CmdletBinding()]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Position = 1,
-            ValueFromPipelineByPropertyName = $true)]
-        [int32]
-        $PluginId,
-
-        [Switch]
-        $Detail
+        [int32]$SessionId,
+        [Parameter(Position = 1, ValueFromPipelineByPropertyName)]
+        [int32]$PluginId,
+        [Switch]$Detail
 
     )
 
@@ -52,7 +43,7 @@ function Get-AcasPluginRule {
             param
             (
                 [Object]
-                [Parameter(ValueFromPipeline = $true)]
+                [Parameter(ValueFromPipeline)]
                 $InputObject
             )
 
@@ -131,9 +122,5 @@ function Get-AcasPluginRule {
                 }
             }
         }
-    }
-
-    end {
-
     }
 }

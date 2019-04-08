@@ -5,15 +5,15 @@ function Remove-AcasGroup {
     param
     (
         # Nessus session Id
-        [Parameter(Mandatory = $true,
+        [Parameter(Mandatory,
             Position = 0,
-            ValueFromPipelineByPropertyName = $true)]
+            ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]
         $SessionId,
 
-        [Parameter(Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true,
+        [Parameter(Mandatory,
+            ValueFromPipelineByPropertyName,
             Position = 1)]
         [Int32]
         $GroupId
@@ -49,7 +49,7 @@ function Remove-AcasGroup {
 
                 InvokeNessusRestRequest @GroupParams
             } else {
-                Write-Warning -message "Server for session $($Connection.sessionid) is not licenced for multiple users."
+                Write-PSFMessage -Level Warning -Mesage "Server for session $($Connection.sessionid) is not licenced for multiple users."
             }
         }
     }
