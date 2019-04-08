@@ -30,7 +30,7 @@ function Get-AcasFolder {
     (
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32]$SessionId,
+        [int32]$SessionId
     )
     process {
         $ToProcess = @()
