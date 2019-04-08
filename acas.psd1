@@ -33,7 +33,7 @@
     PowerShellVersion  = '3.0'
 
     # Modules that must be imported into the global environment prior to importing this module
-    #RequiredModules    = @('PSFramework')
+    RequiredModules    = @('PSFramework')
 
     # Assemblies that must be loaded prior to importing this module
     RequiredAssemblies = @('bin\RestSharp.dll')
@@ -48,7 +48,8 @@
     )
 
     # Functions to export from this module
-    FunctionsToExport  = @('Add-AcasGroupUser',
+    FunctionsToExport  = @(
+        'Add-AcasGroupUser',
         'Add-AcasPluginRule',
         'Add-AcasPolicyPortRange',
         'Copy-AcasPolicy',
@@ -92,6 +93,7 @@
         'Remove-AcasUser',
         'Rename-AcasGroup',
         'Resume-AcasScan',
+        'Save-AcasPlugin',
         'Set-AcasPolicyPortRange',
         'Set-AcasUserPassword',
         'Show-AcasGroupMember',
@@ -103,7 +105,9 @@
         'Show-AcasScanHostDetail',
         'Start-AcasScan',
         'Stop-AcasScan',
-        'Suspend-AcasScan')
+        'Suspend-AcasScan',
+        'Test-AcasAccessibility'
+    )
 
     # Cmdlets to export from this module
     CmdletsToExport    = @()

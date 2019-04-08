@@ -7,7 +7,7 @@ function Add-AcasGroupUser {
     Long description
 
     .PARAMETER SessionId
-    Parameter description
+    ID of a valid Nessus session
 
     .PARAMETER GroupId
     Parameter description
@@ -76,8 +76,7 @@ function Add-AcasGroupUser {
                 }
 
                 InvokeNessusRestRequest @GroupParams
-            }
-            else {
+            } else {
                 Write-Warning -message "Server for session $($Connection.sessionid) is not licenced for multiple users."
             }
         }

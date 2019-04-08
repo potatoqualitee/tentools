@@ -1,25 +1,25 @@
 function New-AcasSession {
     <#
-.SYNOPSIS
+    .SYNOPSIS
 
-.DESCRIPTION
-Long description
+    .DESCRIPTION
+    Long description
 
-.PARAMETER ComputerName
-Parameter description
+    .PARAMETER ComputerName
+    Parameter description
 
-.PARAMETER Port
-Parameter description
+    .PARAMETER Port
+    Parameter description
 
-.PARAMETER Credentials
-Parameter description
+    .PARAMETER Credentials
+    Parameter description
 
-.EXAMPLE
-An example
+    .EXAMPLE
+    An example
 
-.NOTES
-General notes
-#>
+    .NOTES
+    General notes
+    #>
 
     [CmdletBinding()]
     param

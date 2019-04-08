@@ -1,7 +1,8 @@
 function Remove-AcasGroup {
-
+    ##
+    
     [CmdletBinding()]
-    Param
+    param
     (
         # Nessus session Id
         [Parameter(Mandatory = $true,
@@ -47,8 +48,7 @@ function Remove-AcasGroup {
                 }
 
                 InvokeNessusRestRequest @GroupParams
-            }
-            else {
+            } else {
                 Write-Warning -message "Server for session $($Connection.sessionid) is not licenced for multiple users."
             }
         }

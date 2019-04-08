@@ -1,29 +1,29 @@
 function Import-AcasScan {
     <#
-.SYNOPSIS
-Short description
+    .SYNOPSIS
+    Short description
 
-.DESCRIPTION
-Long description
+    .DESCRIPTION
+    Long description
 
-.PARAMETER SessionId
-Parameter description
+    .PARAMETER SessionId
+    Parameter description
 
-.PARAMETER File
-Parameter description
+    .PARAMETER File
+    Parameter description
 
-.PARAMETER Encrypted
-Parameter description
+    .PARAMETER Encrypted
+    Parameter description
 
-.PARAMETER Password
-Parameter description
+    .PARAMETER Password
+    Parameter description
 
-.EXAMPLE
-An example
+    .EXAMPLE
+    An example
 
-.NOTES
-General notes
-#>
+    .NOTES
+    General notes
+    #>
 
     [CmdletBinding()]
     param
@@ -59,8 +59,7 @@ General notes
         if ($Encrypted) {
             $ContentType = 'application/octet-stream'
             $URIPath = 'file/upload?no_enc=1'
-        }
-        else {
+        } else {
             $ContentType = 'application/octet-stream'
             $URIPath = 'file/upload'
         }
@@ -113,8 +112,7 @@ General notes
             $result = $RestClient.Execute($RestRequest)
             if ($result.ErrorMessage.Length -gt 0) {
                 Write-Error -Message $result.ErrorMessage
-            }
-            else {
+            } else {
                 $RestParams = New-Object -TypeName System.Collections.Specialized.OrderedDictionary
                 $RestParams.add('file', "$($fileinfo.name)")
                 if ($Encrypted) {

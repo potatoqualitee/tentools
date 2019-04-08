@@ -1,26 +1,26 @@
 function Get-AcasPolicy {
     <#
-.SYNOPSIS
-Short description
+    .SYNOPSIS
+    Short description
 
-.DESCRIPTION
-Long description
+    .DESCRIPTION
+    Long description
 
-.PARAMETER SessionId
-Parameter description
+    .PARAMETER SessionId
+    Parameter description
 
-.PARAMETER Name
-Parameter description
+    .PARAMETER Name
+    Parameter description
 
-.PARAMETER PolicyID
-Parameter description
+    .PARAMETER PolicyID
+    Parameter description
 
-.EXAMPLE
-An example
+    .EXAMPLE
+    An example
 
-.NOTES
-General notes
-#>
+    .NOTES
+    General notes
+    #>
 
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param

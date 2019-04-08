@@ -1,41 +1,41 @@
 function Export-AcasScan {
     <#
-.SYNOPSIS
-Short description
+    .SYNOPSIS
+    Short description
 
-.DESCRIPTION
-Long description
+    .DESCRIPTION
+    Long description
 
-.PARAMETER SessionId
-Parameter description
+    .PARAMETER SessionId
+    Parameter description
 
-.PARAMETER ScanId
-Parameter description
+    .PARAMETER ScanId
+    Parameter description
 
-.PARAMETER Format
-Parameter description
+    .PARAMETER Format
+    Parameter description
 
-.PARAMETER OutFile
-Parameter description
+    .PARAMETER OutFile
+    Parameter description
 
-.PARAMETER PSObject
-Parameter description
+    .PARAMETER PSObject
+    Parameter description
 
-.PARAMETER Chapters
-Parameter description
+    .PARAMETER Chapters
+    Parameter description
 
-.PARAMETER HistoryID
-Parameter description
+    .PARAMETER HistoryID
+    Parameter description
 
-.PARAMETER Password
-Parameter description
+    .PARAMETER Password
+    Parameter description
 
-.EXAMPLE
-An example
+    .EXAMPLE
+    An example
 
-.NOTES
-General notes
-#>
+    .NOTES
+    General notes
+    #>
 
     [CmdletBinding()]
     param
@@ -122,8 +122,7 @@ General notes
         if ($Chapters) {
             if ($Chapters -contains 'All') {
                 $ExportParams.Add('chapters', 'vuln_hosts_summary;vuln_by_host;compliance_exec;remediations;vuln_by_plugin;compliance')
-            }
-            else {
+            } else {
                 $ExportParams.Add('chapters', $Chapters.ToLower())
             }
         }
@@ -131,8 +130,7 @@ General notes
         foreach ($Connection in $ToProcess) {
             if ($HistoryId) {
                 $path = "/scans/$($ScanId)/export?history_id=$($HistoryId)"
-            }
-            else {
+            } else {
                 $path = "/scans/$($ScanId)/export"
             }
 
@@ -144,8 +142,7 @@ General notes
                     try {
                         $FileStatus = InvokeNessusRestRequest -SessionObject $Connection -Path "/scans/$($ScanId)/export/$($FileID.file)/status"  -Method 'Get'
                         Write-Verbose -Message "Status of export is $($FileStatus.status)"
-                    }
-                    catch {
+                    } catch {
                         break
                     }
                     Start-Sleep -Seconds 1
@@ -153,8 +150,7 @@ General notes
                 if ($FileStatus.status -eq 'ready' -and $Format -eq 'CSV' -and $PSObject.IsPresent) {
                     Write-Verbose -Message "Converting report to PSObject"
                     InvokeNessusRestRequest -SessionObject $Connection -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' | ConvertFrom-CSV
-                }
-                elseif ($FileStatus.status -eq 'ready') {
+                } elseif ($FileStatus.status -eq 'ready') {
                     Write-Verbose -Message "Downloading report to $($OutFile)"
                     InvokeNessusRestRequest -SessionObject $Connection -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' -OutFile $OutFile
                 }

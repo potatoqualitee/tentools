@@ -1,26 +1,26 @@
 function Rename-AcasGroup {
     <#
-.SYNOPSIS
-Short description
+    .SYNOPSIS
+    Short description
 
-.DESCRIPTION
-Long description
+    .DESCRIPTION
+    Long description
 
-.PARAMETER SessionId
-Parameter description
+    .PARAMETER SessionId
+    Parameter description
 
-.PARAMETER GroupId
-Parameter description
+    .PARAMETER GroupId
+    Parameter description
 
-.PARAMETER Name
-Parameter description
+    .PARAMETER Name
+    Parameter description
 
-.EXAMPLE
-An example
+    .EXAMPLE
+    An example
 
-.NOTES
-General notes
-#>
+    .NOTES
+    General notes
+    #>
 
     [CmdletBinding()]
     param
@@ -77,8 +77,7 @@ General notes
                 }
 
                 InvokeNessusRestRequest @GroupParams
-            }
-            else {
+            } else {
                 Write-Warning -message "Server for session $($Connection.sessionid) is not licenced for multiple users."
             }
         }

@@ -1,26 +1,26 @@
 function Remove-AcasScanHistory {
     <#
-.SYNOPSIS
-Short description
+    .SYNOPSIS
+    Short description
 
-.DESCRIPTION
-Long description
+    .DESCRIPTION
+    Long description
 
-.PARAMETER SessionId
-Parameter description
+    .PARAMETER SessionId
+    Parameter description
 
-.PARAMETER ScanId
-Parameter description
+    .PARAMETER ScanId
+    Parameter description
 
-.PARAMETER HistoryId
-Parameter description
+    .PARAMETER HistoryId
+    Parameter description
 
-.EXAMPLE
-An example
+    .EXAMPLE
+    An example
 
-.NOTES
-General notes
-#>
+    .NOTES
+    General notes
+    #>
 
     [CmdletBinding()]
     Param

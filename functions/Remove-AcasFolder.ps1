@@ -1,20 +1,20 @@
 function Remove-NessusFolder {
     <#
     .SYNOPSIS
-    
+
     .DESCRIPTION
     Long description
-    
+
     .PARAMETER SessionId
     Parameter description
-    
+
     .EXAMPLE
     An example
-    
+
     .NOTES
     General notes
     #>
-    
+
     [CmdletBinding()]
     Param
     (
@@ -36,7 +36,7 @@ function Remove-NessusFolder {
 
         foreach ($i in $SessionId) {
             $Connections = $Global:NessusConn
-            
+
             foreach ($Connection in $Connections) {
                 if ($Connection.SessionId -eq $i) {
                     $ToProcess += $Connection
@@ -44,7 +44,7 @@ function Remove-NessusFolder {
             }
         }
 
-        foreach ($Connection in $ToProcess) {   
+        foreach ($Connection in $ToProcess) {
             $Folder = InvokeNessusRestRequest -SessionObject $Connection -Path "/folders/$($FolderId)" -Method 'DELETE'
         }
     }

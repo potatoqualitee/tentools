@@ -1,77 +1,69 @@
 function Get-AcasPolicyPortScanner {
-<#
-.SYNOPSIS
-Short description
+    <#
+    .SYNOPSIS
+    Short description
 
-.DESCRIPTION
-Long description
+    .DESCRIPTION
+    Long description
 
-.PARAMETER SessionId
-Parameter description
+    .PARAMETER SessionId
+    Parameter description
 
-.PARAMETER PolicyId
-Parameter description
+    .PARAMETER PolicyId
+    Parameter description
 
-.EXAMPLE
-An example
+    .EXAMPLE
+    An example
 
-.NOTES
-General notes
-#>
+    .NOTES
+    General notes
+    #>
 
     [CmdletBinding()]
     [OutputType([int])]
     param
     (
         # Nessus session Id
-        [Parameter(Mandatory=$true,
-                   Position=0,
-                   ValueFromPipelineByPropertyName=$true)]
+        [Parameter(Mandatory = $true,
+            Position = 0,
+            ValueFromPipelineByPropertyName = $true)]
         [Alias('Index')]
         [int32]
         $SessionId,
 
-        [Parameter(Mandatory=$true,
-                   Position=1,
-                   ValueFromPipelineByPropertyName=$true)]
+        [Parameter(Mandatory = $true,
+            Position = 1,
+            ValueFromPipelineByPropertyName = $true)]
         [int32[]]
         $PolicyId
     )
 
-    begin
-    {
+    begin {
         $sessions = Get-AcasSession | Select-Object -ExpandProperty sessionid
-        if ($SessionId -notin $sessions)
-        {
+        if ($SessionId -notin $sessions) {
             throw "SessionId $($SessionId) is not present in the current sessions."
         }
         $Session = Get-AcasSession -SessionId $SessionId
     }
-    process
-    {
-        foreach ($PolicyToChange in $PolicyId)
-        {
-            try
-            {
+    process {
+        foreach ($PolicyToChange in $PolicyId) {
+            try {
                 $Policy = Get-AcasPolicyDetail -SessionId $Session.SessionId -PolicyId $PolicyToChange
                 $UpdateProps = [ordered]@{
-                    'PolicyId' = $PolicyToChange
+                    'PolicyId'   = $PolicyToChange
                     'SYNScanner' = $Policy.settings.syn_scanner
                     'UDPScanner' = $Policy.settings.udp_scanner
                     'TCPScanner' = $Policy.settings.tcp_scanner
                 }
                 $PolSettingsObj = [PSCustomObject]$UpdateProps
-                $PolSettingsObj.pstypenames.insert(0,'Nessus.PolicySetting')
+                $PolSettingsObj.pstypenames.insert(0, 'Nessus.PolicySetting')
                 $PolSettingsObj
-            }
-            catch
-            {
+            } catch {
                 throw $_
             }
 
         }
     }
-    end
-    {
+    end {
     }
 }

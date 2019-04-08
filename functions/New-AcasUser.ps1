@@ -1,35 +1,35 @@
 function New-AcasUser {
     <#
-.SYNOPSIS
-Short description
+    .SYNOPSIS
+    Short description
 
-.DESCRIPTION
-Long description
+    .DESCRIPTION
+    Long description
 
-.PARAMETER SessionId
-Parameter description
+    .PARAMETER SessionId
+    Parameter description
 
-.PARAMETER Credential
-Parameter description
+    .PARAMETER Credential
+    Parameter description
 
-.PARAMETER Permission
-Parameter description
+    .PARAMETER Permission
+    Parameter description
 
-.PARAMETER Type
-Parameter description
+    .PARAMETER Type
+    Parameter description
 
-.PARAMETER Email
-Parameter description
+    .PARAMETER Email
+    Parameter description
 
-.PARAMETER Name
-Parameter description
+    .PARAMETER Name
+    Parameter description
 
-.EXAMPLE
-An example
+    .EXAMPLE
+    An example
 
-.NOTES
-General notes
-#>
+    .NOTES
+    General notes
+    #>
 
     [CmdletBinding()]
     param

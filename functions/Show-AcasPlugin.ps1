@@ -1,23 +1,23 @@
 function Show-AcasPlugin {
     <#
-.SYNOPSIS
-Short description
+    .SYNOPSIS
+    Short description
 
-.DESCRIPTION
-Long description
+    .DESCRIPTION
+    Long description
 
-.PARAMETER SessionId
-Parameter description
+    .PARAMETER SessionId
+    Parameter description
 
-.PARAMETER PluginId
-Parameter description
+    .PARAMETER PluginId
+    Parameter description
 
-.EXAMPLE
-An example
+    .EXAMPLE
+    An example
 
-.NOTES
-General notes
-#>
+    .NOTES
+    General notes
+    #>
 
     [CmdletBinding()]
     Param
@@ -61,8 +61,7 @@ General notes
                         # Some attributes have multiple values, i.e. osvdb. This causes errors when adding duplicates
                         If ($Attributes.Keys -contains $Attribute.attribute_name) {
                             $Attributes[$Attribute.attribute_name] += ", $($Attribute.attribute_value)"
-                        }
-                        Else {
+                        } Else {
                             $Attributes.add("$($Attribute.attribute_name)", "$($Attribute.attribute_value)")
                         }
                     }

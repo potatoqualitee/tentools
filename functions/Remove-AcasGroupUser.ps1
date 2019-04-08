@@ -1,7 +1,37 @@
 function Remove-AcasGroupUser {
+    <#
+    .SYNOPSIS
+    Removes a Nessus group user
 
+    .DESCRIPTION
+    Can be used to clear a previously defined, scan report altering rule
+
+    .PARAMETER SessionId
+    ID of a valid Nessus session
+
+    .PARAMETER Id
+    ID number of the rule which would you like removed/deleted
+
+    .EXAMPLE
+    Remove-AcasGroupUser -SessionId 0 -Id 500
+    Will delete a group user with an ID of 500
+
+    .EXAMPLE
+    Get-AcasPluginRule -SessionId 0 | Remove-AcasGroupUser
+    Will delete all rules
+
+    .EXAMPLE
+    Get-AcasPluginRule -SessionId 0 | ? {$_.Host -eq 'myComputer'} | Remove-AcasGroupUser
+    Will find all group users that match the computer name, and delete them
+
+    .INPUTS
+    Can accept pipeline data from Get-AcasPluginRule
+
+    .OUTPUTS
+    Empty, unless an error is received from the server
+    #>
     [CmdletBinding()]
-    Param
+    param
     (
         # Nessus session Id
         [Parameter(Mandatory = $true,
@@ -53,8 +83,7 @@ function Remove-AcasGroupUser {
                 }
 
                 InvokeNessusRestRequest @GroupParams
-            }
-            else {
+            } else {
                 Write-Warning -message "Server for session $($Connection.sessionid) is not licenced for multiple users."
             }
         }

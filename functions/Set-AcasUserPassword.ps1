@@ -1,26 +1,26 @@
 function Set-AcasUserPassword {
     <#
-.SYNOPSIS
-Short description
+    .SYNOPSIS
+    Short description
 
-.DESCRIPTION
-Long description
+    .DESCRIPTION
+    Long description
 
-.PARAMETER SessionId
-Parameter description
+    .PARAMETER SessionId
+    Parameter description
 
-.PARAMETER UserId
-Parameter description
+    .PARAMETER UserId
+    Parameter description
 
-.PARAMETER Password
-Parameter description
+    .PARAMETER Password
+    Parameter description
 
-.EXAMPLE
-An example
+    .EXAMPLE
+    An example
 
-.NOTES
-General notes
-#>
+    .NOTES
+    General notes
+    #>
 
     [CmdletBinding()]
     Param

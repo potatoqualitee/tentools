@@ -1,5 +1,23 @@
 function Remove-AcasScan {
+    <#
+    .SYNOPSIS
+    Short description
 
+    .DESCRIPTION
+    Long description
+
+    .PARAMETER SessionId
+    Parameter description
+
+    .PARAMETER ScanId
+    Parameter description
+
+    .EXAMPLE
+    An example
+
+    .NOTES
+    General notes
+    #>
     [CmdletBinding()]
     Param
     (

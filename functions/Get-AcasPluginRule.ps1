@@ -1,44 +1,27 @@
 function Get-AcasPluginRule {
-<#
-.SYNOPSIS
-Short description
-
-.DESCRIPTION
-Long description
-
-.PARAMETER InputObject
-Parameter description
-
-.EXAMPLE
-An example
-
-.NOTES
-General notes
-#>
-
     <#
-            .SYNOPSIS
-            Gets a list of all Nessus plugin rules
+    .SYNOPSIS
+    Gets a list of all Nessus plugin rules
 
-            .DESCRIPTION
-            Gets a list of all Nessus plugin rules
+    .DESCRIPTION
+    Gets a list of all Nessus plugin rules
 
-            .PARAMETER SessionId
-            ID of a valid Nessus session
+    .PARAMETER SessionId
+    ID of a valid Nessus session
 
-            .PARAMETER Detail
-            Does an additional lookup on each rule, to return the plugin name. Helpfule when reporting
+    .PARAMETER Detail
+    Does an additional lookup on each rule, to return the plugin name. Helpfule when reporting
 
-            .EXAMPLE
-            Get-AcasPluginRule -SessionId 0
-            Gets all defined plugin rules
+    .EXAMPLE
+    Get-AcasPluginRule -SessionId 0
+    Gets all defined plugin rules
 
-            .EXAMPLE
-            Get-AcasPluginRule -SessionId 0 -Detail
-            Gets all defined plugin rules with details
+    .EXAMPLE
+    Get-AcasPluginRule -SessionId 0 -Detail
+    Gets all defined plugin rules with details
 
-            .OUTPUTS
-            Returns a PSObject with basic rule info, or returns PSObject with base info + plugin name
+    .OUTPUTS
+    Returns a PSObject with basic rule info, or returns PSObject with base info + plugin name
     #>
 
 
@@ -142,8 +125,7 @@ General notes
 
                     If ($PluginId) {
                         $pRuleObj | Limit-PluginRule
-                    }
-                    Else {
+                    } Else {
                         $pRuleObj
                     }
                 }

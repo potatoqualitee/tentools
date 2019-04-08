@@ -1,20 +1,20 @@
 function Get-AcasSession {
     <#
-.SYNOPSIS
-Short description
+    .SYNOPSIS
+    Short description
 
-.DESCRIPTION
-Long description
+    .DESCRIPTION
+    Long description
 
-.PARAMETER SessionId
-Parameter description
+    .PARAMETER SessionId
+    Parameter description
 
-.EXAMPLE
-An example
+    .EXAMPLE
+    An example
 
-.NOTES
-General notes
-#>
+    .NOTES
+    General notes
+    #>
 
     [CmdletBinding()]
     param(
@@ -38,8 +38,7 @@ General notes
                     }
                 }
             }
-        }
-        else {
+        } else {
             # Return all sessions.
             $return_sessions = @()
             foreach ($s in $Global:NessusConn) {$s}

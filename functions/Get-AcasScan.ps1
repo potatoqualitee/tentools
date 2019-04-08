@@ -1,26 +1,26 @@
 function Get-AcasScan {
     <#
-.SYNOPSIS
-Short description
+    .SYNOPSIS
+    Short description
 
-.DESCRIPTION
-Long description
+    .DESCRIPTION
+    Long description
 
-.PARAMETER SessionId
-Parameter description
+    .PARAMETER SessionId
+    Parameter description
 
-.PARAMETER FolderId
-Parameter description
+    .PARAMETER FolderId
+    Parameter description
 
-.PARAMETER Status
-Parameter description
+    .PARAMETER Status
+    Parameter description
 
-.EXAMPLE
-An example
+    .EXAMPLE
+    An example
 
-.NOTES
-General notes
-#>
+    .NOTES
+    General notes
+    #>
 
     [CmdletBinding()]
     param
@@ -75,8 +75,7 @@ General notes
 
                 if ($Status.length -gt 0) {
                     $Scans2Process = $Scans.scans | Where-Object {$_.status -eq $Status.ToLower()}
-                }
-                else {
+                } else {
                     $Scans2Process = $Scans.scans
                 }
                 foreach ($scan in $Scans2Process) {
@@ -99,8 +98,7 @@ General notes
 
                     if ($scan.starttime -cnotlike "*T*") {
                         $ScanProps.add('StartTime', $origin.AddSeconds($scan.starttime).ToLocalTime())
-                    }
-                    else {
+                    } else {
                         $StartTime = [datetime]::ParseExact($scan.starttime, "yyyyMMddTHHmmss",
                             [System.Globalization.CultureInfo]::InvariantCulture,
                             [System.Globalization.DateTimeStyles]::None)

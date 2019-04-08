@@ -1,23 +1,23 @@
 function Show-AcasGroupMember {
     <#
-.SYNOPSIS
-Short description
+    .SYNOPSIS
+    Short description
 
-.DESCRIPTION
-Long description
+    .DESCRIPTION
+    Long description
 
-.PARAMETER SessionId
-Parameter description
+    .PARAMETER SessionId
+    Parameter description
 
-.PARAMETER GroupId
-Parameter description
+    .PARAMETER GroupId
+    Parameter description
 
-.EXAMPLE
-An example
+    .EXAMPLE
+    An example
 
-.NOTES
-General notes
-#>
+    .NOTES
+    General notes
+    #>
 
     [CmdletBinding()]
     Param
@@ -82,8 +82,7 @@ General notes
                     $UserObj.pstypenames[0] = 'Nessus.User'
                     $UserObj
                 }
-            }
-            else {
+            } else {
                 Write-Warning -message "Server for session $($Connection.sessionid) is not licenced for multiple users."
             }
         }

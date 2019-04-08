@@ -1,34 +1,34 @@
 function Add-AcasPluginRule {
     <#
-            .SYNOPSIS
-            Creates a new Nessus plugin rule
+    .SYNOPSIS
+    Creates a new Nessus plugin rule
 
-            .DESCRIPTION
-            Can be used to alter report output for various reasons. i.e. vulnerability acceptance, verified
-            false-positive on non-credentialed scans, alternate mitigation in place, etc...
+    .DESCRIPTION
+    Can be used to alter report output for various reasons. i.e. vulnerability acceptance, verified
+    false-positive on non-credentialed scans, alternate mitigation in place, etc...
 
-            .PARAMETER SessionId
-            ID of a valid Nessus session
+    .PARAMETER SessionId
+    ID of a valid Nessus session
 
-            .PARAMETER PluginId
-            ID number of the plugin which would you like altered
+    .PARAMETER PluginId
+    ID number of the plugin which would you like altered
 
-            .PARAMETER ComputerName
-            Name, IP address, or Wildcard (*), which defines the the host(s) affected by the rule
+    .PARAMETER ComputerName
+    Name, IP address, or Wildcard (*), which defines the the host(s) affected by the rule
 
-            .PARAMETER Type
-            Severity level you would like future scan reports to display for the defined host(s)
+    .PARAMETER Type
+    Severity level you would like future scan reports to display for the defined host(s)
 
-            .PARAMETER Expiration
-            Date/Time object, which defines the time you would like the rule to expire
+    .PARAMETER Expiration
+    Date/Time object, which defines the time you would like the rule to expire
 
-            .EXAMPLE
-            Add-AcasPluginRule -SessionId 0 -PluginId 15901 -ComputerName 'WebServer' -Type Critical
-            Creates a rule that changes the default severity of 'Medium', to 'Critical' for the defined computer and plugin ID
+    .EXAMPLE
+    Add-AcasPluginRule -SessionId 0 -PluginId 15901 -ComputerName 'WebServer' -Type Critical
+    Creates a rule that changes the default severity of 'Medium', to 'Critical' for the defined computer and plugin ID
 
-            .EXAMPLE
-            $WebServers | % {Add-AcasPluginRule -SessionId 0 -PluginId 15901 -ComputerName $_ -Type Critical}
-            Creates a rule for a list computers, using the defined options
+    .EXAMPLE
+    $WebServers | % {Add-AcasPluginRule -SessionId 0 -PluginId 15901 -ComputerName $_ -Type Critical}
+    Creates a rule for a list computers, using the defined options
     #>
     [CmdletBinding()]
     param

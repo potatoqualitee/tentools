@@ -1,4 +1,20 @@
 function Remove-AcasSession {
+    <#
+    .SYNOPSIS
+    Short description
+
+    .DESCRIPTION
+    Long description
+
+    .PARAMETER SessionId
+    Parameter description
+
+    .EXAMPLE
+    An example
+
+    .NOTES
+    General notes
+    #>
 
     [CmdletBinding()]
     param(
@@ -40,8 +56,7 @@ function Remove-AcasSession {
                 }
                 try {
                     $RemoveResponse = Invoke-RestMethod @RestMethodParams
-                }
-                catch {
+                } catch {
                     Write-Verbose -Message "Session with Id $($connection.SessionId) seems to have expired."
                 }
 
