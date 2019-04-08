@@ -19,16 +19,10 @@ function Get-AcasServerStatus {
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId = @()
+        [int32[]]$SessionId = @()
     )
-
-    begin {
-    }
     process {
         $ToProcess = @()
 
@@ -51,7 +45,5 @@ function Get-AcasServerStatus {
                 $ServerStatus
             }
         }
-    }
-    end {
     }
 }

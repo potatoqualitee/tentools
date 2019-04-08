@@ -19,9 +19,7 @@ function Get-AcasServerInfo {
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = @()
     )
@@ -64,7 +62,5 @@ function Get-AcasServerInfo {
                 $SrvInfoObj
             }
         }
-    }
-    end {
     }
 }

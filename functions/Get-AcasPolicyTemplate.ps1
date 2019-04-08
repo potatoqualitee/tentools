@@ -21,38 +21,19 @@ function Get-AcasPolicyTemplate {
     .NOTES
     General notes
 #>
-
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param
     (
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipelineByPropertyName,
-            ParameterSetName = 'All')]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName, ParameterSetName = 'All')]
         [Parameter(ParameterSetName = 'ByName')]
         [Parameter(ParameterSetName = 'ByUUID')]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
-
-        [Parameter(Mandatory = $false,
-            Position = 1,
-            ValueFromPipelineByPropertyName,
-            ParameterSetName = 'ByName')]
-        [string]
-        $Name,
-
-        [Parameter(Mandatory = $false,
-            Position = 1,
-            ValueFromPipelineByPropertyName,
-            ParameterSetName = 'ByUUID')]
-        [string]
-        $PolicyUUID
-
+        [int32[]]$SessionId,
+        [Parameter(Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
+        [string]$Name,
+        [Parameter(Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByUUID')]
+        [string]$PolicyUUID
     )
-
-    begin {
-    }
     process {
         $ToProcess = @()
 
@@ -99,7 +80,5 @@ function Get-AcasPolicyTemplate {
                 }
             }
         }
-    }
-    end {
     }
 }

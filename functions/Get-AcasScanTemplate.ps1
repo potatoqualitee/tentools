@@ -19,14 +19,9 @@ function Get-AcasScanTemplate {
     [CmdletBinding()]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId = @()
-
+        [int32[]]$SessionId = @()
     )
 
     begin {
@@ -64,7 +59,5 @@ function Get-AcasScanTemplate {
                 }
             }
         }
-    }
-    end {
     }
 }

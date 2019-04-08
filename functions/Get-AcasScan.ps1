@@ -27,8 +27,7 @@ function Get-AcasScan {
     (
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]
-        $SessionId,
+        [int32[]]$SessionId,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName)]
         [int32]$FolderId,
         [Parameter(Position = 2, ValueFromPipelineByPropertyName)]

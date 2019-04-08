@@ -18,24 +18,15 @@ function Get-AcasPolicyPortScanner {
     .NOTES
     General notes
     #>
-
     [CmdletBinding()]
     [OutputType([int])]
     param
     (
-        # Nessus session Id
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32]
-        $SessionId,
-
-        [Parameter(Mandatory,
-            Position = 1,
-            ValueFromPipelineByPropertyName)]
-        [int32[]]
-        $PolicyId
+        [int32]$SessionId,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int32[]]$PolicyId
     )
 
     begin {
@@ -61,9 +52,6 @@ function Get-AcasPolicyPortScanner {
             } catch {
                 Stop-Function -Message "Failure" -ErrorRecord $_ -Continue
             }
-
         }
-    }
-    end {
     }
 }

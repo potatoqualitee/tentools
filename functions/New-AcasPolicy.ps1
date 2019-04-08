@@ -84,14 +84,11 @@ function New-AcasPolicy {
                         throw "Template with name $($TemplateName) was not found."
                     }
                 }
-
                 'ByUUID'
                 {
                     $Templates2Proc = $Templates.templates | Where-Object {$_.uuid -eq $PolicyUUID}
                 }
             }
-
-
             $RequestSet = @{'uuid' = $PolicyUUID;
                 'settings' = @{
                     'name' = $Name
