@@ -81,7 +81,7 @@
         'New-AcasGroup',
         'New-AcasPolicy',
         'New-AcasScan',
-        'New-AcasSession',
+        'Connect-AcasService',
         'New-AcasUser',
         'Remove-AcasGroup',
         'Remove-AcasGroupUser',

@@ -1,24 +1,26 @@
-function New-AcasSession {
+function Connect-AcasService {
     <#
     .SYNOPSIS
+    Creates a connection to the Nessus website
 
     .DESCRIPTION
-    Long description
+    Creates a connection to the Nessus website which persists through all commands.
 
     .PARAMETER ComputerName
-    Nessus Server IP Address or FQDN to connect to.
+    Target Nessus Server IP Address or FQDN
 
     .PARAMETER Port
-    Port number of the Nessus web service. Default 8834
+    Port number of the Nessus web service. Defaults to 8834.
 
     .PARAMETER Credential
     Credential for connecting to the Nessus Server
 
-    .EXAMPLE
-    New-AcasSession -ComputerName acas -Credential admin
+    .PARAMETER UseDefaultCredential
+    Use current credential for connecting to the Nessus Server
 
-    .NOTES
-    General notes
+    .EXAMPLE
+    Connect-AcasService -ComputerName acas -Credential admin
+
     #>
 
     [CmdletBinding()]
@@ -27,8 +29,8 @@ function New-AcasSession {
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 0)]
         [string[]]$ComputerName,
         [int]$Port = 8834,
-        [Parameter(Mandatory,Position = 1)]
-        [Management.Automation.PSCredential]$Credential
+        [Management.Automation.PSCredential]$Credential,
+        [switch]$UseDefaultCredential
     )
     process {
         if ([System.Net.ServicePointManager]::CertificatePolicy.ToString() -ne 'IgnoreCerts') {
@@ -53,8 +55,6 @@ function New-AcasSession {
         # Source: https://stackoverflow.com/questions/32355556/powershell-invoke-restmethod-over-https
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-        $SessionProps = New-Object -TypeName System.Collections.Specialized.OrderedDictionary
-
         foreach ($computer in $ComputerName) {
             $Uri = "https://$($computer):$($Port)"
             $RestMethodParams = @{
@@ -64,13 +64,19 @@ function New-AcasSession {
                 'ErrorVariable' = 'NessusLoginError'
             }
 
-            $TokenResponse = Invoke-RestMethod @RestMethodParams
-            if ($TokenResponse) {
+            try {
+                $token = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
+            }
+            catch {
+                Stop-PSFFunction -Message "Failure" -ErrorRecord $_ -Continue
+            }
+            
+            if ($token) {
                 $session = [PSCustomObject]@{
-                    URI = $Uri
+                    URI        = $Uri
                     Credential = $Credential
-                    Token = $TokenResponse.token
-                    SessionId = $Global:NessusConn.Count
+                    Token      = $token.token
+                    SessionId  = $Global:NessusConn.Count
                 }
                 [void]$Global:NessusConn.Add($session)
                 $session
