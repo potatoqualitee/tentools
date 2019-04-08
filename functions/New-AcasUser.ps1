@@ -34,7 +34,7 @@ function New-AcasUser {
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId,
         [Parameter(Mandatory, Position = 1)]

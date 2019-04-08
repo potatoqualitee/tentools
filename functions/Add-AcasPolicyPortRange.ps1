@@ -27,7 +27,7 @@ function Add-AcasPolicyPortRange {
     param
     (
         # Nessus session Id
-        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32]$SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]

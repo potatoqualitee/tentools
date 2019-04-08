@@ -56,27 +56,24 @@ function New-AcasSession {
         $SessionProps = New-Object -TypeName System.Collections.Specialized.OrderedDictionary
 
         foreach ($computer in $ComputerName) {
-            $URI = "https://$($computer):$($Port)"
+            $Uri = "https://$($computer):$($Port)"
             $RestMethodParams = @{
                 'Method'        = 'Post'
-                'URI'           = "$($URI)/session"
+                'URI'           = "$($Uri)/session"
                 'Body'          = @{'username' = $Credential.UserName; 'password' = $Credential.GetNetworkCredential().password}
                 'ErrorVariable' = 'NessusLoginError'
             }
 
             $TokenResponse = Invoke-RestMethod @RestMethodParams
             if ($TokenResponse) {
-                $SessionProps.add('URI', $URI)
-                $SessionProps.Add('Credential', $Credential)
-                $SessionProps.add('Token', $TokenResponse.token)
-                $SessionIndex = $Global:NessusConn.Count
-                $SessionProps.Add('SessionId', $SessionIndex)
-                $sessionobj = New-Object -TypeName psobject -Property $SessionProps
-                $sessionobj.pstypenames[0] = 'Nessus.Session'
-
-                [void]$Global:NessusConn.Add($sessionobj)
-
-                $sessionobj
+                $session = [PSCustomObject]@{
+                    URI = $Uri
+                    Credential = $Credential
+                    Token = $TokenResponse.token
+                    SessionId = $Global:NessusConn.Count
+                }
+                [void]$Global:NessusConn.Add($session)
+                $session
             }
         }
     }

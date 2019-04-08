@@ -22,7 +22,7 @@ function Suspend-AcasScan {
     [CmdletBinding()]
     Param
     (
-        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName)]

@@ -25,9 +25,9 @@ function Get-AcasScan {
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId,
+        [int32[]]$SessionId = $Global:NessusConn.SessionId,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName)]
         [int32]$FolderId,
         [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
@@ -67,7 +67,7 @@ function Get-AcasScan {
                     $Scans2Process = $Scans.scans
                 }
                 foreach ($scan in $Scans2Process) {
-                    
+
                     if ($scan.starttime -cnotlike "*T*") {
                         $StartTime = $origin.AddSeconds($scan.starttime).ToLocalTime()
                     } else {

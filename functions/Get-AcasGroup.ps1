@@ -20,7 +20,7 @@ function Get-AcasGroup {
     [OutputType([int])]
     param
     (
-        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32]$SessionId
     )

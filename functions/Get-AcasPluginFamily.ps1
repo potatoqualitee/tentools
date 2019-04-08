@@ -18,7 +18,7 @@ function Get-AcasPluginFamily {
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32]$SessionId
     )
