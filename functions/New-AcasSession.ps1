@@ -28,7 +28,7 @@ function New-AcasSession {
         [string[]]$ComputerName,
         [int]$Port = 8834,
         [Parameter(Mandatory,Position = 1)]
-        [Management.Automation.PSCredential]$Credentials
+        [Management.Automation.PSCredential]$Credential
     )
     process {
         if ([System.Net.ServicePointManager]::CertificatePolicy.ToString() -ne 'IgnoreCerts') {
@@ -60,14 +60,14 @@ function New-AcasSession {
             $RestMethodParams = @{
                 'Method'        = 'Post'
                 'URI'           = "$($URI)/session"
-                'Body'          = @{'username' = $Credentials.UserName; 'password' = $Credentials.GetNetworkCredential().password}
+                'Body'          = @{'username' = $Credential.UserName; 'password' = $Credential.GetNetworkCredential().password}
                 'ErrorVariable' = 'NessusLoginError'
             }
 
             $TokenResponse = Invoke-RestMethod @RestMethodParams
             if ($TokenResponse) {
                 $SessionProps.add('URI', $URI)
-                $SessionProps.Add('Credentials', $Credentials)
+                $SessionProps.Add('Credentials', $Credential)
                 $SessionProps.add('Token', $TokenResponse.token)
                 $SessionIndex = $Global:NessusConn.Count
                 $SessionProps.Add('SessionId', $SessionIndex)

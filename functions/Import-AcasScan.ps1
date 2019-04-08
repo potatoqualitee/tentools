@@ -101,8 +101,8 @@ function Import-AcasScan {
                 $RestParams = New-Object -TypeName System.Collections.Specialized.OrderedDictionary
                 $RestParams.add('file', "$($fileinfo.name)")
                 if ($Encrypted) {
-                    $Credentials = New-Object System.Management.Automation.PSCredential -ArgumentList 'user', $Password
-                    $RestParams.Add('password', $Credentials.GetNetworkCredential().Password)
+                    $Credential = New-Object System.Management.Automation.PSCredential -ArgumentList 'user', $Password
+                    $RestParams.Add('password', $Credential.GetNetworkCredential().Password)
                 }
 
                 $impParams = @{ 'Body' = $RestParams }

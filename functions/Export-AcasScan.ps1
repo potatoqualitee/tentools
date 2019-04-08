@@ -78,8 +78,8 @@ function Export-AcasScan {
         $ExportParams = @{}
 
         if ($Format -eq 'DB' -and $Password) {
-            $Credentials = New-Object System.Management.Automation.PSCredential -ArgumentList 'user', $Password
-            $ExportParams.Add('password', $Credentials.GetNetworkCredential().Password)
+            $Credential = New-Object System.Management.Automation.PSCredential -ArgumentList 'user', $Password
+            $ExportParams.Add('password', $Credential.GetNetworkCredential().Password)
         }
 
         if ($Format) {
