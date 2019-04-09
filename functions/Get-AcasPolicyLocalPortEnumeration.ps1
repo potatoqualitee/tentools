@@ -25,37 +25,40 @@ function Get-AcasPolicyLocalPortEnumeration {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32]$SessionId,
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
-        [int32[]]$PolicyId
+        [int32[]]$PolicyId,
+        [switch]$EnableException
     )
 
-    begin {
-        $sessions = Get-AcasSession | Select-Object -ExpandProperty sessionid
-        if ($SessionId -notin $sessions) {
-            throw "SessionId $($SessionId) is not present in the current sessions."
-        }
-        $Session = Get-AcasSession -SessionId $SessionId
-    }
     process {
-        foreach ($PolicyToChange in $PolicyId) {
-            try {
-                $Policy = Get-AcasPolicyDetail -SessionId $Session.SessionId -PolicyId $PolicyToChange
-                $UpdateProps = [ordered]@{
-                    'PolicyId'             = $PolicyToChange
-                    'WMINetstat'           = $Policy.settings.wmi_netstat_scanner
-                    'SSHNetstat'           = $Policy.settings.ssh_netstat_scanner
-                    'SNMPScanner'          = $Policy.settings.snmp_scanner
-                    'VerifyOpenPorts'      = $Policy.settings.verify_open_ports
-                    'ScanOnlyIfLocalFails' = $Policy.settings.only_portscan_if_enum_failed
-                }
-                $PolSettingsObj = [PSCustomObject]$UpdateProps
-                $PolSettingsObj.pstypenames.insert(0, 'Nessus.PolicySetting')
-                $PolSettingsObj
-            } catch {
-                Stop-Function -Message "Failure" -ErrorRecord $_ -Continue
+        $sessions = Get-AcasSession | Select-Object -ExpandProperty sessionid
+        foreach ($i in $SessionId) {
+            if ($i -notin $sessions) {
+                Stop-PSFFunction -Message "SessionId $($i) is not present in the current sessions."
             }
+       
+            $Session = Get-AcasSession -SessionId $i
 
+            foreach ($PolicyToChange in $PolicyId) {
+                try {
+                    $Policy = Get-AcasPolicyDetail -SessionId $Session.SessionId -PolicyId $PolicyToChange
+                    $UpdateProps = [ordered]@{
+                        'PolicyId'             = $PolicyToChange
+                        'WMINetstat'           = $Policy.settings.wmi_netstat_scanner
+                        'SSHNetstat'           = $Policy.settings.ssh_netstat_scanner
+                        'SNMPScanner'          = $Policy.settings.snmp_scanner
+                        'VerifyOpenPorts'      = $Policy.settings.verify_open_ports
+                        'ScanOnlyIfLocalFails' = $Policy.settings.only_portscan_if_enum_failed
+                    }
+                    $PolSettingsObj = [PSCustomObject]$UpdateProps
+                    $PolSettingsObj.pstypenames.insert(0, 'Nessus.PolicySetting')
+                    $PolSettingsObj
+                }
+                catch {
+                    Stop-Function -Message "Failure" -ErrorRecord $_ -Continue
+                }
+            }
         }
     }
 }

@@ -22,7 +22,8 @@ function Get-AcasGroup {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32]$SessionId
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [switch]$EnableException
     )
 
     begin {
@@ -65,7 +66,8 @@ function Get-AcasGroup {
                     $GroupObj.pstypenames.insert(0, 'Nessus.Group')
                     $GroupObj
                 }
-            } else {
+            }
+            else {
                 Write-PSFMessage -Level Warning -Mesage "Server for session $($connection.sessionid) is not licenced for multiple users."
             }
         }

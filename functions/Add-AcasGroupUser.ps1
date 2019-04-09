@@ -27,16 +27,18 @@ function Add-AcasGroupUser {
         # Nessus session Id
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $Global:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
         [Int32]$GroupId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 2)]
-        [Int32]$UserId
+        [Int32]$UserId,
+        [switch]$EnableException
     )
 
     begin {
+        $collection = @()
         foreach ($i in $SessionId) {
-            $connections = $global:NessusConn
+            $connections = $Global:NessusConn
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
                     $collection += $connection
@@ -63,7 +65,8 @@ function Add-AcasGroupUser {
                 }
 
                 Invoke-AcasRequest @GroupParams
-            } else {
+            }
+            else {
                 Write-PSFMessage -Level Warning -Mesage "Server for session $($connection.sessionid) is not licenced for multiple users."
             }
         }

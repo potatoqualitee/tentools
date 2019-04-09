@@ -46,7 +46,8 @@ function Add-AcasPluginRule {
         [ValidateSet('Critical', 'High', 'Medium', 'Low', 'Info', 'Exclude')]
         [String]$Type,
         [Parameter(Position = 4, ValueFromPipelineByPropertyName)]
-        [datetime]$Expiration
+        [datetime]$Expiration,
+        [switch]$EnableException
     )
 
     begin {

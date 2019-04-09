@@ -25,7 +25,7 @@ function Get-AcasPolicy {
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param
     (
-        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName, ParameterSetName = 'All')]
+        [Parameter(Position = 0, ValueFromPipelineByPropertyName, ParameterSetName = 'All')]
         [Parameter(ParameterSetName = 'ByName')]
         [Parameter(ParameterSetName = 'ByID')]
         [Alias('Index')]
@@ -33,7 +33,8 @@ function Get-AcasPolicy {
         [Parameter(Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
         [string]$Name,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByID')]
-        [string]$PolicyID
+        [string]$PolicyID,
+        [switch]$EnableException
     )
 
     begin {

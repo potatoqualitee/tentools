@@ -34,7 +34,8 @@ function Connect-AcasService {
         [int]$Port = 8834,
         [Management.Automation.PSCredential]$Credential,
         [switch]$UseDefaultCredential,
-        [switch]$AcceptSelfSignedCert
+        [switch]$AcceptSelfSignedCert,
+        [switch]$EnableException
     )
     process {
         if ($AcceptSelfSignedCert -and [System.Net.ServicePointManager]::CertificatePolicy.ToString() -ne 'IgnoreCerts') {

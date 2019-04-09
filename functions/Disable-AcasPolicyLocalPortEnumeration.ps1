@@ -43,7 +43,8 @@ function Disable-AcasPolicyLocalPortEnumeration {
         [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$VerifyOpenPorts,
         [Parameter(ValueFromPipelineByPropertyName)]
-        [switch]$ScanOnlyIfLocalFails
+        [switch]$ScanOnlyIfLocalFails,
+        [switch]$EnableException
     )
 
     begin {

@@ -62,7 +62,8 @@ function Edit-AcasPluginRule {
         [ValidateSet('Critical', 'High', 'Medium', 'Low', 'Info', 'Exclude')]
         [String]$Type,
         [Parameter(Position = 5, ValueFromPipelineByPropertyName)]
-        [Object]$Expiration #TODO: Validate the Expiratoin date, but still allow nulls
+        [Object]$Expiration, #TODO: Validate the Expiratoin date, but still allow nulls
+        [switch]$EnableException
     )
 
     begin {

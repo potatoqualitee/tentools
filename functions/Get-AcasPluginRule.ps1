@@ -23,18 +23,16 @@ function Get-AcasPluginRule {
     .OUTPUTS
     Returns a PSObject with basic rule info, or returns PSObject with base info + plugin name
     #>
-
-
     [CmdletBinding()]
     param
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32]$SessionId,
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName)]
         [int32]$PluginId,
-        [Switch]$Detail
-
+        [Switch]$Detail,
+        [switch]$EnableException
     )
 
     begin {
@@ -116,7 +114,8 @@ function Get-AcasPluginRule {
 
                     If ($PluginId) {
                         $pRuleObj | Limit-PluginRule
-                    } Else {
+                    }
+                    Else {
                         $pRuleObj
                     }
                 }

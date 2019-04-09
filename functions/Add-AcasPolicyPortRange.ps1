@@ -33,7 +33,8 @@ function Add-AcasPolicyPortRange {
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [int32[]]$PolicyId,
         [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
-        [string[]]$Port
+        [string[]]$Port,
+        [switch]$EnableException
     )
 
     begin {

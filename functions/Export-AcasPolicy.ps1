@@ -31,7 +31,8 @@ function Export-AcasPolicy {
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [int32]$PolicyId,
         [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
-        [string]$OutFile
+        [string]$OutFile,
+        [switch]$EnableException
     )
 
     process {
@@ -53,7 +54,8 @@ function Export-AcasPolicy {
             if ($OutFile.length -gt 0) {
                 Write-PSFMessage -Level Verbose -Mesage "Saving policy as $($OutFile)"
                 $Policy.Save($ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutFile))
-            } else {
+            }
+            else {
                 $Policy
             }
             Write-PSFMessage -Level Verbose -Mesage 'Policy exported.'

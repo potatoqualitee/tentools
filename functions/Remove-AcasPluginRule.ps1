@@ -9,12 +9,12 @@ function Remove-AcasPluginRule {
     .PARAMETER SessionId
     ID of a valid Nessus session
 
-    .PARAMETER Id
-    ID number of the rule which would you like removed/deleted
+    .PARAMETER RuleId
+    RuleId number of the rule which would you like removed/deleted
 
     .EXAMPLE
-    Remove-AcasPluginRule -SessionId 0 -Id 500
-    Will delete a plugin rule with an ID of 500
+    Remove-AcasPluginRule -SessionId 0 -RuleId 500
+    Will delete a plugin rule with an RuleId of 500
 
     .EXAMPLE
     Get-AcasPluginRule -SessionId 0 | Remove-AcasPluginRule
@@ -37,7 +37,7 @@ function Remove-AcasPluginRule {
         [Alias('Index')]
         [int32]$SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
-        [int32]$Id
+        [int32]$RuleId
     )
 
     begin {
@@ -56,7 +56,7 @@ function Remove-AcasPluginRule {
 
     process {
         foreach ($connection in $collection) {
-            Invoke-AcasRequest -SessionObject $connection -Path ('/plugin-rules/{0}' -f $Id) -Method 'Delete'
+            Invoke-AcasRequest -SessionObject $connection -Path ('/plugin-rules/{0}' -f $RuleId) -Method 'Delete'
         }
     }
 }

@@ -34,7 +34,8 @@ function Disable-AcasPolicyPortScanner {
         [int32[]]$PolicyId,
         [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
         [ValidateSet('TCP', 'SYN', 'UDP')]
-        [string[]]$ScanMethods
+        [string[]]$ScanMethods,
+        [switch]$EnableException
     )
 
     begin {

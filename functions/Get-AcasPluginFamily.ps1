@@ -20,7 +20,8 @@ function Get-AcasPluginFamily {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32]$SessionId
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [switch]$EnableException
     )
     process {
         $collection = @()
