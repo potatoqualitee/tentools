@@ -33,19 +33,19 @@ function Get-AcasFolder {
         [int32]$SessionId
     )
     process {
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
 
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             $Folders = InvokeNessusRestRequest -SessionObject $connection -Path '/folders' -Method 'Get'
 
             if ($Folders -is [psobject]) {

@@ -39,14 +39,14 @@ function Get-AcasScan {
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
     }
     process {
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
@@ -56,7 +56,7 @@ function Get-AcasScan {
             $Params.Add('folder_id', $FolderId)
         }
 
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             $Scans = InvokeNessusRestRequest -SessionObject $connection -Path '/scans' -Method 'Get' -Parameter $Params
 
             if ($Scans -is [psobject]) {

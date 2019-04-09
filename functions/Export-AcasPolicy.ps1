@@ -35,19 +35,19 @@ function Export-AcasPolicy {
     )
 
     process {
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
 
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             Write-PSFMessage -Level Verbose -Mesage "Exporting policy with id $($PolicyId)."
             $Policy = InvokeNessusRestRequest -SessionObject $connection -Path "/policies/$($PolicyId)/export" -Method 'GET'
             if ($OutFile.length -gt 0) {

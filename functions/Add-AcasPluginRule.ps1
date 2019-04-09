@@ -50,14 +50,14 @@ function Add-AcasPluginRule {
     )
 
     begin {
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
@@ -66,7 +66,7 @@ function Add-AcasPluginRule {
     }
 
     process {
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             $dtExpiration = $null
 
             If ($Expiration) {

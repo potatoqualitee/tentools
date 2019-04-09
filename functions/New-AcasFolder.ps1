@@ -29,19 +29,19 @@ function New-AcasFolder {
         [string]$Name
     )
     process {
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
 
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             $Folder = InvokeNessusRestRequest -SessionObject $connection -Path '/folders' -Method 'Post' -Parameter @{'name' = $Name}
 
             if ($Folder -is [psobject]) {

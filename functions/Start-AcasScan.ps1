@@ -39,14 +39,14 @@ function Start-AcasScan {
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
     }
     process {
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
@@ -57,7 +57,7 @@ function Start-AcasScan {
         }
         $paramJson = ConvertTo-Json -InputObject $params -Compress
 
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             $Scans = InvokeNessusRestRequest -SessionObject $connection -Path "/scans/$($ScanId)/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json'
 
             if ($Scans -is [psobject]) {

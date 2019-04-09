@@ -23,19 +23,19 @@ function Get-AcasPluginFamily {
         [int32]$SessionId
     )
     process {
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
 
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             $Families = InvokeNessusRestRequest -SessionObject $connection -Path '/plugins/families' -Method 'Get'
             if ($Families -is [Object[]]) {
                 foreach ($Family in $Families) {

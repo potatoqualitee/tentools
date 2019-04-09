@@ -35,7 +35,7 @@ function Show-AcasGroupMember {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
@@ -43,7 +43,7 @@ function Show-AcasGroupMember {
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
     }
     process {
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             $ServerTypeParams = @{
                 'SessionObject' = $connection
                 'Path'          = '/server/properties'

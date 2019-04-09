@@ -29,19 +29,19 @@ function Remove-AcasScan {
     )
 
     process {
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
 
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             Write-PSFMessage -Level Verbose -Mesage "Removing scan with Id $($ScanId)"
 
             $ScanDetails = InvokeNessusRestRequest -SessionObject $connection -Path "/scans/$($ScanId)" -Method 'Delete' -Parameter $Params

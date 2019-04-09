@@ -51,7 +51,7 @@ function New-AcasPolicy {
 
     begin
     {
-        $ToProcess = @()
+        $collection = @()
 
         foreach($i in $SessionId)
         {
@@ -61,14 +61,14 @@ function New-AcasPolicy {
             {
                 if ($connection.SessionId -eq $i)
                 {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
     }
     process
     {
-        foreach($connection in $ToProcess)
+        foreach($connection in $collection)
         {
             switch ($PSCmdlet.ParameterSetName)
             {

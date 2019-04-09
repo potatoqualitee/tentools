@@ -30,19 +30,19 @@ function Copy-AcasPolicy {
 
     )
     process {
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
 
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             $CopiedPolicy = InvokeNessusRestRequest -SessionObject $connection -Path "/policies/$($PolicyId)/copy" -Method 'Post'
             [PSCustomObject]@{
                 Name      = $CopiedPolicy.Name

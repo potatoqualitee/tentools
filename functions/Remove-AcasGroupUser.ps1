@@ -48,13 +48,13 @@ function Remove-AcasGroupUser {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
     }
     process {
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             $ServerTypeParams = @{
                 'SessionObject' = $connection
                 'Path'          = '/server/properties'

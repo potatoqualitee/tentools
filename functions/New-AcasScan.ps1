@@ -75,21 +75,21 @@ function New-AcasScan {
     )
 
     begin {
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0 
     }
     process {
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             # Join emails as a single comma separated string.
             $emails = $email -join ","
 

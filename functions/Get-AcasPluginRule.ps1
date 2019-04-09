@@ -63,14 +63,14 @@ function Get-AcasPluginRule {
             'exclude'         = 'Exclude'
         }
 
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
@@ -79,7 +79,7 @@ function Get-AcasPluginRule {
     }
 
     process {
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             $pRules = InvokeNessusRestRequest -SessionObject $connection -Path '/plugin-rules' -Method 'Get'
 
             if ($pRules -is [psobject]) {

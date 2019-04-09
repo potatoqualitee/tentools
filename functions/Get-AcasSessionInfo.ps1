@@ -29,18 +29,18 @@ function Get-AcasSessionInfo {
     }
     process {
         $connections = $global:NessusConn
-        $ToProcess = New-Object -TypeName System.Collections.ArrayList
+        $collection = New-Object -TypeName System.Collections.ArrayList
 
         foreach ($i in $SessionId) {
             Write-Verbose "Removing server session $($i)"
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    [void]$ToProcess.Add($connection)
+                    [void]$collection.Add($connection)
                 }
             }
 
-            foreach ($connection in $ToProcess) {
+            foreach ($connection in $collection) {
                 $RestMethodParams = @{
                     'Method'        = 'Get'
                     'URI'           = "$($connection.URI)/session"

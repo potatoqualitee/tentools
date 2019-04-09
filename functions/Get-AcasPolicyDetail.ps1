@@ -37,20 +37,20 @@ function Get-AcasPolicyDetail {
     )
 
     begin {
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
     }
     process {
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             switch ($PSCmdlet.ParameterSetName) {
                 'ByName' {
                     $Pol = Get-AcasPolicy -Name $Name -SessionId $connection.SessionId

@@ -35,19 +35,19 @@ function Set-AcasUserPassword {
     )
 
     begin {
-        $ToProcess = @()
+        $collection = @()
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
     }
     process {
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             foreach ($uid in $UserId) {
                 Write-PSFMessage -Level Verbose -Mesage "Updating user with Id $($uid)"
                 $pass = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))

@@ -30,19 +30,19 @@ function Remove-AcasUser {
     )
 
     begin {
-        $ToProcess = @()
+        $collection = @()
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
     }
     process {
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             foreach ($uid in $UserId) {
                 Write-PSFMessage -Level Verbose -Mesage "Deleting user with Id $($uid)"
                 InvokeNessusRestRequest -SessionObject $connection -Path "/users/$($uid)" -Method 'Delete'

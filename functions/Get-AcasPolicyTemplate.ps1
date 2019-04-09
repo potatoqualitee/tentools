@@ -35,19 +35,19 @@ function Get-AcasPolicyTemplate {
         [string]$PolicyUUID
     )
     process {
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
 
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             $Templates = InvokeNessusRestRequest -SessionObject $connection -Path '/editor/policy/templates' -Method 'Get'
 
             if ($Templates -is [psobject]) {

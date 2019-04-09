@@ -29,19 +29,19 @@ function Show-AcasPlugin {
         [int32]$PluginId
     )
     process {
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
 
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             $Plugin = InvokeNessusRestRequest -SessionObject $connection -Path "/plugins/plugin/$($PluginId)" -Method 'Get'
 
             if ($Plugin -is [psobject]) {

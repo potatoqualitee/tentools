@@ -33,14 +33,14 @@ function Show-AcasScanHistory {
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
     }
     process {
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
@@ -50,7 +50,7 @@ function Show-AcasScanHistory {
             $Params.Add('history_id', $HistoryId)
         }
 
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             $ScanDetails = InvokeNessusRestRequest -SessionObject $connection -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $Params
 
             if ($ScanDetails -is [psobject]) {

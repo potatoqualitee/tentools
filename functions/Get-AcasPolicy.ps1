@@ -38,20 +38,20 @@ function Get-AcasPolicy {
 
     begin {
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
     }
     process {
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             $Policies = InvokeNessusRestRequest -SessionObject $connection -Path '/policies' -Method 'Get'
 
             if ($Policies -is [psobject]) {

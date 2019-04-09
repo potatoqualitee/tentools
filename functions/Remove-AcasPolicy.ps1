@@ -29,19 +29,19 @@ function Remove-AcasPolicy {
         [int32]$PolicyId
     )
     process {
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
 
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             Write-PSFMessage -Level Verbose -Mesage "Deleting policy with id $($PolicyId)."
             $RemovedPolicy = InvokeNessusRestRequest -SessionObject $connection -Path "/policies/$($PolicyId)" -Method 'DELETE'
             Write-PSFMessage -Level Verbose -Mesage 'Policy deleted.'

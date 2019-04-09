@@ -63,14 +63,14 @@ function Export-AcasScan {
         [securestring]$Password
     )
     process {
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
@@ -94,7 +94,7 @@ function Export-AcasScan {
             }
         }
 
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             if ($HistoryId) {
                 $path = "/scans/$($ScanId)/export?history_id=$($HistoryId)"
             } else {

@@ -39,14 +39,14 @@ function Show-AcasScanHostDetail {
         [int32]$HistoryId
     )
     process {
-        $ToProcess = @()
+        $collection = @()
 
         foreach ($i in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {
-                    $ToProcess += $connection
+                    $collection += $connection
                 }
             }
         }
@@ -56,7 +56,7 @@ function Show-AcasScanHostDetail {
             $Params.Add('history_id', $HistoryId)
         }
 
-        foreach ($connection in $ToProcess) {
+        foreach ($connection in $collection) {
             $ScanDetails = InvokeNessusRestRequest -SessionObject $connection -Path "/scans/$($ScanId)/hosts/$($HostId)" -Method 'Get' -Parameter $Params
 
             if ($ScanDetails -is [psobject]) {
