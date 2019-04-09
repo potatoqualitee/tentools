@@ -27,18 +27,18 @@ function Get-AcasServerStatus {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
 
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $ToProcess) {
 
-            $ServerStatus = InvokeNessusRestRequest -SessionObject $Connection -Path '/server/status' -Method 'Get'
+            $ServerStatus = InvokeNessusRestRequest -SessionObject $connection -Path '/server/status' -Method 'Get'
 
             if ($ServerStatus -is [psobject]) {
                 $ServerStatus.pstypenames[0] = 'Nessus.ServerStatus'

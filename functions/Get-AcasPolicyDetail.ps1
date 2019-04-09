@@ -40,20 +40,20 @@ function Get-AcasPolicyDetail {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
     }
     process {
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $ToProcess) {
             switch ($PSCmdlet.ParameterSetName) {
                 'ByName' {
-                    $Pol = Get-AcasPolicy -Name $Name -SessionId $Connection.SessionId
+                    $Pol = Get-AcasPolicy -Name $Name -SessionId $connection.SessionId
                     if ($Pol -ne $null) {
                         $PolicyId = $Pol.PolicyId
                     } else {
@@ -63,7 +63,7 @@ function Get-AcasPolicyDetail {
 
             }
             Write-PSFMessage -Level Verbose -Mesage "Getting details for policy with id $($PolicyId)."
-            $Policy = InvokeNessusRestRequest -SessionObject $Connection -Path "/policies/$($PolicyId)" -Method 'GET'
+            $Policy = InvokeNessusRestRequest -SessionObject $connection -Path "/policies/$($PolicyId)" -Method 'GET'
             $Policy
         }
     }

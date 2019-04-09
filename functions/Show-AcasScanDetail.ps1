@@ -41,11 +41,11 @@ function Show-AcasScanDetail {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
@@ -55,8 +55,8 @@ function Show-AcasScanDetail {
             $Params.Add('history_id', $HistoryId)
         }
 
-        foreach ($Connection in $ToProcess) {
-            $ScanDetails = InvokeNessusRestRequest -SessionObject $Connection -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $Params
+        foreach ($connection in $ToProcess) {
+            $ScanDetails = InvokeNessusRestRequest -SessionObject $connection -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $Params
 
             if ($ScanDetails -is [psobject]) {
 
@@ -83,7 +83,7 @@ function Show-AcasScanDetail {
                 $ScanInfo.add('EditAllowed', $ScanDetails.info.edit_allowed)
                 $ScanInfo.add('LastModified', $origin.AddSeconds($ScanDetails.info.timestamp).ToLocalTime())
                 $ScanInfo.add('ScanStart', $origin.AddSeconds($ScanDetails.info.scan_start).ToLocalTime())
-                $ScanInfo.Add('SessionId', $Connection.SessionId)
+                $ScanInfo.Add('SessionId', $connection.SessionId)
                 $InfoObj = New-Object -TypeName psobject -Property $ScanInfo
                 $InfoObj.pstypenames[0] = 'Nessus.Scan.Info'
 

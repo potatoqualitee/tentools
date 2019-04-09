@@ -41,18 +41,18 @@ function Get-AcasPolicy {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
     }
     process {
-        foreach ($Connection in $ToProcess) {
-            $Policies = InvokeNessusRestRequest -SessionObject $Connection -Path '/policies' -Method 'Get'
+        foreach ($connection in $ToProcess) {
+            $Policies = InvokeNessusRestRequest -SessionObject $connection -Path '/policies' -Method 'Get'
 
             if ($Policies -is [psobject]) {
                 switch ($PSCmdlet.ParameterSetName) {
@@ -83,7 +83,7 @@ function Get-AcasPolicy {
                     $PolProps.Add('UserPermission', $Policy.user_permissions)
                     $PolProps.Add('Modified', $origin.AddSeconds($Policy.last_modification_date).ToLocalTime())
                     $PolProps.Add('Created', $origin.AddSeconds($Policy.creation_date).ToLocalTime())
-                    $PolProps.Add('SessionId', $Connection.SessionId)
+                    $PolProps.Add('SessionId', $connection.SessionId)
                     $PolObj = [PSCustomObject]$PolProps
                     $PolObj.pstypenames.insert(0, 'Nessus.Policy')
                     $PolObj

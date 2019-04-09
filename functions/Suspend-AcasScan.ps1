@@ -36,17 +36,17 @@ function Suspend-AcasScan {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
 
-        foreach ($Connection in $ToProcess) {
-            $Scans = InvokeNessusRestRequest -SessionObject $Connection -Path "/scans/$($ScanId)/pause" -Method 'Post'
+        foreach ($connection in $ToProcess) {
+            $Scans = InvokeNessusRestRequest -SessionObject $connection -Path "/scans/$($ScanId)/pause" -Method 'Post'
 
             if ($Scans -is [psobject]) {
                 $scan = $Scans.scan
@@ -63,7 +63,7 @@ function Suspend-AcasScan {
                 $ScanProps.add('CreationDate', $origin.AddSeconds($scan.creation_date).ToLocalTime())
                 $ScanProps.add('LastModified', $origin.AddSeconds($scan.last_modification_date).ToLocalTime())
                 $ScanProps.add('StartTime', $origin.AddSeconds($scan.starttime).ToLocalTime())
-                $ScanProps.Add('SessionId', $Connection.SessionId)
+                $ScanProps.Add('SessionId', $connection.SessionId)
                 $ScanObj = New-Object -TypeName psobject -Property $ScanProps
                 $ScanObj.pstypenames[0] = 'Nessus.RunningScan'
                 $ScanObj

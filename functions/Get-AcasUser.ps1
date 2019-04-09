@@ -30,11 +30,11 @@ function Get-AcasUser {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
@@ -42,9 +42,9 @@ function Get-AcasUser {
     process {
 
 
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $ToProcess) {
 
-            $Users = InvokeNessusRestRequest -SessionObject $Connection -Path '/users' -Method 'Get'
+            $Users = InvokeNessusRestRequest -SessionObject $connection -Path '/users' -Method 'Get'
 
             if ($Users -is [psobject]) {
                 $Users.users | ForEach-Object -process {
@@ -56,7 +56,7 @@ function Get-AcasUser {
                     $UserProperties.Add('Type', $_.type)
                     $UserProperties.Add('Permission', $PermissionsId2Name[$_.permissions])
                     $UserProperties.Add('LastLogin', $origin.AddSeconds($_.lastlogin).ToLocalTime())
-                    $UserProperties.Add('SessionId', $Connection.SessionId)
+                    $UserProperties.Add('SessionId', $connection.SessionId)
                     $UserObj = New-Object -TypeName psobject -Property $UserProperties
                     $UserObj.pstypenames[0] = 'Nessus.User'
                     $UserObj

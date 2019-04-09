@@ -53,11 +53,11 @@ function Add-AcasPluginRule {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
@@ -66,7 +66,7 @@ function Add-AcasPluginRule {
     }
 
     process {
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $ToProcess) {
             $dtExpiration = $null
 
             If ($Expiration) {
@@ -94,7 +94,7 @@ function Add-AcasPluginRule {
 
             $pRuleJson = ConvertTo-Json -InputObject $pRulehash -Compress
 
-            InvokeNessusRestRequest -SessionObject $Connection -Path '/plugin-rules' -Method 'Post' `
+            InvokeNessusRestRequest -SessionObject $connection -Path '/plugin-rules' -Method 'Post' `
                 -Parameter $pRuleJson -ContentType 'application/json'
         }
     }

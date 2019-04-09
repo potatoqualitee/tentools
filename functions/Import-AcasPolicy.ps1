@@ -59,27 +59,27 @@ function Import-AcasPolicy {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
 
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $ToProcess) {
             $fileinfo = Get-ItemProperty -Path $File
             $FilePath = $fileinfo.FullName
             $RestClient = New-Object RestSharp.RestClient
             $RestRequest = New-Object RestSharp.RestRequest
             $RestClient.UserAgent = 'Posh-SSH'
-            $RestClient.BaseUrl = $Connection.uri
+            $RestClient.BaseUrl = $connection.uri
             $RestRequest.Method = [RestSharp.Method]::POST
             $RestRequest.Resource = $URIPath
 
             [void]$RestRequest.AddFile('Filedata', $FilePath, 'application/octet-stream')
-            [void]$RestRequest.AddHeader('X-Cookie', "token=$($Connection.Token)")
+            [void]$RestRequest.AddHeader('X-Cookie', "token=$($connection.Token)")
             $result = $RestClient.Execute($RestRequest)
             if ($result.ErrorMessage.Length -gt 0) {
                 Write-Error -Message $result.ErrorMessage
@@ -92,7 +92,7 @@ function Import-AcasPolicy {
                 }
 
                 $impParams = @{ 'Body' = $RestParams }
-                $Policy = Invoke-RestMethod -Method Post -Uri "$($Connection.URI)/policies/import" -header @{'X-Cookie' = "token=$($Connection.Token)"} -Body (ConvertTo-Json @{'file' = $fileinfo.name; } -Compress) -ContentType 'application/json'
+                $Policy = Invoke-RestMethod -Method Post -Uri "$($connection.URI)/policies/import" -header @{'X-Cookie' = "token=$($connection.Token)"} -Body (ConvertTo-Json @{'file' = $fileinfo.name; } -Compress) -ContentType 'application/json'
                 $PolProps = [ordered]@{}
                 $PolProps.Add('Name', $Policy.Name)
                 $PolProps.Add('PolicyId', $Policy.id)
@@ -106,7 +106,7 @@ function Import-AcasPolicy {
                 $PolProps.Add('UserPermission', $Policy.user_permissions)
                 $PolProps.Add('Modified', $origin.AddSeconds($Policy.last_modification_date).ToLocalTime())
                 $PolProps.Add('Created', $origin.AddSeconds($Policy.creation_date).ToLocalTime())
-                $PolProps.Add('SessionId', $Connection.SessionId)
+                $PolProps.Add('SessionId', $connection.SessionId)
                 $PolObj = [PSCustomObject]$PolProps
                 $PolObj.pstypenames.insert(0, 'Nessus.Policy')
                 $PolObj

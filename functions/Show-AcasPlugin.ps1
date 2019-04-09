@@ -32,17 +32,17 @@ function Show-AcasPlugin {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
 
-        foreach ($Connection in $ToProcess) {
-            $Plugin = InvokeNessusRestRequest -SessionObject $Connection -Path "/plugins/plugin/$($PluginId)" -Method 'Get'
+        foreach ($connection in $ToProcess) {
+            $Plugin = InvokeNessusRestRequest -SessionObject $connection -Path "/plugins/plugin/$($PluginId)" -Method 'Get'
 
             if ($Plugin -is [psobject]) {
                 if ($Plugin.name -ne $null) {
@@ -62,7 +62,7 @@ function Show-AcasPlugin {
                     $PluginProps.Add('PluginId', $Plugin.id)
                     $PluginProps.Add('FamilyName', $Plugin.family_name)
                     $PluginProps.Add('Attributes', $Attributes)
-                    $PluginProps.Add('SessionId', $Connection.SessionId)
+                    $PluginProps.Add('SessionId', $connection.SessionId)
                     $PluginObj = New-Object -TypeName psobject -Property $PluginProps
                     $PluginObj.pstypenames[0] = 'Nessus.Plugin'
                     $PluginObj

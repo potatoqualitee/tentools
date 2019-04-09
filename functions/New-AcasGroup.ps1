@@ -32,19 +32,19 @@ function New-AcasGroup {
 
     begin {
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
     }
     process {
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $ToProcess) {
             $ServerTypeParams = @{
-                'SessionObject' = $Connection
+                'SessionObject' = $connection
                 'Path'          = '/server/properties'
                 'Method'        = 'GET'
             }
@@ -52,16 +52,16 @@ function New-AcasGroup {
             $Server = InvokeNessusRestRequest @ServerTypeParams
 
             if ($Server.capabilities.multi_user -eq 'full') {
-                $Groups = InvokeNessusRestRequest -SessionObject $Connection -Path '/groups' -Method 'POST' -Parameter @{'name' = $Name}
+                $Groups = InvokeNessusRestRequest -SessionObject $connection -Path '/groups' -Method 'POST' -Parameter @{'name' = $Name}
                 $NewGroupProps = [ordered]@{}
                 $NewGroupProps.Add('Name', $Groups.name)
                 $NewGroupProps.Add('GroupId', $Groups.id)
                 $NewGroupProps.Add('Permissions', $Groups.permissions)
-                $NewGroupProps.Add('SessionId', $Connection.SessionId)
+                $NewGroupProps.Add('SessionId', $connection.SessionId)
                 $NewGroupObj = [pscustomobject]$NewGroupProps
                 $NewGroupObj
             } else {
-                Write-PSFMessage -Level Warning -Mesage "Server for session $($Connection.sessionid) is not licenced for multiple users."
+                Write-PSFMessage -Level Warning -Mesage "Server for session $($connection.sessionid) is not licenced for multiple users."
             }
         }
     }

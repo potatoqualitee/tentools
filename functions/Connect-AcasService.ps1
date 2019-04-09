@@ -18,6 +18,9 @@ function Connect-AcasService {
     .PARAMETER UseDefaultCredential
     Use current credential for connecting to the Nessus Server
 
+    .PARAMETER AcceptSelfSignedCert
+    Use current credential for connecting to the Nessus Server
+
     .EXAMPLE
     Connect-AcasService -ComputerName acas -Credential admin
 
@@ -30,10 +33,11 @@ function Connect-AcasService {
         [string[]]$ComputerName,
         [int]$Port = 8834,
         [Management.Automation.PSCredential]$Credential,
-        [switch]$UseDefaultCredential
+        [switch]$UseDefaultCredential,
+        [switch]$AcceptSelfSignedCert
     )
     process {
-        if ([System.Net.ServicePointManager]::CertificatePolicy.ToString() -ne 'IgnoreCerts') {
+        if ($AcceptSelfSignedCert -and [System.Net.ServicePointManager]::CertificatePolicy.ToString() -ne 'IgnoreCerts') {
             $Domain = [AppDomain]::CurrentDomain
             $DynAssembly = New-Object System.Reflection.AssemblyName('IgnoreCerts')
             $AssemblyBuilder = $Domain.DefineDynamicAssembly($DynAssembly, [System.Reflection.Emit.AssemblyBuilderAccess]::Run)
@@ -41,7 +45,7 @@ function Connect-AcasService {
             $TypeBuilder = $ModuleBuilder.DefineType('IgnoreCerts', 'AutoLayout, AnsiClass, Class, Public, BeforeFieldInit', [System.Object], [System.Net.ICertificatePolicy])
             $TypeBuilder.DefineDefaultConstructor('PrivateScope, Public, HideBySig, SpecialName, RTSpecialName') | Out-Null
             $MethodInfo = [System.Net.ICertificatePolicy].GetMethod('CheckValidationResult')
-            $MethodBuilder = $TypeBuilder.DefineMethod($MethodInfo.Name, 'PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask', $MethodInfo.CallingConvention, $MethodInfo.ReturnType, ([Type[]] ($MethodInfo.GetParameters() | % {$_.ParameterType})))
+            $MethodBuilder = $TypeBuilder.DefineMethod($MethodInfo.Name, 'PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask', $MethodInfo.CallingConvention, $MethodInfo.ReturnType, ([Type[]] ($MethodInfo.GetParameters() | ForEach-Object {$_.ParameterType})))
             $ILGen = $MethodBuilder.GetILGenerator()
             $ILGen.Emit([Reflection.Emit.Opcodes]::Ldc_I4_1)
             $ILGen.Emit([Reflection.Emit.Opcodes]::Ret)

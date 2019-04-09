@@ -55,26 +55,26 @@ function New-AcasPolicy {
 
         foreach($i in $SessionId)
         {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach($Connection in $Connections)
+            foreach($connection in $connections)
             {
-                if ($Connection.SessionId -eq $i)
+                if ($connection.SessionId -eq $i)
                 {
-                    $ToProcess += $Connection
+                    $ToProcess += $connection
                 }
             }
         }
     }
     process
     {
-        foreach($Connection in $ToProcess)
+        foreach($connection in $ToProcess)
         {
             switch ($PSCmdlet.ParameterSetName)
             {
                 'ByName'
                 {
-                    $tmpl = Get-AcasPolicyTemplate -Name $TemplateName -SessionId $Connection.SessionId
+                    $tmpl = Get-AcasPolicyTemplate -Name $TemplateName -SessionId $connection.SessionId
                     if ($tmpl -ne $null)
                     {
                         $PolicyUUID = $tmpl.PolicyUUID
@@ -97,14 +97,14 @@ function New-AcasPolicy {
 
             $SettingsJson = ConvertTo-Json -InputObject $RequestSet -Compress
             $RequestParams = @{
-                'SessionObject' = $Connection
+                'SessionObject' = $connection
                 'Path' = "/policies/"
                 'Method' = 'POST'
                 'ContentType' = 'application/json'
                 'Parameter'= $SettingsJson
             }
             $NewPolicy = InvokeNessusRestRequest @RequestParams
-            Get-AcasPolicy -PolicyID $NewPolicy.policy_id -SessionId $Connection.sessionid
+            Get-AcasPolicy -PolicyID $NewPolicy.policy_id -SessionId $connection.sessionid
         }
     }
 }

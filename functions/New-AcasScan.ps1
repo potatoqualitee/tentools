@@ -78,18 +78,18 @@ function New-AcasScan {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0 
     }
     process {
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $ToProcess) {
             # Join emails as a single comma separated string.
             $emails = $email -join ","
 
@@ -120,7 +120,7 @@ function New-AcasScan {
 
                 'Policy' {
                     $polUUID = $null
-                    $Policies = Get-AcasPolicy -SessionId $Connection.SessionId
+                    $Policies = Get-AcasPolicy -SessionId $connection.SessionId
                     foreach ($Policy in $Policies) {
                         if ($Policy.PolicyId -eq $PolicyId) {
                             Write-PSFMessage -Level Verbose -Mesage "Uising Poicy with UUID of $($Policy.PolicyUUID)"
@@ -143,7 +143,7 @@ function New-AcasScan {
             $ScanJson = ConvertTo-Json -InputObject $scanhash -Compress
 
             $ServerTypeParams = @{
-                'SessionObject' = $Connection
+                'SessionObject' = $connection
                 'Path'          = '/scans'
                 'Method'        = 'POST'
                 'ContentType'   = 'application/json'
@@ -169,7 +169,7 @@ function New-AcasScan {
                 $ScanProps.add('StartTime', $origin.AddSeconds($scan.starttime).ToLocalTime())
                 $ScanProps.add('Scheduled', $scan.control)
                 $ScanProps.add('DashboardEnabled', $scan.use_dashboard)
-                $ScanProps.Add('SessionId', $Connection.SessionId)
+                $ScanProps.Add('SessionId', $connection.SessionId)
 
                 $ScanObj = New-Object -TypeName psobject -Property $ScanProps
                 $ScanObj.pstypenames[0] = 'Nessus.Scan'

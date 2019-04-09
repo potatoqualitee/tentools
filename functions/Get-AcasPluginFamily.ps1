@@ -26,17 +26,17 @@ function Get-AcasPluginFamily {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
 
-        foreach ($Connection in $ToProcess) {
-            $Families = InvokeNessusRestRequest -SessionObject $Connection -Path '/plugins/families' -Method 'Get'
+        foreach ($connection in $ToProcess) {
+            $Families = InvokeNessusRestRequest -SessionObject $connection -Path '/plugins/families' -Method 'Get'
             if ($Families -is [Object[]]) {
                 foreach ($Family in $Families) {
                     $FamilyProps = [ordered]@{}

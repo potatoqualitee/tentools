@@ -27,19 +27,19 @@ function Get-AcasGroup {
 
     begin {
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
     }
     process {
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $ToProcess) {
             $ServerTypeParams = @{
-                'SessionObject' = $Connection
+                'SessionObject' = $connection
                 'Path'          = '/server/properties'
                 'Method'        = 'GET'
             }
@@ -48,7 +48,7 @@ function Get-AcasGroup {
 
             if ($Server.capabilities.multi_user -eq 'full') {
                 $GroupParams = @{
-                    'SessionObject' = $Connection
+                    'SessionObject' = $connection
                     'Path'          = '/groups'
                     'Method'        = 'GET'
                 }
@@ -60,13 +60,13 @@ function Get-AcasGroup {
                     $GroupProps.Add('GroupId', $Group.id)
                     $GroupProps.Add('Permissions', $Group.permissions)
                     $GroupProps.Add('UserCount', $Group.user_count)
-                    $GroupProps.Add('SessionId', $Connection.SessionId)
+                    $GroupProps.Add('SessionId', $connection.SessionId)
                     $GroupObj = [PSCustomObject]$GroupProps
                     $GroupObj.pstypenames.insert(0, 'Nessus.Group')
                     $GroupObj
                 }
             } else {
-                Write-PSFMessage -Level Warning -Mesage "Server for session $($Connection.sessionid) is not licenced for multiple users."
+                Write-PSFMessage -Level Warning -Mesage "Server for session $($connection.sessionid) is not licenced for multiple users."
             }
         }
     }

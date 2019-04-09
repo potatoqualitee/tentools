@@ -36,17 +36,17 @@ function Get-AcasFolder {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
 
-        foreach ($Connection in $ToProcess) {
-            $Folders = InvokeNessusRestRequest -SessionObject $Connection -Path '/folders' -Method 'Get'
+        foreach ($connection in $ToProcess) {
+            $Folders = InvokeNessusRestRequest -SessionObject $connection -Path '/folders' -Method 'Get'
 
             if ($Folders -is [psobject]) {
                 foreach ($folder in $Folders.folders) {
@@ -56,7 +56,7 @@ function Get-AcasFolder {
                     $FolderProps.Add('Type', $folder.type)
                     $FolderProps.Add('Default', $folder.default_tag)
                     $FolderProps.Add('Unread', $folder.unread_count)
-                    $FolderProps.Add('SessionId', $Connection.SessionId)
+                    $FolderProps.Add('SessionId', $connection.SessionId)
                     $FolderObj = New-Object -TypeName psobject -Property $FolderProps
                     $FolderObj.pstypenames[0] = 'Nessus.Folder'
                     $FolderObj

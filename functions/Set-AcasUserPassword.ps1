@@ -37,23 +37,23 @@ function Set-AcasUserPassword {
     begin {
         $ToProcess = @()
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
     }
     process {
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $ToProcess) {
             foreach ($uid in $UserId) {
                 Write-PSFMessage -Level Verbose -Mesage "Updating user with Id $($uid)"
                 $pass = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))
                 $params = @{'password' = $pass}
                 $paramJson = ConvertTo-Json -InputObject $params -Compress
-                InvokeNessusRestRequest -SessionObject $Connection -Path "/users/$($uid)/chpasswd" -Method 'PUT' -Parameter $paramJson -ContentType 'application/json'
+                InvokeNessusRestRequest -SessionObject $connection -Path "/users/$($uid)/chpasswd" -Method 'PUT' -Parameter $paramJson -ContentType 'application/json'
 
             }
         }

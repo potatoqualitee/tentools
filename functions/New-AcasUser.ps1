@@ -55,18 +55,18 @@ function New-AcasUser {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
     }
     process {
 
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $ToProcess) {
             $NewUserParams = @{}
 
             $NewUserParams.Add('type', $Type.ToLower())
@@ -82,7 +82,7 @@ function New-AcasUser {
                 $NewUserParams.Add('name', $Name)
             }
 
-            $NewUser = InvokeNessusRestRequest -SessionObject $Connection -Path '/users' -Method 'Post' -Parameter $NewUserParams
+            $NewUser = InvokeNessusRestRequest -SessionObject $connection -Path '/users' -Method 'Post' -Parameter $NewUserParams
 
             if ($NewUser) {
                 $NewUser

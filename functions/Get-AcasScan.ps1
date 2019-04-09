@@ -42,11 +42,11 @@ function Get-AcasScan {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
@@ -56,8 +56,8 @@ function Get-AcasScan {
             $Params.Add('folder_id', $FolderId)
         }
 
-        foreach ($Connection in $ToProcess) {
-            $Scans = InvokeNessusRestRequest -SessionObject $Connection -Path '/scans' -Method 'Get' -Parameter $Params
+        foreach ($connection in $ToProcess) {
+            $Scans = InvokeNessusRestRequest -SessionObject $connection -Path '/scans' -Method 'Get' -Parameter $Params
 
             if ($Scans -is [psobject]) {
 
@@ -89,7 +89,7 @@ function Get-AcasScan {
                         TimeZone = $scan.timezone
                         Scheduled = $scan.control
                         DashboardEnabled = $scan.use_dashboard
-                        SessionId = $Connection.SessionId
+                        SessionId = $connection.SessionId
                         CreationDate = $origin.AddSeconds($scan.creation_date).ToLocalTime()
                         LastModified = $origin.AddSeconds($scan.last_modification_date).ToLocalTime()
                         StartTime = $StartTime

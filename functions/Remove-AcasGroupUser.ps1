@@ -44,19 +44,19 @@ function Remove-AcasGroupUser {
 
     begin {
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
     }
     process {
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $ToProcess) {
             $ServerTypeParams = @{
-                'SessionObject' = $Connection
+                'SessionObject' = $connection
                 'Path'          = '/server/properties'
                 'Method'        = 'GET'
             }
@@ -65,14 +65,14 @@ function Remove-AcasGroupUser {
 
             if ($Server.capabilities.multi_user -eq 'full') {
                 $GroupParams = @{
-                    'SessionObject' = $Connection
+                    'SessionObject' = $connection
                     'Path'          = "/groups/$($GroupId)/users/$($UserId)"
                     'Method'        = 'DELETE'
                 }
 
                 InvokeNessusRestRequest @GroupParams
             } else {
-                Write-PSFMessage -Level Warning -Mesage "Server for session $($Connection.sessionid) is not licenced for multiple users."
+                Write-PSFMessage -Level Warning -Mesage "Server for session $($connection.sessionid) is not licenced for multiple users."
             }
         }
     }

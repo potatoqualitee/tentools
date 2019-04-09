@@ -31,11 +31,11 @@ function Show-AcasGroupMember {
 
     begin {
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
@@ -43,9 +43,9 @@ function Show-AcasGroupMember {
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
     }
     process {
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $ToProcess) {
             $ServerTypeParams = @{
-                'SessionObject' = $Connection
+                'SessionObject' = $connection
                 'Path'          = '/server/properties'
                 'Method'        = 'GET'
             }
@@ -54,7 +54,7 @@ function Show-AcasGroupMember {
 
             if ($Server.capabilities.multi_user -eq 'full') {
                 $GroupParams = @{
-                    'SessionObject' = $Connection
+                    'SessionObject' = $connection
                     'Path'          = "/groups/$($GroupId)/users"
                     'Method'        = 'GET '
                 }
@@ -69,13 +69,13 @@ function Show-AcasGroupMember {
                     $UserProperties.Add('Type', $User.type)
                     $UserProperties.Add('Permission', $PermissionsId2Name[$User.permissions])
                     $UserProperties.Add('LastLogin', $origin.AddSeconds($User.lastlogin).ToLocalTime())
-                    $UserProperties.Add('SessionId', $Connection.SessionId)
+                    $UserProperties.Add('SessionId', $connection.SessionId)
                     $UserObj = New-Object -TypeName psobject -Property $UserProperties
                     $UserObj.pstypenames[0] = 'Nessus.User'
                     $UserObj
                 }
             } else {
-                Write-PSFMessage -Level Warning -Mesage "Server for session $($Connection.sessionid) is not licenced for multiple users."
+                Write-PSFMessage -Level Warning -Mesage "Server for session $($connection.sessionid) is not licenced for multiple users."
             }
         }
     }

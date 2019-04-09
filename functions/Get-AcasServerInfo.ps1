@@ -31,18 +31,18 @@ function Get-AcasServerInfo {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
 
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $ToProcess) {
 
-            $ServerInfo = InvokeNessusRestRequest -SessionObject $Connection -Path '/server/properties' -Method 'Get'
+            $ServerInfo = InvokeNessusRestRequest -SessionObject $connection -Path '/server/properties' -Method 'Get'
 
             if ($ServerInfo -is [psobject]) {
                 $SrvInfoProp = [ordered]@{}

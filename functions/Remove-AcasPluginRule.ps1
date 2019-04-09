@@ -44,19 +44,19 @@ function Remove-AcasPluginRule {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
     }
 
     process {
-        foreach ($Connection in $ToProcess) {
-            InvokeNessusRestRequest -SessionObject $Connection -Path ('/plugin-rules/{0}' -f $Id) -Method 'Delete'
+        foreach ($connection in $ToProcess) {
+            InvokeNessusRestRequest -SessionObject $connection -Path ('/plugin-rules/{0}' -f $Id) -Method 'Delete'
         }
     }
 }

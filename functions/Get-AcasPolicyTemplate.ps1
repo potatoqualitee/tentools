@@ -38,17 +38,17 @@ function Get-AcasPolicyTemplate {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
 
-        foreach ($Connection in $ToProcess) {
-            $Templates = InvokeNessusRestRequest -SessionObject $Connection -Path '/editor/policy/templates' -Method 'Get'
+        foreach ($connection in $ToProcess) {
+            $Templates = InvokeNessusRestRequest -SessionObject $connection -Path '/editor/policy/templates' -Method 'Get'
 
             if ($Templates -is [psobject]) {
                 switch ($PSCmdlet.ParameterSetName) {
@@ -73,7 +73,7 @@ function Get-AcasPolicyTemplate {
                     $TmplProps.add('PolicyUUID', $Template.uuid)
                     $TmplProps.add('CloudOnly', $Template.cloud_only)
                     $TmplProps.add('SubscriptionOnly', $Template.subscription_only)
-                    $TmplProps.add('SessionId', $Connection.SessionId)
+                    $TmplProps.add('SessionId', $connection.SessionId)
                     $Tmplobj = New-Object -TypeName psobject -Property $TmplProps
                     $Tmplobj.pstypenames[0] = 'Nessus.PolicyTemplate'
                     $Tmplobj

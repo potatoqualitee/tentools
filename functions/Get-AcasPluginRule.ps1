@@ -66,11 +66,11 @@ function Get-AcasPluginRule {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
@@ -79,8 +79,8 @@ function Get-AcasPluginRule {
     }
 
     process {
-        foreach ($Connection in $ToProcess) {
-            $pRules = InvokeNessusRestRequest -SessionObject $Connection -Path '/plugin-rules' -Method 'Get'
+        foreach ($connection in $ToProcess) {
+            $pRules = InvokeNessusRestRequest -SessionObject $connection -Path '/plugin-rules' -Method 'Get'
 
             if ($pRules -is [psobject]) {
                 foreach ($pRule in $pRules.plugin_rules) {
@@ -110,7 +110,7 @@ function Get-AcasPluginRule {
                     $pRuleProps.add('Owner_ID', $pRule.owner_id)
                     $pRuleProps.add('Shared', $pRule.shared)
                     $pRuleProps.add('Permissions', $pRule.user_permissions)
-                    $pRuleProps.add('SessionId', $Connection.SessionId)
+                    $pRuleProps.add('SessionId', $connection.SessionId)
                     $pRuleObj = New-Object -TypeName psobject -Property $pRuleProps
                     $pRuleObj.pstypenames[0] = 'Nessus.PluginRules'
 

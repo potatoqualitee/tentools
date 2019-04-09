@@ -32,20 +32,20 @@ function New-AcasFolder {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
 
-        foreach ($Connection in $ToProcess) {
-            $Folder = InvokeNessusRestRequest -SessionObject $Connection -Path '/folders' -Method 'Post' -Parameter @{'name' = $Name}
+        foreach ($connection in $ToProcess) {
+            $Folder = InvokeNessusRestRequest -SessionObject $connection -Path '/folders' -Method 'Post' -Parameter @{'name' = $Name}
 
             if ($Folder -is [psobject]) {
-                Get-AcasFolder -SessionId $Connection.sessionid | Where-Object {
+                Get-AcasFolder -SessionId $connection.sessionid | Where-Object {
                     $_.FolderId -eq $Folder.id
                 }
             }

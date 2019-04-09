@@ -37,19 +37,19 @@ function Remove-AcasScanHistory {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
 
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $ToProcess) {
             Write-PSFMessage -Level Verbose -Mesage "Removing history Id ($HistoryId) from scan Id $($ScanId)"
 
-            $ScanHistoryDetails = InvokeNessusRestRequest -SessionObject $Connection -Path "/scans/$($ScanId)/history/$($HistoryId)" -Method 'Delete' -Parameter $Params
+            $ScanHistoryDetails = InvokeNessusRestRequest -SessionObject $connection -Path "/scans/$($ScanId)/history/$($HistoryId)" -Method 'Delete' -Parameter $Params
 
             if ($ScanHistoryDetails -eq '') {
                 Write-PSFMessage -Level Verbose -Mesage 'History Removed'

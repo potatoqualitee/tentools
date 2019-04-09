@@ -34,17 +34,17 @@ function Get-AcasSessionInfo {
         foreach ($i in $SessionId) {
             Write-Verbose "Removing server session $($i)"
 
-            foreach ($Connection in $connections) {
-                if ($Connection.SessionId -eq $i) {
-                    [void]$ToProcess.Add($Connection)
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    [void]$ToProcess.Add($connection)
                 }
             }
 
-            foreach ($Connection in $ToProcess) {
+            foreach ($connection in $ToProcess) {
                 $RestMethodParams = @{
                     'Method'        = 'Get'
                     'URI'           = "$($connection.URI)/session"
-                    'Headers'       = @{'X-Cookie' = "token=$($Connection.Token)"}
+                    'Headers'       = @{'X-Cookie' = "token=$($connection.Token)"}
                     'ErrorVariable' = 'NessusSessionError'
                 }
                 $SessInfo = Invoke-RestMethod @RestMethodParams

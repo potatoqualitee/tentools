@@ -32,17 +32,17 @@ function Show-AcasPluginFamilyDetails {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
 
-        foreach ($Connection in $ToProcess) {
-            $FamilyDetails = InvokeNessusRestRequest -SessionObject $Connection -Path "/plugins/families/$($FamilyId)" -Method 'Get'
+        foreach ($connection in $ToProcess) {
+            $FamilyDetails = InvokeNessusRestRequest -SessionObject $connection -Path "/plugins/families/$($FamilyId)" -Method 'Get'
             if ($FamilyDetails -is [Object]) {
                 $DetailProps = [ordered]@{}
                 $DetailProps.Add('Name', $FamilyDetails.name)

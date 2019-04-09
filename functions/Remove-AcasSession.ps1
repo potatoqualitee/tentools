@@ -33,19 +33,19 @@ function Remove-AcasSession {
             foreach ($i in $SessionId) {
                 Write-PSFMessage -Level Verbose -Mesage "Removing server session $($i)"
 
-                foreach ($Connection in $connections) {
-                    if ($Connection.SessionId -eq $i) {
-                        [void]$toremove.Add($Connection)
+                foreach ($connection in $connections) {
+                    if ($connection.SessionId -eq $i) {
+                        [void]$toremove.Add($connection)
                     }
                 }
             }
 
-            foreach ($Connection in $toremove) {
+            foreach ($connection in $toremove) {
                 Write-PSFMessage -Level Verbose -Mesage 'Disposing of connection'
                 $RestMethodParams = @{
                     'Method'        = 'Delete'
                     'URI'           = "$($connection.URI)/session"
-                    'Headers'       = @{'X-Cookie' = "token=$($Connection.Token)"}
+                    'Headers'       = @{'X-Cookie' = "token=$($connection.Token)"}
                     'ErrorVariable' = 'DisconnectError'
                     'ErrorAction'   = 'SilentlyContinue'
                 }
@@ -56,7 +56,7 @@ function Remove-AcasSession {
                 }
                 
                 Write-PSFMessage -Level Verbose -Mesage "Removing session from `$Global:NessusConn"
-                $Global:NessusConn.Remove($Connection)
+                $Global:NessusConn.Remove($connection)
                 Write-PSFMessage -Level Verbose -Mesage "Session $($i) removed."
             }
         }

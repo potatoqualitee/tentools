@@ -42,11 +42,11 @@ function Start-AcasScan {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+            $connections = $Global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $i) {
+                    $ToProcess += $connection
                 }
             }
         }
@@ -57,15 +57,15 @@ function Start-AcasScan {
         }
         $paramJson = ConvertTo-Json -InputObject $params -Compress
 
-        foreach ($Connection in $ToProcess) {
-            $Scans = InvokeNessusRestRequest -SessionObject $Connection -Path "/scans/$($ScanId)/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json'
+        foreach ($connection in $ToProcess) {
+            $Scans = InvokeNessusRestRequest -SessionObject $connection -Path "/scans/$($ScanId)/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json'
 
             if ($Scans -is [psobject]) {
 
                 $ScanProps = [ordered]@{}
                 $ScanProps.add('ScanUUID', $scans.scan_uuid)
                 $ScanProps.add('ScanId', $ScanId)
-                $ScanProps.add('SessionId', $Connection.SessionId)
+                $ScanProps.add('SessionId', $connection.SessionId)
                 $ScanObj = New-Object -TypeName psobject -Property $ScanProps
                 $ScanObj.pstypenames[0] = 'Nessus.LaunchedScan'
                 $ScanObj

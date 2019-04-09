@@ -25,9 +25,9 @@ function Get-AcasSession {
     process {
         if ($Index.Count -gt 0) {
             foreach ($i in $SessionId) {
-                foreach ($Connection in $Global:NessusConn) {
-                    if ($Connection.SessionId -eq $i) {
-                        $Connection
+                foreach ($connection in $Global:NessusConn) {
+                    if ($connection.SessionId -eq $i) {
+                        $connection
                     }
                 }
             }
