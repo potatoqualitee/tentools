@@ -31,7 +31,7 @@ function New-AcasScan {
         Parameter description
 
     .PARAMETER ScannerId
-        Parameter description
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
     .PARAMETER Email
         Parameter description

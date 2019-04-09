@@ -10,7 +10,7 @@ function Show-AcasScanHost {
         Parameter description
 
     .PARAMETER ScanId
-        Parameter description
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
     .PARAMETER HistoryId
         Parameter description

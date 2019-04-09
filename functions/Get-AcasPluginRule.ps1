@@ -7,7 +7,7 @@ function Get-AcasPluginRule {
         Gets a list of all Nessus plugin rules
 
     .PARAMETER SessionId
-        ID of a valid Nessus session
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
     .PARAMETER Detail
         Does an additional lookup on each rule, to return the plugin name. Helpfule when reporting

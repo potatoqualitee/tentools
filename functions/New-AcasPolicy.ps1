@@ -7,7 +7,7 @@ function New-AcasPolicy {
         Long description
 
     .PARAMETER SessionId
-        Parameter description
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
     .PARAMETER Name
         Name for new policy

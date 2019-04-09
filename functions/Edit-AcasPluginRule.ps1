@@ -7,7 +7,7 @@ function Edit-AcasPluginRule {
         Can be used to change a previously defined, scan report altering rule
 
     .PARAMETER SessionId
-        ID of a valid Nessus session
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
     .PARAMETER Id
         ID number of the rule which would you like removed/deleted

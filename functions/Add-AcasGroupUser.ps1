@@ -7,7 +7,7 @@ function Add-AcasGroupUser {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated when Connect-AcasService is used.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
     .PARAMETER GroupId
         Parameter description

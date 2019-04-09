@@ -7,7 +7,7 @@ function Get-AcasPluginFamily {
         Long description
 
     .PARAMETER SessionId
-        A valid ID of a Nessus session. This is auto-populated when Connect-AcasService is used.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.

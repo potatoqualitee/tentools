@@ -7,7 +7,7 @@ function Suspend-AcasScan {
         Long description
 
     .PARAMETER SessionId
-        Parameter description
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
     .PARAMETER ScanId
         Parameter description
