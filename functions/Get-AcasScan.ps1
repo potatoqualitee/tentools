@@ -65,12 +65,12 @@ function Get-AcasScan {
             if ($Scans -is [psobject]) {
 
                 if ($Status.length -gt 0) {
-                    $Scans2Process = $Scans.scans | Where-Object { $_.status -eq $Status.ToLower() }
+                    $allscans = $Scans.scans | Where-Object { $_.status -eq $Status.ToLower() }
                 }
                 else {
-                    $Scans2Process = $Scans.scans
+                    $allscans = $Scans.scans
                 }
-                foreach ($scan in $Scans2Process) {
+                foreach ($scan in $allscans) {
 
                     if ($scan.starttime -cnotlike "*T*") {
                         $StartTime = $origin.AddSeconds($scan.starttime).ToLocalTime()

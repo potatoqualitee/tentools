@@ -36,8 +36,7 @@ function Add-AcasGroupUser {
         [Int32]$UserId,
         [switch]$EnableException
     )
-
-    begin {
+    process {
         $collection = @()
         foreach ($id in $SessionId) {
             $connections = $Global:NessusConn
@@ -47,8 +46,7 @@ function Add-AcasGroupUser {
                 }
             }
         }
-    }
-    process {
+
         foreach ($connection in $collection) {
             $ServerTypeParams = @{
                 'SessionObject' = $connection

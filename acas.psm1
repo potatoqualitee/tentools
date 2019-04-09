@@ -14,7 +14,7 @@ function Import-ModuleFile {
 if ($acas_dotsourcemodule) { $script:doDotSource }
 
 # Import all internal functions
-foreach ($function in (Get-ChildItem "$ModuleRoot\internal\functions" -Filter "*.ps1" -Recurse -ErrorAction Ignore)) {
+foreach ($function in (Get-ChildItem "$ModuleRoot\internal\" -Filter "*.ps1" -Recurse -ErrorAction Ignore)) {
     . Import-ModuleFile -Path $function.FullName
 }
 
