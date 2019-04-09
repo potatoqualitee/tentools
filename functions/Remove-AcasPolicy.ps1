@@ -43,7 +43,7 @@ function Remove-AcasPolicy {
 
         foreach ($connection in $collection) {
             Write-PSFMessage -Level Verbose -Mesage "Deleting policy with id $($PolicyId)."
-            $RemovedPolicy = InvokeNessusRestRequest -SessionObject $connection -Path "/policies/$($PolicyId)" -Method 'DELETE'
+            $RemovedPolicy = Invoke-AcasRequest -SessionObject $connection -Path "/policies/$($PolicyId)" -Method 'DELETE'
             Write-PSFMessage -Level Verbose -Mesage 'Policy deleted.'
         }
     }

@@ -57,7 +57,7 @@ function Show-AcasScanHostDetail {
         }
 
         foreach ($connection in $collection) {
-            $ScanDetails = InvokeNessusRestRequest -SessionObject $connection -Path "/scans/$($ScanId)/hosts/$($HostId)" -Method 'Get' -Parameter $Params
+            $ScanDetails = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/hosts/$($HostId)" -Method 'Get' -Parameter $Params
 
             if ($ScanDetails -is [psobject]) {
                 $HostProps = [ordered]@{}

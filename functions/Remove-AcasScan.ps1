@@ -44,7 +44,7 @@ function Remove-AcasScan {
         foreach ($connection in $collection) {
             Write-PSFMessage -Level Verbose -Mesage "Removing scan with Id $($ScanId)"
 
-            $ScanDetails = InvokeNessusRestRequest -SessionObject $connection -Path "/scans/$($ScanId)" -Method 'Delete' -Parameter $Params
+            $ScanDetails = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)" -Method 'Delete' -Parameter $Params
             if ($ScanDetails -eq 'null') {
                 Write-PSFMessage -Level Verbose -Mesage 'Scan Removed'
             }

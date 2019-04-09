@@ -36,7 +36,7 @@ function Get-AcasPluginFamily {
         }
 
         foreach ($connection in $collection) {
-            $Families = InvokeNessusRestRequest -SessionObject $connection -Path '/plugins/families' -Method 'Get'
+            $Families = Invoke-AcasRequest -SessionObject $connection -Path '/plugins/families' -Method 'Get'
             if ($Families -is [Object[]]) {
                 foreach ($Family in $Families) {
                     $FamilyProps = [ordered]@{}

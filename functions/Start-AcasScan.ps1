@@ -58,7 +58,7 @@ function Start-AcasScan {
         $paramJson = ConvertTo-Json -InputObject $params -Compress
 
         foreach ($connection in $collection) {
-            $Scans = InvokeNessusRestRequest -SessionObject $connection -Path "/scans/$($ScanId)/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json'
+            $Scans = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json'
 
             if ($Scans -is [psobject]) {
 

@@ -44,7 +44,7 @@ function Get-AcasUser {
 
         foreach ($connection in $collection) {
 
-            $Users = InvokeNessusRestRequest -SessionObject $connection -Path '/users' -Method 'Get'
+            $Users = Invoke-AcasRequest -SessionObject $connection -Path '/users' -Method 'Get'
 
             if ($Users -is [psobject]) {
                 $Users.users | ForEach-Object -process {
@@ -54,7 +54,7 @@ function Get-AcasUser {
                     $UserProperties.Add('Email', $_.email)
                     $UserProperties.Add('UserId', $_.id)
                     $UserProperties.Add('Type', $_.type)
-                    $UserProperties.Add('Permission', $permissionenum[$_.permissions])
+                    $UserProperties.Add('Permission', $permidenum[$_.permissions])
                     $UserProperties.Add('LastLogin', $origin.AddSeconds($_.lastlogin).ToLocalTime())
                     $UserProperties.Add('SessionId', $connection.SessionId)
                     $UserObj = New-Object -TypeName psobject -Property $UserProperties

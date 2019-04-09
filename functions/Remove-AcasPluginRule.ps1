@@ -56,7 +56,7 @@ function Remove-AcasPluginRule {
 
     process {
         foreach ($connection in $collection) {
-            InvokeNessusRestRequest -SessionObject $connection -Path ('/plugin-rules/{0}' -f $Id) -Method 'Delete'
+            Invoke-AcasRequest -SessionObject $connection -Path ('/plugin-rules/{0}' -f $Id) -Method 'Delete'
         }
     }
 }

@@ -50,7 +50,7 @@ function Show-AcasGroupMember {
                 'Method'        = 'GET'
             }
 
-            $Server = InvokeNessusRestRequest @ServerTypeParams
+            $Server = Invoke-AcasRequest @ServerTypeParams
 
             if ($Server.capabilities.multi_user -eq 'full') {
                 $GroupParams = @{
@@ -59,7 +59,7 @@ function Show-AcasGroupMember {
                     'Method'        = 'GET '
                 }
 
-                $GroupMembers = InvokeNessusRestRequest @GroupParams
+                $GroupMembers = Invoke-AcasRequest @GroupParams
                 foreach ($User in $GroupMembers.users) {
                     $UserProperties = [ordered]@{}
                     $UserProperties.Add('Name', $User.name)
@@ -67,7 +67,7 @@ function Show-AcasGroupMember {
                     $UserProperties.Add('Email', $User.email)
                     $UserProperties.Add('UserId', $_Userid)
                     $UserProperties.Add('Type', $User.type)
-                    $UserProperties.Add('Permission', $permissionenum[$User.permissions])
+                    $UserProperties.Add('Permission', $permidenum[$User.permissions])
                     $UserProperties.Add('LastLogin', $origin.AddSeconds($User.lastlogin).ToLocalTime())
                     $UserProperties.Add('SessionId', $connection.SessionId)
                     $UserObj = New-Object -TypeName psobject -Property $UserProperties

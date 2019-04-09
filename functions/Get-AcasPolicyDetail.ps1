@@ -63,7 +63,7 @@ function Get-AcasPolicyDetail {
 
             }
             Write-PSFMessage -Level Verbose -Mesage "Getting details for policy with id $($PolicyId)."
-            $Policy = InvokeNessusRestRequest -SessionObject $connection -Path "/policies/$($PolicyId)" -Method 'GET'
+            $Policy = Invoke-AcasRequest -SessionObject $connection -Path "/policies/$($PolicyId)" -Method 'GET'
             $Policy
         }
     }

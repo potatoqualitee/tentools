@@ -49,7 +49,7 @@ function Export-AcasPolicy {
 
         foreach ($connection in $collection) {
             Write-PSFMessage -Level Verbose -Mesage "Exporting policy with id $($PolicyId)."
-            $Policy = InvokeNessusRestRequest -SessionObject $connection -Path "/policies/$($PolicyId)/export" -Method 'GET'
+            $Policy = Invoke-AcasRequest -SessionObject $connection -Path "/policies/$($PolicyId)/export" -Method 'GET'
             if ($OutFile.length -gt 0) {
                 Write-PSFMessage -Level Verbose -Mesage "Saving policy as $($OutFile)"
                 $Policy.Save($ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutFile))

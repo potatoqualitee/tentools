@@ -53,7 +53,7 @@ function Rename-AcasGroup {
                 'Method'        = 'GET'
             }
 
-            $Server = InvokeNessusRestRequest @ServerTypeParams
+            $Server = Invoke-AcasRequest @ServerTypeParams
 
             if ($Server.capabilities.multi_user -eq 'full') {
                 $GroupParams = @{
@@ -64,7 +64,7 @@ function Rename-AcasGroup {
                     'Parameter'     = (ConvertTo-Json -InputObject @{'name' = $Name} -Compress)
                 }
 
-                InvokeNessusRestRequest @GroupParams
+                Invoke-AcasRequest @GroupParams
             } else {
                 Write-PSFMessage -Level Warning -Mesage "Server for session $($connection.sessionid) is not licenced for multiple users."
             }

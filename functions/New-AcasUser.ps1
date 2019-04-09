@@ -70,7 +70,7 @@ function New-AcasUser {
             $NewUserParams = @{}
 
             $NewUserParams.Add('type', $Type.ToLower())
-            $NewUserParams.Add('permissions', $PermissionsName2Id[$Permission])
+            $NewUserParams.Add('permissions', $permenum[$Permission])
             $NewUserParams.Add('username', $Credential.GetNetworkCredential().UserName)
             $NewUserParams.Add('password', $Credential.GetNetworkCredential().Password)
 
@@ -82,7 +82,7 @@ function New-AcasUser {
                 $NewUserParams.Add('name', $Name)
             }
 
-            $NewUser = InvokeNessusRestRequest -SessionObject $connection -Path '/users' -Method 'Post' -Parameter $NewUserParams
+            $NewUser = Invoke-AcasRequest -SessionObject $connection -Path '/users' -Method 'Post' -Parameter $NewUserParams
 
             if ($NewUser) {
                 $NewUser

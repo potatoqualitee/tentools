@@ -49,10 +49,10 @@ function New-AcasGroup {
                 'Method'        = 'GET'
             }
 
-            $Server = InvokeNessusRestRequest @ServerTypeParams
+            $Server = Invoke-AcasRequest @ServerTypeParams
 
             if ($Server.capabilities.multi_user -eq 'full') {
-                $Groups = InvokeNessusRestRequest -SessionObject $connection -Path '/groups' -Method 'POST' -Parameter @{'name' = $Name}
+                $Groups = Invoke-AcasRequest -SessionObject $connection -Path '/groups' -Method 'POST' -Parameter @{'name' = $Name}
                 $NewGroupProps = [ordered]@{}
                 $NewGroupProps.Add('Name', $Groups.name)
                 $NewGroupProps.Add('GroupId', $Groups.id)

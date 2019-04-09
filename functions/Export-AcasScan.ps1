@@ -102,12 +102,12 @@ function Export-AcasScan {
             }
 
             Write-PSFMessage -Level Verbose -Mesage "Exporting scan with Id of $($ScanId) in $($Format) format."
-            $FileID = InvokeNessusRestRequest -SessionObject $connection -Path $path  -Method 'Post' -Parameter $ExportParams
+            $FileID = Invoke-AcasRequest -SessionObject $connection -Path $path  -Method 'Post' -Parameter $ExportParams
             if ($FileID -is [psobject]) {
                 $FileStatus = ''
                 while ($FileStatus.status -ne 'ready') {
                     try {
-                        $FileStatus = InvokeNessusRestRequest -SessionObject $connection -Path "/scans/$($ScanId)/export/$($FileID.file)/status"  -Method 'Get'
+                        $FileStatus = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/export/$($FileID.file)/status"  -Method 'Get'
                         Write-PSFMessage -Level Verbose -Mesage "Status of export is $($FileStatus.status)"
                     } catch {
                         break
@@ -116,10 +116,10 @@ function Export-AcasScan {
                 }
                 if ($FileStatus.status -eq 'ready' -and $Format -eq 'CSV' -and $PSObject.IsPresent) {
                     Write-PSFMessage -Level Verbose -Mesage "Converting report to PSObject"
-                    InvokeNessusRestRequest -SessionObject $connection -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' | ConvertFrom-CSV
+                    Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' | ConvertFrom-CSV
                 } elseif ($FileStatus.status -eq 'ready') {
                     Write-PSFMessage -Level Verbose -Mesage "Downloading report to $($OutFile)"
-                    InvokeNessusRestRequest -SessionObject $connection -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' -OutFile $OutFile
+                    Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' -OutFile $OutFile
                 }
             }
         }

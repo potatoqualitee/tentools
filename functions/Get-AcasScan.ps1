@@ -57,7 +57,7 @@ function Get-AcasScan {
         }
 
         foreach ($connection in $collection) {
-            $Scans = InvokeNessusRestRequest -SessionObject $connection -Path '/scans' -Method 'Get' -Parameter $Params
+            $Scans = Invoke-AcasRequest -SessionObject $connection -Path '/scans' -Method 'Get' -Parameter $Params
 
             if ($Scans -is [psobject]) {
 
@@ -83,7 +83,7 @@ function Get-AcasScan {
                         Enabled = $scan.enabled
                         FolderId = $scan.folder_id
                         Owner = $scan.owner
-                        UserPermission = $permissionenum[$scan.user_permissions]
+                        UserPermission = $permidenum[$scan.user_permissions]
                         Rules = $scan.rrules
                         Shared = $scan.shared
                         TimeZone = $scan.timezone

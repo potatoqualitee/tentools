@@ -46,7 +46,7 @@ function Get-AcasFolder {
         }
 
         foreach ($connection in $collection) {
-            $Folders = InvokeNessusRestRequest -SessionObject $connection -Path '/folders' -Method 'Get'
+            $Folders = Invoke-AcasRequest -SessionObject $connection -Path '/folders' -Method 'Get'
 
             if ($Folders -is [psobject]) {
                 foreach ($folder in $Folders.folders) {

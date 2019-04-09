@@ -51,7 +51,7 @@ function Show-AcasScanHistory {
         }
 
         foreach ($connection in $collection) {
-            $ScanDetails = InvokeNessusRestRequest -SessionObject $connection -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $Params
+            $ScanDetails = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $Params
 
             if ($ScanDetails -is [psobject]) {
                 foreach ($History in $ScanDetails.history) {

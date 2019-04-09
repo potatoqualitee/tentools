@@ -52,7 +52,7 @@ function Show-AcasScanHost {
         }
 
         foreach ($connection in $collection) {
-            $ScanDetails = InvokeNessusRestRequest -SessionObject $connection -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $Params
+            $ScanDetails = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $Params
 
             if ($ScanDetails -is [psobject]) {
                 foreach ($Host in $ScanDetails.hosts) {

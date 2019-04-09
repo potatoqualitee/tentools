@@ -52,7 +52,7 @@ function Add-AcasGroupUser {
                 'Method'        = 'GET'
             }
 
-            $Server = InvokeNessusRestRequest @ServerTypeParams
+            $Server = Invoke-AcasRequest @ServerTypeParams
 
             if ($Server.capabilities.multi_user -eq 'full') {
                 $GroupParams = @{
@@ -62,7 +62,7 @@ function Add-AcasGroupUser {
                     'Parameter'     = @{'user_id' = $UserId}
                 }
 
-                InvokeNessusRestRequest @GroupParams
+                Invoke-AcasRequest @GroupParams
             } else {
                 Write-PSFMessage -Level Warning -Mesage "Server for session $($connection.sessionid) is not licenced for multiple users."
             }

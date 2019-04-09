@@ -46,7 +46,7 @@ function Suspend-AcasScan {
         }
 
         foreach ($connection in $collection) {
-            $Scans = InvokeNessusRestRequest -SessionObject $connection -Path "/scans/$($ScanId)/pause" -Method 'Post'
+            $Scans = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/pause" -Method 'Post'
 
             if ($Scans -is [psobject]) {
                 $scan = $Scans.scan
@@ -59,7 +59,7 @@ function Suspend-AcasScan {
                 $ScanProps.add('Owner', $scan.owner)
                 $ScanProps.add('AlternateTarget', $scan.ownalt_targetser)
                 $ScanProps.add('IsPCI', $scan.is_pci)
-                $ScanProps.add('UserPermission', $permissionenum[$scan.user_permissions])
+                $ScanProps.add('UserPermission', $permidenum[$scan.user_permissions])
                 $ScanProps.add('CreationDate', $origin.AddSeconds($scan.creation_date).ToLocalTime())
                 $ScanProps.add('LastModified', $origin.AddSeconds($scan.last_modification_date).ToLocalTime())
                 $ScanProps.add('StartTime', $origin.AddSeconds($scan.starttime).ToLocalTime())

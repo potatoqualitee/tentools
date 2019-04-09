@@ -42,7 +42,7 @@ function New-AcasFolder {
         }
 
         foreach ($connection in $collection) {
-            $Folder = InvokeNessusRestRequest -SessionObject $connection -Path '/folders' -Method 'Post' -Parameter @{'name' = $Name}
+            $Folder = Invoke-AcasRequest -SessionObject $connection -Path '/folders' -Method 'Post' -Parameter @{'name' = $Name}
 
             if ($Folder -is [psobject]) {
                 Get-AcasFolder -SessionId $connection.sessionid | Where-Object {

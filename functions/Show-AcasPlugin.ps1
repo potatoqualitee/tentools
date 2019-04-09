@@ -42,7 +42,7 @@ function Show-AcasPlugin {
         }
 
         foreach ($connection in $collection) {
-            $Plugin = InvokeNessusRestRequest -SessionObject $connection -Path "/plugins/plugin/$($PluginId)" -Method 'Get'
+            $Plugin = Invoke-AcasRequest -SessionObject $connection -Path "/plugins/plugin/$($PluginId)" -Method 'Get'
 
             if ($Plugin -is [psobject]) {
                 if ($Plugin.name -ne $null) {

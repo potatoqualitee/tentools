@@ -53,7 +53,7 @@ function Set-AcasUserPassword {
                 $pass = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))
                 $params = @{'password' = $pass}
                 $paramJson = ConvertTo-Json -InputObject $params -Compress
-                InvokeNessusRestRequest -SessionObject $connection -Path "/users/$($uid)/chpasswd" -Method 'PUT' -Parameter $paramJson -ContentType 'application/json'
+                Invoke-AcasRequest -SessionObject $connection -Path "/users/$($uid)/chpasswd" -Method 'PUT' -Parameter $paramJson -ContentType 'application/json'
 
             }
         }

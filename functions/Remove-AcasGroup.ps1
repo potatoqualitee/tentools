@@ -30,7 +30,7 @@ function Remove-AcasGroup {
                 'Method'        = 'GET'
             }
 
-            $Server = InvokeNessusRestRequest @ServerTypeParams
+            $Server = Invoke-AcasRequest @ServerTypeParams
 
             if ($Server.capabilities.multi_user -eq 'full') {
                 $GroupParams = @{
@@ -39,7 +39,7 @@ function Remove-AcasGroup {
                     'Method'        = 'DELETE '
                 }
 
-                InvokeNessusRestRequest @GroupParams
+                Invoke-AcasRequest @GroupParams
             } else {
                 Write-PSFMessage -Level Warning -Mesage "Server for session $($connection.sessionid) is not licenced for multiple users."
             }

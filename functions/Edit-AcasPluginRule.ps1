@@ -115,7 +115,7 @@ function Edit-AcasPluginRule {
 
             $pRuleJson
 
-            InvokeNessusRestRequest -SessionObject $connection -Path ('/plugin-rules/{0}' -f $Id) -Method 'Put' `
+            Invoke-AcasRequest -SessionObject $connection -Path ('/plugin-rules/{0}' -f $Id) -Method 'Put' `
                 -Parameter $pRuleJson -ContentType 'application/json'
         }
     }

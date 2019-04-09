@@ -38,7 +38,7 @@ function Get-AcasServerStatus {
 
         foreach ($connection in $collection) {
 
-            $ServerStatus = InvokeNessusRestRequest -SessionObject $connection -Path '/server/status' -Method 'Get'
+            $ServerStatus = Invoke-AcasRequest -SessionObject $connection -Path '/server/status' -Method 'Get'
 
             if ($ServerStatus -is [psobject]) {
                 $ServerStatus.pstypenames[0] = 'Nessus.ServerStatus'

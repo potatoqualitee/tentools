@@ -80,7 +80,7 @@ function Get-AcasPluginRule {
 
     process {
         foreach ($connection in $collection) {
-            $pRules = InvokeNessusRestRequest -SessionObject $connection -Path '/plugin-rules' -Method 'Get'
+            $pRules = Invoke-AcasRequest -SessionObject $connection -Path '/plugin-rules' -Method 'Get'
 
             if ($pRules -is [psobject]) {
                 foreach ($pRule in $pRules.plugin_rules) {

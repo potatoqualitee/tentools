@@ -42,7 +42,7 @@ function Show-AcasPluginFamilyDetails {
         }
 
         foreach ($connection in $collection) {
-            $FamilyDetails = InvokeNessusRestRequest -SessionObject $connection -Path "/plugins/families/$($FamilyId)" -Method 'Get'
+            $FamilyDetails = Invoke-AcasRequest -SessionObject $connection -Path "/plugins/families/$($FamilyId)" -Method 'Get'
             if ($FamilyDetails -is [Object]) {
                 $DetailProps = [ordered]@{}
                 $DetailProps.Add('Name', $FamilyDetails.name)

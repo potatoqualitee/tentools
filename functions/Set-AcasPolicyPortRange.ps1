@@ -52,7 +52,7 @@ function Set-AcasPolicyPortRange {
                 'Parameter'     = "{`"settings`": {`"portscan_range`": `"$($Port -join ",")`"}}"
             }
 
-            InvokeNessusRestRequest @RequestParams | Out-Null
+            Invoke-AcasRequest @RequestParams | Out-Null
             Get-AcasPolicyPortRange -SessionId $SessionId -PolicyId $PolicyToChange
         }
     }

@@ -41,7 +41,7 @@ function Get-AcasScanTemplate {
 
 
         foreach ($connection in $collection) {
-            $Templates = InvokeNessusRestRequest -SessionObject $connection -Path '/editor/scan/templates' -Method 'Get'
+            $Templates = Invoke-AcasRequest -SessionObject $connection -Path '/editor/scan/templates' -Method 'Get'
 
             if ($Templates -is [psobject]) {
                 foreach ($Template in $Templates.templates) {

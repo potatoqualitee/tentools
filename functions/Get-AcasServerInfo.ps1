@@ -42,7 +42,7 @@ function Get-AcasServerInfo {
 
         foreach ($connection in $collection) {
 
-            $ServerInfo = InvokeNessusRestRequest -SessionObject $connection -Path '/server/properties' -Method 'Get'
+            $ServerInfo = Invoke-AcasRequest -SessionObject $connection -Path '/server/properties' -Method 'Get'
 
             if ($ServerInfo -is [psobject]) {
                 $SrvInfoProp = [ordered]@{}

@@ -69,7 +69,7 @@ function Enable-AcasPolicyPortScanner {
                 'Parameter'     = $SettingsJson
             }
 
-            InvokeNessusRestRequest @RequestParams | Out-Null
+            Invoke-AcasRequest @RequestParams | Out-Null
             Get-AcasPolicyPortScanner -SessionId $SessionId -PolicyId $PolicyToChange
 
         }

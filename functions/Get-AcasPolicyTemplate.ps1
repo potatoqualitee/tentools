@@ -48,7 +48,7 @@ function Get-AcasPolicyTemplate {
         }
 
         foreach ($connection in $collection) {
-            $Templates = InvokeNessusRestRequest -SessionObject $connection -Path '/editor/policy/templates' -Method 'Get'
+            $Templates = Invoke-AcasRequest -SessionObject $connection -Path '/editor/policy/templates' -Method 'Get'
 
             if ($Templates -is [psobject]) {
                 switch ($PSCmdlet.ParameterSetName) {

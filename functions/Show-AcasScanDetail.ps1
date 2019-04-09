@@ -56,7 +56,7 @@ function Show-AcasScanDetail {
         }
 
         foreach ($connection in $collection) {
-            $ScanDetails = InvokeNessusRestRequest -SessionObject $connection -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $Params
+            $ScanDetails = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $Params
 
             if ($ScanDetails -is [psobject]) {
 
@@ -79,7 +79,7 @@ function Show-AcasScanDetail {
                 $ScanInfo.add('HasAuditTrail', $ScanDetails.info.hasaudittrail)
                 $ScanInfo.add('HasKb', $ScanDetails.info.haskb)
                 $ScanInfo.add('ACL', $ScanDetails.info.acls)
-                $ScanInfo.add('Permission', $permissionenum[$ScanDetails.info.user_permissions])
+                $ScanInfo.add('Permission', $permidenum[$ScanDetails.info.user_permissions])
                 $ScanInfo.add('EditAllowed', $ScanDetails.info.edit_allowed)
                 $ScanInfo.add('LastModified', $origin.AddSeconds($ScanDetails.info.timestamp).ToLocalTime())
                 $ScanInfo.add('ScanStart', $origin.AddSeconds($ScanDetails.info.scan_start).ToLocalTime())

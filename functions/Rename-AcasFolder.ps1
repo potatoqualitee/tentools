@@ -47,7 +47,7 @@ function Rename-AcasFolder {
         }
 
         foreach ($connection in $collection) {
-            $Folder = InvokeNessusRestRequest -SessionObject $connection -Path "/folders/$($FolderId)" -Method 'PUT' -Parameter @{'name' = $Name}
+            $Folder = Invoke-AcasRequest -SessionObject $connection -Path "/folders/$($FolderId)" -Method 'PUT' -Parameter @{'name' = $Name}
         }
     }
 }

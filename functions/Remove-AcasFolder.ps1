@@ -38,7 +38,7 @@ function Remove-NessusFolder {
         }
 
         foreach ($connection in $collection) {
-            $Folder = InvokeNessusRestRequest -SessionObject $connection -Path "/folders/$($FolderId)" -Method 'DELETE'
+            $Folder = Invoke-AcasRequest -SessionObject $connection -Path "/folders/$($FolderId)" -Method 'DELETE'
         }
     }
 }

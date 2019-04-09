@@ -94,7 +94,7 @@ function Add-AcasPluginRule {
 
             $pRuleJson = ConvertTo-Json -InputObject $pRulehash -Compress
 
-            InvokeNessusRestRequest -SessionObject $connection -Path '/plugin-rules' -Method 'Post' `
+            Invoke-AcasRequest -SessionObject $connection -Path '/plugin-rules' -Method 'Post' `
                 -Parameter $pRuleJson -ContentType 'application/json'
         }
     }

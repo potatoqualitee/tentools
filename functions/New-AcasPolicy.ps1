@@ -103,7 +103,7 @@ function New-AcasPolicy {
                 'ContentType' = 'application/json'
                 'Parameter'= $SettingsJson
             }
-            $NewPolicy = InvokeNessusRestRequest @RequestParams
+            $NewPolicy = Invoke-AcasRequest @RequestParams
             Get-AcasPolicy -PolicyID $NewPolicy.policy_id -SessionId $connection.sessionid
         }
     }

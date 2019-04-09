@@ -45,7 +45,7 @@ function Remove-AcasUser {
         foreach ($connection in $collection) {
             foreach ($uid in $UserId) {
                 Write-PSFMessage -Level Verbose -Mesage "Deleting user with Id $($uid)"
-                InvokeNessusRestRequest -SessionObject $connection -Path "/users/$($uid)" -Method 'Delete'
+                Invoke-AcasRequest -SessionObject $connection -Path "/users/$($uid)" -Method 'Delete'
             }
         }
     }

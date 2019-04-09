@@ -44,7 +44,7 @@ function Get-AcasGroup {
                 'Method'        = 'GET'
             }
 
-            $Server = InvokeNessusRestRequest @ServerTypeParams
+            $Server = Invoke-AcasRequest @ServerTypeParams
 
             if ($Server.capabilities.multi_user -eq 'full') {
                 $GroupParams = @{
@@ -53,7 +53,7 @@ function Get-AcasGroup {
                     'Method'        = 'GET'
                 }
 
-                $Groups = InvokeNessusRestRequest @GroupParams
+                $Groups = Invoke-AcasRequest @GroupParams
                 foreach ($Group in $Groups.groups) {
                     $GroupProps = [ordered]@{}
                     $GroupProps.Add('Name', $Group.name)

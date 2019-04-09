@@ -84,7 +84,7 @@ function Enable-AcasPolicyLocalPortEnumeration {
                 'Parameter'     = $SettingsJson
             }
 
-            InvokeNessusRestRequest @RequestParams | Out-Null
+            Invoke-AcasRequest @RequestParams | Out-Null
             Get-AcasPolicyLocalPortEnumeration -SessionId $SessionId -PolicyId $PolicyToChange
 
         }

@@ -52,7 +52,7 @@ function Get-AcasPolicy {
     }
     process {
         foreach ($connection in $collection) {
-            $Policies = InvokeNessusRestRequest -SessionObject $connection -Path '/policies' -Method 'Get'
+            $Policies = Invoke-AcasRequest -SessionObject $connection -Path '/policies' -Method 'Get'
 
             if ($Policies -is [psobject]) {
                 switch ($PSCmdlet.ParameterSetName) {
