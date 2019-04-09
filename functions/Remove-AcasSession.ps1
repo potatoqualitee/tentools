@@ -30,11 +30,11 @@ function Remove-AcasSession {
         $toremove = New-Object -TypeName System.Collections.ArrayList
 
         if ($SessionId.Count -gt 0) {
-            foreach ($i in $SessionId) {
-                Write-PSFMessage -Level Verbose -Mesage "Removing server session $($i)"
+            foreach ($id in $SessionId) {
+                Write-PSFMessage -Level Verbose -Mesage "Removing server session $($id)"
 
                 foreach ($connection in $connections) {
-                    if ($connection.SessionId -eq $i) {
+                    if ($connection.SessionId -eq $id) {
                         [void]$toremove.Add($connection)
                     }
                 }
@@ -57,7 +57,7 @@ function Remove-AcasSession {
                 
                 Write-PSFMessage -Level Verbose -Mesage "Removing session from `$global:NessusConn"
                 $global:NessusConn.Remove($connection)
-                Write-PSFMessage -Level Verbose -Mesage "Session $($i) removed."
+                Write-PSFMessage -Level Verbose -Mesage "Session $($id) removed."
             }
         }
     }

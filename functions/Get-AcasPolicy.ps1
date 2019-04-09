@@ -41,11 +41,11 @@ function Get-AcasPolicy {
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
         $collection = @()
 
-        foreach ($i in $SessionId) {
+        foreach ($id in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $i) {
+                if ($connection.SessionId -eq $id) {
                     $collection += $connection
                 }
             }

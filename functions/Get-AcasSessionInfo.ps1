@@ -31,11 +31,11 @@ function Get-AcasSessionInfo {
         $connections = $global:NessusConn
         $collection = New-Object -TypeName System.Collections.ArrayList
 
-        foreach ($i in $SessionId) {
-            Write-Verbose "Removing server session $($i)"
+        foreach ($id in $SessionId) {
+            Write-Verbose "Removing server session $($id)"
 
             foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $i) {
+                if ($connection.SessionId -eq $id) {
                     [void]$collection.Add($connection)
                 }
             }

@@ -53,11 +53,11 @@ function Add-AcasPluginRule {
     begin {
         $collection = @()
 
-        foreach ($i in $SessionId) {
+        foreach ($id in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $i) {
+                if ($connection.SessionId -eq $id) {
                     $collection += $connection
                 }
             }

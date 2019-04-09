@@ -33,12 +33,12 @@ function Get-AcasPolicyLocalPortEnumeration {
 
     process {
         $sessions = Get-AcasSession | Select-Object -ExpandProperty sessionid
-        foreach ($i in $SessionId) {
-            if ($i -notin $sessions) {
-                Stop-PSFFunction -Message "SessionId $($i) is not present in the current sessions."
+        foreach ($id in $SessionId) {
+            if ($id -notin $sessions) {
+                Stop-PSFFunction -Message "SessionId $($id) is not present in the current sessions."
             }
        
-            $Session = Get-AcasSession -SessionId $i
+            $Session = Get-AcasSession -SessionId $id
 
             foreach ($PolicyToChange in $PolicyId) {
                 try {
