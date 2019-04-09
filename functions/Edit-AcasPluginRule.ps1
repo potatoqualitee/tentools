@@ -1,49 +1,49 @@
 function Edit-AcasPluginRule {
     <#
     .SYNOPSIS
-    Edits a Nessus plugin rule
+        Edits a Nessus plugin rule
 
     .DESCRIPTION
-    Can be used to change a previously defined, scan report altering rule
+        Can be used to change a previously defined, scan report altering rule
 
     .PARAMETER SessionId
-    ID of a valid Nessus session
+        ID of a valid Nessus session
 
     .PARAMETER Id
-    ID number of the rule which would you like removed/deleted
+        ID number of the rule which would you like removed/deleted
 
     .PARAMETER PluginId
-    ID number of the plugin which would you like altered
+        ID number of the plugin which would you like altered
 
     .PARAMETER ComputerName
-    Name, IP address, or Wildcard (*), which defines the the host(s) affected by the rule
+        Name, IP address, or Wildcard (*), which defines the the host(s) affected by the rule
 
     .PARAMETER Type
-    Severity level you would like future scan reports to display for the defined host(s)
+        Severity level you would like future scan reports to display for the defined host(s)
 
     .PARAMETER Expiration
-    Date/Time object, which defines the time you would like the rule to expire. Not required
+        Date/Time object, which defines the time you would like the rule to expire. Not required
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    Edit-AcasPluginRule -SessionId 0 -Id 500 -ComputerName 'YourComputer' -Expiration (([datetime]::Now).AddDays(10)) -Type Low
-    Will edit a plugin rule with an ID of 500, to have a new computer name. Rule expires in 10 days
+        PS> Edit-AcasPluginRule -SessionId 0 -Id 500 -ComputerName 'YourComputer' -Expiration (([datetime]::Now).AddDays(10)) -Type Low
+            
+        Will edit a plugin rule with an ID of 500, to have a new computer name. Rule expires in 10 days
 
     .EXAMPLE
-    Get-AcasPluginRule -SessionId 0 | Edit-AcasPluginRule -Type High
-    Will alter all rules to now have a serverity of 'Info'
+        PS> Get-AcasPluginRule -SessionId 0 | Edit-AcasPluginRule -Type High
+            
+        Will alter all rules to now have a serverity of 'Info'
 
     .EXAMPLE
-    Get-AcasPluginRule -SessionId 0 | ? {$_.Host -eq 'myComputer'} | Edit-AcasPluginRule -Type 'High'
-    Will find all plugin rules that match the computer name, and set their severity to high
-
-    .INPUTS
-    Can accept pipeline data from Get-AcasPluginRule
-
-    .OUTPUTS
-    Empty, unless an error is received from the server
+        PS> Get-AcasPluginRule -SessionId 0 | ? {$_.Host -eq 'myComputer'} | Edit-AcasPluginRule -Type 'High'
+            
+        Will find all plugin rules that match the computer name, and set their severity to high
     #>
-
-
     [CmdletBinding()]
     param
     (

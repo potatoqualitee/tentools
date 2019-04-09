@@ -1,24 +1,25 @@
 function Import-AcasPolicy {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        Parameter description
 
     .PARAMETER File
-    Parameter description
+        Parameter description
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
-
     [CmdletBinding()]
     param
     (
@@ -26,14 +27,13 @@ function Import-AcasPolicy {
         [Alias('Index')]
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
-        [ValidateScript( {Test-Path -Path $_})]
+        [ValidateScript( { Test-Path -Path $_ })]
         [string]$File,
         [switch]$EnableException
     )
 
     begin {
-
-        $ContentType = 'application/octet-stream'
+        # $ContentType = 'application/octet-stream'
         $URIPath = 'file/upload'
 
         $netAssembly = [Reflection.Assembly]::GetAssembly([System.Net.Configuration.SettingsSection])
@@ -84,7 +84,8 @@ function Import-AcasPolicy {
             $result = $RestClient.Execute($RestRequest)
             if ($result.ErrorMessage.Length -gt 0) {
                 Write-Error -Message $result.ErrorMessage
-            } else {
+            }
+            else {
                 $RestParams = New-Object -TypeName System.Collections.Specialized.OrderedDictionary
                 $RestParams.add('file', "$($fileinfo.name)")
                 if ($Encrypted) {
@@ -93,14 +94,14 @@ function Import-AcasPolicy {
                 }
 
                 $impParams = @{ 'Body' = $RestParams }
-                $Policy = Invoke-RestMethod -Method Post -Uri "$($connection.URI)/policies/import" -header @{'X-Cookie' = "token=$($connection.Token)"} -Body (ConvertTo-Json @{'file' = $fileinfo.name; } -Compress) -ContentType 'application/json'
-                $PolProps = [ordered]@{}
+                $Policy = Invoke-RestMethod -Method Post -Uri "$($connection.URI)/policies/import" -header @{'X-Cookie' = "token=$($connection.Token)" } -Body (ConvertTo-Json @{'file' = $fileinfo.name; } -Compress) -ContentType 'application/json'
+                $PolProps = [ordered]@{ }
                 $PolProps.Add('Name', $Policy.Name)
                 $PolProps.Add('PolicyId', $Policy.id)
                 $PolProps.Add('Description', $Policy.description)
                 $PolProps.Add('PolicyUUID', $Policy.template_uuid)
                 $PolProps.Add('Visibility', $Policy.visibility)
-                $PolProps['Shared'] = & { if ($Policy.shared -eq 1) {$True}else {$False}}
+                $PolProps['Shared'] = & { if ($Policy.shared -eq 1) { $True }else { $False } }
                 $PolProps.Add('Owner', $Policy.owner)
                 $PolProps.Add('UserId', $Policy.owner_id)
                 $PolProps.Add('NoTarget', $Policy.no_target)

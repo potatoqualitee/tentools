@@ -1,21 +1,22 @@
 function Get-AcasUser {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        Parameter description
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
-
     [CmdletBinding()]
     param
     (
@@ -49,7 +50,7 @@ function Get-AcasUser {
 
             if ($Users -is [psobject]) {
                 $Users.users | ForEach-Object -process {
-                    $UserProperties = [ordered]@{}
+                    $UserProperties = [ordered]@{ }
                     $UserProperties.Add('Name', $_.name)
                     $UserProperties.Add('UserName', $_.username)
                     $UserProperties.Add('Email', $_.email)
@@ -66,5 +67,5 @@ function Get-AcasUser {
         }
 
     }
-    end {}
+    end { }
 }

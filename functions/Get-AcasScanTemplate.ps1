@@ -1,21 +1,22 @@
 function Get-AcasScanTemplate {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        Parameter description
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
-
     [CmdletBinding()]
     param
     (
@@ -28,25 +29,23 @@ function Get-AcasScanTemplate {
     begin {
         $collection = @()
 
-        foreach ($idn $SessionId) {
+        foreach ($id in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id{
+                if ($connection.SessionId -eq $id) {
                     $collection += $connection
                 }
             }
         }
     }
     process {
-
-
         foreach ($connection in $collection) {
             $Templates = Invoke-AcasRequest -SessionObject $connection -Path '/editor/scan/templates' -Method 'Get'
 
             if ($Templates -is [psobject]) {
                 foreach ($Template in $Templates.templates) {
-                    $TmplProps = [ordered]@{}
+                    $TmplProps = [ordered]@{ }
                     $TmplProps.add('Name', $Template.name)
                     $TmplProps.add('Title', $Template.title)
                     $TmplProps.add('Description', $Template.desc)

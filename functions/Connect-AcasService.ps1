@@ -1,31 +1,34 @@
 function Connect-AcasService {
     <#
     .SYNOPSIS
-    Creates a connection to the Nessus website
+        Creates a connection to the Nessus website
 
     .DESCRIPTION
-    Creates a connection to the Nessus website which persists through all commands.
+        Creates a connection to the Nessus website which persists through all commands.
 
     .PARAMETER ComputerName
-    Target Nessus Server IP Address or FQDN
+        Target Nessus Server IP Address or FQDN
 
     .PARAMETER Port
-    Port number of the Nessus web service. Defaults to 8834.
+        Port number of the Nessus web service. Defaults to 8834.
 
     .PARAMETER Credential
-    Credential for connecting to the Nessus Server
+        Credential for connecting to the Nessus Server
 
     .PARAMETER UseDefaultCredential
-    Use current credential for connecting to the Nessus Server
+        Use current credential for connecting to the Nessus Server
 
     .PARAMETER AcceptSelfSignedCert
-    Use current credential for connecting to the Nessus Server
+        Use current credential for connecting to the Nessus Server
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    Connect-AcasService -ComputerName acas -Credential admin
-
+        PS> Connect-AcasService -ComputerName acas -Credential admin
     #>
-
     [CmdletBinding()]
     param
     (

@@ -1,27 +1,28 @@
 function Show-AcasScanDetail {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        Parameter description
 
     .PARAMETER ScanId
-    Parameter description
+        Parameter description
 
     .PARAMETER HistoryId
-    Parameter description
+        Parameter description
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
-
     [CmdletBinding()]
     Param
     (
@@ -50,7 +51,7 @@ function Show-AcasScanDetail {
                 }
             }
         }
-        $Params = @{}
+        $Params = @{ }
 
         if ($HistoryId) {
             $Params.Add('history_id', $HistoryId)
@@ -61,12 +62,12 @@ function Show-AcasScanDetail {
 
             if ($ScanDetails -is [psobject]) {
 
-                $ScanDetailProps = [ordered]@{}
+                $ScanDetailProps = [ordered]@{ }
                 $hosts = @()
                 $history = @()
 
                 # process Scan Info
-                $ScanInfo = [ordered]@{}
+                $ScanInfo = [ordered]@{ }
                 $ScanInfo.add('Name', $ScanDetails.info.name)
                 $ScanInfo.add('ScanId', $ScanDetails.info.object_id)
                 $ScanInfo.add('Status', $ScanDetails.info.status)
@@ -91,7 +92,7 @@ function Show-AcasScanDetail {
 
                 # process host info.
                 foreach ($Host in $ScanDetails.hosts) {
-                    $HostProps = [ordered]@{}
+                    $HostProps = [ordered]@{ }
                     $HostProps.Add('HostName', $Host.hostname)
                     $HostProps.Add('HostId', $Host.host_id)
                     $HostProps.Add('Critical', $Host.critical)
@@ -106,7 +107,7 @@ function Show-AcasScanDetail {
 
                 # process history info.
                 foreach ($ScanHistory in $ScanDetails.history) {
-                    $HistoryProps = [ordered]@{}
+                    $HistoryProps = [ordered]@{ }
                     $HistoryProps['HistoryId'] = $ScanHistory.history_id
                     $HistoryProps['UUID'] = $ScanHistory.uuid
                     $HistoryProps['Status'] = $ScanHistory.status

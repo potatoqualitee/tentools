@@ -1,42 +1,44 @@
 function Export-AcasScan {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        Parameter description
 
     .PARAMETER ScanId
-    Parameter description
+        Parameter description
 
     .PARAMETER Format
-    Parameter description
+        Parameter description
 
     .PARAMETER OutFile
-    Parameter description
+        Parameter description
 
     .PARAMETER PSObject
-    Parameter description
+        Parameter description
 
     .PARAMETER Chapters
-    Parameter description
+        Parameter description
 
     .PARAMETER HistoryID
-    Parameter description
+        Parameter description
 
     .PARAMETER Password
-    Parameter description
+        Parameter description
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
+
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
-
     [CmdletBinding()]
     param
     (
@@ -76,7 +78,7 @@ function Export-AcasScan {
             }
         }
 
-        $ExportParams = @{}
+        $ExportParams = @{ }
 
         if ($Format -eq 'DB' -and $Password) {
             $Credential = New-Object System.Management.Automation.PSCredential -ArgumentList 'user', $Password
@@ -120,7 +122,7 @@ function Export-AcasScan {
                 }
                 if ($FileStatus.status -eq 'ready' -and $Format -eq 'CSV' -and $PSObject.IsPresent) {
                     Write-PSFMessage -Level Verbose -Mesage "Converting report to PSObject"
-                    Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' | ConvertFrom-CSV
+                    Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' | ConvertFrom-Csv
                 }
                 elseif ($FileStatus.status -eq 'ready') {
                     Write-PSFMessage -Level Verbose -Mesage "Downloading report to $($OutFile)"

@@ -1,25 +1,25 @@
 function Remove-AcasScan {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        Parameter description
 
     .PARAMETER ScanId
-    Parameter description
+        Parameter description
 
     .EXAMPLE
-    An example
+        PS> Get-Acas
 
     .NOTES
     General notes
     #>
     [CmdletBinding()]
-    Param
+    param
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
@@ -28,7 +28,6 @@ function Remove-AcasScan {
         [int32]$ScanId,
         [switch]$EnableException
     )
-
     process {
         $collection = @()
 

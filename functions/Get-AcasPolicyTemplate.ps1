@@ -1,30 +1,32 @@
 function Get-AcasPolicyTemplate {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        Parameter description
 
     .PARAMETER Name
-    Parameter description
+        Parameter description
 
     .PARAMETER PolicyUUID
-    Parameter description
+        Parameter description
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
 #>
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param
     (
-        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName, ParameterSetName = 'All')]
+        [Parameter(Position = 0, ValueFromPipelineByPropertyName, ParameterSetName = 'All')]
         [Parameter(ParameterSetName = 'ByName')]
         [Parameter(ParameterSetName = 'ByUUID')]
         [Alias('Index')]
@@ -38,11 +40,11 @@ function Get-AcasPolicyTemplate {
     process {
         $collection = @()
 
-        foreach ($iin $SessionId) {
+        foreach ($id in $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $i {
+                if ($connection.SessionId -eq $id) {
                     $collection += $connection
                 }
             }
@@ -54,11 +56,11 @@ function Get-AcasPolicyTemplate {
             if ($Templates -is [psobject]) {
                 switch ($PSCmdlet.ParameterSetName) {
                     'ByName' {
-                        $Templates2Proc = $Templates.templates | Where-Object {$_.name -eq $Name}
+                        $Templates2Proc = $Templates.templates | Where-Object { $_.name -eq $Name }
                     }
 
                     'ByUUID' {
-                        $Templates2Proc = $Templates.templates | Where-Object {$_.uuid -eq $PolicyUUID}
+                        $Templates2Proc = $Templates.templates | Where-Object { $_.uuid -eq $PolicyUUID }
                     }
 
                     'All' {
@@ -67,7 +69,7 @@ function Get-AcasPolicyTemplate {
                 }
 
                 foreach ($Template in $Templates2Proc) {
-                    $TmplProps = [ordered]@{}
+                    $TmplProps = [ordered]@{ }
                     $TmplProps.add('Name', $Template.name)
                     $TmplProps.add('Title', $Template.title)
                     $TmplProps.add('Description', $Template.desc)

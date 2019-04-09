@@ -1,31 +1,33 @@
 function New-AcasPolicy {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        Parameter description
 
     .PARAMETER Name
-    Name for new policy
+        Name for new policy
 
     .PARAMETER PolicyUUID
-    Policy Template UUID to base new policy from.
+        Policy Template UUID to base new policy from.
 
     .PARAMETER TemplateName
-    Policy Template name to base new policy from.
+        Policy Template name to base new policy from.
 
     .PARAMETER Description
-    Description for new policy.
+        Description for new policy.
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
     [CmdletBinding(DefaultParameterSetName = 'ByName')]
     param
@@ -50,59 +52,49 @@ function New-AcasPolicy {
         [switch]$EnableException
     )
 
-    begin
-    {
+    begin {
         $collection = @()
 
-        foreach($id in $SessionId)
-        {
+        foreach ($id in $SessionId) {
             $connections = $global:NessusConn
 
-            foreach($connection in $connections)
-            {
-                if ($connection.SessionId -eq $id)
-                {
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $id) {
                     $collection += $connection
                 }
             }
         }
     }
-    process
-    {
-        foreach($connection in $collection)
-        {
-            switch ($PSCmdlet.ParameterSetName)
-            {
-                'ByName'
-                {
+    process {
+        foreach ($connection in $collection) {
+            switch ($PSCmdlet.ParameterSetName) {
+                'ByName' {
                     $tmpl = Get-AcasPolicyTemplate -Name $TemplateName -SessionId $connection.SessionId
-                    if ($tmpl -ne $null)
-                    {
+                    if ($tmpl -ne $null) {
                         $PolicyUUID = $tmpl.PolicyUUID
                     }
-                    else
-                    {
+                    else {
                         throw "Template with name $($TemplateName) was not found."
                     }
                 }
-                'ByUUID'
-                {
-                    $Templates2Proc = $Templates.templates | Where-Object {$_.uuid -eq $PolicyUUID}
+                'ByUUID' {
+                    $Templates2Proc = $Templates.templates | Where-Object { $_.uuid -eq $PolicyUUID }
                 }
             }
             $RequestSet = @{'uuid' = $PolicyUUID;
-                'settings' = @{
-                    'name' = $Name
-                    'description' = $Description}
+                'settings'         = @{
+                    'name'        = $Name
+                    'description' = $Description
+                }
             }
 
             $SettingsJson = ConvertTo-Json -InputObject $RequestSet -Compress
             $RequestParams = @{
                 'SessionObject' = $connection
-                'Path' = "/policies/"
-                'Method' = 'POST'
-                'ContentType' = 'application/json'
-                'Parameter'= $SettingsJson
+                'Path'          = "/policies/"
+                'Method'        = 'POST'
+                'ContentType'   = 'application/json'
+                'Parameter'     = $SettingsJson
             }
             $NewPolicy = Invoke-AcasRequest @RequestParams
             Get-AcasPolicy -PolicyID $NewPolicy.policy_id -SessionId $connection.sessionid

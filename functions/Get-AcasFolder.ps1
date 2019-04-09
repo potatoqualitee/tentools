@@ -1,9 +1,19 @@
 function Get-AcasFolder {
     <#
     .Synopsis
-    Gets folders configured on a Nessus Server.
+        Gets folders configured on a Nessus Server.
+
     .DESCRIPTION
-    Gets folders configured on a Nessus Server.
+        Gets folders configured on a Nessus Server.
+
+    .PARAMETER SessionId
+        A valid ID of a Nessus session. This is auto-populated when Connect-AcasService is used.
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
+
     .EXAMPLE
         Get-AcasFolder 0
 
@@ -51,7 +61,7 @@ function Get-AcasFolder {
 
             if ($Folders -is [psobject]) {
                 foreach ($folder in $Folders.folders) {
-                    $FolderProps = [ordered]@{}
+                    $FolderProps = [ordered]@{ }
                     $FolderProps.Add('Name', $folder.name)
                     $FolderProps.Add('FolderId', $folder.id)
                     $FolderProps.Add('Type', $folder.type)

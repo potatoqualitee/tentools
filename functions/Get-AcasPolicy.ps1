@@ -1,25 +1,27 @@
 function Get-AcasPolicy {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        Parameter description
 
     .PARAMETER Name
-    Parameter description
+        Parameter description
 
     .PARAMETER PolicyID
-    Parameter description
+        Parameter description
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
 
     [CmdletBinding(DefaultParameterSetName = 'All')]
@@ -58,11 +60,11 @@ function Get-AcasPolicy {
             if ($Policies -is [psobject]) {
                 switch ($PSCmdlet.ParameterSetName) {
                     'ByName' {
-                        $Policies2Proc = $Policies.policies | Where-Object {$_.name -eq $Name}
+                        $Policies2Proc = $Policies.policies | Where-Object { $_.name -eq $Name }
                     }
 
                     'ByID' {
-                        $Policies2Proc = $Policies.policies | Where-Object {$_.id -eq $PolicyID}
+                        $Policies2Proc = $Policies.policies | Where-Object { $_.id -eq $PolicyID }
                     }
 
                     'All' {
@@ -71,13 +73,13 @@ function Get-AcasPolicy {
                 }
 
                 foreach ($Policy in $Policies2Proc) {
-                    $PolProps = [ordered]@{}
+                    $PolProps = [ordered]@{ }
                     $PolProps.Add('Name', $Policy.Name)
                     $PolProps.Add('PolicyId', $Policy.id)
                     $PolProps.Add('Description', $Policy.description)
                     $PolProps.Add('PolicyUUID', $Policy.template_uuid)
                     $PolProps.Add('Visibility', $Policy.visibility)
-                    $PolProps['Shared'] = & { if ($Policy.shared -eq 1) {$True}else {$False}}
+                    $PolProps['Shared'] = & { if ($Policy.shared -eq 1) { $True }else { $False } }
                     $PolProps.Add('Owner', $Policy.owner)
                     $PolProps.Add('UserId', $Policy.owner_id)
                     $PolProps.Add('NoTarget', $Policy.no_target)

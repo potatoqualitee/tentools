@@ -1,27 +1,32 @@
 function Get-AcasPluginRule {
     <#
     .SYNOPSIS
-    Gets a list of all Nessus plugin rules
+        Gets a list of all Nessus plugin rules
 
     .DESCRIPTION
-    Gets a list of all Nessus plugin rules
+        Gets a list of all Nessus plugin rules
 
     .PARAMETER SessionId
-    ID of a valid Nessus session
+        ID of a valid Nessus session
 
     .PARAMETER Detail
-    Does an additional lookup on each rule, to return the plugin name. Helpfule when reporting
+        Does an additional lookup on each rule, to return the plugin name. Helpfule when reporting
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    Get-AcasPluginRule -SessionId 0
-    Gets all defined plugin rules
+        PS> Get-AcasPluginRule -SessionId 0
+        Gets all defined plugin rules
 
     .EXAMPLE
-    Get-AcasPluginRule -SessionId 0 -Detail
-    Gets all defined plugin rules with details
+        PS> Get-AcasPluginRule -SessionId 0 -Detail
+        Gets all defined plugin rules with details
 
     .OUTPUTS
-    Returns a PSObject with basic rule info, or returns PSObject with base info + plugin name
+        Returns a PSObject with basic rule info, or returns PSObject with base info + plugin name
     #>
     [CmdletBinding()]
     param
@@ -90,7 +95,7 @@ function Get-AcasPluginRule {
 
 
 
-                    $pRuleProps = [Ordered]@{}
+                    $pRuleProps = [Ordered]@{ }
                     $pRuleProps.add('ID', $pRule.id)
                     $pRuleProps.add('Host', $pRule.host)
                     $pRuleProps.add('PluginId', $pRule.plugin_id)

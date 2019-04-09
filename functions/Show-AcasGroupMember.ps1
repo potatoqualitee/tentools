@@ -1,24 +1,23 @@
 function Show-AcasGroupMember {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        Parameter description
 
     .PARAMETER GroupId
-    Parameter description
+        Parameter description
 
     .EXAMPLE
-    An example
+        PS> Get-Acas
 
     .NOTES
     General notes
     #>
-
     [CmdletBinding()]
     param
     (

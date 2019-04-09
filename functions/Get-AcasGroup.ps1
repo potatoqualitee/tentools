@@ -1,21 +1,22 @@
 function Get-AcasGroup {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        A valid ID of a Nessus session. This is auto-populated when Connect-AcasService is used.
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
-
     [CmdletBinding()]
     [OutputType([int])]
     param
@@ -25,7 +26,6 @@ function Get-AcasGroup {
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [switch]$EnableException
     )
-
     begin {
         foreach ($id in $SessionId) {
             $connections = $global:NessusConn
@@ -56,7 +56,7 @@ function Get-AcasGroup {
 
                 $Groups = Invoke-AcasRequest @GroupParams
                 foreach ($Group in $Groups.groups) {
-                    $GroupProps = [ordered]@{}
+                    $GroupProps = [ordered]@{ }
                     $GroupProps.Add('Name', $Group.name)
                     $GroupProps.Add('GroupId', $Group.id)
                     $GroupProps.Add('Permissions', $Group.permissions)

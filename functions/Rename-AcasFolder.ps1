@@ -1,27 +1,23 @@
 function Rename-AcasFolder {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        Parameter description
 
     .PARAMETER FolderId
-    Parameter description
+        Parameter description
 
     .PARAMETER Name
-    Parameter description
+        Parameter description
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
-
     [CmdletBinding()]
     param
     (

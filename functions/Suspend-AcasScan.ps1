@@ -1,26 +1,23 @@
 function Suspend-AcasScan {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        Parameter description
 
     .PARAMETER ScanId
-    Parameter description
+        Parameter description
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
 
     [CmdletBinding()]
-    Param
+    param
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
@@ -51,7 +48,7 @@ function Suspend-AcasScan {
 
             if ($Scans -is [psobject]) {
                 $scan = $Scans.scan
-                $ScanProps = [ordered]@{}
+                $ScanProps = [ordered]@{ }
                 $ScanProps.add('Name', $scan.name)
                 $ScanProps.add('ScanId', $ScanId)
                 $ScanProps.add('HistoryId', $scan.id)

@@ -1,24 +1,21 @@
 function Show-AcasPlugin {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        Parameter description
 
     .PARAMETER PluginId
-    Parameter description
+        Parameter description
 
     .EXAMPLE
-    An example
+        PS> Get-Acas
 
-    .NOTES
-    General notes
     #>
-
     [CmdletBinding()]
     Param
     (

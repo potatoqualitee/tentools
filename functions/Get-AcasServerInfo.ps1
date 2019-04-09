@@ -1,21 +1,22 @@
 function Get-AcasServerInfo {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        Parameter description
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
-
     [CmdletBinding()]
     param
     (
@@ -24,7 +25,6 @@ function Get-AcasServerInfo {
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [switch]$EnableException
     )
-
     begin {
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
     }
@@ -46,7 +46,7 @@ function Get-AcasServerInfo {
             $ServerInfo = Invoke-AcasRequest -SessionObject $connection -Path '/server/properties' -Method 'Get'
 
             if ($ServerInfo -is [psobject]) {
-                $SrvInfoProp = [ordered]@{}
+                $SrvInfoProp = [ordered]@{ }
                 $SrvInfoProp.Add('NessusType', $ServerInfo.nessus_type)
                 $SrvInfoProp.Add('ServerVersion', $ServerInfo.server_version)
                 $SrvInfoProp.Add('UIVersion', $ServerInfo.nessus_ui_version)

@@ -1,25 +1,27 @@
 function Get-AcasScan {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        Parameter description
 
     .PARAMETER FolderId
-    Parameter description
+        Parameter description
 
     .PARAMETER Status
-    Parameter description
+        Parameter description
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
 
     [CmdletBinding()]
@@ -51,7 +53,7 @@ function Get-AcasScan {
                 }
             }
         }
-        $Params = @{}
+        $Params = @{ }
 
         if ($FolderId) {
             $Params.Add('folder_id', $FolderId)
@@ -63,7 +65,7 @@ function Get-AcasScan {
             if ($Scans -is [psobject]) {
 
                 if ($Status.length -gt 0) {
-                    $Scans2Process = $Scans.scans | Where-Object {$_.status -eq $Status.ToLower()}
+                    $Scans2Process = $Scans.scans | Where-Object { $_.status -eq $Status.ToLower() }
                 }
                 else {
                     $Scans2Process = $Scans.scans
