@@ -1,42 +1,48 @@
 function Add-AcasPluginRule {
     <#
     .SYNOPSIS
-    Creates a new Nessus plugin rule
+        Creates a new Nessus plugin rule
 
     .DESCRIPTION
-    Can be used to alter report output for various reasons. i.e. vulnerability acceptance, verified
-    false-positive on non-credentialed scans, alternate mitigation in place, etc...
+        Can be used to alter report output for various reasons. i.e. vulnerability acceptance, verified
+        false-positive on non-credentialed scans, alternate mitigation in place, etc...
 
     .PARAMETER SessionId
-    ID of a valid Nessus session
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
     .PARAMETER PluginId
-    ID number of the plugin which would you like altered
+        ID number of the plugin which would you like altered
 
     .PARAMETER ComputerName
-    Name, IP address, or Wildcard (*), which defines the the host(s) affected by the rule
+        Name, IP address, or Wildcard (*), which defines the the host(s) affected by the rule
 
     .PARAMETER Type
-    Severity level you would like future scan reports to display for the defined host(s)
+        Severity level you would like future scan reports to display for the defined host(s)
 
     .PARAMETER Expiration
-    Date/Time object, which defines the time you would like the rule to expire
+        Date/Time object, which defines the time you would like the rule to expire
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    Add-AcasPluginRule -SessionId 0 -PluginId 15901 -ComputerName 'WebServer' -Type Critical
-    Creates a rule that changes the default severity of 'Medium', to 'Critical' for the defined computer and plugin ID
+        PS> Add-AcasPluginRule -SessionId 0 -PluginId 15901 -ComputerName 'WebServer' -Type Critical
+        
+        Creates a rule that changes the default severity of 'Medium', to 'Critical' for the defined computer and plugin ID
 
     .EXAMPLE
-    $WebServers | % {Add-AcasPluginRule -SessionId 0 -PluginId 15901 -ComputerName $_ -Type Critical}
-    Creates a rule for a list computers, using the defined options
+        PS> $WebServers | % {Add-AcasPluginRule -SessionId 0 -PluginId 15901 -ComputerName $_ -Type Critical}
+        
+        Creates a rule for a list computers, using the defined options
     #>
     [CmdletBinding()]
     param
     (
-        # Nessus session Id
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $Global:NessusConn.SessionId,
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [int32]$PluginId,
         [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
@@ -46,18 +52,19 @@ function Add-AcasPluginRule {
         [ValidateSet('Critical', 'High', 'Medium', 'Low', 'Info', 'Exclude')]
         [String]$Type,
         [Parameter(Position = 4, ValueFromPipelineByPropertyName)]
-        [datetime]$Expiration
+        [datetime]$Expiration,
+        [switch]$EnableException
     )
 
     begin {
-        $ToProcess = @()
+        $collection = @()
 
-        foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+        foreach ($id in $SessionId) {
+            $connections = $global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $id) {
+                    $collection += $connection
                 }
             }
         }
@@ -66,7 +73,7 @@ function Add-AcasPluginRule {
     }
 
     process {
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $collection) {
             $dtExpiration = $null
 
             If ($Expiration) {
@@ -94,7 +101,7 @@ function Add-AcasPluginRule {
 
             $pRuleJson = ConvertTo-Json -InputObject $pRulehash -Compress
 
-            InvokeNessusRestRequest -SessionObject $Connection -Path '/plugin-rules' -Method 'Post' `
+            Invoke-AcasRequest -SessionObject $connection -Path '/plugin-rules' -Method 'Post' `
                 -Parameter $pRuleJson -ContentType 'application/json'
         }
     }

@@ -1,41 +1,41 @@
 function Show-AcasGroupMember {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
     .PARAMETER GroupId
-    Parameter description
+        Parameter description
 
     .EXAMPLE
-    An example
+        PS> Get-Acas
 
     .NOTES
     General notes
     #>
-
     [CmdletBinding()]
     param
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $Global:NessusConn.SessionId,
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
-        [int32]$GroupId
+        [int32]$GroupId,
+        [switch]$EnableException
     )
 
     begin {
-        foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+        foreach ($id in $SessionId) {
+            $connections = $global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $id) {
+                    $collection += $connection
                 }
             }
         }
@@ -43,23 +43,23 @@ function Show-AcasGroupMember {
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
     }
     process {
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $collection) {
             $ServerTypeParams = @{
-                'SessionObject' = $Connection
+                'SessionObject' = $connection
                 'Path'          = '/server/properties'
                 'Method'        = 'GET'
             }
 
-            $Server = InvokeNessusRestRequest @ServerTypeParams
+            $Server = Invoke-AcasRequest @ServerTypeParams
 
             if ($Server.capabilities.multi_user -eq 'full') {
                 $GroupParams = @{
-                    'SessionObject' = $Connection
+                    'SessionObject' = $connection
                     'Path'          = "/groups/$($GroupId)/users"
                     'Method'        = 'GET '
                 }
 
-                $GroupMembers = InvokeNessusRestRequest @GroupParams
+                $GroupMembers = Invoke-AcasRequest @GroupParams
                 foreach ($User in $GroupMembers.users) {
                     $UserProperties = [ordered]@{}
                     $UserProperties.Add('Name', $User.name)
@@ -67,15 +67,15 @@ function Show-AcasGroupMember {
                     $UserProperties.Add('Email', $User.email)
                     $UserProperties.Add('UserId', $_Userid)
                     $UserProperties.Add('Type', $User.type)
-                    $UserProperties.Add('Permission', $PermissionsId2Name[$User.permissions])
+                    $UserProperties.Add('Permission', $permidenum[$User.permissions])
                     $UserProperties.Add('LastLogin', $origin.AddSeconds($User.lastlogin).ToLocalTime())
-                    $UserProperties.Add('SessionId', $Connection.SessionId)
+                    $UserProperties.Add('SessionId', $connection.SessionId)
                     $UserObj = New-Object -TypeName psobject -Property $UserProperties
                     $UserObj.pstypenames[0] = 'Nessus.User'
                     $UserObj
                 }
             } else {
-                Write-PSFMessage -Level Warning -Mesage "Server for session $($Connection.sessionid) is not licenced for multiple users."
+                Write-PSFMessage -Level Warning -Mesage "Server for session $($connection.sessionid) is not licenced for multiple users."
             }
         }
     }

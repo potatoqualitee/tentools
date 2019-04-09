@@ -1,58 +1,58 @@
 function Get-AcasScanTemplate {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
-
     [CmdletBinding()]
     param
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = @()
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [switch]$EnableException
     )
 
     begin {
-        $ToProcess = @()
+        $collection = @()
 
-        foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+        foreach ($id in $SessionId) {
+            $connections = $global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $id) {
+                    $collection += $connection
                 }
             }
         }
     }
     process {
-
-
-        foreach ($Connection in $ToProcess) {
-            $Templates = InvokeNessusRestRequest -SessionObject $Connection -Path '/editor/scan/templates' -Method 'Get'
+        foreach ($connection in $collection) {
+            $Templates = Invoke-AcasRequest -SessionObject $connection -Path '/editor/scan/templates' -Method 'Get'
 
             if ($Templates -is [psobject]) {
                 foreach ($Template in $Templates.templates) {
-                    $TmplProps = [ordered]@{}
+                    $TmplProps = [ordered]@{ }
                     $TmplProps.add('Name', $Template.name)
                     $TmplProps.add('Title', $Template.title)
                     $TmplProps.add('Description', $Template.desc)
                     $TmplProps.add('UUID', $Template.uuid)
                     $TmplProps.add('CloudOnly', $Template.cloud_only)
                     $TmplProps.add('SubscriptionOnly', $Template.subscription_only)
-                    $TmplProps.add('SessionId', $Connection.SessionId)
+                    $TmplProps.add('SessionId', $connection.SessionId)
                     $Tmplobj = New-Object -TypeName psobject -Property $TmplProps
                     $Tmplobj.pstypenames[0] = 'Nessus.ScanTemplate'
                     $Tmplobj

@@ -1,56 +1,54 @@
 function Suspend-AcasScan {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
     .PARAMETER ScanId
-    Parameter description
+        Parameter description
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
 
     [CmdletBinding()]
-    Param
+    param
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $Global:NessusConn.SessionId,
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName)]
-        [int32]$ScanId
+        [int32]$ScanId,
+        [switch]$EnableException
     )
 
     begin {
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
     }
     process {
-        $ToProcess = @()
+        $collection = @()
 
-        foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+        foreach ($id in $SessionId) {
+            $connections = $global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $id) {
+                    $collection += $connection
                 }
             }
         }
 
-        foreach ($Connection in $ToProcess) {
-            $Scans = InvokeNessusRestRequest -SessionObject $Connection -Path "/scans/$($ScanId)/pause" -Method 'Post'
+        foreach ($connection in $collection) {
+            $Scans = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/pause" -Method 'Post'
 
             if ($Scans -is [psobject]) {
                 $scan = $Scans.scan
-                $ScanProps = [ordered]@{}
+                $ScanProps = [ordered]@{ }
                 $ScanProps.add('Name', $scan.name)
                 $ScanProps.add('ScanId', $ScanId)
                 $ScanProps.add('HistoryId', $scan.id)
@@ -59,11 +57,11 @@ function Suspend-AcasScan {
                 $ScanProps.add('Owner', $scan.owner)
                 $ScanProps.add('AlternateTarget', $scan.ownalt_targetser)
                 $ScanProps.add('IsPCI', $scan.is_pci)
-                $ScanProps.add('UserPermission', $PermissionsId2Name[$scan.user_permissions])
+                $ScanProps.add('UserPermission', $permidenum[$scan.user_permissions])
                 $ScanProps.add('CreationDate', $origin.AddSeconds($scan.creation_date).ToLocalTime())
                 $ScanProps.add('LastModified', $origin.AddSeconds($scan.last_modification_date).ToLocalTime())
                 $ScanProps.add('StartTime', $origin.AddSeconds($scan.starttime).ToLocalTime())
-                $ScanProps.Add('SessionId', $Connection.SessionId)
+                $ScanProps.Add('SessionId', $connection.SessionId)
                 $ScanObj = New-Object -TypeName psobject -Property $ScanProps
                 $ScanObj.pstypenames[0] = 'Nessus.RunningScan'
                 $ScanObj

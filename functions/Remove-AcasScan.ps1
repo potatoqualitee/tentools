@@ -1,50 +1,50 @@
 function Remove-AcasScan {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
     .PARAMETER ScanId
-    Parameter description
+        Parameter description
 
     .EXAMPLE
-    An example
+        PS> Get-Acas
 
     .NOTES
     General notes
     #>
     [CmdletBinding()]
-    Param
+    param
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $Global:NessusConn.SessionId,
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory,Position = 1, ValueFromPipelineByPropertyName)]
-        [int32]$ScanId
+        [int32]$ScanId,
+        [switch]$EnableException
     )
-
     process {
-        $ToProcess = @()
+        $collection = @()
 
-        foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+        foreach ($id in $SessionId) {
+            $connections = $global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $id) {
+                    $collection += $connection
                 }
             }
         }
 
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $collection) {
             Write-PSFMessage -Level Verbose -Mesage "Removing scan with Id $($ScanId)"
 
-            $ScanDetails = InvokeNessusRestRequest -SessionObject $Connection -Path "/scans/$($ScanId)" -Method 'Delete' -Parameter $Params
+            $ScanDetails = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)" -Method 'Delete' -Parameter $Params
             if ($ScanDetails -eq 'null') {
                 Write-PSFMessage -Level Verbose -Mesage 'Scan Removed'
             }

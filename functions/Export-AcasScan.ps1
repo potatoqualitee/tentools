@@ -1,42 +1,43 @@
 function Export-AcasScan {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        Parameter description
 
     .PARAMETER ScanId
-    Parameter description
+        Parameter description
 
     .PARAMETER Format
-    Parameter description
+        Parameter description
 
     .PARAMETER OutFile
-    Parameter description
+        Parameter description
 
     .PARAMETER PSObject
-    Parameter description
+        Parameter description
 
     .PARAMETER Chapters
-    Parameter description
+        Parameter description
 
     .PARAMETER HistoryID
-    Parameter description
+        Parameter description
 
     .PARAMETER Password
-    Parameter description
+        Parameter description
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
-
     [CmdletBinding()]
     param
     (
@@ -60,22 +61,23 @@ function Export-AcasScan {
         [Parameter(Position = 4, ValueFromPipelineByPropertyName)]
         [Int32]$HistoryID,
         [Parameter(ValueFromPipelineByPropertyName)]
-        [securestring]$Password
+        [securestring]$Password,
+        [switch]$EnableException
     )
     process {
-        $ToProcess = @()
+        $collection = @()
 
-        foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+        foreach ($id in $SessionId) {
+            $connections = $global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $id) {
+                    $collection += $connection
                 }
             }
         }
 
-        $ExportParams = @{}
+        $ExportParams = @{ }
 
         if ($Format -eq 'DB' -and $Password) {
             $Credential = New-Object System.Management.Automation.PSCredential -ArgumentList 'user', $Password
@@ -89,37 +91,41 @@ function Export-AcasScan {
         if ($Chapters) {
             if ($Chapters -contains 'All') {
                 $ExportParams.Add('chapters', 'vuln_hosts_summary;vuln_by_host;compliance_exec;remediations;vuln_by_plugin;compliance')
-            } else {
+            }
+            else {
                 $ExportParams.Add('chapters', $Chapters.ToLower())
             }
         }
 
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $collection) {
             if ($HistoryId) {
                 $path = "/scans/$($ScanId)/export?history_id=$($HistoryId)"
-            } else {
+            }
+            else {
                 $path = "/scans/$($ScanId)/export"
             }
 
             Write-PSFMessage -Level Verbose -Mesage "Exporting scan with Id of $($ScanId) in $($Format) format."
-            $FileID = InvokeNessusRestRequest -SessionObject $Connection -Path $path  -Method 'Post' -Parameter $ExportParams
+            $FileID = Invoke-AcasRequest -SessionObject $connection -Path $path  -Method 'Post' -Parameter $ExportParams
             if ($FileID -is [psobject]) {
                 $FileStatus = ''
                 while ($FileStatus.status -ne 'ready') {
                     try {
-                        $FileStatus = InvokeNessusRestRequest -SessionObject $Connection -Path "/scans/$($ScanId)/export/$($FileID.file)/status"  -Method 'Get'
+                        $FileStatus = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/export/$($FileID.file)/status"  -Method 'Get'
                         Write-PSFMessage -Level Verbose -Mesage "Status of export is $($FileStatus.status)"
-                    } catch {
+                    }
+                    catch {
                         break
                     }
                     Start-Sleep -Seconds 1
                 }
                 if ($FileStatus.status -eq 'ready' -and $Format -eq 'CSV' -and $PSObject.IsPresent) {
                     Write-PSFMessage -Level Verbose -Mesage "Converting report to PSObject"
-                    InvokeNessusRestRequest -SessionObject $Connection -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' | ConvertFrom-CSV
-                } elseif ($FileStatus.status -eq 'ready') {
+                    Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' | ConvertFrom-Csv
+                }
+                elseif ($FileStatus.status -eq 'ready') {
                     Write-PSFMessage -Level Verbose -Mesage "Downloading report to $($OutFile)"
-                    InvokeNessusRestRequest -SessionObject $Connection -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' -OutFile $OutFile
+                    Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' -OutFile $OutFile
                 }
             }
         }

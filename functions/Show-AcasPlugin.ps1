@@ -1,48 +1,46 @@
 function Show-AcasPlugin {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
     .PARAMETER PluginId
-    Parameter description
+        Parameter description
 
     .EXAMPLE
-    An example
+        PS> Get-Acas
 
-    .NOTES
-    General notes
     #>
-
     [CmdletBinding()]
     Param
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $Global:NessusConn.SessionId,
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
-        [int32]$PluginId
+        [int32]$PluginId,
+        [switch]$EnableException
     )
     process {
-        $ToProcess = @()
+        $collection = @()
 
-        foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+        foreach ($id in $SessionId) {
+            $connections = $global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $id) {
+                    $collection += $connection
                 }
             }
         }
 
-        foreach ($Connection in $ToProcess) {
-            $Plugin = InvokeNessusRestRequest -SessionObject $Connection -Path "/plugins/plugin/$($PluginId)" -Method 'Get'
+        foreach ($connection in $collection) {
+            $Plugin = Invoke-AcasRequest -SessionObject $connection -Path "/plugins/plugin/$($PluginId)" -Method 'Get'
 
             if ($Plugin -is [psobject]) {
                 if ($Plugin.name -ne $null) {
@@ -62,7 +60,7 @@ function Show-AcasPlugin {
                     $PluginProps.Add('PluginId', $Plugin.id)
                     $PluginProps.Add('FamilyName', $Plugin.family_name)
                     $PluginProps.Add('Attributes', $Attributes)
-                    $PluginProps.Add('SessionId', $Connection.SessionId)
+                    $PluginProps.Add('SessionId', $connection.SessionId)
                     $PluginObj = New-Object -TypeName psobject -Property $PluginProps
                     $PluginObj.pstypenames[0] = 'Nessus.Plugin'
                     $PluginObj

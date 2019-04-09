@@ -1,63 +1,66 @@
 function Remove-AcasSession {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
-
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = @()
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [switch]$EnableException
     )
     process {
         # Finding and saving sessions in to a different Array so they can be
         # removed from the main one so as to not generate an modification
         # error for a collection in use.
-        $connections = $Global:NessusConn
+        $connections = $global:NessusConn
         $toremove = New-Object -TypeName System.Collections.ArrayList
 
         if ($SessionId.Count -gt 0) {
-            foreach ($i in $SessionId) {
-                Write-PSFMessage -Level Verbose -Mesage "Removing server session $($i)"
+            foreach ($id in $SessionId) {
+                Write-PSFMessage -Level Verbose -Mesage "Removing server session $($id)"
 
-                foreach ($Connection in $connections) {
-                    if ($Connection.SessionId -eq $i) {
-                        [void]$toremove.Add($Connection)
+                foreach ($connection in $connections) {
+                    if ($connection.SessionId -eq $id) {
+                        [void]$toremove.Add($connection)
                     }
                 }
             }
 
-            foreach ($Connection in $toremove) {
+            foreach ($connection in $toremove) {
                 Write-PSFMessage -Level Verbose -Mesage 'Disposing of connection'
                 $RestMethodParams = @{
                     'Method'        = 'Delete'
                     'URI'           = "$($connection.URI)/session"
-                    'Headers'       = @{'X-Cookie' = "token=$($Connection.Token)"}
+                    'Headers'       = @{'X-Cookie' = "token=$($connection.Token)" }
                     'ErrorVariable' = 'DisconnectError'
                     'ErrorAction'   = 'SilentlyContinue'
                 }
                 try {
                     $RemoveResponse = Invoke-RestMethod @RestMethodParams
-                } catch {
+                }
+                catch {
                     Write-PSFMessage -Level Verbose -Mesage "Session with Id $($connection.SessionId) seems to have expired."
                 }
                 
-                Write-PSFMessage -Level Verbose -Mesage "Removing session from `$Global:NessusConn"
-                $Global:NessusConn.Remove($Connection)
-                Write-PSFMessage -Level Verbose -Mesage "Session $($i) removed."
+                Write-PSFMessage -Level Verbose -Mesage "Removing session from `$global:NessusConn"
+                $global:NessusConn.Remove($connection)
+                Write-PSFMessage -Level Verbose -Mesage "Session $($id) removed."
             }
         }
     }

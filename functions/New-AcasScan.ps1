@@ -1,57 +1,58 @@
 function New-AcasScan {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        Parameter description
 
     .PARAMETER Name
-    Parameter description
+        Parameter description
 
     .PARAMETER PolicyUUID
-    Parameter description
+        Parameter description
 
     .PARAMETER PolicyId
-    Parameter description
+        Parameter description
 
     .PARAMETER Target
-    Parameter description
+        Parameter description
 
     .PARAMETER Enabled
-    Parameter description
+        Parameter description
 
     .PARAMETER Description
-    Parameter description
+        Parameter description
 
     .PARAMETER FolderId
-    Parameter description
+        Parameter description
 
     .PARAMETER ScannerId
-    Parameter description
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
     .PARAMETER Email
-    Parameter description
+        Parameter description
 
     .PARAMETER CreateDashboard
-    Parameter description
+        Parameter description
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
-
     [CmdletBinding(DefaultParameterSetName = 'Policy')]
     param
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $Global:NessusConn.SessionId,
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [string]$Name,
         [Parameter(Mandatory, Position = 2, ParameterSetName = 'Template', ValueFromPipelineByPropertyName)]
@@ -71,25 +72,26 @@ function New-AcasScan {
         [Parameter(ValueFromPipelineByPropertyName)]
         [string[]]$Email,
         [Parameter(ValueFromPipelineByPropertyName)]
-        [switch]$CreateDashboard
+        [switch]$CreateDashboard,
+        [switch]$EnableException
     )
 
     begin {
-        $ToProcess = @()
+        $collection = @()
 
-        foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+        foreach ($id in $SessionId) {
+            $connections = $global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $id) {
+                    $collection += $connection
                 }
             }
         }
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0 
     }
     process {
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $collection) {
             # Join emails as a single comma separated string.
             $emails = $email -join ","
 
@@ -120,7 +122,7 @@ function New-AcasScan {
 
                 'Policy' {
                     $polUUID = $null
-                    $Policies = Get-AcasPolicy -SessionId $Connection.SessionId
+                    $Policies = Get-AcasPolicy -SessionId $connection.SessionId
                     foreach ($Policy in $Policies) {
                         if ($Policy.PolicyId -eq $PolicyId) {
                             Write-PSFMessage -Level Verbose -Mesage "Uising Poicy with UUID of $($Policy.PolicyUUID)"
@@ -143,14 +145,14 @@ function New-AcasScan {
             $ScanJson = ConvertTo-Json -InputObject $scanhash -Compress
 
             $ServerTypeParams = @{
-                'SessionObject' = $Connection
+                'SessionObject' = $connection
                 'Path'          = '/scans'
                 'Method'        = 'POST'
                 'ContentType'   = 'application/json'
                 'Parameter'     = $ScanJson
             }
 
-            $NewScan = InvokeNessusRestRequest @ServerTypeParams
+            $NewScan = Invoke-AcasRequest @ServerTypeParams
 
             foreach ($scan in $NewScan.scan) {
                 $ScanProps = [ordered]@{}
@@ -160,7 +162,7 @@ function New-AcasScan {
                 $ScanProps.add('Enabled', $scan.enabled)
                 $ScanProps.add('FolderId', $scan.folder_id)
                 $ScanProps.add('Owner', $scan.owner)
-                $ScanProps.add('UserPermission', $PermissionsId2Name[$scan.user_permissions])
+                $ScanProps.add('UserPermission', $permidenum[$scan.user_permissions])
                 $ScanProps.add('Rules', $scan.rrules)
                 $ScanProps.add('Shared', $scan.shared)
                 $ScanProps.add('TimeZone', $scan.timezone)
@@ -169,7 +171,7 @@ function New-AcasScan {
                 $ScanProps.add('StartTime', $origin.AddSeconds($scan.starttime).ToLocalTime())
                 $ScanProps.add('Scheduled', $scan.control)
                 $ScanProps.add('DashboardEnabled', $scan.use_dashboard)
-                $ScanProps.Add('SessionId', $Connection.SessionId)
+                $ScanProps.Add('SessionId', $connection.SessionId)
 
                 $ScanObj = New-Object -TypeName psobject -Property $ScanProps
                 $ScanObj.pstypenames[0] = 'Nessus.Scan'

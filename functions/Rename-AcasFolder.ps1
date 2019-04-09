@@ -1,53 +1,50 @@
 function Rename-AcasFolder {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
     .PARAMETER FolderId
-    Parameter description
+        Parameter description
 
     .PARAMETER Name
-    Parameter description
+        Parameter description
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
-
     [CmdletBinding()]
     param
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $Global:NessusConn.SessionId,
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [Int]$FolderId,
         [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
-        [string]$Name
+        [string]$Name,
+        [switch]$EnableException
     )
     process {
-        $ToProcess = @()
+        $collection = @()
 
-        foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+        foreach ($id in $SessionId) {
+            $connections = $global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $id) {
+                    $collection += $connection
                 }
             }
         }
 
-        foreach ($Connection in $ToProcess) {
-            $Folder = InvokeNessusRestRequest -SessionObject $Connection -Path "/folders/$($FolderId)" -Method 'PUT' -Parameter @{'name' = $Name}
+        foreach ($connection in $collection) {
+            $Folder = Invoke-AcasRequest -SessionObject $connection -Path "/folders/$($FolderId)" -Method 'PUT' -Parameter @{'name' = $Name}
         }
     }
 }

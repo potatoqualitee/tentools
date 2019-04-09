@@ -1,69 +1,72 @@
 function Get-AcasPolicyDetail {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
     .PARAMETER PolicyId
-    Parameter description
+        Parameter description
 
     .PARAMETER Name
-    Parameter description
+        Parameter description
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    An example
-
-    .NOTES
-    General notes
+        PS> Get-Acas
     #>
-
     [CmdletBinding(DefaultParameterSetName = 'ByName')]
     param
     (
-        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName, ParameterSetName = 'All')]
+        [Parameter(Position = 0, ValueFromPipelineByPropertyName, ParameterSetName = 'All')]
         [Parameter(ParameterSetName = 'ByName')]
         [Parameter(ParameterSetName = 'ByID')]
         [Alias('Index')]
-        [int32[]]$SessionId = $Global:NessusConn.SessionId,
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByID')]
         [int32]$PolicyId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
-        [string]$Name
+        [string]$Name,
+        [switch]$EnableException
     )
 
     begin {
-        $ToProcess = @()
+        $collection = @()
 
-        foreach ($i in $SessionId) {
-            $Connections = $Global:NessusConn
+        foreach ($id in $SessionId) {
+            $connections = $global:NessusConn
 
-            foreach ($Connection in $Connections) {
-                if ($Connection.SessionId -eq $i) {
-                    $ToProcess += $Connection
+            foreach ($connection in $connections) {
+                if ($connection.SessionId -eq $id) {
+                    $collection += $connection
                 }
             }
         }
     }
     process {
-        foreach ($Connection in $ToProcess) {
+        foreach ($connection in $collection) {
             switch ($PSCmdlet.ParameterSetName) {
                 'ByName' {
-                    $Pol = Get-AcasPolicy -Name $Name -SessionId $Connection.SessionId
+                    $Pol = Get-AcasPolicy -Name $Name -SessionId $connection.SessionId
                     if ($Pol -ne $null) {
                         $PolicyId = $Pol.PolicyId
-                    } else {
+                    }
+                    else {
                         throw "Policy with name $($Name) was not found."
                     }
                 }
 
             }
             Write-PSFMessage -Level Verbose -Mesage "Getting details for policy with id $($PolicyId)."
-            $Policy = InvokeNessusRestRequest -SessionObject $Connection -Path "/policies/$($PolicyId)" -Method 'GET'
+            $Policy = Invoke-AcasRequest -SessionObject $connection -Path "/policies/$($PolicyId)" -Method 'GET'
             $Policy
         }
     }

@@ -17,7 +17,8 @@ function Save-AcasPlugin {
     #>
     [CmdletBinding()]
     param (
-        [String]$Path = $PWD
+        [String]$Path = $PWD,
+        [switch]$EnableException
     )
 
     begin {

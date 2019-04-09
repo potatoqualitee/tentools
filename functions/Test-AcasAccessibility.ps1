@@ -1,56 +1,53 @@
 function Test-AcasAccessibility {
     <#
 	.SYNOPSIS
-	Tests the Credentialing and Accessibility of ACAS.
+	    Tests the Credentialing and Accessibility of ACAS.
 
 	.DESCRIPTION
-	Tests the Credentialing and Accessibility of ACAS.
+        Tests the Credentialing and Accessibility of ACAS.
 
-	This command automates the checklist found at:
-    https://docs.tenable.com/nessus/Content/EnableWindowsLoginsForLocalAndRemoteAudits.htm
+        This command automates the checklist found at:
+        https://docs.tenable.com/nessus/Content/EnableWindowsLoginsForLocalAndRemoteAudits.htm
 
 
-    This includes:
-    *1) The Windows Management Instrumentation (WMI) service must be enabled on the target.  (https://technet.microsoft.com/en-us/library/cc180684.aspx)
-    *2) The Remote Registry service must be enabled on the target.
-    *3) File & Printer Sharing must be enabled in the target's network configuration.
-    4) An SMB account must be used that has local administrator rights on the target.  (You can use a domain account, but that account must be a local administrator on the devices being scanned.)
-    *5) Ports 139 (TCP) and 445 (TCP) must be open between the Nessus scanner and the target.
-    6) Ensure that no Windows security policies are in place that block access to these services. See below for more information.
-    7) The default administrative shares (i.e. IPC$, ADMIN$, C$) must be enabled (AutoShareServer = 1). These are enabled by default and can cause other issues if disabled (http://support.microsoft.com/kb/842715/en-us).
-    RemoteRegistry
+        This includes:
+        *1) The Windows Management Instrumentation (WMI) service must be enabled on the target.  (https://technet.microsoft.com/en-us/library/cc180684.aspx)
+        *2) The Remote Registry service must be enabled on the target.
+        *3) File & Printer Sharing must be enabled in the target's network configuration.
+        4) An SMB account must be used that has local administrator rights on the target.  (You can use a domain account, but that account must be a local administrator on the devices being scanned.)
+        *5) Ports 139 (TCP) and 445 (TCP) must be open between the Nessus scanner and the target.
+        6) Ensure that no Windows security policies are in place that block access to these services. See below for more information.
+        7) The default administrative shares (i.e. IPC$, ADMIN$, C$) must be enabled (AutoShareServer = 1). These are enabled by default and can cause other issues if disabled (http://support.microsoft.com/kb/842715/en-us).
+        RemoteRegistry
 
 	.PARAMETER ComputerName
-	The network name or names of the target computers. Using an IP address will be slower and potentially less accurate.
+	    The network name or names of the target computers. Using an IP address will be slower and potentially less accurate.
 
 	.PARAMETER ServiceAccount
-	The ACAS Service account.
+	    The ACAS Service account.
 
 	.PARAMETER Credential
-	Optional parameter to run the script checker as an alternative user.
-	Useful if running as the ACAS service account is desired
+        Optional parameter to run the script checker as an alternative user.
+        Useful if running as the ACAS service account is desired
 
 	.EXAMPLE
-	PS> Test-AcasAccessibility -ComputerName WS101
+        PS> Test-AcasAccessibility -ComputerName WS101
 
-	Remotely connects to computer WS101 and performs tests. Assumes svc.acas.* is the service account
+        Remotely connects to computer WS101 and performs tests. Assumes svc.acas.* is the service account
 
 	.EXAMPLE
-	PS> Test-AcasAccessibility -ComputerName WS101 -Credential ad\acaschecker -ServiceAccount acas2
+        PS> Test-AcasAccessibility -ComputerName WS101 -Credential ad\acaschecker -ServiceAccount acas2
 
-	Remotely connects to computer WS101 as ad\acaschecker and performs tests. Checks to see if an account matching acas2 is a local admin.
-
+        Remotely connects to computer WS101 as ad\acaschecker and performs tests. Checks to see if an account matching acas2 is a local admin.
 	#>
-
     [CmdletBinding()]
     param (
-        # Parameter help description
         [Parameter(Mandatory)]
         [String[]]$ComputerName,
         [String]$ServiceAccount = $env:USERNAME,
-        [PSCredential]$Credential
+        [PSCredential]$Credential,
+        [switch]$EnableException
     )
-
     begin {
         $scriptblock = {
             function Get-ErrorMessage {
@@ -72,14 +69,16 @@ function Test-AcasAccessibility {
             }
             if ($PSBoundParameters.Credential) {
                 $executedasuser = $Credential.UserName
-            } else {
+            }
+            else {
                 $executedasuser = "$env:USERDOMAIN\$env:USERNAME"
             }
 
             $ServiceAccount = $args
-            if ((Invoke-Command -ScriptBlock { net localgroup administrators } | Out-String | Where-Object { $psitem -match "$ServiceAccount"  })) {
+            if ((Invoke-Command -ScriptBlock { net.exe localgroup administrators } | Out-String | Where-Object { $psitem -match "$ServiceAccount" })) {
                 $isadmin = $true
-            } else {
+            }
+            else {
                 $isadmin = $false
             }
             [PSCustomObject]@{
@@ -94,7 +93,8 @@ function Test-AcasAccessibility {
             try {
                 $WMIService = Get-Service -Name Winmgmt -ErrorAction Stop
                 $stoperror = "None"
-            } catch {
+            }
+            catch {
                 $stoperror = Get-ErrorMessage -Record $_
             }
 
@@ -119,7 +119,8 @@ function Test-AcasAccessibility {
             try {
                 $RemoteRegService = Get-Service -Name RemoteRegistry -ErrorAction Stop
                 $stoperror = "None"
-            } catch {
+            }
+            catch {
                 $stoperror = Get-ErrorMessage -Record $_
             }
 
@@ -145,13 +146,14 @@ function Test-AcasAccessibility {
                 # shhh, we decided on WmiObject over CimInstance because it is more reliable
                 $share = Get-WmiObject -Class Win32_Share -ErrorAction Stop
                 $stoperror = "None"
-            } catch {
+            }
+            catch {
                 $stoperror = Get-ErrorMessage -Record $_
             }
 
             $RemoteAdmin = $share | Where-Object Description -eq "Remote Admin"
             $RemoteIPC = $share | Where-Object Description -eq "Remote IPC"
-            $DefaultShareC = $share | Where-Object {$_.Description -eq "Default Share" -and $_.Name -like "C*"}
+            $DefaultShareC = $share | Where-Object { $_.Description -eq "Default Share" -and $_.Name -like "C*" }
 
             [PSCustomObject]@{
                 ComputerName   = $env:COMPUTERNAME.ToUpper()
@@ -182,7 +184,8 @@ function Test-AcasAccessibility {
         }
         if ($PSBoundParameters.Credential) {
             $executedasuser = $Credential.UserName
-        } else {
+        }
+        else {
             $executedasuser = "$env:USERDOMAIN\$env:USERNAME"
         }
     }
@@ -197,7 +200,8 @@ function Test-AcasAccessibility {
                 if ($resolved -as [ipaddress]) {
                     Write-Warning "Unable to resolve $computer to a hostname. Please use the network name instead. You can potentially find the network name by using ping -a $computer"
                     continue
-                } else {
+                }
+                else {
                     $Computer = $resolved
                 }
             }
@@ -212,7 +216,8 @@ function Test-AcasAccessibility {
             try {
                 $Port139 = Test-NetConnection -ComputerName $computer -Port 139 -ErrorAction Stop
                 $stoperror = "None"
-            } catch {
+            }
+            catch {
                 $stoperror = Get-ErrorMessage -Record $_
             }
 
@@ -228,7 +233,8 @@ function Test-AcasAccessibility {
             try {
                 $Port445 = Test-NetConnection -ComputerName $computer -Port 445 -ErrorAction Stop
                 $stoperror = "None"
-            } catch {
+            }
+            catch {
                 $stoperror = Get-ErrorMessage -Record $_
             }
 

@@ -1,28 +1,34 @@
 function Connect-AcasService {
     <#
     .SYNOPSIS
-    Creates a connection to the Nessus website
+        Creates a connection to the Nessus website
 
     .DESCRIPTION
-    Creates a connection to the Nessus website which persists through all commands.
+        Creates a connection to the Nessus website which persists through all commands.
 
     .PARAMETER ComputerName
-    Target Nessus Server IP Address or FQDN
+        Target Nessus Server IP Address or FQDN
 
     .PARAMETER Port
-    Port number of the Nessus web service. Defaults to 8834.
+        Port number of the Nessus web service. Defaults to 8834.
 
     .PARAMETER Credential
-    Credential for connecting to the Nessus Server
+        Credential for connecting to the Nessus Server
 
     .PARAMETER UseDefaultCredential
-    Use current credential for connecting to the Nessus Server
+        Use current credential for connecting to the Nessus Server
+
+    .PARAMETER AcceptSelfSignedCert
+        Use current credential for connecting to the Nessus Server
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    Connect-AcasService -ComputerName acas -Credential admin
-
+        PS> Connect-AcasService -ComputerName acas -Credential admin
     #>
-
     [CmdletBinding()]
     param
     (
@@ -30,10 +36,12 @@ function Connect-AcasService {
         [string[]]$ComputerName,
         [int]$Port = 8834,
         [Management.Automation.PSCredential]$Credential,
-        [switch]$UseDefaultCredential
+        [switch]$UseDefaultCredential,
+        [switch]$AcceptSelfSignedCert,
+        [switch]$EnableException
     )
     process {
-        if ([System.Net.ServicePointManager]::CertificatePolicy.ToString() -ne 'IgnoreCerts') {
+        if ($AcceptSelfSignedCert -and [System.Net.ServicePointManager]::CertificatePolicy.ToString() -ne 'IgnoreCerts') {
             $Domain = [AppDomain]::CurrentDomain
             $DynAssembly = New-Object System.Reflection.AssemblyName('IgnoreCerts')
             $AssemblyBuilder = $Domain.DefineDynamicAssembly($DynAssembly, [System.Reflection.Emit.AssemblyBuilderAccess]::Run)
@@ -41,7 +49,7 @@ function Connect-AcasService {
             $TypeBuilder = $ModuleBuilder.DefineType('IgnoreCerts', 'AutoLayout, AnsiClass, Class, Public, BeforeFieldInit', [System.Object], [System.Net.ICertificatePolicy])
             $TypeBuilder.DefineDefaultConstructor('PrivateScope, Public, HideBySig, SpecialName, RTSpecialName') | Out-Null
             $MethodInfo = [System.Net.ICertificatePolicy].GetMethod('CheckValidationResult')
-            $MethodBuilder = $TypeBuilder.DefineMethod($MethodInfo.Name, 'PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask', $MethodInfo.CallingConvention, $MethodInfo.ReturnType, ([Type[]] ($MethodInfo.GetParameters() | % {$_.ParameterType})))
+            $MethodBuilder = $TypeBuilder.DefineMethod($MethodInfo.Name, 'PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask', $MethodInfo.CallingConvention, $MethodInfo.ReturnType, ([Type[]] ($MethodInfo.GetParameters() | ForEach-Object {$_.ParameterType})))
             $ILGen = $MethodBuilder.GetILGenerator()
             $ILGen.Emit([Reflection.Emit.Opcodes]::Ldc_I4_1)
             $ILGen.Emit([Reflection.Emit.Opcodes]::Ret)
@@ -76,9 +84,9 @@ function Connect-AcasService {
                     URI        = $Uri
                     Credential = $Credential
                     Token      = $token.token
-                    SessionId  = $Global:NessusConn.Count
+                    SessionId  = $global:NessusConn.Count
                 }
-                [void]$Global:NessusConn.Add($session)
+                [void]$global:NessusConn.Add($session)
                 $session
             }
         }

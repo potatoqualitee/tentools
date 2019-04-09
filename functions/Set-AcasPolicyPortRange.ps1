@@ -1,25 +1,28 @@
 function Set-AcasPolicyPortRange {
     <#
     .SYNOPSIS
-    Short description
+        Short description
 
     .DESCRIPTION
-    Long description
+        Long description
 
     .PARAMETER SessionId
-    Parameter description
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
     .PARAMETER PolicyId
-    Parameter description
+        Parameter description
 
     .PARAMETER Port
-    Parameter description
+        Parameter description
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-    An example
+        PS> Get-Acas
 
-    .NOTES
-    General notes
     #>
 
     [CmdletBinding()]
@@ -32,7 +35,8 @@ function Set-AcasPolicyPortRange {
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [int32[]]$PolicyId,
         [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
-        [string[]]$Port
+        [string[]]$Port,
+        [switch]$EnableException
     )
 
     begin {
@@ -52,7 +56,7 @@ function Set-AcasPolicyPortRange {
                 'Parameter'     = "{`"settings`": {`"portscan_range`": `"$($Port -join ",")`"}}"
             }
 
-            InvokeNessusRestRequest @RequestParams | Out-Null
+            Invoke-AcasRequest @RequestParams | Out-Null
             Get-AcasPolicyPortRange -SessionId $SessionId -PolicyId $PolicyToChange
         }
     }
