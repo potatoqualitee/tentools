@@ -59,7 +59,7 @@ function Suspend-AcasScan {
                 $ScanProps.add('Owner', $scan.owner)
                 $ScanProps.add('AlternateTarget', $scan.ownalt_targetser)
                 $ScanProps.add('IsPCI', $scan.is_pci)
-                $ScanProps.add('UserPermission', $PermissionsId2Name[$scan.user_permissions])
+                $ScanProps.add('UserPermission', $permissionenum[$scan.user_permissions])
                 $ScanProps.add('CreationDate', $origin.AddSeconds($scan.creation_date).ToLocalTime())
                 $ScanProps.add('LastModified', $origin.AddSeconds($scan.last_modification_date).ToLocalTime())
                 $ScanProps.add('StartTime', $origin.AddSeconds($scan.starttime).ToLocalTime())

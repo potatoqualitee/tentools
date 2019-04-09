@@ -29,7 +29,7 @@ if (!(Test-Path variable:Global:NessusConn )) {
 }
  
 # Variables
-$PermissionsId2Name = @{
+$permissionenum = @{
     16  = 'Read-Only'
     32  = 'Regular'
     64  = 'Administrator'

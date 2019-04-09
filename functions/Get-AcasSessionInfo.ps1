@@ -55,7 +55,7 @@ function Get-AcasSessionInfo {
                     $SessionProps.Add('UserName', $SessInfo.UserName)
                     $SessionProps.Add('Email', $SessInfo.Email)
                     $SessionProps.Add('Type', $SessInfo.Type)
-                    $SessionProps.Add('Permission', $PermissionsId2Name[$SessInfo.permissions])
+                    $SessionProps.Add('Permission', $permissionenum[$SessInfo.permissions])
                     $SessionProps.Add('LastLogin', $origin.AddSeconds($SessInfo.lastlogin).ToLocalTime())
                     $SessionProps.Add('Groups', $SessInfo.groups)
                     $SessionProps.Add('Connectors', $SessInfo.connectors)

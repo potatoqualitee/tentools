@@ -160,7 +160,7 @@ function New-AcasScan {
                 $ScanProps.add('Enabled', $scan.enabled)
                 $ScanProps.add('FolderId', $scan.folder_id)
                 $ScanProps.add('Owner', $scan.owner)
-                $ScanProps.add('UserPermission', $PermissionsId2Name[$scan.user_permissions])
+                $ScanProps.add('UserPermission', $permissionenum[$scan.user_permissions])
                 $ScanProps.add('Rules', $scan.rrules)
                 $ScanProps.add('Shared', $scan.shared)
                 $ScanProps.add('TimeZone', $scan.timezone)

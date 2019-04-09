@@ -83,7 +83,7 @@ function Get-AcasScan {
                         Enabled = $scan.enabled
                         FolderId = $scan.folder_id
                         Owner = $scan.owner
-                        UserPermission = $PermissionsId2Name[$scan.user_permissions]
+                        UserPermission = $permissionenum[$scan.user_permissions]
                         Rules = $scan.rrules
                         Shared = $scan.shared
                         TimeZone = $scan.timezone

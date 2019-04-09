@@ -54,7 +54,7 @@ function Get-AcasUser {
                     $UserProperties.Add('Email', $_.email)
                     $UserProperties.Add('UserId', $_.id)
                     $UserProperties.Add('Type', $_.type)
-                    $UserProperties.Add('Permission', $PermissionsId2Name[$_.permissions])
+                    $UserProperties.Add('Permission', $permissionenum[$_.permissions])
                     $UserProperties.Add('LastLogin', $origin.AddSeconds($_.lastlogin).ToLocalTime())
                     $UserProperties.Add('SessionId', $connection.SessionId)
                     $UserObj = New-Object -TypeName psobject -Property $UserProperties
