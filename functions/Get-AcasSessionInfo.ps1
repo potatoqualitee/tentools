@@ -28,7 +28,7 @@ function Get-AcasSessionInfo {
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
     }
     process {
-        $connections = $Global:NessusConn
+        $connections = $global:NessusConn
         $ToProcess = New-Object -TypeName System.Collections.ArrayList
 
         foreach ($i in $SessionId) {

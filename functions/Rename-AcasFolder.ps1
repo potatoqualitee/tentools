@@ -27,7 +27,7 @@ function Rename-AcasFolder {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $Global:NessusConn.SessionId,
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [Int]$FolderId,
         [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
@@ -37,7 +37,7 @@ function Rename-AcasFolder {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $connections = $Global:NessusConn
+            $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {

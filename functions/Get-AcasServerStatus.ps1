@@ -27,7 +27,7 @@ function Get-AcasServerStatus {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $connections = $Global:NessusConn
+            $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {

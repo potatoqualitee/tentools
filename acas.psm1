@@ -25,7 +25,7 @@ foreach ($function in (Get-ChildItem "$ModuleRoot\functions" -Filter "*.ps1" -Re
 
 
 if (!(Test-Path variable:Global:NessusConn )) {
-    $Global:NessusConn = New-Object System.Collections.ArrayList
+    $global:NessusConn = New-Object System.Collections.ArrayList
 }
  
 # Variables
@@ -128,7 +128,7 @@ function InvokeNessusRestRequest {
             if ($NessusLoginError) {
                 Write-Error -Message 'Failed to Re-Authenticate the session. Session is being Removed.'
                 $FailedConnection = $SessionObject
-                [void]$Global:NessusConn.Remove($FailedConnection)
+                [void]$global:NessusConn.Remove($FailedConnection)
             }
             else {
                 Write-PSFMessage -Level Verbose -Mesage 'Updating session with new authentication token.'
@@ -141,8 +141,8 @@ function InvokeNessusRestRequest {
                 $SessionProps.Add('SessionId', $SessionObject.SessionId)
                 $Sessionobj = New-Object -TypeName psobject -Property $SessionProps
                 $Sessionobj.pstypenames[0] = 'Nessus.Session'
-                [void]$Global:NessusConn.Remove($SessionObject)
-                [void]$Global:NessusConn.Add($Sessionobj)
+                [void]$global:NessusConn.Remove($SessionObject)
+                [void]$global:NessusConn.Add($Sessionobj)
 
                 # Re-submit query with the new token and return results.
                 $RestMethodParams.Headers = @{'X-Cookie' = "token=$($Sessionobj.Token)"}

@@ -29,7 +29,7 @@ function Get-AcasPolicy {
         [Parameter(ParameterSetName = 'ByName')]
         [Parameter(ParameterSetName = 'ByID')]
         [Alias('Index')]
-        [int32[]]$SessionId = $Global:NessusConn.SessionId,
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
         [string]$Name,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByID')]
@@ -41,7 +41,7 @@ function Get-AcasPolicy {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $connections = $Global:NessusConn
+            $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {

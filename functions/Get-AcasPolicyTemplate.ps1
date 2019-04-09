@@ -28,7 +28,7 @@ function Get-AcasPolicyTemplate {
         [Parameter(ParameterSetName = 'ByName')]
         [Parameter(ParameterSetName = 'ByUUID')]
         [Alias('Index')]
-        [int32[]]$SessionId = $Global:NessusConn.SessionId,
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
         [string]$Name,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByUUID')]
@@ -38,7 +38,7 @@ function Get-AcasPolicyTemplate {
         $ToProcess = @()
 
         foreach ($i in $SessionId) {
-            $connections = $Global:NessusConn
+            $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $i) {

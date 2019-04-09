@@ -80,9 +80,9 @@ function Connect-AcasService {
                     URI        = $Uri
                     Credential = $Credential
                     Token      = $token.token
-                    SessionId  = $Global:NessusConn.Count
+                    SessionId  = $global:NessusConn.Count
                 }
-                [void]$Global:NessusConn.Add($session)
+                [void]$global:NessusConn.Add($session)
                 $session
             }
         }

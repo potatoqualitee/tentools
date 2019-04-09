@@ -26,7 +26,7 @@ function Remove-AcasSession {
         # Finding and saving sessions in to a different Array so they can be
         # removed from the main one so as to not generate an modification
         # error for a collection in use.
-        $connections = $Global:NessusConn
+        $connections = $global:NessusConn
         $toremove = New-Object -TypeName System.Collections.ArrayList
 
         if ($SessionId.Count -gt 0) {
@@ -55,8 +55,8 @@ function Remove-AcasSession {
                     Write-PSFMessage -Level Verbose -Mesage "Session with Id $($connection.SessionId) seems to have expired."
                 }
                 
-                Write-PSFMessage -Level Verbose -Mesage "Removing session from `$Global:NessusConn"
-                $Global:NessusConn.Remove($connection)
+                Write-PSFMessage -Level Verbose -Mesage "Removing session from `$global:NessusConn"
+                $global:NessusConn.Remove($connection)
                 Write-PSFMessage -Level Verbose -Mesage "Session $($i) removed."
             }
         }
