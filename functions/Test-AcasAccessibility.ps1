@@ -48,7 +48,8 @@ function Test-AcasAccessibility {
         [Parameter(Mandatory)]
         [String[]]$ComputerName,
         [String]$ServiceAccount = $env:USERNAME,
-        [PSCredential]$Credential
+        [PSCredential]$Credential,
+        [switch]$EnableException
     )
 
     begin {

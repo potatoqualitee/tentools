@@ -25,7 +25,8 @@ function Remove-AcasScan {
         [Alias('Index')]
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory,Position = 1, ValueFromPipelineByPropertyName)]
-        [int32]$ScanId
+        [int32]$ScanId,
+        [switch]$EnableException
     )
 
     process {

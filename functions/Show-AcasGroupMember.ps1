@@ -26,7 +26,8 @@ function Show-AcasGroupMember {
         [Alias('Index')]
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
-        [int32]$GroupId
+        [int32]$GroupId,
+        [switch]$EnableException
     )
 
     begin {

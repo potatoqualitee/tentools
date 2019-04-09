@@ -39,7 +39,8 @@ function Remove-AcasGroupUser {
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
         [Int32]$GroupId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 2)]
-        [Int32]$UserId
+        [Int32]$UserId,
+        [switch]$EnableException
     )
 
     begin {

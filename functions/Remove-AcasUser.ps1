@@ -26,7 +26,8 @@ function Remove-AcasUser {
         [Alias('Index')]
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
-        [int32[]]$UserId
+        [int32[]]$UserId,
+        [switch]$EnableException
     )
 
     begin {

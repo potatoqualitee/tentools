@@ -31,7 +31,8 @@ function Rename-AcasFolder {
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [Int]$FolderId,
         [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
-        [string]$Name
+        [string]$Name,
+        [switch]$EnableException
     )
     process {
         $collection = @()

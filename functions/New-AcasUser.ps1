@@ -48,7 +48,8 @@ function New-AcasUser {
         [Parameter(ValueFromPipelineByPropertyName)]
         [string]$Email,
         [Parameter(ValueFromPipelineByPropertyName)]
-        [string]$Name
+        [string]$Name,
+        [switch]$EnableException
     )
 
     begin {

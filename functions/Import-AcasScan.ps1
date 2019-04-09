@@ -37,7 +37,8 @@ function Import-AcasScan {
         [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
         [switch]$Encrypted,
         [Parameter(ValueFromPipelineByPropertyName)]
-        [securestring]$Password
+        [securestring]$Password,
+        [switch]$EnableException
     )
 
     begin {

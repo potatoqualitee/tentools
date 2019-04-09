@@ -20,7 +20,8 @@ function Get-AcasSession {
     param(
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [switch]$EnableException
     )
     process {
         if ($Index.Count -gt 0) {

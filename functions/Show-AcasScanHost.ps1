@@ -31,7 +31,8 @@ function Show-AcasScanHost {
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
-        [int32]$HistoryId
+        [int32]$HistoryId,
+        [switch]$EnableException
     )
     process {
         $collection = @()

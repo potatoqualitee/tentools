@@ -46,7 +46,8 @@ function New-AcasPolicy {
         [Parameter(ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName = 'ByName')]
         [Parameter(ParameterSetName = 'ByUUID')]
-        [string]$Description = ''
+        [string]$Description = '',
+        [switch]$EnableException
     )
 
     begin

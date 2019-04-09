@@ -26,7 +26,8 @@ function Remove-AcasPolicy {
         [Alias('Index')]
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
-        [int32]$PolicyId
+        [int32]$PolicyId,
+        [switch]$EnableException
     )
     process {
         $collection = @()

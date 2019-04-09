@@ -8,7 +8,8 @@ function Remove-AcasGroup {
         [Alias('Index')]
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
-        [Int32]$GroupId
+        [Int32]$GroupId,
+        [switch]$EnableException
     )
 
     begin {

@@ -32,16 +32,17 @@ function Get-AcasPolicyTemplate {
         [Parameter(Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
         [string]$Name,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByUUID')]
-        [string]$PolicyUUID
+        [string]$PolicyUUID,
+        [switch]$EnableException
     )
     process {
         $collection = @()
 
-        foreach ($id in $SessionId) {
+        foreach ($iin $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
+                if ($connection.SessionId -eq $i {
                     $collection += $connection
                 }
             }

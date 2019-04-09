@@ -71,7 +71,8 @@ function New-AcasScan {
         [Parameter(ValueFromPipelineByPropertyName)]
         [string[]]$Email,
         [Parameter(ValueFromPipelineByPropertyName)]
-        [switch]$CreateDashboard
+        [switch]$CreateDashboard,
+        [switch]$EnableException
     )
 
     begin {

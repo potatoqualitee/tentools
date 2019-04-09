@@ -31,7 +31,8 @@ function Set-AcasUserPassword {
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [int32[]]$UserId,
         [Parameter(Mandatory, Position = 3, ValueFromPipelineByPropertyName)]
-        [securestring]$Password
+        [securestring]$Password,
+        [switch]$EnableException
     )
 
     begin {

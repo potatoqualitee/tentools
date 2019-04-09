@@ -27,7 +27,8 @@ function New-AcasGroup {
         [Alias('Index')]
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
-        [string]$Name
+        [string]$Name,
+        [switch]$EnableException
     )
 
     begin {

@@ -31,7 +31,8 @@ function Rename-AcasGroup {
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
         [Int32]$GroupId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 2)]
-        [string]$Name
+        [string]$Name,
+        [switch]$EnableException
     )
 
     begin {

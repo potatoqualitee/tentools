@@ -26,7 +26,8 @@ function New-AcasFolder {
         [Alias('Index')]
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
-        [string]$Name
+        [string]$Name,
+        [switch]$EnableException
     )
     process {
         $collection = @()

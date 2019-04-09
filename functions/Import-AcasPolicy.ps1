@@ -27,7 +27,8 @@ function Import-AcasPolicy {
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [ValidateScript( {Test-Path -Path $_})]
-        [string]$File
+        [string]$File,
+        [switch]$EnableException
     )
 
     begin {

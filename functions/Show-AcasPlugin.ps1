@@ -26,7 +26,8 @@ function Show-AcasPlugin {
         [Alias('Index')]
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
-        [int32]$PluginId
+        [int32]$PluginId,
+        [switch]$EnableException
     )
     process {
         $collection = @()

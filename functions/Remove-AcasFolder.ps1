@@ -22,7 +22,8 @@ function Remove-NessusFolder {
         [Alias('Index')]
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
-        [Int]$FolderId
+        [Int]$FolderId,
+        [switch]$EnableException
     )
     process {
         $collection = @()

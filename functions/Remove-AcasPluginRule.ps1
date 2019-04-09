@@ -37,7 +37,8 @@ function Remove-AcasPluginRule {
         [Alias('Index')]
         [int32]$SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
-        [int32]$RuleId
+        [int32]$RuleId,
+        [switch]$EnableException
     )
 
     begin {

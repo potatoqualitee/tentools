@@ -26,7 +26,8 @@ function Get-AcasPolicyPortScanner {
         [Alias('Index')]
         [int32]$SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
-        [int32[]]$PolicyId
+        [int32[]]$PolicyId,
+        [switch]$EnableException
     )
 
     begin {

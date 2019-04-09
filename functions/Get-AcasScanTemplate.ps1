@@ -21,17 +21,18 @@ function Get-AcasScanTemplate {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = @()
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [switch]$EnableException
     )
 
     begin {
         $collection = @()
 
-        foreach ($id in $SessionId) {
+        foreach ($idn $SessionId) {
             $connections = $global:NessusConn
 
             foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
+                if ($connection.SessionId -eq $id{
                     $collection += $connection
                 }
             }

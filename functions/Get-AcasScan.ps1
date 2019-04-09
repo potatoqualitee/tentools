@@ -32,7 +32,8 @@ function Get-AcasScan {
         [int32]$FolderId,
         [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
         [ValidateSet('Completed', 'Imported', 'Running', 'Paused', 'Canceled')]
-        [string]$Status
+        [string]$Status,
+        [switch]$EnableException
     )
 
     begin {
@@ -63,36 +64,38 @@ function Get-AcasScan {
 
                 if ($Status.length -gt 0) {
                     $Scans2Process = $Scans.scans | Where-Object {$_.status -eq $Status.ToLower()}
-                } else {
+                }
+                else {
                     $Scans2Process = $Scans.scans
                 }
                 foreach ($scan in $Scans2Process) {
 
                     if ($scan.starttime -cnotlike "*T*") {
                         $StartTime = $origin.AddSeconds($scan.starttime).ToLocalTime()
-                    } else {
+                    }
+                    else {
                         $StartTime = [datetime]::ParseExact($scan.starttime, "yyyyMMddTHHmmss",
                             [System.Globalization.CultureInfo]::InvariantCulture,
                             [System.Globalization.DateTimeStyles]::None)
                     }
 
                     [pscustomobject]@{
-                        Name = $scan.name
-                        ScanId = $scan.id
-                        Status = $scan.status
-                        Enabled = $scan.enabled
-                        FolderId = $scan.folder_id
-                        Owner = $scan.owner
-                        UserPermission = $permidenum[$scan.user_permissions]
-                        Rules = $scan.rrules
-                        Shared = $scan.shared
-                        TimeZone = $scan.timezone
-                        Scheduled = $scan.control
+                        Name             = $scan.name
+                        ScanId           = $scan.id
+                        Status           = $scan.status
+                        Enabled          = $scan.enabled
+                        FolderId         = $scan.folder_id
+                        Owner            = $scan.owner
+                        UserPermission   = $permidenum[$scan.user_permissions]
+                        Rules            = $scan.rrules
+                        Shared           = $scan.shared
+                        TimeZone         = $scan.timezone
+                        Scheduled        = $scan.control
                         DashboardEnabled = $scan.use_dashboard
-                        SessionId = $connection.SessionId
-                        CreationDate = $origin.AddSeconds($scan.creation_date).ToLocalTime()
-                        LastModified = $origin.AddSeconds($scan.last_modification_date).ToLocalTime()
-                        StartTime = $StartTime
+                        SessionId        = $connection.SessionId
+                        CreationDate     = $origin.AddSeconds($scan.creation_date).ToLocalTime()
+                        LastModified     = $origin.AddSeconds($scan.last_modification_date).ToLocalTime()
+                        StartTime        = $StartTime
                     }
                 }
             }

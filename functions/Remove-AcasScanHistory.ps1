@@ -31,7 +31,8 @@ function Remove-AcasScanHistory {
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
-        [int32]$HistoryId
+        [int32]$HistoryId,
+        [switch]$EnableException
     )
     process {
         $collection = @()

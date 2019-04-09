@@ -32,7 +32,8 @@ function Start-AcasScan {
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
-        [string[]]$AlternateTarget
+        [string[]]$AlternateTarget,
+        [switch]$EnableException
     )
 
     begin {
