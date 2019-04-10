@@ -1,4 +1,4 @@
-function Show-AcasScanHostDetail {
+function Get-AcasScanHostDetail {
     <#
     .SYNOPSIS
         Short description
@@ -40,37 +40,23 @@ function Show-AcasScanHostDetail {
         [int32]$HistoryId,
         [switch]$EnableException
     )
-    process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $connection
-                }
-            }
-        }
-        $Params = @{ }
+    begin {
+        $params = @{ }
 
         if ($HistoryId) {
-            $Params.Add('history_id', $HistoryId)
+            $params.Add('history_id', $HistoryId)
         }
-
-        foreach ($connection in $collection) {
-            $ScanDetails = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/hosts/$($HostId)" -Method 'Get' -Parameter $Params
-
-            if ($ScanDetails -is [psobject]) {
-                $HostProps = [ordered]@{ }
-                $HostProps.Add('Info', $ScanDetails.info)
-                $HostProps.Add('Vulnerabilities', $ScanDetails.vulnerabilities)
-                $HostProps.Add('Compliance', $ScanDetails.compliance)
-                $HostProps.Add('ScanId', $ScanId)
-                $HostProps.Add('SessionId', $connection.SessionId)
-                $HostObj = New-Object -TypeName psobject -Property $HostProps
-                $HostObj.pstypenames[0] = 'Nessus.Scan.HostDetails'
-                $HostObj
+    }
+    process {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            foreach ($detail in (Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/hosts/$($HostId)" -Method 'Get' -Parameter $params)) {
+                [pscustomobject]@{ 
+                    Info            = $detail.info
+                    Vulnerabilities = $detail.vulnerabilities
+                    Compliance      = $detail.compliance
+                    ScanId          = $ScanId
+                    SessionId       = $session.SessionId
+                }
             }
         }
     }

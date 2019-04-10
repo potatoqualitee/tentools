@@ -26,49 +26,37 @@ function Get-AcasGroup {
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [switch]$EnableException
     )
-    begin {
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $connection
-                }
-            }
-        }
-    }
     process {
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $ServerTypeParams = @{
-                'SessionObject' = $connection
-                'Path'          = '/server/properties'
-                'Method'        = 'GET'
+                SessionObject   = $session
+                Path            = '/server/properties'
+                Method          = 'GET'
+                EnableException = $EnableException
             }
 
             $Server = Invoke-AcasRequest @ServerTypeParams
 
             if ($Server.capabilities.multi_user -eq 'full') {
-                $GroupParams = @{
-                    'SessionObject' = $connection
-                    'Path'          = '/groups'
-                    'Method'        = 'GET'
+                $groupParams = @{
+                    SessionObject = $session
+                    Path          = '/groups'
+                    Method        = 'GET'
                 }
 
-                $Groups = Invoke-AcasRequest @GroupParams
-                foreach ($Group in $Groups.groups) {
-                    $GroupProps = [ordered]@{ }
-                    $GroupProps.Add('Name', $Group.name)
-                    $GroupProps.Add('GroupId', $Group.id)
-                    $GroupProps.Add('Permissions', $Group.permissions)
-                    $GroupProps.Add('UserCount', $Group.user_count)
-                    $GroupProps.Add('SessionId', $connection.SessionId)
-                    $GroupObj = [PSCustomObject]$GroupProps
-                    $GroupObj.pstypenames.insert(0, 'Nessus.Group')
-                    $GroupObj
+                $groups = Invoke-AcasRequest @GroupParams
+                foreach ($group in $groups.groups) {
+                    [pscustomobject]@{ 
+                        Name        = $group.name
+                        GroupId     = $group.id
+                        Permissions = $group.permissions
+                        UserCount   = $group.user_count
+                        SessionId   = $session.SessionId
+                    } | Select-DefaultView -ExcludeProperty SessionId
                 }
             }
             else {
-                Write-PSFMessage -Level Warning -Mesage "Server for session $($connection.sessionid) is not licenced for multiple users."
+                Write-PSFMessage -Level Warning -Message "Server for session $($connection.sessionid) is not licenced for multiple users."
             }
         }
     }

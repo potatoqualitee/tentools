@@ -36,28 +36,13 @@ function Set-AcasUserPassword {
         [securestring]$Password,
         [switch]$EnableException
     )
-
-    begin {
-        $collection = @()
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $connection
-                }
-            }
-        }
-    }
     process {
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             foreach ($uid in $UserId) {
-                Write-PSFMessage -Level Verbose -Mesage "Updating user with Id $($uid)"
-                $pass = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))
-                $params = @{'password' = $pass }
+                Write-PSFMessage -Level Verbose -Message "Updating user with Id $($uid)"
+                $params = @{'password' = $([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))) }
                 $paramJson = ConvertTo-Json -InputObject $params -Compress
-                Invoke-AcasRequest -SessionObject $connection -Path "/users/$($uid)/chpasswd" -Method 'PUT' -Parameter $paramJson -ContentType 'application/json'
-
+                Invoke-AcasRequest -SessionObject $session -Path "/users/$($uid)/chpasswd" -Method 'PUT' -Parameter $paramJson -ContentType 'application/json'
             }
         }
     }

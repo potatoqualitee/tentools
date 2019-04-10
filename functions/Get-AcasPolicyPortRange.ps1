@@ -32,30 +32,20 @@ function Get-AcasPolicyPortRange {
         [int32[]]$PolicyId,
         [switch]$EnableException
     )
-
-    begin {
-        $sessions = Get-AcasSession | Select-Object -ExpandProperty sessionid
-        if ($SessionId -notin $sessions) {
-            throw "SessionId $($SessionId) is not present in the current sessions."
-        }
-        $Session = Get-AcasSession -SessionId $SessionId
-    }
     process {
-        foreach ($PolicyToChange in $PolicyId) {
-            try {
-                $Policy = Get-AcasPolicyDetail -SessionId $Session.SessionId -PolicyId $PolicyToChange
-                $UpdateProps = [ordered]@{
-                    'PolicyId'  = $PolicyToChange
-                    'PortRange' = $Policy.settings.portscan_range
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            foreach ($policy in $PolicyId) {
+                try {
+                    $policydetail = Get-AcasPolicyDetail -SessionId $session.SessionId -PolicyId $policy
+                    [pscustomobject]@{
+                        PolicyId  = $policy
+                        PortRange = $policydetail.settings.portscan_range
+                    }
                 }
-                $PolSettingsObj = [PSCustomObject]$UpdateProps
-                $PolSettingsObj.pstypenames.insert(0, 'Nessus.PolicySetting')
-                $PolSettingsObj
+                catch {
+                    Stop-PSFFunction -Message "Failure" -ErrorRecord $_ -Continue
+                }
             }
-            catch {
-                Stop-Function -Message "Failure" -ErrorRecord $_ -Continue
-            }
-
         }
     }
 }

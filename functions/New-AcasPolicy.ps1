@@ -29,75 +29,53 @@ function New-AcasPolicy {
     .EXAMPLE
         PS> Get-Acas
     #>
-    [CmdletBinding(DefaultParameterSetName = 'ByName')]
+    [CmdletBinding()]
     param
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
-        [Parameter(ParameterSetName = 'ByName')]
-        [Parameter(ParameterSetName = 'ByUUID')]
         [Alias('Index')]
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
-        [Parameter(ParameterSetName = 'ByName')]
-        [Parameter(ParameterSetName = 'ByUUID')]
         [string]$Name,
-        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName, ParameterSetName = 'ByUUID')]
-        [string]$PolicyUUID,
-        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
+        [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
+        [string[]]$PolicyUUID,
+        [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
         [string]$TemplateName,
         [Parameter(ValueFromPipelineByPropertyName)]
-        [Parameter(ParameterSetName = 'ByName')]
-        [Parameter(ParameterSetName = 'ByUUID')]
         [string]$Description = '',
         [switch]$EnableException
     )
-
-    begin {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $connection
-                }
-            }
-        }
-    }
     process {
-        foreach ($connection in $collection) {
-            switch ($PSCmdlet.ParameterSetName) {
-                'ByName' {
-                    $tmpl = Get-AcasPolicyTemplate -Name $TemplateName -SessionId $connection.SessionId
-                    if ($tmpl -ne $null) {
-                        $PolicyUUID = $tmpl.PolicyUUID
-                    }
-                    else {
-                        throw "Template with name $($TemplateName) was not found."
-                    }
-                }
-                'ByUUID' {
-                    $Templates2Proc = $Templates.templates | Where-Object { $_.uuid -eq $PolicyUUID }
-                }
-            }
-            $RequestSet = @{'uuid' = $PolicyUUID;
-                'settings'         = @{
-                    'name'        = $Name
-                    'description' = $Description
-                }
+        if (-not $PSBoundParameters.TemplateName -and -not $PSBoundParameters.PolicyUUID) {
+            Stop-PSFFunction -Message "Please specify either TemplateName or PolicyUUID"
+            return
+        }
+
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            if ($PSBoundParameters.TemplateName) {
+                $PolicyUUID = (Get-AcasPolicyTemplate -Name $TemplateName -SessionId $session.SessionId).PolicyUUID
             }
 
-            $SettingsJson = ConvertTo-Json -InputObject $RequestSet -Compress
-            $RequestParams = @{
-                'SessionObject' = $connection
-                'Path'          = "/policies/"
-                'Method'        = 'POST'
-                'ContentType'   = 'application/json'
-                'Parameter'     = $SettingsJson
+            foreach ($policyid in $PolicyUUID) {
+                $req = @{
+                    uuid     = $policyid
+                    settings = @{
+                        'name'        = $Name
+                        'description' = $Description
+                    }
+                }
+
+                $SettingsJson = ConvertTo-Json -InputObject $req -Compress
+                $params = @{
+                    SessionObject = $session
+                    Path          = "/policies/"
+                    Method        = 'POST'
+                    ContentType   = 'application/json'
+                    Parameter     = $SettingsJson
+                }
+                $NewPolicy = Invoke-AcasRequest @params
+                Get-AcasPolicy -PolicyID $NewPolicy.policy_id -SessionId $session.sessionid
             }
-            $NewPolicy = Invoke-AcasRequest @RequestParams
-            Get-AcasPolicy -PolicyID $NewPolicy.policy_id -SessionId $connection.sessionid
         }
     }
 }

@@ -38,7 +38,7 @@ function Start-AcasScan {
     )
 
     begin {
-        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
+        
     }
     process {
         $collection = @()
@@ -48,26 +48,26 @@ function Start-AcasScan {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
-        $Params = @{ }
+        $params = @{ }
 
         if ($AlternateTarget) {
-            $Params.Add('alt_targets', $AlternateTarget)
+            $params.Add('alt_targets', $AlternateTarget)
         }
         $paramJson = ConvertTo-Json -InputObject $params -Compress
 
-        foreach ($connection in $collection) {
-            $Scans = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json'
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            $Scans = Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json'
 
             if ($Scans -is [psobject]) {
 
                 $ScanProps = [ordered]@{ }
                 $ScanProps.add('ScanUUID', $scans.scan_uuid)
                 $ScanProps.add('ScanId', $ScanId)
-                $ScanProps.add('SessionId', $connection.SessionId)
+                $ScanProps.add('SessionId', $session.SessionId)
                 $ScanObj = New-Object -TypeName psobject -Property $ScanProps
                 $ScanObj.pstypenames[0] = 'Nessus.LaunchedScan'
                 $ScanObj

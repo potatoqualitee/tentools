@@ -18,6 +18,9 @@ function Import-AcasScan {
     .PARAMETER Password
         Parameter description
 
+    .PARAMETER Credential
+        Parameter description
+
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
         This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
@@ -39,16 +42,15 @@ function Import-AcasScan {
         [switch]$Encrypted,
         [Parameter(ValueFromPipelineByPropertyName)]
         [securestring]$Password,
+        [securestring]$Credential,
         [switch]$EnableException
     )
 
     begin {
         if ($Encrypted) {
-            $ContentType = 'application/octet-stream'
             $URIPath = 'file/upload?no_enc=1'
         }
         else {
-            $ContentType = 'application/octet-stream'
             $URIPath = 'file/upload'
         }
 
@@ -69,23 +71,10 @@ function Import-AcasScan {
                 }
             }
         }
-
-        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
     }
     process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $connection
-                }
-            }
-        }
-
-        foreach ($conn in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
             $fileinfo = Get-ItemProperty -Path $File
             $FilePath = $fileinfo.FullName
             $RestClient = New-Object RestSharp.RestClient
@@ -104,36 +93,32 @@ function Import-AcasScan {
             else {
                 $RestParams = New-Object -TypeName System.Collections.Specialized.OrderedDictionary
                 $RestParams.add('file', "$($fileinfo.name)")
-                if ($Encrypted) {
-                    $Credential = New-Object System.Management.Automation.PSCredential -ArgumentList 'user', $Password
+                if ($Encrypted -and ($Password -or $Credential)) {
+                    if (-not $Credential) {
+                        $Credential = New-Object System.Management.Automation.PSCredential -ArgumentList 'user', $Password
+                    }
                     $RestParams.Add('password', $Credential.GetNetworkCredential().Password)
                 }
 
-                $impParams = @{ 'Body' = $RestParams }
-                $ImportResult = Invoke-RestMethod -Method Post -Uri "$($conn.URI)/scans/import" -header @{'X-Cookie' = "token=$($conn.Token)" } -Body (ConvertTo-Json @{'file' = $fileinfo.name; } -Compress) -ContentType 'application/json'
-                if ($ImportResult.scan -ne $null) {
-                    $scan = $ImportResult.scan
-                    $ScanProps = [ordered]@{ }
-                    $ScanProps.add('Name', $scan.name)
-                    $ScanProps.add('ScanId', $scan.id)
-                    $ScanProps.add('Status', $scan.status)
-                    $ScanProps.add('Enabled', $scan.enabled)
-                    $ScanProps.add('FolderId', $scan.folder_id)
-                    $ScanProps.add('Owner', $scan.owner)
-                    $ScanProps.add('UserPermission', $permidenum[$scan.user_permissions])
-                    $ScanProps.add('Rules', $scan.rrules)
-                    $ScanProps.add('Shared', $scan.shared)
-                    $ScanProps.add('TimeZone', $scan.timezone)
-                    $ScanProps.add('CreationDate', $origin.AddSeconds($scan.creation_date).ToLocalTime())
-                    $ScanProps.add('LastModified', $origin.AddSeconds($scan.last_modification_date).ToLocalTime())
-                    $ScanProps.add('StartTime', $origin.AddSeconds($scan.starttime).ToLocalTime())
-                    $ScanProps.add('Scheduled', $scan.control)
-                    $ScanProps.add('DashboardEnabled', $scan.use_dashboard)
-                    $ScanProps.Add('SessionId', $conn.SessionId)
-
-                    $ScanObj = New-Object -TypeName psobject -Property $ScanProps
-                    $ScanObj.pstypenames[0] = 'Nessus.Scan'
-                    $ScanObj
+                foreach ($scan in ((Invoke-RestMethod -Method Post -Uri "$($conn.URI)/scans/import" -header @{'X-Cookie' = "token=$($conn.Token)" } -Body (ConvertTo-Json @{'file' = $fileinfo.name; } -Compress) -ContentType 'application/json').scan)) {
+                    [pscustomobject]@{
+                        Name             = $scan.name
+                        ScanId           = $scan.id
+                        Status           = $scan.status
+                        Enabled          = $scan.enabled
+                        FolderId         = $scan.folder_id
+                        Owner            = $scan.owner
+                        UserPermission   = $permidenum[$scan.user_permissions]
+                        Rules            = $scan.rrules
+                        Shared           = $scan.shared
+                        TimeZone         = $scan.timezone
+                        CreationDate     = $origin.AddSeconds($scan.creation_date).ToLocalTime()
+                        LastModified     = $origin.AddSeconds($scan.last_modification_date).ToLocalTime()
+                        StartTime        = $origin.AddSeconds($scan.starttime).ToLocalTime()
+                        Scheduled        = $scan.control
+                        DashboardEnabled = $scan.use_dashboard
+                        SessionId        = $conn.SessionId
+                    }
                 }
             }
         }

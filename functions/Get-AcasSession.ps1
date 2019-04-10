@@ -24,20 +24,20 @@ function Get-AcasSession {
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [switch]$EnableException
     )
-    process {
-        if ($Index.Count -gt 0) {
-            foreach ($id in $SessionId) {
-                foreach ($connection in $global:NessusConn) {
-                    if ($connection.SessionId -eq $id) {
-                        $connection
-                    }
-                }
+    begin {
+        if (Test-PSFParameterBinding -Parameter SessionId) {
+            if ($null -eq $SessionId) {
+                Write-PSFMessage -Level Warning -Message "No session specified. Have you connected using Connect-AcasService during this session?"
             }
         }
+    }
+    process {
+        Write-PSFMessage -level Verbose -Message "Connected sessions: $($global:NessusConn.Count)"
+        if ($PSBoundParameters.SessionId) {
+            $global:NessusConn | Where-Object SessionId -in $SessionId
+        }
         else {
-            # Return all sessions.
-            $return_sessions = @()
-            foreach ($s in $global:NessusConn) { $s }
+            $global:NessusConn
         }
     }
 }

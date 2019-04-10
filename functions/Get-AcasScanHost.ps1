@@ -1,4 +1,4 @@
-function New-AcasGroup {
+function Get-AcasScanHost {
     <#
     .SYNOPSIS
         Short description
@@ -7,9 +7,12 @@ function New-AcasGroup {
         Long description
 
     .PARAMETER SessionId
+        Parameter description
+
+    .PARAMETER ScanId
         ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
-    .PARAMETER Name
+    .PARAMETER HistoryId
         Parameter description
 
     .PARAMETER EnableException
@@ -21,37 +24,38 @@ function New-AcasGroup {
         PS> Get-Acas
     #>
     [CmdletBinding()]
-    [OutputType([int])]
-    param
+    Param
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $global:NessusConn.SessionId,
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
-        [string]$Name,
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [int32]$ScanId,
+        [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
+        [int32]$HistoryId,
         [switch]$EnableException
     )
+    begin {
+        $params = @{ }
+
+        if ($HistoryId) {
+            $params.Add('history_id', $HistoryId)
+        }
+    }
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $ServerTypeParams = @{
-                SessionObject = $session
-                Path          = '/server/properties'
-                Method        = 'GET'
-            }
-
-            $Server = Invoke-AcasRequest @ServerTypeParams
-
-            if ($Server.capabilities.multi_user -eq 'full') {
-                $groups = Invoke-AcasRequest -SessionObject $session -Path '/groups' -Method 'POST' -Parameter @{'name' = $Name }
-                [pscustomobject]@{ 
-                    Name        = $groups.name
-                    GroupId     = $groups.id
-                    Permissions = $groups.permissions
-                    SessionId   = $session.SessionId
+            foreach ($Host in (Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $params).hosts) {
+                [pscustomobject]@{
+                    HostName  = $Host.hostname
+                    HostId    = $Host.host_id
+                    Critical  = $Host.critical
+                    High      = $Host.high
+                    Medium    = $Host.medium
+                    Low       = $Host.low
+                    Info      = $Host.info
+                    ScanId    = $ScanId
+                    SessionId = $session.SessionId
                 }
-            }
-            else {
-                Write-PSFMessage -Level Warning -Message "Server for session $($connection.sessionid) is not licenced for multiple users."
             }
         }
     }

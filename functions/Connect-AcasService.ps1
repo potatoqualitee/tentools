@@ -49,7 +49,7 @@ function Connect-AcasService {
             $TypeBuilder = $ModuleBuilder.DefineType('IgnoreCerts', 'AutoLayout, AnsiClass, Class, Public, BeforeFieldInit', [System.Object], [System.Net.ICertificatePolicy])
             $TypeBuilder.DefineDefaultConstructor('PrivateScope, Public, HideBySig, SpecialName, RTSpecialName') | Out-Null
             $MethodInfo = [System.Net.ICertificatePolicy].GetMethod('CheckValidationResult')
-            $MethodBuilder = $TypeBuilder.DefineMethod($MethodInfo.Name, 'PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask', $MethodInfo.CallingConvention, $MethodInfo.ReturnType, ([Type[]] ($MethodInfo.GetParameters() | ForEach-Object {$_.ParameterType})))
+            $MethodBuilder = $TypeBuilder.DefineMethod($MethodInfo.Name, 'PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask', $MethodInfo.CallingConvention, $MethodInfo.ReturnType, ([Type[]] ($MethodInfo.GetParameters() | ForEach-Object { $_.ParameterType })))
             $ILGen = $MethodBuilder.GetILGenerator()
             $ILGen.Emit([Reflection.Emit.Opcodes]::Ldc_I4_1)
             $ILGen.Emit([Reflection.Emit.Opcodes]::Ret)
@@ -65,29 +65,47 @@ function Connect-AcasService {
 
         foreach ($computer in $ComputerName) {
             $Uri = "https://$($computer):$($Port)"
+            if ($PSBoundParameters.Credential) {
+                $body = @{'username' = $Credential.UserName; 'password' = $Credential.GetNetworkCredential().password }
+            }
+            else {
+                $body = $null
+            }
             $RestMethodParams = @{
-                'Method'        = 'Post'
-                'URI'           = "$($Uri)/session"
-                'Body'          = @{'username' = $Credential.UserName; 'password' = $Credential.GetNetworkCredential().password}
-                'ErrorVariable' = 'NessusLoginError'
+                Method        = 'Post'
+                URI           = "$($Uri)/session"
+                Body          = $body
+                ErrorVariable = 'NessusLoginError'
             }
 
             try {
                 $token = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
             }
             catch {
-                Stop-PSFFunction -Message "Failure" -ErrorRecord $_ -Continue
+                $msg = Get-ErrorMessage -Record $_
+                if ($msg -eq "The remote server returned an error: (401) Unauthorized.") {
+                    $msg = "The remote server returned an error: (401) Unauthorized. This is likely due to a bad username/password."
+                }
+                
+                Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
             }
             
             if ($token) {
+                if ($PSBoundParameters.Credential) {
+                    $username = $Credential.UserName
+                }
+                else {
+                    $username = "$env:USERDOMAIN\$env:USERNAME"
+                }
                 $session = [PSCustomObject]@{
                     URI        = $Uri
+                    UserName   = $username
                     Credential = $Credential
                     Token      = $token.token
                     SessionId  = $global:NessusConn.Count
                 }
                 [void]$global:NessusConn.Add($session)
-                $session
+                $session | Select-DefaultView -Property SessionId, UserName, URI
             }
         }
     }

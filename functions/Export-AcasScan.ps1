@@ -15,7 +15,7 @@ function Export-AcasScan {
     .PARAMETER Format
         Parameter description
 
-    .PARAMETER OutFile
+    .PARAMETER Path
         Parameter description
 
     .PARAMETER PSObject
@@ -46,11 +46,11 @@ function Export-AcasScan {
         [int32]$SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
-        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
+        [Parameter(Position = 2)]
         [ValidateSet('Nessus', 'HTML', 'PDF', 'CSV', 'DB')]
-        [string]$Format,
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [String]$OutFile,
+        [string]$Format = 'PDF',
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [String]$Path,
         [Parameter(ValueFromPipelineByPropertyName)]
         [Switch]$PSObject,
         [Parameter(Position = 3, ValueFromPipelineByPropertyName)]
@@ -62,25 +62,18 @@ function Export-AcasScan {
         [Int32]$HistoryID,
         [Parameter(ValueFromPipelineByPropertyName)]
         [securestring]$Password,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string]$Name,
+        [securestring]$Credential,
         [switch]$EnableException
     )
-    process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $connection
-                }
-            }
-        }
-
+    begin { 
         $ExportParams = @{ }
 
-        if ($Format -eq 'DB' -and $Password) {
-            $Credential = New-Object System.Management.Automation.PSCredential -ArgumentList 'user', $Password
+        if ($Format -eq 'DB' -and ($Password -or $Credential)) {
+            if (-not $Credential) {
+                $Credential = New-Object System.Management.Automation.PSCredential -ArgumentList 'user', $Password
+            }
             $ExportParams.Add('password', $Credential.GetNetworkCredential().Password)
         }
 
@@ -97,22 +90,27 @@ function Export-AcasScan {
             }
         }
 
-        foreach ($connection in $collection) {
+        if (-not (Test-Path -Path $Path)) {
+            $null = New-Item -Type Directory -Path $Path
+        }
+    }
+    process {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             if ($HistoryId) {
-                $path = "/scans/$($ScanId)/export?history_id=$($HistoryId)"
+                $urlpath = "/scans/$($ScanId)/export?history_id=$($HistoryId)"
             }
             else {
-                $path = "/scans/$($ScanId)/export"
+                $urlpath = "/scans/$($ScanId)/export"
             }
 
-            Write-PSFMessage -Level Verbose -Mesage "Exporting scan with Id of $($ScanId) in $($Format) format."
-            $FileID = Invoke-AcasRequest -SessionObject $connection -Path $path  -Method 'Post' -Parameter $ExportParams
+            Write-PSFMessage -Level Verbose -Message "Exporting scan with Id of $($ScanId) in $($Format) format."
+            $FileID = Invoke-AcasRequest -SessionObject $session -Path $urlpath  -Method 'Post' -Parameter $ExportParams
             if ($FileID -is [psobject]) {
                 $FileStatus = ''
                 while ($FileStatus.status -ne 'ready') {
                     try {
-                        $FileStatus = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/export/$($FileID.file)/status"  -Method 'Get'
-                        Write-PSFMessage -Level Verbose -Mesage "Status of export is $($FileStatus.status)"
+                        $FileStatus = Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($FileID.file)/status"  -Method 'Get'
+                        Write-PSFMessage -Level Verbose -Message "Status of export is $($FileStatus.status)"
                     }
                     catch {
                         break
@@ -120,13 +118,15 @@ function Export-AcasScan {
                     Start-Sleep -Seconds 1
                 }
                 if ($FileStatus.status -eq 'ready' -and $Format -eq 'CSV' -and $PSObject.IsPresent) {
-                    Write-PSFMessage -Level Verbose -Mesage "Converting report to PSObject"
-                    Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' | ConvertFrom-Csv
+                    Write-PSFMessage -Level Verbose -Message "Converting report to PSObject"
+                    Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' | ConvertFrom-Csv
                 }
                 elseif ($FileStatus.status -eq 'ready') {
-                    Write-PSFMessage -Level Verbose -Mesage "Downloading report to $($OutFile)"
-                    Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' -OutFile $OutFile
+                    Write-PSFMessage -Level Verbose -Message "Downloading report to $($Path)"
+                    $filepath = "$path\$name-$scanid.$($Format.ToLower())"
+                    Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' -OutFile $filepath
                 }
+                Get-ChildItem -Path $Path
             }
         }
     }

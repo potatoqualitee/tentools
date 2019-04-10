@@ -26,26 +26,8 @@ function Get-AcasServerStatus {
         [switch]$EnableException
     )
     process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $connection
-                }
-            }
-        }
-
-        foreach ($connection in $collection) {
-
-            $ServerStatus = Invoke-AcasRequest -SessionObject $connection -Path '/server/status' -Method 'Get'
-
-            if ($ServerStatus -is [psobject]) {
-                $ServerStatus.pstypenames[0] = 'Nessus.ServerStatus'
-                $ServerStatus
-            }
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            Invoke-AcasRequest -SessionObject $session -Path '/server/status' -Method 'Get'
         }
     }
 }

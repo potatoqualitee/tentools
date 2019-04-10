@@ -25,47 +25,22 @@ function Get-AcasUser {
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [switch]$EnableException
     )
-
-    begin {
-        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $connection
-                }
-            }
-        }
-    }
     process {
-
-
-        foreach ($connection in $collection) {
-
-            $Users = Invoke-AcasRequest -SessionObject $connection -Path '/users' -Method 'Get'
-
-            if ($Users -is [psobject]) {
-                $Users.users | ForEach-Object -process {
-                    $UserProperties = [ordered]@{ }
-                    $UserProperties.Add('Name', $_.name)
-                    $UserProperties.Add('UserName', $_.username)
-                    $UserProperties.Add('Email', $_.email)
-                    $UserProperties.Add('UserId', $_.id)
-                    $UserProperties.Add('Type', $_.type)
-                    $UserProperties.Add('Permission', $permidenum[$_.permissions])
-                    $UserProperties.Add('LastLogin', $origin.AddSeconds($_.lastlogin).ToLocalTime())
-                    $UserProperties.Add('SessionId', $connection.SessionId)
-                    $UserObj = New-Object -TypeName psobject -Property $UserProperties
-                    $UserObj.pstypenames[0] = 'Nessus.User'
-                    $UserObj
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            
+            $Users = Invoke-AcasRequest -SessionObject $session -Path '/users' -Method 'Get'
+            $Users.users | ForEach-Object -process {
+                [pscustomobject]@{ 
+                    Name       = $_.name
+                    UserName   = $_.username
+                    Email      = $_.email
+                    UserId     = $_.id
+                    Type       = $_.type
+                    Permission = $permidenum[$_.permissions]
+                    LastLogin  = $origin.AddSeconds($_.lastlogin).ToLocalTime()
+                    SessionId  = $session.SessionId
                 }
             }
         }
-
     }
-    end { }
 }

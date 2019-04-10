@@ -44,34 +44,17 @@ function Get-AcasFolder {
         [switch]$EnableException
     )
     process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $connection
-                }
-            }
-        }
-
-        foreach ($connection in $collection) {
-            $Folders = Invoke-AcasRequest -SessionObject $connection -Path '/folders' -Method 'Get'
-
-            if ($Folders -is [psobject]) {
-                foreach ($folder in $Folders.folders) {
-                    $FolderProps = [ordered]@{ }
-                    $FolderProps.Add('Name', $folder.name)
-                    $FolderProps.Add('FolderId', $folder.id)
-                    $FolderProps.Add('Type', $folder.type)
-                    $FolderProps.Add('Default', $folder.default_tag)
-                    $FolderProps.Add('Unread', $folder.unread_count)
-                    $FolderProps.Add('SessionId', $connection.SessionId)
-                    $FolderObj = New-Object -TypeName psobject -Property $FolderProps
-                    $FolderObj.pstypenames[0] = 'Nessus.Folder'
-                    $FolderObj
-                }
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            $folders = Invoke-AcasRequest -SessionObject $session -Path '/folders' -Method 'Get'
+            foreach ($folder in $folders.folders) {
+                [pscustomobject]@{
+                    Name      = $folder.name
+                    FolderId  = $folder.id
+                    Type      = $folder.type
+                    Default   = $folder.default_tag
+                    Unread    = $folder.unread_count
+                    SessionId = $session.SessionId
+                } | Select-DefaultView -ExcludeProperty SessionId
             }
         }
     }

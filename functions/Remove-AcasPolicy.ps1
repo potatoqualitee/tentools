@@ -31,22 +31,10 @@ function Remove-AcasPolicy {
         [switch]$EnableException
     )
     process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $connection
-                }
-            }
-        }
-
-        foreach ($connection in $collection) {
-            Write-PSFMessage -Level Verbose -Mesage "Deleting policy with id $($PolicyId)."
-            $RemovedPolicy = Invoke-AcasRequest -SessionObject $connection -Path "/policies/$($PolicyId)" -Method 'DELETE'
-            Write-PSFMessage -Level Verbose -Mesage 'Policy deleted.'
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            Write-PSFMessage -Level Verbose -Message "Deleting policy with id $($PolicyId)."
+            Invoke-AcasRequest -SessionObject $session -Path "/policies/$($PolicyId)" -Method 'DELETE'
+            Write-PSFMessage -Level Verbose -Message 'Policy deleted.'
         }
     }
 }

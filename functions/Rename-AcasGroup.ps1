@@ -42,34 +42,34 @@ function Rename-AcasGroup {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
     }
     process {
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $ServerTypeParams = @{
-                'SessionObject' = $connection
-                'Path'          = '/server/properties'
-                'Method'        = 'GET'
+                SessionObject = $session
+                Path          = '/server/properties'
+                Method        = 'GET'
             }
 
             $Server = Invoke-AcasRequest @ServerTypeParams
 
             if ($Server.capabilities.multi_user -eq 'full') {
                 $GroupParams = @{
-                    'SessionObject' = $connection
-                    'Path'          = "/groups/$($GroupId)"
-                    'Method'        = 'PUT'
-                    'ContentType'   = 'application/json'
-                    'Parameter'     = (ConvertTo-Json -InputObject @{'name' = $Name } -Compress)
+                    SessionObject = $session
+                    Path          = "/groups/$($GroupId)"
+                    Method        = 'PUT'
+                    ContentType   = 'application/json'
+                    Parameter     = (ConvertTo-Json -InputObject @{'name' = $Name } -Compress)
                 }
 
                 Invoke-AcasRequest @GroupParams
             }
             else {
-                Write-PSFMessage -Level Warning -Mesage "Server for session $($connection.sessionid) is not licenced for multiple users."
+                Write-PSFMessage -Level Warning -Message "Server for session $($connection.sessionid) is not licenced for multiple users."
             }
         }
     }

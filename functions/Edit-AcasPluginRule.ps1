@@ -47,7 +47,6 @@ function Edit-AcasPluginRule {
     [CmdletBinding()]
     param
     (
-        # Nessus session Id
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32]$SessionId,
@@ -65,29 +64,12 @@ function Edit-AcasPluginRule {
         [Object]$Expiration, #TODO: Validate the Expiratoin date, but still allow nulls
         [switch]$EnableException
     )
-
-    begin {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $connection
-                }
-            }
-        }
-
-        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-    }
-
     process {
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            
             $dtExpiration = $null
 
             If ($Expiration) {
-
                 $dtExpiration = (New-TimeSpan -Start $origin -end $Expiration -ErrorAction SilentlyContinue).TotalSeconds.ToInt32($null)
             }
 
@@ -113,11 +95,17 @@ function Edit-AcasPluginRule {
             }
 
             $pRuleJson = ConvertTo-Json -InputObject $pRulehash -Compress
+            
+            $params = @{
+                SessionObject   = $session
+                Path            = ('/plugin-rules/{0}' -f $Id)
+                Method          = 'Put'
+                Parameter       = $pRuleJson
+                ContentType     = 'application/json'
+                EnableException = $EnableException
+            }
 
-            $pRuleJson
-
-            Invoke-AcasRequest -SessionObject $connection -Path ('/plugin-rules/{0}' -f $Id) -Method 'Put' `
-                -Parameter $pRuleJson -ContentType 'application/json'
+            Invoke-AcasRequest @params
         }
     }
 }

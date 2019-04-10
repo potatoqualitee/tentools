@@ -38,58 +38,42 @@ function Get-AcasPolicy {
         [string]$PolicyID,
         [switch]$EnableException
     )
-
-    begin {
-        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $connection
-                }
-            }
-        }
-    }
     process {
-        foreach ($connection in $collection) {
-            $Policies = Invoke-AcasRequest -SessionObject $connection -Path '/policies' -Method 'Get'
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            
+            $policies = Invoke-AcasRequest -SessionObject $session -Path '/policies' -Method 'Get'
 
-            if ($Policies -is [psobject]) {
+            if ($policies -is [psobject]) {
                 switch ($PSCmdlet.ParameterSetName) {
                     'ByName' {
-                        $Policies2Proc = $Policies.policies | Where-Object { $_.name -eq $Name }
+                        $collection = $policies.policies | Where-Object { $_.name -eq $Name }
                     }
 
                     'ByID' {
-                        $Policies2Proc = $Policies.policies | Where-Object { $_.id -eq $PolicyID }
+                        $collection = $policies.policies | Where-Object { $_.id -eq $PolicyID }
                     }
 
                     'All' {
-                        $Policies2Proc = $Policies.policies
+                        $collection = $policies.policies
                     }
                 }
 
-                foreach ($Policy in $Policies2Proc) {
-                    $PolProps = [ordered]@{ }
-                    $PolProps.Add('Name', $Policy.Name)
-                    $PolProps.Add('PolicyId', $Policy.id)
-                    $PolProps.Add('Description', $Policy.description)
-                    $PolProps.Add('PolicyUUID', $Policy.template_uuid)
-                    $PolProps.Add('Visibility', $Policy.visibility)
-                    $PolProps['Shared'] = & { if ($Policy.shared -eq 1) { $True }else { $False } }
-                    $PolProps.Add('Owner', $Policy.owner)
-                    $PolProps.Add('UserId', $Policy.owner_id)
-                    $PolProps.Add('NoTarget', $Policy.no_target)
-                    $PolProps.Add('UserPermission', $Policy.user_permissions)
-                    $PolProps.Add('Modified', $origin.AddSeconds($Policy.last_modification_date).ToLocalTime())
-                    $PolProps.Add('Created', $origin.AddSeconds($Policy.creation_date).ToLocalTime())
-                    $PolProps.Add('SessionId', $connection.SessionId)
-                    $PolObj = [PSCustomObject]$PolProps
-                    $PolObj.pstypenames.insert(0, 'Nessus.Policy')
-                    $PolObj
+                foreach ($Policy in $collection) {
+                    [pscustomobject]@{
+                        Name           = $Policy.Name
+                        PolicyId       = $Policy.id
+                        Description    = $Policy.description
+                        PolicyUUID     = $Policy.template_uuid
+                        Visibility     = $Policy.visibility
+                        Shared         = (if ($Policy.shared -eq 1) { $true } else { $false })
+                        Owner          = $Policy.owner
+                        UserId         = $Policy.owner_id
+                        NoTarget       = $Policy.no_target
+                        UserPermission = $Policy.user_permissions
+                        Modified       = $origin.AddSeconds($Policy.last_modification_date).ToLocalTime()
+                        Created        = $origin.AddSeconds($Policy.creation_date).ToLocalTime()
+                        SessionId      = $session.SessionId
+                    }
                 }
             }
         }

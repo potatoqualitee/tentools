@@ -24,30 +24,15 @@ function Remove-AcasScan {
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $global:NessusConn.SessionId,
-        [Parameter(Mandatory,Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [switch]$EnableException
     )
     process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $connection
-                }
-            }
-        }
-
-        foreach ($connection in $collection) {
-            Write-PSFMessage -Level Verbose -Mesage "Removing scan with Id $($ScanId)"
-
-            $ScanDetails = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)" -Method 'Delete' -Parameter $Params
-            if ($ScanDetails -eq 'null') {
-                Write-PSFMessage -Level Verbose -Mesage 'Scan Removed'
-            }
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            Write-PSFMessage -Level Verbose -Message "Removing scan with Id $($ScanId)"
+            Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Delete' -Parameter $params
+            Write-PSFMessage -Level Verbose -Message 'Scan Removed'
         }
     }
 }

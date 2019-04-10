@@ -30,44 +30,24 @@ function Resume-AcasScan {
         [int32]$ScanId,
         [switch]$EnableException
     )
-
-    begin {
-        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-    }
     process {
-        $collection = @()
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            foreach ($scan in (Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/resume" -Method 'Post').scan) {
+                [pscustomobject]@{
+                    Name            = $scan.name
+                    ScanId          = $ScanId
+                    HistoryId       = $scan.id
+                    Status          = $scan.status
+                    Enabled         = $scan.enabled
+                    Owner           = $scan.owner
+                    AlternateTarget = $scan.ownalt_targetser
+                    IsPCI           = $scan.is_pci
+                    UserPermission  = $permidenum[$scan.user_permissions]
+                    CreationDate    = $origin.AddSeconds($scan.creation_date).ToLocalTime()
+                    LastModified    = $origin.AddSeconds($scan.last_modification_date).ToLocalTime()
+                    StartTime       = $origin.AddSeconds($scan.starttime).ToLocalTime()
+                    SessionId       = $session.SessionId
                 }
-            }
-        }
-
-        foreach ($connection in $collection) {
-            $Scans = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/resume" -Method 'Post'
-
-            if ($Scans -is [psobject]) {
-                $scan = $Scans.scan
-                $ScanProps = [ordered]@{ }
-                $ScanProps.add('Name', $scan.name)
-                $ScanProps.add('ScanId', $ScanId)
-                $ScanProps.add('HistoryId', $scan.id)
-                $ScanProps.add('Status', $scan.status)
-                $ScanProps.add('Enabled', $scan.enabled)
-                $ScanProps.add('Owner', $scan.owner)
-                $ScanProps.add('AlternateTarget', $scan.ownalt_targetser)
-                $ScanProps.add('IsPCI', $scan.is_pci)
-                $ScanProps.add('UserPermission', $permidenum[$scan.user_permissions])
-                $ScanProps.add('CreationDate', $origin.AddSeconds($scan.creation_date).ToLocalTime())
-                $ScanProps.add('LastModified', $origin.AddSeconds($scan.last_modification_date).ToLocalTime())
-                $ScanProps.add('StartTime', $origin.AddSeconds($scan.starttime).ToLocalTime())
-                $ScanProps.Add('SessionId', $connection.SessionId)
-                $ScanObj = New-Object -TypeName psobject -Property $ScanProps
-                $ScanObj.pstypenames[0] = 'Nessus.RunningScan'
-                $ScanObj
             }
         }
     }

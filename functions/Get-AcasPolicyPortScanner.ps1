@@ -31,30 +31,19 @@ function Get-AcasPolicyPortScanner {
         [int32[]]$PolicyId,
         [switch]$EnableException
     )
-
-    begin {
-        $sessions = Get-AcasSession | Select-Object -ExpandProperty sessionid
-        if ($SessionId -notin $sessions) {
-            throw "SessionId $($SessionId) is not present in the current sessions."
-        }
-        $Session = Get-AcasSession -SessionId $SessionId
-    }
     process {
-        foreach ($PolicyToChange in $PolicyId) {
+        foreach ($policy in $PolicyId) {
             try {
-                $Policy = Get-AcasPolicyDetail -SessionId $Session.SessionId -PolicyId $PolicyToChange
-                $UpdateProps = [ordered]@{
-                    'PolicyId'   = $PolicyToChange
-                    'SYNScanner' = $Policy.settings.syn_scanner
-                    'UDPScanner' = $Policy.settings.udp_scanner
-                    'TCPScanner' = $Policy.settings.tcp_scanner
+                $policydetail = Get-AcasPolicyDetail -SessionId $session.SessionId -PolicyId $policy
+                [pscustomobject]@{
+                    PolicyId   = $policy
+                    SYNScanner = $policydetail.settings.syn_scanner
+                    UDPScanner = $policydetail.settings.udp_scanner
+                    TCPScanner = $policydetail.settings.tcp_scanner
                 }
-                $PolSettingsObj = [PSCustomObject]$UpdateProps
-                $PolSettingsObj.pstypenames.insert(0, 'Nessus.PolicySetting')
-                $PolSettingsObj
             }
             catch {
-                Stop-Function -Message "Failure" -ErrorRecord $_ -Continue
+                Stop-PSFFunction -Message "Failure" -ErrorRecord $_ -Continue
             }
         }
     }

@@ -198,8 +198,7 @@ function Test-AcasAccessibility {
                 $resolved = (Resolve-NetworkName -Computer $Computer -ErrorAction Ignore).ComputerName
 
                 if ($resolved -as [ipaddress]) {
-                    Write-Warning "Unable to resolve $computer to a hostname. Please use the network name instead. You can potentially find the network name by using ping -a $computer"
-                    continue
+                    Stop-Function -Message "Unable to resolve $computer to a hostname. Please use the network name instead. You can potentially find the network name by using ping -a $computer" -Continue
                 }
                 else {
                     $Computer = $resolved

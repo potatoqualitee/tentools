@@ -55,29 +55,12 @@ function Add-AcasPluginRule {
         [datetime]$Expiration,
         [switch]$EnableException
     )
-
-    begin {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $connection
-                }
-            }
-        }
-
-        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-    }
-
     process {
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            
             $dtExpiration = $null
 
             If ($Expiration) {
-
                 $dtExpiration = (New-TimeSpan -Start $origin -end $Expiration).TotalSeconds.ToInt32($null)
             }
 
@@ -101,8 +84,16 @@ function Add-AcasPluginRule {
 
             $pRuleJson = ConvertTo-Json -InputObject $pRulehash -Compress
 
-            Invoke-AcasRequest -SessionObject $connection -Path '/plugin-rules' -Method 'Post' `
-                -Parameter $pRuleJson -ContentType 'application/json'
+            $params = @{
+                SessionObject   = $session
+                Path            = '/plugin-rules'
+                Method          = 'Post'
+                Parameter       = $pRuleJson
+                ContentType     = 'application/json'
+                EnableException = $EnableException
+            }
+
+            Invoke-AcasRequest @params
         }
     }
 }
