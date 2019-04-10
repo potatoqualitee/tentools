@@ -34,15 +34,12 @@ function Get-AcasScanHistory {
 
     begin {
         $params = @{ }
-
         if ($HistoryId) {
             $params.Add('history_id', $HistoryId)
         }
     }
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            
-
             foreach ($ScanDetails in (Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $params).history) {
                 [pscustomobject]@{
                     HistoryId        = $History.history_id

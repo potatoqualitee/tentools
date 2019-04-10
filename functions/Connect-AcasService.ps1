@@ -105,7 +105,7 @@ function Connect-AcasService {
                     SessionId  = $global:NessusConn.Count
                 }
                 [void]$global:NessusConn.Add($session)
-                $session | Select-DefaultView -Property URI, UserName Token, SessionId
+                $session | Select-DefaultView -Property SessionId, UserName, URI
             }
         }
     }
