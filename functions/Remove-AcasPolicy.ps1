@@ -44,9 +44,9 @@ function Remove-AcasPolicy {
         }
 
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            Write-PSFMessage -Level Verbose -Mesage "Deleting policy with id $($PolicyId)."
+            Write-PSFMessage -Level Verbose -Message "Deleting policy with id $($PolicyId)."
             $RemovedPolicy = Invoke-AcasRequest -SessionObject $session -Path "/policies/$($PolicyId)" -Method 'DELETE'
-            Write-PSFMessage -Level Verbose -Mesage 'Policy deleted.'
+            Write-PSFMessage -Level Verbose -Message 'Policy deleted.'
         }
     }
 }

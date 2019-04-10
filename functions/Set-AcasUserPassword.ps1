@@ -52,7 +52,7 @@ function Set-AcasUserPassword {
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             foreach ($uid in $UserId) {
-                Write-PSFMessage -Level Verbose -Mesage "Updating user with Id $($uid)"
+                Write-PSFMessage -Level Verbose -Message "Updating user with Id $($uid)"
                 $pass = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))
                 $params = @{'password' = $pass }
                 $paramJson = ConvertTo-Json -InputObject $params -Compress

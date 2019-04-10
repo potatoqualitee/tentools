@@ -50,7 +50,7 @@ function Get-AcasPolicyDetail {
                     }
                 }
             }
-            Write-PSFMessage -Level Verbose -Mesage "Getting details for policy with id $($PolicyId)."
+            Write-PSFMessage -Level Verbose -Message "Getting details for policy with id $($PolicyId)."
             Invoke-AcasRequest -SessionObject $session -Path "/policies/$($PolicyId)" -Method 'GET'
         }
     }

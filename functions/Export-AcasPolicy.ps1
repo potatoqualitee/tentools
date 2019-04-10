@@ -37,17 +37,17 @@ function Export-AcasPolicy {
     )
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            Write-PSFMessage -Level Verbose -Mesage "Exporting policy with id $($PolicyId)."
+            Write-PSFMessage -Level Verbose -Message "Exporting policy with id $($PolicyId)."
             $Policy = Invoke-AcasRequest -SessionObject $session -Path "/policies/$($PolicyId)/export" -Method 'GET'
             if ($OutFile.length -gt 0) {
-                Write-PSFMessage -Level Verbose -Mesage "Saving policy as $($OutFile)"
+                Write-PSFMessage -Level Verbose -Message "Saving policy as $($OutFile)"
                 $Policy.Save($ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutFile))
                 Get-ChildItem -Path $OutFile
             }
             else {
                 $Policy
             }
-            Write-PSFMessage -Level Verbose -Mesage 'Policy exported.'
+            Write-PSFMessage -Level Verbose -Message 'Policy exported.'
         }
     }
 }

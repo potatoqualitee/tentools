@@ -46,7 +46,7 @@ function Remove-AcasUser {
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             foreach ($uid in $UserId) {
-                Write-PSFMessage -Level Verbose -Mesage "Deleting user with Id $($uid)"
+                Write-PSFMessage -Level Verbose -Message "Deleting user with Id $($uid)"
                 Invoke-AcasRequest -SessionObject $session -Path "/users/$($uid)" -Method 'Delete'
             }
         }

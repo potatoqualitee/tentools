@@ -49,12 +49,12 @@ function Remove-AcasScanHistory {
         }
 
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            Write-PSFMessage -Level Verbose -Mesage "Removing history Id ($HistoryId) from scan Id $($ScanId)"
+            Write-PSFMessage -Level Verbose -Message "Removing history Id ($HistoryId) from scan Id $($ScanId)"
 
             $ScanHistoryDetails = Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/history/$($HistoryId)" -Method 'Delete' -Parameter $params
 
             if ($ScanHistoryDetails -eq '') {
-                Write-PSFMessage -Level Verbose -Mesage 'History Removed'
+                Write-PSFMessage -Level Verbose -Message 'History Removed'
             }
         }
     }

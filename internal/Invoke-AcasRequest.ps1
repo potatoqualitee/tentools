@@ -53,7 +53,7 @@ function Invoke-AcasRequest {
 
         try {
             #$RestMethodParams.Uri
-            Write-PSFMessage -Level Verbose -Message "Connecting with the following params: $RestMethodParams"
+            Write-PSFMessage -Level Verbose -Message "Connecting to $($SessionObject.URI)"
             $results = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
    
         }
@@ -105,13 +105,15 @@ function Invoke-AcasRequest {
                         $results = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
                     }
                     catch {
-                        Stop-PSFFunction -Message "Failure" -ErrorRecord $_ -Continue
+                        $msg = Get-ErrorMessage -Record $_
+                        Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
                     }
                 }
             }
         } 
         catch {
-            Stop-PSFFunction -Message "Failure" -ErrorRecord $_ -Continue
+            $msg = Get-ErrorMessage -Record $_
+            Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
         }
         $results
     }

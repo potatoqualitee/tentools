@@ -113,7 +113,7 @@ function New-AcasScan {
 
             switch ($PSCmdlet.ParameterSetName) {
                 'Template' {
-                    Write-PSFMessage -Level Verbose -Mesage "Using Template with UUID of $($PolicyUUID)"
+                    Write-PSFMessage -Level Verbose -Message "Using Template with UUID of $($PolicyUUID)"
                     $scanhash = [ordered]@{
                         'uuid'     = $PolicyUUID
                         'settings' = $settings
@@ -125,7 +125,7 @@ function New-AcasScan {
                     $Policies = Get-AcasPolicy -SessionId $session.SessionId
                     foreach ($Policy in $Policies) {
                         if ($Policy.PolicyId -eq $PolicyId) {
-                            Write-PSFMessage -Level Verbose -Mesage "Uising Poicy with UUID of $($Policy.PolicyUUID)"
+                            Write-PSFMessage -Level Verbose -Message "Uising Poicy with UUID of $($Policy.PolicyUUID)"
                             $polUUID = $Policy.PolicyUUID
                         }
                     }

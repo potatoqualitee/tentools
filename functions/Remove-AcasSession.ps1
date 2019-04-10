@@ -33,7 +33,7 @@ function Remove-AcasSession {
 
         if ($SessionId.Count -gt 0) {
             foreach ($id in $SessionId) {
-                Write-PSFMessage -Level Verbose -Mesage "Removing server session $($id)"
+                Write-PSFMessage -Level Verbose -Message "Removing server session $($id)"
 
                 foreach ($connection in $connections) {
                     if ($connection.SessionId -eq $id) {
@@ -43,7 +43,7 @@ function Remove-AcasSession {
             }
 
             foreach ($connection in $toremove) {
-                Write-PSFMessage -Level Verbose -Mesage 'Disposing of connection'
+                Write-PSFMessage -Level Verbose -Message 'Disposing of connection'
                 $RestMethodParams = @{
                     Method        = 'Delete'
                     'URI'           = "$($connection.URI)/session"
@@ -55,12 +55,12 @@ function Remove-AcasSession {
                     $RemoveResponse = Invoke-RestMethod @RestMethodParams
                 }
                 catch {
-                    Write-PSFMessage -Level Verbose -Mesage "Session with Id $($connection.SessionId) seems to have expired."
+                    Write-PSFMessage -Level Verbose -Message "Session with Id $($connection.SessionId) seems to have expired."
                 }
                 
-                Write-PSFMessage -Level Verbose -Mesage "Removing session from `$global:NessusConn"
+                Write-PSFMessage -Level Verbose -Message "Removing session from `$global:NessusConn"
                 $global:NessusConn.Remove($connection)
-                Write-PSFMessage -Level Verbose -Mesage "Session $($id) removed."
+                Write-PSFMessage -Level Verbose -Message "Session $($id) removed."
             }
         }
     }
