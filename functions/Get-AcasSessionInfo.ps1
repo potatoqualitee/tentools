@@ -33,7 +33,7 @@ function Get-AcasSessionInfo {
         $collection = New-Object -TypeName System.Collections.ArrayList
 
         foreach ($id in $SessionId) {
-            Write-Verbose "Removing server session $($id)"
+            Write-PSFMessage -Level Verbose -Message "Removing server session $($id)"
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
@@ -43,7 +43,7 @@ function Get-AcasSessionInfo {
 
             foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
                 $RestMethodParams = @{
-                    Method        = 'Get'
+                    Method          = 'Get'
                     'URI'           = "$($connection.URI)/session"
                     'Headers'       = @{'X-Cookie' = "token=$($connection.Token)" }
                     'ErrorVariable' = 'NessusSessionError'

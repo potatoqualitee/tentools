@@ -38,49 +38,31 @@ function Get-AcasPolicyTemplate {
         [switch]$EnableException
     )
     process {
-        $collection = @()
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            $templates = Invoke-AcasRequest -SessionObject $session -Path '/editor/policy/templates' -Method 'Get'
 
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
+            switch ($PSCmdlet.ParameterSetName) {
+                'ByName' {
+                    $templates = $templates.templates | Where-Object { $_.name -eq $Name }
+                }
+                'ByUUID' {
+                    $templates = $templates.templates | Where-Object { $_.uuid -eq $PolicyUUID }
+                }
+                'All' {
+                    $templates = $templates.templates
                 }
             }
-        }
 
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $Templates = Invoke-AcasRequest -SessionObject $session -Path '/editor/policy/templates' -Method 'Get'
-
-            if ($Templates -is [psobject]) {
-                switch ($PSCmdlet.ParameterSetName) {
-                    'ByName' {
-                        $Templates2Proc = $Templates.templates | Where-Object { $_.name -eq $Name }
-                    }
-
-                    'ByUUID' {
-                        $Templates2Proc = $Templates.templates | Where-Object { $_.uuid -eq $PolicyUUID }
-                    }
-
-                    'All' {
-                        $Templates2Proc = $Templates.templates
-                    }
-                }
-
-                foreach ($Template in $Templates2Proc) {
-                    $TmplProps = [ordered]@{ }
-                    $TmplProps.add('Name', $Template.name)
-                    $TmplProps.add('Title', $Template.title)
-                    $TmplProps.add('Description', $Template.desc)
-                    $TmplProps.add('PolicyUUID', $Template.uuid)
-                    $TmplProps.add('CloudOnly', $Template.cloud_only)
-                    $TmplProps.add('SubscriptionOnly', $Template.subscription_only)
-                    $TmplProps.add('SessionId', $session.SessionId)
-                    $Tmplobj = New-Object -TypeName psobject -Property $TmplProps
-                    $Tmplobj.pstypenames[0] = 'Nessus.PolicyTemplate'
-                    $Tmplobj
-                }
+            foreach ($template in $templates) {
+                [pscustomobject]@{
+                    Name             = $template.name
+                    Title            = $template.title
+                    Description      = $template.desc
+                    PolicyUUID       = $template.uuid
+                    CloudOnly        = $template.cloud_only
+                    SubscriptionOnly = $template.subscription_only
+                    SessionId        = $session.SessionId
+                } | Select-DefaultView -ExcludeProperty SessionId
             }
         }
     }

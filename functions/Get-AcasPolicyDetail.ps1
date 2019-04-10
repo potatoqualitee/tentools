@@ -37,37 +37,21 @@ function Get-AcasPolicyDetail {
         [string]$Name,
         [switch]$EnableException
     )
-
-    begin {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
-    }
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             switch ($PSCmdlet.ParameterSetName) {
                 'ByName' {
-                    $Pol = Get-AcasPolicy -Name $Name -SessionId $session.SessionId
-                    if ($Pol -ne $null) {
-                        $PolicyId = $Pol.PolicyId
+                    $policy = Get-AcasPolicy -Name $Name -SessionId $session.SessionId
+                    if ($policy) {
+                        $PolicyId = $policy.PolicyId
                     }
                     else {
-                        throw "Policy with name $($Name) was not found."
+                        Stop-Function -Message "Policy with name $($Name) was not found." -Continue
                     }
                 }
-
             }
             Write-PSFMessage -Level Verbose -Mesage "Getting details for policy with id $($PolicyId)."
-            $Policy = Invoke-AcasRequest -SessionObject $session -Path "/policies/$($PolicyId)" -Method 'GET'
-            $Policy
+            Invoke-AcasRequest -SessionObject $session -Path "/policies/$($PolicyId)" -Method 'GET'
         }
     }
 }

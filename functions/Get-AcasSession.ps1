@@ -32,14 +32,9 @@ function Get-AcasSession {
         }
     }
     process {
-        if ($SessionId.Count -gt 0) {
-            foreach ($id in $SessionId) {
-                foreach ($connection in $global:NessusConn) {
-                    if ($connection.SessionId -eq $id) {
-                        $session
-                    }
-                }
-            }
+        Write-PSFMessage -level Verbose -Message "Connected sessions: $($global:NessusConn.Count)"
+        if ($PSBoundParameters.SessionId) {
+            $global:NessusConn | Where-Object SessionId -in $SessionId
         }
         else {
             $global:NessusConn

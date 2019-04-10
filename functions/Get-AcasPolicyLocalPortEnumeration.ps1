@@ -33,28 +33,18 @@ function Get-AcasPolicyLocalPortEnumeration {
     )
 
     process {
-        $sessions = Get-AcasSession | Select-Object -ExpandProperty sessionid
-        foreach ($id in $SessionId) {
-            if ($id -notin $sessions) {
-                Stop-PSFFunction -Message "SessionId $($id) is not present in the current sessions."
-            }
-       
-            $session = Get-AcasSession -SessionId $id
-
-            foreach ($PolicyToChange in $PolicyId) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            foreach ($policy in $PolicyId) {
                 try {
-                    $Policy = Get-AcasPolicyDetail -SessionId $session.SessionId -PolicyId $PolicyToChange
-                    $UpdateProps = [ordered]@{
-                        'PolicyId'             = $PolicyToChange
-                        'WMINetstat'           = $Policy.settings.wmi_netstat_scanner
-                        'SSHNetstat'           = $Policy.settings.ssh_netstat_scanner
-                        'SNMPScanner'          = $Policy.settings.snmp_scanner
-                        'VerifyOpenPorts'      = $Policy.settings.verify_open_ports
-                        'ScanOnlyIfLocalFails' = $Policy.settings.only_portscan_if_enum_failed
+                    $policydetail = Get-AcasPolicyDetail -SessionId $session.SessionId -PolicyId $policy
+                    [pscustomobject]@{
+                        PolicyId             = $policy
+                        WMINetstat           = $policydetail.settings.wmi_netstat_scanner
+                        SSHNetstat           = $policydetail.settings.ssh_netstat_scanner
+                        SNMPScanner          = $policydetail.settings.snmp_scanner
+                        VerifyOpenPorts      = $policydetail.settings.verify_open_ports
+                        ScanOnlyIfLocalFails = $policydetail.settings.only_portscan_if_enum_failed
                     }
-                    $PolSettingsObj = [PSCustomObject]$UpdateProps
-                    $PolSettingsObj.pstypenames.insert(0, 'Nessus.PolicySetting')
-                    $PolSettingsObj
                 }
                 catch {
                     Stop-Function -Message "Failure" -ErrorRecord $_ -Continue
