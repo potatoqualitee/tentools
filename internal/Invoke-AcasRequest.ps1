@@ -31,7 +31,7 @@ function Invoke-AcasRequest {
     
 
     $RestMethodParams = @{
-        'Method'        = $Method
+        Method        = $Method
         'URI'           =  "$($SessionObject.URI)$($Path)"
         'Headers'       = @{'X-Cookie' = "token=$($SessionObject.Token)"}
         'ErrorVariable' = 'NessusUserError'
@@ -72,7 +72,7 @@ function Invoke-AcasRequest {
             # Re-Authenticating using information from session.
             Write-Message -Level Verbose -Message 'The session has expired, Re-authenticating'
             $ReAuthParams = @{
-                'Method' = 'Post'
+                Method = 'Post'
                 'URI' =  "$($SessionObject.URI)/session"
                 'Body' = @{'username' = $SessionObject.Credentials.UserName; 'password' = $SessionObject.Credentials.GetNetworkCredential().password}
                 'ErrorVariable' = 'NessusLoginError'

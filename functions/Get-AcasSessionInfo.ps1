@@ -43,7 +43,7 @@ function Get-AcasSessionInfo {
 
             foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
                 $RestMethodParams = @{
-                    'Method'        = 'Get'
+                    Method        = 'Get'
                     'URI'           = "$($connection.URI)/session"
                     'Headers'       = @{'X-Cookie' = "token=$($connection.Token)" }
                     'ErrorVariable' = 'NessusSessionError'

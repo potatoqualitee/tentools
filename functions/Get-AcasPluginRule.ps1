@@ -25,8 +25,6 @@ function Get-AcasPluginRule {
         PS> Get-AcasPluginRule -SessionId 0 -Detail
         Gets all defined plugin rules with details
 
-    .OUTPUTS
-        Returns a PSObject with basic rule info, or returns PSObject with base info + plugin name
     #>
     [CmdletBinding()]
     param
@@ -35,28 +33,12 @@ function Get-AcasPluginRule {
         [Alias('Index')]
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName)]
-        [int32]$PluginId,
+        [int32[]]$PluginId,
         [Switch]$Detail,
         [switch]$EnableException
     )
 
     begin {
-
-        function Limit-PluginRule {
-            param
-            (
-                [Object]
-                [Parameter(ValueFromPipeline)]
-                $InputObject
-            )
-
-            process {
-                if ($InputObject.PluginID -eq $PluginId) {
-                    $InputObject
-                }
-            }
-        }
-
         $dicTypeRev = @{
             'recast_critical' = 'Critical'
             'recast_high'     = 'High'
@@ -65,65 +47,45 @@ function Get-AcasPluginRule {
             'recast_info'     = 'Info'
             'exclude'         = 'Exclude'
         }
-
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
-
-        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
     }
 
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $pRules = Invoke-AcasRequest -SessionObject $session -Path '/plugin-rules' -Method 'Get'
+            $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
+            $rules = Invoke-AcasRequest -SessionObject $session -Path '/plugin-rules' -Method 'Get'
 
-            if ($pRules -is [psobject]) {
-                foreach ($pRule in $pRules.plugin_rules) {
-                    $dtExpiration = $null
-
-                    If ($pRule.date) {
-                        $dtExpiration = $origin.AddSeconds($pRule.date).ToLocalTime()
-                    }
-
-
-
-                    $pRuleProps = [Ordered]@{ }
-                    $pRuleProps.add('ID', $pRule.id)
-                    $pRuleProps.add('Host', $pRule.host)
-                    $pRuleProps.add('PluginId', $pRule.plugin_id)
-
-                    # Significant increase in web requests!
-                    If ($Detail) {
-                        # Provides the rule name in the returned object
-                        $objPluginDetails = Show-AcasPlugin -SessionId $session.SessionId -PluginId $pRule.plugin_id
-                        $pRuleProps.add('Plugin', $objPluginDetails.Name)
-                    }
-
-                    $pRuleProps.add('Expiration', $dtExpiration)
-                    $pRuleProps.add('Type', $dicTypeRev[$pRule.type])
-                    $pRuleProps.add('Owner', $pRule.owner)
-                    $pRuleProps.add('Owner_ID', $pRule.owner_id)
-                    $pRuleProps.add('Shared', $pRule.shared)
-                    $pRuleProps.add('Permissions', $pRule.user_permissions)
-                    $pRuleProps.add('SessionId', $session.SessionId)
-                    $pRuleObj = New-Object -TypeName psobject -Property $pRuleProps
-                    $pRuleObj.pstypenames[0] = 'Nessus.PluginRules'
-
-                    If ($PluginId) {
-                        $pRuleObj | Limit-PluginRule
-                    }
-                    Else {
-                        $pRuleObj
-                    }
+            foreach ($rule in $rules.plugin_rules) {
+                if ($PSBoundParameters.PluginId -and ($rule.plugin_id -notin $PluginId)) {
+                    continue
                 }
+                $dtExpiration = $null
+
+                If ($rule.date) {
+                    $dtExpiration = $origin.AddSeconds($rule.date).ToLocalTime()
+                }
+
+                If ($Detail) {
+                    # Significant increase in web requests!
+                    # Provides the rule name in the returned object
+                    $plugin = (Show-AcasPlugin -SessionId $session.SessionId -PluginId $rule.plugin_id).Name
+                }
+                else {
+                    $plugin = $null
+                }
+
+                [pscustomobject]@{ 
+                    Id          = $rule.id
+                    Host        = $rule.host
+                    PluginId    = $rule.plugin_id
+                    Expiration  = $dtExpiration
+                    Type        = $dicTypeRev[$rule.type]
+                    Owner       = $rule.owner
+                    Owner_ID    = $rule.owner_id
+                    Shared      = $rule.shared
+                    Permissions = $rule.user_permissions
+                    Plugin      = $plugin
+                    SessionId   = $session.SessionId
+                } | Select-DefaultView -ExcludeProperty SessionId
             }
         }
     }

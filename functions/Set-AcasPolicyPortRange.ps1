@@ -49,9 +49,9 @@ function Set-AcasPolicyPortRange {
     process {
         foreach ($PolicyToChange in $PolicyId) {
             $params = @{
-                'SessionObject' = $session
-                'Path'          = "/policies/$($PolicyToChange)"
-                'Method'        = 'PUT'
+                SessionObject = $session
+                Path          = "/policies/$($PolicyToChange)"
+                Method        = 'PUT'
                 'ContentType'   = 'application/json'
                 'Parameter'     = "{`"settings`": {`"portscan_range`": `"$($Port -join ",")`"}}"
             }

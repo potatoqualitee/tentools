@@ -46,9 +46,9 @@ function New-AcasGroup {
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $ServerTypeParams = @{
-                'SessionObject' = $session
-                'Path'          = '/server/properties'
-                'Method'        = 'GET'
+                SessionObject = $session
+                Path          = '/server/properties'
+                Method        = 'GET'
             }
 
             $Server = Invoke-AcasRequest @ServerTypeParams

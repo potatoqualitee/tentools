@@ -90,9 +90,9 @@ function New-AcasPolicy {
 
             $SettingsJson = ConvertTo-Json -InputObject $RequestSet -Compress
             $params = @{
-                'SessionObject' = $session
-                'Path'          = "/policies/"
-                'Method'        = 'POST'
+                SessionObject = $session
+                Path          = "/policies/"
+                Method        = 'POST'
                 'ContentType'   = 'application/json'
                 'Parameter'     = $SettingsJson
             }

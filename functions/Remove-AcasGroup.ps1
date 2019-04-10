@@ -45,18 +45,18 @@ function Remove-AcasGroup {
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $ServerTypeParams = @{
-                'SessionObject' = $session
-                'Path'          = '/server/properties'
-                'Method'        = 'GET'
+                SessionObject = $session
+                Path          = '/server/properties'
+                Method        = 'GET'
             }
 
             $Server = Invoke-AcasRequest @ServerTypeParams
 
             if ($Server.capabilities.multi_user -eq 'full') {
                 $GroupParams = @{
-                    'SessionObject' = $session
-                    'Path'          = "/groups/$($GroupId)"
-                    'Method'        = 'DELETE '
+                    SessionObject = $session
+                    Path          = "/groups/$($GroupId)"
+                    Method        = 'DELETE '
                 }
 
                 Invoke-AcasRequest @GroupParams

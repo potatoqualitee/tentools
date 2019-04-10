@@ -145,9 +145,9 @@ function New-AcasScan {
             $ScanJson = ConvertTo-Json -InputObject $scanhash -Compress
 
             $ServerTypeParams = @{
-                'SessionObject' = $session
-                'Path'          = '/scans'
-                'Method'        = 'POST'
+                SessionObject = $session
+                Path          = '/scans'
+                Method        = 'POST'
                 'ContentType'   = 'application/json'
                 'Parameter'     = $ScanJson
             }

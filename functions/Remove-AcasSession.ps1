@@ -45,7 +45,7 @@ function Remove-AcasSession {
             foreach ($connection in $toremove) {
                 Write-PSFMessage -Level Verbose -Mesage 'Disposing of connection'
                 $RestMethodParams = @{
-                    'Method'        = 'Delete'
+                    Method        = 'Delete'
                     'URI'           = "$($connection.URI)/session"
                     'Headers'       = @{'X-Cookie' = "token=$($connection.Token)" }
                     'ErrorVariable' = 'DisconnectError'
