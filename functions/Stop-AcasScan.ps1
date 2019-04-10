@@ -38,10 +38,10 @@ function Stop-AcasScan {
         $collection = @()
 
         foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
+            $sessions = $global:NessusConn
 
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
+            foreach ($session in $sessions) {
+                if ($session.SessionId -eq $id) {
                     $collection += $session
                 }
             }

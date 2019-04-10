@@ -39,9 +39,9 @@ function Add-AcasGroupUser {
     process {
         $collection = @()
         foreach ($id in $SessionId) {
-            $connections = $Global:NessusConn
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
+            $sessions = $Global:NessusConn
+            foreach ($session in $sessions) {
+                if ($session.SessionId -eq $id) {
                     $collection += $session
                 }
             }
@@ -68,7 +68,7 @@ function Add-AcasGroupUser {
                 Invoke-AcasRequest @params
             }
             else {
-                Write-PSFMessage -Level Warning -Message "Server for session $($connection.sessionid) is not licenced for multiple users."
+                Write-PSFMessage -Level Warning -Message "Server for session $($session.sessionid) is not licenced for multiple users."
             }
         }
     }

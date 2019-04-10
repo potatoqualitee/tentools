@@ -28,26 +28,26 @@ function Remove-AcasSession {
         # Finding and saving sessions in to a different Array so they can be
         # removed from the main one so as to not generate an modification
         # error for a collection in use.
-        $connections = $global:NessusConn
+        $sessions = $global:NessusConn
         $toremove = New-Object -TypeName System.Collections.ArrayList
 
         if ($SessionId.Count -gt 0) {
             foreach ($id in $SessionId) {
                 Write-PSFMessage -Level Verbose -Message "Removing server session $($id)"
 
-                foreach ($connection in $connections) {
-                    if ($connection.SessionId -eq $id) {
-                        [void]$toremove.Add($connection)
+                foreach ($session in $sessions) {
+                    if ($session.SessionId -eq $id) {
+                        [void]$toremove.Add($session)
                     }
                 }
             }
 
-            foreach ($connection in $toremove) {
+            foreach ($session in $toremove) {
                 Write-PSFMessage -Level Verbose -Message 'Disposing of connection'
                 $RestMethodParams = @{
                     Method          = 'Delete'
-                    'URI'           = "$($connection.URI)/session"
-                    'Headers'       = @{'X-Cookie' = "token=$($connection.Token)" }
+                    'URI'           = "$($session.URI)/session"
+                    'Headers'       = @{'X-Cookie' = "token=$($session.Token)" }
                     'ErrorVariable' = 'DisconnectError'
                     'ErrorAction'   = 'SilentlyContinue'
                 }
@@ -55,11 +55,11 @@ function Remove-AcasSession {
                     Invoke-RestMethod @RestMethodParams
                 }
                 catch {
-                    Stop-Function -Message "Session with Id $($connection.SessionId) seems to have expired." -Continue
+                    Stop-Function -Message "Session with Id $($session.SessionId) seems to have expired." -Continue
                 }
                 
                 Write-PSFMessage -Level Verbose -Message "Removing session from `$global:NessusConn"
-                $null = $global:NessusConn.Remove($connection)
+                $null = $global:NessusConn.Remove($session)
                 Write-PSFMessage -Level Verbose -Message "Session $($id) removed."
             }
         }
