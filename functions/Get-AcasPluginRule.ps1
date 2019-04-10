@@ -51,7 +51,7 @@ function Get-AcasPluginRule {
 
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
+            
             $rules = Invoke-AcasRequest -SessionObject $session -Path '/plugin-rules' -Method 'Get'
 
             foreach ($rule in $rules.plugin_rules) {

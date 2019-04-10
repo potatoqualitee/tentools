@@ -27,20 +27,8 @@ function Remove-NessusFolder {
         [switch]$EnableException
     )
     process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
-
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $Folder = Invoke-AcasRequest -SessionObject $session -Path "/folders/$($FolderId)" -Method 'DELETE'
+            Invoke-AcasRequest -SessionObject $session -Path "/folders/$($FolderId)" -Method 'DELETE'
         }
     }
 }

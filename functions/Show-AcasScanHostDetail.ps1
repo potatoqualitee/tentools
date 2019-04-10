@@ -40,37 +40,23 @@ function Show-AcasScanHostDetail {
         [int32]$HistoryId,
         [switch]$EnableException
     )
-    process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
+    begin {
         $params = @{ }
 
         if ($HistoryId) {
             $params.Add('history_id', $HistoryId)
         }
-
+    }
+    process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $ScanDetails = Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/hosts/$($HostId)" -Method 'Get' -Parameter $params
-
-            if ($ScanDetails -is [psobject]) {
-                $HostProps = [ordered]@{ }
-                $HostProps.Add('Info', $ScanDetails.info)
-                $HostProps.Add('Vulnerabilities', $ScanDetails.vulnerabilities)
-                $HostProps.Add('Compliance', $ScanDetails.compliance)
-                $HostProps.Add('ScanId', $ScanId)
-                $HostProps.Add('SessionId', $session.SessionId)
-                $HostObj = New-Object -TypeName psobject -Property $HostProps
-                $HostObj.pstypenames[0] = 'Nessus.Scan.HostDetails'
-                $HostObj
+            foreach ($detail in (Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/hosts/$($HostId)" -Method 'Get' -Parameter $params)) {
+                [pscustomobject]@{ 
+                    Info            = $detail.info
+                    Vulnerabilities = $detail.vulnerabilities
+                    Compliance      = $detail.compliance
+                    ScanId          = $ScanId
+                    SessionId       = $session.SessionId
+                }
             }
         }
     }

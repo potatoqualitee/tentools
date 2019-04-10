@@ -62,8 +62,8 @@ function Rename-AcasGroup {
                     SessionObject = $session
                     Path          = "/groups/$($GroupId)"
                     Method        = 'PUT'
-                    'ContentType'   = 'application/json'
-                    'Parameter'     = (ConvertTo-Json -InputObject @{'name' = $Name } -Compress)
+                    ContentType   = 'application/json'
+                    Parameter     = (ConvertTo-Json -InputObject @{'name' = $Name } -Compress)
                 }
 
                 Invoke-AcasRequest @GroupParams

@@ -30,19 +30,6 @@ function Remove-AcasUser {
         [int32[]]$UserId,
         [switch]$EnableException
     )
-
-    begin {
-        $collection = @()
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
-    }
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             foreach ($uid in $UserId) {

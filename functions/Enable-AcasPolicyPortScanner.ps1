@@ -50,7 +50,7 @@ function Enable-AcasPolicyPortScanner {
             { $scanners['syn_scanner'] = 'yes' }
         }
 
-        $settings = @{'settings' = $scanners }
+        $settings = @{settings = $scanners }
         $settingsJson = ConvertTo-Json -InputObject $settings -Compress
     }
     process {

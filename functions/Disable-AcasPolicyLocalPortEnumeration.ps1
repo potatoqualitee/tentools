@@ -67,7 +67,7 @@ function Disable-AcasPolicyLocalPortEnumeration {
         if ($ScanOnlyIfLocalFails)
         { $scanners['only_portscan_if_enum_failed'] = 'no' }
 
-        $settings = @{'settings' = $scanners }
+        $settings = @{settings = $scanners }
         $settingsJson = ConvertTo-Json -InputObject $settings -Compress
     }
     process {

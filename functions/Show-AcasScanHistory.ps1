@@ -33,42 +33,25 @@ function Show-AcasScanHistory {
     )
 
     begin {
-        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-    }
-    process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
         $params = @{ }
 
         if ($HistoryId) {
             $params.Add('history_id', $HistoryId)
         }
-
+    }
+    process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $ScanDetails = Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $params
+            
 
-            if ($ScanDetails -is [psobject]) {
-                foreach ($History in $ScanDetails.history) {
-                    $HistoryProps = [ordered]@{ }
-                    $HistoryProps['HistoryId'] = $History.history_id
-                    $HistoryProps['UUID'] = $History.uuid
-                    $HistoryProps['Status'] = $History.status
-                    $HistoryProps['Type'] = $History.type
-                    $HistoryProps['CreationDate'] = $origin.AddSeconds($History.creation_date).ToLocalTime()
-                    $HistoryProps['LastModifiedDate'] = $origin.AddSeconds($History.last_modification_date).ToLocalTime()
-                    $HistoryProps['SessionId'] = $session.SessionId
-                    $HistObj = New-Object -TypeName psobject -Property $HistoryProps
-                    $HistObj.pstypenames[0] = 'Nessus.Scan.History'
-                    $HistObj
+            foreach ($ScanDetails in (Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $params).history) {
+                [pscustomobject]@{
+                    HistoryId        = $History.history_id
+                    UUID             = $History.uuid
+                    Status           = $History.status
+                    Type             = $History.type
+                    CreationDate     = $origin.AddSeconds($History.creation_date).ToLocalTime()
+                    LastModifiedDate = $origin.AddSeconds($History.last_modification_date).ToLocalTime()
+                    SessionId        = $session.SessionId
                 }
             }
         }

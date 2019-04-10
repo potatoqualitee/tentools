@@ -31,28 +31,13 @@ function Show-AcasPluginFamilyDetails {
         [switch]$EnableException
     )
     process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
-
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $FamilyDetails = Invoke-AcasRequest -SessionObject $session -Path "/plugins/families/$($FamilyId)" -Method 'Get'
-            if ($FamilyDetails -is [Object]) {
-                $DetailProps = [ordered]@{ }
-                $DetailProps.Add('Name', $FamilyDetails.name)
-                $DetailProps.Add('FamilyId', $FamilyDetails.id)
-                $DetailProps.Add('Plugins', $FamilyDetails.plugins)
-                $FamilyObj = New-Object -TypeName psobject -Property $DetailProps
-                $FamilyObj.pstypenames[0] = 'Nessus.PluginFamilyDetails'
-                $FamilyObj
+            foreach ($detail in (Invoke-AcasRequest -SessionObject $session -Path "/plugins/families/$($FamilyId)" -Method 'Get')) {
+                [pscustomobject]@{
+                    Name     = $detail.name
+                    FamilyId = $detail.id
+                    Plugins  = $detail.plugins
+                }
             }
         }
     }

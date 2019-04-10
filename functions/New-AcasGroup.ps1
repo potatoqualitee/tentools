@@ -31,18 +31,6 @@ function New-AcasGroup {
         [string]$Name,
         [switch]$EnableException
     )
-
-    begin {
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
-    }
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $ServerTypeParams = @{
@@ -54,14 +42,13 @@ function New-AcasGroup {
             $Server = Invoke-AcasRequest @ServerTypeParams
 
             if ($Server.capabilities.multi_user -eq 'full') {
-                $Groups = Invoke-AcasRequest -SessionObject $session -Path '/groups' -Method 'POST' -Parameter @{'name' = $Name }
-                $NewGroupProps = [ordered]@{ }
-                $NewGroupProps.Add('Name', $Groups.name)
-                $NewGroupProps.Add('GroupId', $Groups.id)
-                $NewGroupProps.Add('Permissions', $Groups.permissions)
-                $NewGroupProps.Add('SessionId', $session.SessionId)
-                $NewGroupObj = [pscustomobject]$NewGroupProps
-                $NewGroupObj
+                $groups = Invoke-AcasRequest -SessionObject $session -Path '/groups' -Method 'POST' -Parameter @{'name' = $Name }
+                [pscustomobject]@{ 
+                    Name        = $groups.name
+                    GroupId     = $groups.id
+                    Permissions = $groups.permissions
+                    SessionId   = $session.SessionId
+                }
             }
             else {
                 Write-PSFMessage -Level Warning -Message "Server for session $($connection.sessionid) is not licenced for multiple users."

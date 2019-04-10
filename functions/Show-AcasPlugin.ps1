@@ -27,43 +27,24 @@ function Show-AcasPlugin {
         [switch]$EnableException
     )
     process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
-
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $Plugin = Invoke-AcasRequest -SessionObject $session -Path "/plugins/plugin/$($PluginId)" -Method 'Get'
-
-            if ($Plugin -is [psobject]) {
-                if ($Plugin.name -ne $null) {
-                    # Parse Attributes
-                    $Attributes = [ordered]@{}
-
-                    foreach ($Attribute in $Plugin.attributes) {
-                        # Some attributes have multiple values, i.e. osvdb. This causes errors when adding duplicates
-                        If ($Attributes.Keys -contains $Attribute.attribute_name) {
-                            $Attributes[$Attribute.attribute_name] += ", $($Attribute.attribute_value)"
-                        } Else {
-                            $Attributes.add("$($Attribute.attribute_name)", "$($Attribute.attribute_value)")
-                        }
+            foreach ($plugin in (Invoke-AcasRequest -SessionObject $session -Path "/plugins/plugin/$($PluginId)" -Method 'Get')) {
+                $attributes = [ordered]@{ }
+                foreach ($attribute in $plugin.attributes) {
+                    # Some attributes have multiple values, i.e. osvdb. This causes errors when adding duplicates
+                    if ($attributes.Keys -contains $attribute.attribute_name) {
+                        $attributes[$attribute.attribute_name] += ", $($attribute.attribute_value)"
                     }
-                    $PluginProps = [ordered]@{}
-                    $PluginProps.Add('Name', $Plugin.name)
-                    $PluginProps.Add('PluginId', $Plugin.id)
-                    $PluginProps.Add('FamilyName', $Plugin.family_name)
-                    $PluginProps.Add('Attributes', $Attributes)
-                    $PluginProps.Add('SessionId', $session.SessionId)
-                    $PluginObj = New-Object -TypeName psobject -Property $PluginProps
-                    $PluginObj.pstypenames[0] = 'Nessus.Plugin'
-                    $PluginObj
+                    else {
+                        $attributes.add("$($attribute.attribute_name)", "$($attribute.attribute_value)")
+                    }
+                }
+                [pscustomobject]@{
+                    Name       = $plugin.name
+                    PluginId   = $plugin.id
+                    FamilyName = $plugin.family_name
+                    Attributes = $attributes
+                    SessionId  = $session.SessionId
                 }
             }
         }

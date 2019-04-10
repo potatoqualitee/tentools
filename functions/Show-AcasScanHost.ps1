@@ -35,42 +35,26 @@ function Show-AcasScanHost {
         [int32]$HistoryId,
         [switch]$EnableException
     )
-    process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
+    begin {
         $params = @{ }
 
         if ($HistoryId) {
             $params.Add('history_id', $HistoryId)
         }
-
+    }
+    process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $ScanDetails = Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $params
-
-            if ($ScanDetails -is [psobject]) {
-                foreach ($Host in $ScanDetails.hosts) {
-                    $HostProps = [ordered]@{ }
-                    $HostProps.Add('HostName', $Host.hostname)
-                    $HostProps.Add('HostId', $Host.host_id)
-                    $HostProps.Add('Critical', $Host.critical)
-                    $HostProps.Add('High', $Host.high)
-                    $HostProps.Add('Medium', $Host.medium)
-                    $HostProps.Add('Low', $Host.low)
-                    $HostProps.Add('Info', $Host.info)
-                    $HostProps.Add('ScanId', $ScanId)
-                    $HostProps.Add('SessionId', $session.SessionId)
-                    $HostObj = New-Object -TypeName psobject -Property $HostProps
-                    $HostObj.pstypenames[0] = 'Nessus.Scan.Host'
-                    $HostObj
+            foreach ($Host in (Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $params).hosts) {
+                [pscustomobject]@{
+                    HostName  = $Host.hostname
+                    HostId    = $Host.host_id
+                    Critical  = $Host.critical
+                    High      = $Host.high
+                    Medium    = $Host.medium
+                    Low       = $Host.low
+                    Info      = $Host.info
+                    ScanId    = $ScanId
+                    SessionId = $session.SessionId
                 }
             }
         }

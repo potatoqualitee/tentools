@@ -25,7 +25,8 @@ function Save-AcasPlugin {
         $CertificateThumbprint = [System.Security.Cryptography.X509Certificates.X509Certificate2[]](Get-ChildItem Cert:\CurrentUser\My | Where-Object FriendlyName -like "*ID Certificate*") | Select-Object -ExpandProperty Thumbprint
         try {
             Import-Module PoshRSJob -ErrorAction Stop
-        } catch {
+        }
+        catch {
             $message = "Failed to load module, PoshRSJob is required for this function.
                         Install the module by running: 'Install-Module -Name PoshRSJob -Scope CurrentUser'"
             Stop-PSFFunction -Message "Failure" -ErrorRecord $_ -Continue
@@ -39,7 +40,7 @@ function Save-AcasPlugin {
     }
 
     process {
-        [string]$FolderName = get-date -f MMddyyyy
+        [string]$FolderName = Get-Date -f MMddyyyy
         $OutPath = $path + $FolderName
 
         Write-Output "Prompting for CAC PIN"
@@ -47,13 +48,14 @@ function Save-AcasPlugin {
 
         if (Test-Path -Path $outpath) {
             Write-Output "Output folder exists"
-        } else {
-            $NewFolder = New-item -Path $Path -Name $Foldername -ItemType directory
+        }
+        else {
+            $null = New-Item -Path $Path -Name $Foldername -ItemType directory
         }
 
-        $FilesToDownload = $ACASFiles | Where-Object {$_.FileName -notlike "*diff*" -and $_.FileName -notlike "*md5*"} | sort length
+        $FilesToDownload = $ACASFiles | Where-Object { $_.FileName -notlike "*diff*" -and $_.FileName -notlike "*md5*" } | Sort-Object length
         if ($FilesToDownload.count -ge 1) {
-            Write-output "Found $($FilesToDownload.count) files to download."
+            Write-Output "Found $($FilesToDownload.count) files to download."
         }
         if ($FilesToDownload.count -ge 3) {
             Write-Warning "More than 2 files found. Limited to 2 at a time. When the next download is started you may be prompted for your PIN again."
@@ -63,7 +65,7 @@ function Save-AcasPlugin {
         $ScriptBlock = {
             $ProgressPreference = 'SilentlyContinue'
             $CertificateThumbprint = [System.Security.Cryptography.X509Certificates.X509Certificate2[]](Get-ChildItem Cert:\CurrentUser\My | Where-Object FriendlyName -like "*ID Certificate*") | Select-Object -ExpandProperty Thumbprint
-            $Logon = Invoke-WebRequest -CertificateThumbprint $CertificateThumbprint -Uri "https://patches.csd.disa.mil/PkiLogin/Default.aspx"-SessionVariable DISALogin
+            $null = Invoke-WebRequest -CertificateThumbprint $CertificateThumbprint -Uri "https://patches.csd.disa.mil/PkiLogin/Default.aspx"-SessionVariable DISALogin
             $remote = $_.DownloadLink
             [string]$target = $Using:OutPath + "\" + $($_.FileName)
             Invoke-WebRequest -CertificateThumbprint $CertificateThumbprint -Uri $remote -OutFile $target -WebSession $DISALogin
@@ -71,7 +73,7 @@ function Save-AcasPlugin {
 
         foreach ($File in $FilesToDownload) {
             $FileLength = [math]::round($File.Length / 1mb)
-            Write-output "Queueing download of $($file.FileName) which was last updated on $($file.PostedDate) and is $($FileLength)MB"
+            Write-Output "Queueing download of $($file.FileName) which was last updated on $($file.PostedDate) and is $($FileLength)MB"
         }
 
         $FilesToDownload | Start-RSjob -ScriptBlock $ScriptBlock -Throttle 2 | Wait-RSJob -ShowProgress | Receive-RSJob
@@ -80,7 +82,7 @@ function Save-AcasPlugin {
         #make sure file hashes match what is reported on website
         Write-Output "Checking file hashes"
 
-        $FilesToCheck = get-childitem -literalpath $outpath
+        $FilesToCheck = Get-ChildItem -literalpath $outpath
         foreach ($Check in $FilesToCheck) {
             Write-Output "Checking hash on $($Check.Name)"
             $GetFileHash = Get-FileHash -Path $Check.FullName
@@ -88,7 +90,8 @@ function Save-AcasPlugin {
                 if ($Check.Name -eq $ACASFile.FileName) {
                     if ($Acasfile.SHA256 -eq $GetFileHash.Hash) {
                         Write-Output "Hash on $($Check.Name) was valid"
-                    } else {
+                    }
+                    else {
                         Write-Warning "Hash on $($Check.Name) was not valid"
                     }
                 }

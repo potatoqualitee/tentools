@@ -30,18 +30,6 @@ function Remove-AcasGroup {
         [Int32]$GroupId,
         [switch]$EnableException
     )
-
-    begin {
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
-    }
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $ServerTypeParams = @{

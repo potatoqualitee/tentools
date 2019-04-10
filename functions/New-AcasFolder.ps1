@@ -31,26 +31,9 @@ function New-AcasFolder {
         [switch]$EnableException
     )
     process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
-
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $Folder = Invoke-AcasRequest -SessionObject $session -Path '/folders' -Method 'Post' -Parameter @{'name' = $Name }
-
-            if ($Folder -is [psobject]) {
-                Get-AcasFolder -SessionId $session.sessionid | Where-Object {
-                    $_.FolderId -eq $Folder.id
-                }
-            }
+            $folder = Invoke-AcasRequest -SessionObject $session -Path '/folders' -Method 'Post' -Parameter @{'name' = $Name }
+            Get-AcasFolder -SessionId $session.sessionid | Where-Object FolderId -eq $folder.id
         }
     }
 }

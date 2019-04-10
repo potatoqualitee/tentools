@@ -38,7 +38,7 @@ function Start-AcasScan {
     )
 
     begin {
-        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
+        
     }
     process {
         $collection = @()

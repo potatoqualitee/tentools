@@ -33,9 +33,6 @@ function Import-AcasPolicy {
     )
 
     begin {
-        # $ContentType = 'application/octet-stream'
-        $URIPath = 'file/upload'
-
         $netAssembly = [Reflection.Assembly]::GetAssembly([System.Net.Configuration.SettingsSection])
 
         if ($netAssembly) {
@@ -56,7 +53,7 @@ function Import-AcasPolicy {
     }
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
+            
             $fileinfo = Get-ItemProperty -Path $File
             $FilePath = $fileinfo.FullName
             $RestClient = New-Object RestSharp.RestClient
@@ -64,7 +61,7 @@ function Import-AcasPolicy {
             $RestClient.UserAgent = 'Posh-SSH'
             $RestClient.BaseUrl = $session.uri
             $RestRequest.Method = [RestSharp.Method]::POST
-            $RestRequest.Resource = $URIPath
+            $RestRequest.Resource = 'file/upload'
 
             [void]$RestRequest.AddFile('Filedata', $FilePath, 'application/octet-stream')
             [void]$RestRequest.AddHeader('X-Cookie', "token=$($connection.Token)")

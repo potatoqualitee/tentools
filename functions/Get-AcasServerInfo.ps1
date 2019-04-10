@@ -26,7 +26,7 @@ function Get-AcasServerInfo {
         [switch]$EnableException
     )
     foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
+        
         $server = Invoke-AcasRequest -SessionObject $session -Path '/server/properties' -Method 'Get'
 
         foreach ($serverinfo in $server) {

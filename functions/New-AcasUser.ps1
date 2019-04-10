@@ -52,43 +52,23 @@ function New-AcasUser {
         [string]$Name,
         [switch]$EnableException
     )
-
-    begin {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
-    }
     process {
-
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $NewUserParams = @{}
-
-            $NewUserParams.Add('type', $Type.ToLower())
-            $NewUserParams.Add('permissions', $permenum[$Permission])
-            $NewUserParams.Add('username', $Credential.GetNetworkCredential().UserName)
-            $NewUserParams.Add('password', $Credential.GetNetworkCredential().Password)
+            $params = @{ }
+            $params.Add('type', $Type.ToLower())
+            $params.Add('permissions', $permenum[$Permission])
+            $params.Add('username', $Credential.GetNetworkCredential().UserName)
+            $params.Add('password', $Credential.GetNetworkCredential().Password)
 
             if ($Email.Length -gt 0) {
-                $NewUserParams.Add('email', $Email)
+                $params.Add('email', $Email)
             }
 
             if ($Name.Length -gt 0) {
-                $NewUserParams.Add('name', $Name)
+                $params.Add('name', $Name)
             }
 
-            $NewUser = Invoke-AcasRequest -SessionObject $session -Path '/users' -Method 'Post' -Parameter $NewUserParams
-
-            if ($NewUser) {
-                $NewUser
-            }
+            Invoke-AcasRequest -SessionObject $session -Path '/users' -Method 'Post' -Parameter $params
         }
     }
 }

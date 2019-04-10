@@ -38,26 +38,20 @@ function Set-AcasPolicyPortRange {
         [string[]]$Port,
         [switch]$EnableException
     )
-
-    begin {
-        $sessions = Get-AcasSession | Select-Object -ExpandProperty sessionid
-        if ($SessionId -notin $sessions) {
-            throw "SessionId $($SessionId) is not present in the current sessions."
-        }
-        $session = Get-AcasSession -SessionId $session.SessionId
-    }
     process {
-        foreach ($PolicyToChange in $PolicyId) {
-            $params = @{
-                SessionObject = $session
-                Path          = "/policies/$($PolicyToChange)"
-                Method        = 'PUT'
-                'ContentType'   = 'application/json'
-                'Parameter'     = "{`"settings`": {`"portscan_range`": `"$($Port -join ",")`"}}"
-            }
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            foreach ($PolicyToChange in $PolicyId) {
+                $params = @{
+                    SessionObject = $session
+                    Path          = "/policies/$($PolicyToChange)"
+                    Method        = 'PUT'
+                    ContentType   = 'application/json'
+                    Parameter     = "{`"settings`": {`"portscan_range`": `"$($Port -join ",")`"}}"
+                }
 
-            $null = Invoke-AcasRequest @params
-            Get-AcasPolicyPortRange -SessionId $session.SessionId -PolicyId $PolicyToChange
+                $null = Invoke-AcasRequest @params
+                Get-AcasPolicyPortRange -SessionId $session.SessionId -PolicyId $PolicyToChange
+            }
         }
     }
 }

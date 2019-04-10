@@ -75,48 +75,34 @@ function New-AcasScan {
         [switch]$CreateDashboard,
         [switch]$EnableException
     )
-
-    begin {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
-        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0 
-    }
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+             
             # Join emails as a single comma separated string.
             $emails = $email -join ","
 
             # Join targets as a single comma separated string.
-            $Targets = $target -join ","
+            $targets = $target -join ","
 
             # Build Scan JSON
             $settings = @{
-                'name'         = $Name
-                'text_targets' = $Targets
+                name         = $Name
+                text_targets = $targets
             }
 
-            if ($FolderId) {$settings.Add('folder_id', $FolderId)}
-            if ($scannerId) {$settings.Add('scanner_id', $scannerId)}
-            if ($Email.Length -gt 0) {$settings.Add('emails', $emails)}
-            if ($Description.Length -gt 0) {$settings.Add('description', $Description)}
-            if ($CreateDashboard) {$settings.Add('use_dashboard', $true)}
-            if ($PolicyId) {$settings.Add('policy_id', $PolicyId)}
+            if ($FolderId) { $settings.Add('folder_id', $FolderId) }
+            if ($scannerId) { $settings.Add('scanner_id', $scannerId) }
+            if ($Email.Length -gt 0) { $settings.Add('emails', $emails) }
+            if ($Description.Length -gt 0) { $settings.Add('description', $Description) }
+            if ($CreateDashboard) { $settings.Add('use_dashboard', $true) }
+            if ($PolicyId) { $settings.Add('policy_id', $PolicyId) }
 
             switch ($PSCmdlet.ParameterSetName) {
                 'Template' {
                     Write-PSFMessage -Level Verbose -Message "Using Template with UUID of $($PolicyUUID)"
-                    $scanhash = [ordered]@{
-                        'uuid'     = $PolicyUUID
-                        'settings' = $settings
+                    $scanhash = [pscustomobject]@{
+                        uuid     = $PolicyUUID
+                        settings = $settings
                     }
                 }
 
@@ -130,13 +116,13 @@ function New-AcasScan {
                         }
                     }
 
-                    if ($polUUID -eq $null) {
-                        Write-Error -message 'Policy specified does not exist in session.'
-                        return
-                    } else {
-                        $scanhash = [ordered]@{
-                            'uuid'     = $polUUID
-                            'settings' = $settings
+                    if ($null -eq $polUUID) {
+                        Stop-PSFFunction -Message 'Policy specified does not exist in session.' -Continue
+                    }
+                    else {
+                        $scanhash = [pscustomobject]@{
+                            uuid     = $polUUID
+                            settings = $settings
                         }
                     }
                 }
@@ -148,34 +134,29 @@ function New-AcasScan {
                 SessionObject = $session
                 Path          = '/scans'
                 Method        = 'POST'
-                'ContentType'   = 'application/json'
-                'Parameter'     = $ScanJson
+                ContentType   = 'application/json'
+                Parameter     = $ScanJson
             }
-
-            $NewScan = Invoke-AcasRequest @ServerTypeParams
-
-            foreach ($scan in $NewScan.scan) {
-                $ScanProps = [ordered]@{}
-                $ScanProps.add('Name', $scan.name)
-                $ScanProps.add('ScanId', $scan.id)
-                $ScanProps.add('Status', $scan.status)
-                $ScanProps.add('Enabled', $scan.enabled)
-                $ScanProps.add('FolderId', $scan.folder_id)
-                $ScanProps.add('Owner', $scan.owner)
-                $ScanProps.add('UserPermission', $permidenum[$scan.user_permissions])
-                $ScanProps.add('Rules', $scan.rrules)
-                $ScanProps.add('Shared', $scan.shared)
-                $ScanProps.add('TimeZone', $scan.timezone)
-                $ScanProps.add('CreationDate', $origin.AddSeconds($scan.creation_date).ToLocalTime())
-                $ScanProps.add('LastModified', $origin.AddSeconds($scan.last_modification_date).ToLocalTime())
-                $ScanProps.add('StartTime', $origin.AddSeconds($scan.starttime).ToLocalTime())
-                $ScanProps.add('Scheduled', $scan.control)
-                $ScanProps.add('DashboardEnabled', $scan.use_dashboard)
-                $ScanProps.Add('SessionId', $session.SessionId)
-
-                $ScanObj = New-Object -TypeName psobject -Property $ScanProps
-                $ScanObj.pstypenames[0] = 'Nessus.Scan'
-                $ScanObj
+            
+            foreach ($scan in (Invoke-AcasRequest @ServerTypeParams).scan) {
+                [pscustomobject]@{
+                    Name             = $scan.name
+                    ScanId           = $scan.id
+                    Status           = $scan.status
+                    Enabled          = $scan.enabled
+                    FolderId         = $scan.folder_id
+                    Owner            = $scan.owner
+                    UserPermission   = $permidenum[$scan.user_permissions]
+                    Rules            = $scan.rrules
+                    Shared           = $scan.shared
+                    TimeZone         = $scan.timezone
+                    CreationDate     = $origin.AddSeconds($scan.creation_date).ToLocalTime()
+                    LastModified     = $origin.AddSeconds($scan.last_modification_date).ToLocalTime()
+                    StartTime        = $origin.AddSeconds($scan.starttime).ToLocalTime()
+                    Scheduled        = $scan.control
+                    DashboardEnabled = $scan.use_dashboard
+                    SessionId        = $session.SessionId
+                }
             }
         }
     }

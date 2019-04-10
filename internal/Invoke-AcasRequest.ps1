@@ -91,7 +91,7 @@ function Invoke-AcasRequest {
                     # Creating new object with updated token so as to replace in the array the old one.
                     $SessionProps = New-Object -TypeName System.Collections.Specialized.OrderedDictionary
                     $SessionProps.add('URI', $SessionObject.URI)
-                    $SessionProps.Add('Credentials', $SessionObject.Credential)
+                    $SessionProps.Add('Credential', $SessionObject.Credential)
                     $SessionProps.add('Token', $TokenResponse.token)
                     $SessionProps.Add('SessionId', $SessionObject.SessionId)
                     $Sessionobj = New-Object -TypeName psobject -Property $SessionProps

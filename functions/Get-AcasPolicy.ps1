@@ -40,7 +40,7 @@ function Get-AcasPolicy {
     )
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
+            
             $policies = Invoke-AcasRequest -SessionObject $session -Path '/policies' -Method 'Get'
 
             if ($policies -is [psobject]) {

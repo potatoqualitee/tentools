@@ -49,4 +49,6 @@ $script:severity = @{
     2 = 'Medium'
     3 = 'High'
     4 = 'Critical'
-} 
+}
+
+$script:origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0

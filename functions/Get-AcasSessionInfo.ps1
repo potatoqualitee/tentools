@@ -28,7 +28,7 @@ function Get-AcasSessionInfo {
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             Write-PSFMessage -Level Verbose -Message "Removing server session $($id)"
-            $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
+            
             $RestMethodParams = @{
                 Method          = 'Get'
                 'URI'           = "$($connection.URI)/session"

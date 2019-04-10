@@ -45,21 +45,21 @@ function Remove-AcasSession {
             foreach ($connection in $toremove) {
                 Write-PSFMessage -Level Verbose -Message 'Disposing of connection'
                 $RestMethodParams = @{
-                    Method        = 'Delete'
+                    Method          = 'Delete'
                     'URI'           = "$($connection.URI)/session"
                     'Headers'       = @{'X-Cookie' = "token=$($connection.Token)" }
                     'ErrorVariable' = 'DisconnectError'
                     'ErrorAction'   = 'SilentlyContinue'
                 }
                 try {
-                    $RemoveResponse = Invoke-RestMethod @RestMethodParams
+                    Invoke-RestMethod @RestMethodParams
                 }
                 catch {
-                    Write-PSFMessage -Level Verbose -Message "Session with Id $($connection.SessionId) seems to have expired."
+                    Stop-Function -Message "Session with Id $($connection.SessionId) seems to have expired." -Continue
                 }
                 
                 Write-PSFMessage -Level Verbose -Message "Removing session from `$global:NessusConn"
-                $global:NessusConn.Remove($connection)
+                $null = $global:NessusConn.Remove($connection)
                 Write-PSFMessage -Level Verbose -Message "Session $($id) removed."
             }
         }
