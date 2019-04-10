@@ -37,7 +37,7 @@ function Export-AcasPolicy {
     )
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            Write-PSFMessage -Level Verbose -Message "Exporting policy with id $($PolicyId)."
+            Write-PSFMessage -Level Verbose -Message "Exporting policy with id $($PolicyId)"
             $policy = Invoke-AcasRequest -SessionObject $session -Path "/policies/$($PolicyId)/export" -Method 'GET'
             if ($PSBoundParameters.OutFile) {
                 Write-PSFMessage -Level Verbose -Message "Saving policy as $($OutFile)"

@@ -103,7 +103,7 @@ function Export-AcasScan {
                 $urlpath = "/scans/$($ScanId)/export"
             }
 
-            Write-PSFMessage -Level Verbose -Message "Exporting scan with Id of $($ScanId) in $($Format) format."
+            Write-PSFMessage -Level Verbose -Message "Exporting scan with Id of $($ScanId) in $($Format) format"
             $FileID = Invoke-AcasRequest -SessionObject $session -Path $urlpath  -Method 'Post' -Parameter $ExportParams
             if ($FileID -is [psobject]) {
                 $FileStatus = ''

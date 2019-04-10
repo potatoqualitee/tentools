@@ -55,10 +55,10 @@ function Save-AcasPlugin {
 
         $FilesToDownload = $ACASFiles | Where-Object { $_.FileName -notlike "*diff*" -and $_.FileName -notlike "*md5*" } | Sort-Object length
         if ($FilesToDownload.count -ge 1) {
-            Write-PSFMessage -Level Verbose -Message "Found $($FilesToDownload.count) files to download."
+            Write-PSFMessage -Level Verbose -Message "Found $($FilesToDownload.count) files to download"
         }
         if ($FilesToDownload.count -ge 3) {
-            Write-PSFMessage -Level Verbose -Message "More than 2 files found. Limited to 2 at a time. When the next download is started you may be prompted for your PIN again."
+            Write-PSFMessage -Level Verbose -Message "More than 2 files found. Limited to 2 at a time. When the next download is started you may be prompted for your PIN again"
         }
 
         #scriptblock for splitting into seperate jobs

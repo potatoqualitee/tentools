@@ -194,7 +194,7 @@ function Test-AcasAccessibility {
         foreach ($Computer in $ComputerName) {
 
             if ($Computer -as [ipaddress]) {
-                Write-Warning "An IP address was specified instead of a hostname. Attempting to resolve hostname, this may be less accurate."
+                Write-Warning "An IP address was specified instead of a hostname. Attempting to resolve hostname, this may be less accurate"
                 $resolved = (Resolve-NetworkName -Computer $Computer -ErrorAction Ignore).ComputerName
 
                 if ($resolved -as [ipaddress]) {

@@ -28,10 +28,10 @@ function Resolve-NetworkName {
 
     $dnsDomain = $env:USERDNSDOMAIN
     # augment fqdn if needed
-    if ($fqdn -notmatch "\." -and $dnsDomain) {
+    if ($fqdn -notmatch "\" -and $dnsDomain) {
         $fqdn = "$fqdn.$dnsdomain"
     }
-    $hostname = $fqdn.Split(".")[0]
+    $hostname = $fqdn.Split("")[0]
 
     # create an output object with some preliminary data gathered so far
     [PSCustomObject]@{

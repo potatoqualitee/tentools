@@ -50,7 +50,7 @@ function Get-AcasPolicyDetail {
                 $PolicyId = (Get-AcasPolicy).PolicyId
             }
             foreach ($id in $PolicyId) {
-                Write-PSFMessage -Level Verbose -Message "Getting details for policy with id $($id)."
+                Write-PSFMessage -Level Verbose -Message "Getting details for policy with id $($id)"
                 Invoke-AcasRequest -SessionObject $session -Path "/policies/$id" -Method 'GET'
             }
         }
