@@ -67,7 +67,7 @@ function Get-AcasPluginRule {
                 If ($Detail) {
                     # Significant increase in web requests!
                     # Provides the rule name in the returned object
-                    $plugin = (Show-AcasPlugin -SessionId $session.SessionId -PluginId $rule.plugin_id).Name
+                    $plugin = (Get-AcasPlugin -SessionId $session.SessionId -PluginId $rule.plugin_id).Name
                 }
                 else {
                     $plugin = $null

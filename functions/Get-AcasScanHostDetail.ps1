@@ -1,4 +1,4 @@
-function Show-AcasPluginFamilyDetails {
+function Get-AcasScanHostDetail {
     <#
     .SYNOPSIS
         Short description
@@ -9,7 +9,13 @@ function Show-AcasPluginFamilyDetails {
     .PARAMETER SessionId
         ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
-    .PARAMETER FamilyId
+    .PARAMETER ScanId
+        Parameter description
+
+    .PARAMETER HostId
+        Parameter description
+
+    .PARAMETER HistoryId
         Parameter description
 
     .PARAMETER EnableException
@@ -21,22 +27,35 @@ function Show-AcasPluginFamilyDetails {
         PS> Get-Acas
     #>
     [CmdletBinding()]
-    param
+    Param
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
-        [int]$FamilyId,
+        [int32]$ScanId,
+        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
+        [int32]$HostId,
+        [Parameter(Position = 3, ValueFromPipelineByPropertyName)]
+        [int32]$HistoryId,
         [switch]$EnableException
     )
+    begin {
+        $params = @{ }
+
+        if ($HistoryId) {
+            $params.Add('history_id', $HistoryId)
+        }
+    }
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            foreach ($detail in (Invoke-AcasRequest -SessionObject $session -Path "/plugins/families/$($FamilyId)" -Method 'Get')) {
-                [pscustomobject]@{
-                    Name     = $detail.name
-                    FamilyId = $detail.id
-                    Plugins  = $detail.plugins
+            foreach ($detail in (Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/hosts/$($HostId)" -Method 'Get' -Parameter $params)) {
+                [pscustomobject]@{ 
+                    Info            = $detail.info
+                    Vulnerabilities = $detail.vulnerabilities
+                    Compliance      = $detail.compliance
+                    ScanId          = $ScanId
+                    SessionId       = $session.SessionId
                 }
             }
         }

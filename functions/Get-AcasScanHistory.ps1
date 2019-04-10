@@ -1,4 +1,4 @@
-function Show-AcasScanHostDetail {
+function Get-AcasScanHistory {
     <#
     .SYNOPSIS
         Short description
@@ -12,12 +12,6 @@ function Show-AcasScanHostDetail {
     .PARAMETER ScanId
         Parameter description
 
-    .PARAMETER HostId
-        Parameter description
-
-    .PARAMETER HistoryId
-        Parameter description
-
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
         This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
@@ -25,6 +19,7 @@ function Show-AcasScanHostDetail {
 
     .EXAMPLE
         PS> Get-Acas
+
     #>
     [CmdletBinding()]
     Param
@@ -34,12 +29,9 @@ function Show-AcasScanHostDetail {
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
-        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
-        [int32]$HostId,
-        [Parameter(Position = 3, ValueFromPipelineByPropertyName)]
-        [int32]$HistoryId,
         [switch]$EnableException
     )
+
     begin {
         $params = @{ }
 
@@ -49,13 +41,17 @@ function Show-AcasScanHostDetail {
     }
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            foreach ($detail in (Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/hosts/$($HostId)" -Method 'Get' -Parameter $params)) {
-                [pscustomobject]@{ 
-                    Info            = $detail.info
-                    Vulnerabilities = $detail.vulnerabilities
-                    Compliance      = $detail.compliance
-                    ScanId          = $ScanId
-                    SessionId       = $session.SessionId
+            
+
+            foreach ($ScanDetails in (Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $params).history) {
+                [pscustomobject]@{
+                    HistoryId        = $History.history_id
+                    UUID             = $History.uuid
+                    Status           = $History.status
+                    Type             = $History.type
+                    CreationDate     = $origin.AddSeconds($History.creation_date).ToLocalTime()
+                    LastModifiedDate = $origin.AddSeconds($History.last_modification_date).ToLocalTime()
+                    SessionId        = $session.SessionId
                 }
             }
         }

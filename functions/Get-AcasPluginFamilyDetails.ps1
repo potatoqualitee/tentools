@@ -1,4 +1,4 @@
-function Show-AcasScanHistory {
+function Get-AcasPluginFamilyDetails {
     <#
     .SYNOPSIS
         Short description
@@ -9,7 +9,7 @@ function Show-AcasScanHistory {
     .PARAMETER SessionId
         ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
 
-    .PARAMETER ScanId
+    .PARAMETER FamilyId
         Parameter description
 
     .PARAMETER EnableException
@@ -19,39 +19,24 @@ function Show-AcasScanHistory {
 
     .EXAMPLE
         PS> Get-Acas
-
     #>
     [CmdletBinding()]
-    Param
+    param
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
-        [int32]$ScanId,
+        [int]$FamilyId,
         [switch]$EnableException
     )
-
-    begin {
-        $params = @{ }
-
-        if ($HistoryId) {
-            $params.Add('history_id', $HistoryId)
-        }
-    }
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            
-
-            foreach ($ScanDetails in (Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $params).history) {
+            foreach ($detail in (Invoke-AcasRequest -SessionObject $session -Path "/plugins/families/$($FamilyId)" -Method 'Get')) {
                 [pscustomobject]@{
-                    HistoryId        = $History.history_id
-                    UUID             = $History.uuid
-                    Status           = $History.status
-                    Type             = $History.type
-                    CreationDate     = $origin.AddSeconds($History.creation_date).ToLocalTime()
-                    LastModifiedDate = $origin.AddSeconds($History.last_modification_date).ToLocalTime()
-                    SessionId        = $session.SessionId
+                    Name     = $detail.name
+                    FamilyId = $detail.id
+                    Plugins  = $detail.plugins
                 }
             }
         }

@@ -1,4 +1,4 @@
-function Show-AcasScanDetail {
+function Get-AcasScanDetail {
     <#
     .SYNOPSIS
         Short description

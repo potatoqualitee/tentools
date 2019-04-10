@@ -1,4 +1,4 @@
-function Show-AcasGroupMember {
+function Get-AcasGroupMember {
     <#
     .SYNOPSIS
         Short description

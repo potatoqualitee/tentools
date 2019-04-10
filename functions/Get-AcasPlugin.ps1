@@ -1,4 +1,4 @@
-function Show-AcasPlugin {
+function Get-AcasPlugin {
     <#
     .SYNOPSIS
         Short description

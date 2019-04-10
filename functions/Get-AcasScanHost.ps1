@@ -1,4 +1,4 @@
-function Show-AcasScanHost {
+function Get-AcasScanHost {
     <#
     .SYNOPSIS
         Short description
