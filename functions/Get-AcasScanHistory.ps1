@@ -31,7 +31,6 @@ function Get-AcasScanHistory {
         [int32]$ScanId,
         [switch]$EnableException
     )
-
     begin {
         $params = @{ }
         if ($HistoryId) {

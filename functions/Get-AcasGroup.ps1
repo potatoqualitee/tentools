@@ -28,23 +28,23 @@ function Get-AcasGroup {
     )
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $ServerTypeParams = @{
+            $serverparams = @{
                 SessionObject   = $session
                 Path            = '/server/properties'
                 Method          = 'GET'
                 EnableException = $EnableException
             }
 
-            $Server = Invoke-AcasRequest @ServerTypeParams
+            $Server = Invoke-AcasRequest @serverparams
 
             if ($Server.capabilities.multi_user -eq 'full') {
-                $groupParams = @{
+                $groupparams = @{
                     SessionObject = $session
                     Path          = '/groups'
                     Method        = 'GET'
                 }
 
-                $groups = Invoke-AcasRequest @GroupParams
+                $groups = Invoke-AcasRequest @groupparams
                 foreach ($group in $groups.groups) {
                     [pscustomobject]@{ 
                         Name        = $group.name

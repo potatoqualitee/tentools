@@ -27,7 +27,7 @@ function Get-AcasUser {
     )
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            
+            $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
             $Users = Invoke-AcasRequest -SessionObject $session -Path '/users' -Method 'Get'
             $Users.users | ForEach-Object -process {
                 [pscustomobject]@{ 

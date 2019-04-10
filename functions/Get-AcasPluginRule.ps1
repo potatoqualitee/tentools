@@ -51,7 +51,6 @@ function Get-AcasPluginRule {
 
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            
             $rules = Invoke-AcasRequest -SessionObject $session -Path '/plugin-rules' -Method 'Get'
 
             foreach ($rule in $rules.plugin_rules) {

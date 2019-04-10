@@ -130,7 +130,7 @@ function New-AcasScan {
 
             $ScanJson = ConvertTo-Json -InputObject $scanhash -Compress
 
-            $ServerTypeParams = @{
+            $serverparams = @{
                 SessionObject = $session
                 Path          = '/scans'
                 Method        = 'POST'
@@ -138,7 +138,7 @@ function New-AcasScan {
                 Parameter     = $ScanJson
             }
             
-            foreach ($scan in (Invoke-AcasRequest @ServerTypeParams).scan) {
+            foreach ($scan in (Invoke-AcasRequest @serverparams).scan) {
                 [pscustomobject]@{
                     Name             = $scan.name
                     ScanId           = $scan.id

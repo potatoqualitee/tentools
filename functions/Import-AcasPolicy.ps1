@@ -53,7 +53,6 @@ function Import-AcasPolicy {
     }
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            
             $fileinfo = Get-ItemProperty -Path $File
             $FilePath = $fileinfo.FullName
             $RestClient = New-Object RestSharp.RestClient

@@ -33,13 +33,13 @@ function New-AcasGroup {
     )
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $ServerTypeParams = @{
+            $serverparams = @{
                 SessionObject = $session
                 Path          = '/server/properties'
                 Method        = 'GET'
             }
 
-            $Server = Invoke-AcasRequest @ServerTypeParams
+            $Server = Invoke-AcasRequest @serverparams
 
             if ($Server.capabilities.multi_user -eq 'full') {
                 $groups = Invoke-AcasRequest -SessionObject $session -Path '/groups' -Method 'POST' -Parameter @{'name' = $Name }

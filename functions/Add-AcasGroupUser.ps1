@@ -48,14 +48,14 @@ function Add-AcasGroupUser {
         }
 
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $ServerTypeParams = @{
+            $serverparams = @{
                 SessionObject   = $session
                 Path            = '/server/properties'
                 Method          = 'GET'
                 EnableException = $EnableException
             }
 
-            $Server = Invoke-AcasRequest @ServerTypeParams
+            $Server = Invoke-AcasRequest @serverparams
 
             if ($Server.capabilities.multi_user -eq 'full') {
                 $params = @{

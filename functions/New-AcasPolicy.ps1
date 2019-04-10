@@ -73,8 +73,8 @@ function New-AcasPolicy {
                     ContentType   = 'application/json'
                     Parameter     = $SettingsJson
                 }
-                $NewPolicy = Invoke-AcasRequest @params
-                Get-AcasPolicy -PolicyID $NewPolicy.policy_id -SessionId $session.sessionid
+                $newpolicy = Invoke-AcasRequest @params
+                Get-AcasPolicy -PolicyID $newpolicy.policy_id -SessionId $session.sessionid
             }
         }
     }

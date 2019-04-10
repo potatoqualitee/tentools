@@ -56,10 +56,10 @@ function Enable-AcasPolicyPortScanner {
     process {
 
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            foreach ($PolicyToChange in $PolicyId) {
+            foreach ($policy in $PolicyId) {
                 $params = @{
                     SessionObject   = $session
-                    Path            = "/policies/$($PolicyToChange)"
+                    Path            = "/policies/$($policy)"
                     Method          = 'PUT'
                     ContentType     = 'application/json'
                     Parameter       = $settingsJson
@@ -67,7 +67,7 @@ function Enable-AcasPolicyPortScanner {
                 }
 
                 $null = Invoke-AcasRequest @params
-                Get-AcasPolicyPortScanner -SessionId $session.SessionId -PolicyId $PolicyToChange
+                Get-AcasPolicyPortScanner -SessionId $session.SessionId -PolicyId $policy
             }
         }
     }
