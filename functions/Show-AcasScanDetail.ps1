@@ -47,18 +47,18 @@ function Show-AcasScanDetail {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
-        $Params = @{ }
+        $params = @{ }
 
         if ($HistoryId) {
-            $Params.Add('history_id', $HistoryId)
+            $params.Add('history_id', $HistoryId)
         }
 
-        foreach ($connection in $collection) {
-            $ScanDetails = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $Params
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            $ScanDetails = Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $params
 
             if ($ScanDetails -is [psobject]) {
 
@@ -85,7 +85,7 @@ function Show-AcasScanDetail {
                 $ScanInfo.add('EditAllowed', $ScanDetails.info.edit_allowed)
                 $ScanInfo.add('LastModified', $origin.AddSeconds($ScanDetails.info.timestamp).ToLocalTime())
                 $ScanInfo.add('ScanStart', $origin.AddSeconds($ScanDetails.info.scan_start).ToLocalTime())
-                $ScanInfo.Add('SessionId', $connection.SessionId)
+                $ScanInfo.Add('SessionId', $session.SessionId)
                 $InfoObj = New-Object -TypeName psobject -Property $ScanInfo
                 $InfoObj.pstypenames[0] = 'Nessus.Scan.Info'
 

@@ -60,16 +60,16 @@ function New-AcasPolicy {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
     }
     process {
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             switch ($PSCmdlet.ParameterSetName) {
                 'ByName' {
-                    $tmpl = Get-AcasPolicyTemplate -Name $TemplateName -SessionId $connection.SessionId
+                    $tmpl = Get-AcasPolicyTemplate -Name $TemplateName -SessionId $session.SessionId
                     if ($tmpl -ne $null) {
                         $PolicyUUID = $tmpl.PolicyUUID
                     }
@@ -89,15 +89,15 @@ function New-AcasPolicy {
             }
 
             $SettingsJson = ConvertTo-Json -InputObject $RequestSet -Compress
-            $RequestParams = @{
-                'SessionObject' = $connection
+            $params = @{
+                'SessionObject' = $session
                 'Path'          = "/policies/"
                 'Method'        = 'POST'
                 'ContentType'   = 'application/json'
                 'Parameter'     = $SettingsJson
             }
-            $NewPolicy = Invoke-AcasRequest @RequestParams
-            Get-AcasPolicy -PolicyID $NewPolicy.policy_id -SessionId $connection.sessionid
+            $NewPolicy = Invoke-AcasRequest @params
+            Get-AcasPolicy -PolicyID $NewPolicy.policy_id -SessionId $session.sessionid
         }
     }
 }

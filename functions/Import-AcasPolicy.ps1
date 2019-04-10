@@ -64,18 +64,18 @@ function Import-AcasPolicy {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
 
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $fileinfo = Get-ItemProperty -Path $File
             $FilePath = $fileinfo.FullName
             $RestClient = New-Object RestSharp.RestClient
             $RestRequest = New-Object RestSharp.RestRequest
             $RestClient.UserAgent = 'Posh-SSH'
-            $RestClient.BaseUrl = $connection.uri
+            $RestClient.BaseUrl = $session.uri
             $RestRequest.Method = [RestSharp.Method]::POST
             $RestRequest.Resource = $URIPath
 
@@ -108,7 +108,7 @@ function Import-AcasPolicy {
                 $PolProps.Add('UserPermission', $Policy.user_permissions)
                 $PolProps.Add('Modified', $origin.AddSeconds($Policy.last_modification_date).ToLocalTime())
                 $PolProps.Add('Created', $origin.AddSeconds($Policy.creation_date).ToLocalTime())
-                $PolProps.Add('SessionId', $connection.SessionId)
+                $PolProps.Add('SessionId', $session.SessionId)
                 $PolObj = [PSCustomObject]$PolProps
                 $PolObj.pstypenames.insert(0, 'Nessus.Policy')
                 $PolObj

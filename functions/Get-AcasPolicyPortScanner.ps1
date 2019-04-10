@@ -37,12 +37,12 @@ function Get-AcasPolicyPortScanner {
         if ($SessionId -notin $sessions) {
             throw "SessionId $($SessionId) is not present in the current sessions."
         }
-        $Session = Get-AcasSession -SessionId $SessionId
+        $session = Get-AcasSession -SessionId $session.SessionId
     }
     process {
         foreach ($PolicyToChange in $PolicyId) {
             try {
-                $Policy = Get-AcasPolicyDetail -SessionId $Session.SessionId -PolicyId $PolicyToChange
+                $Policy = Get-AcasPolicyDetail -SessionId $session.SessionId -PolicyId $PolicyToChange
                 $UpdateProps = [ordered]@{
                     'PolicyId'   = $PolicyToChange
                     'SYNScanner' = $Policy.settings.syn_scanner

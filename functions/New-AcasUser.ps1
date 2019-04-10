@@ -61,14 +61,14 @@ function New-AcasUser {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
     }
     process {
 
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $NewUserParams = @{}
 
             $NewUserParams.Add('type', $Type.ToLower())
@@ -84,7 +84,7 @@ function New-AcasUser {
                 $NewUserParams.Add('name', $Name)
             }
 
-            $NewUser = Invoke-AcasRequest -SessionObject $connection -Path '/users' -Method 'Post' -Parameter $NewUserParams
+            $NewUser = Invoke-AcasRequest -SessionObject $session -Path '/users' -Method 'Post' -Parameter $NewUserParams
 
             if ($NewUser) {
                 $NewUser

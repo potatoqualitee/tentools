@@ -37,15 +37,15 @@ function Remove-AcasGroup {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
     }
     process {
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $ServerTypeParams = @{
-                'SessionObject' = $connection
+                'SessionObject' = $session
                 'Path'          = '/server/properties'
                 'Method'        = 'GET'
             }
@@ -54,7 +54,7 @@ function Remove-AcasGroup {
 
             if ($Server.capabilities.multi_user -eq 'full') {
                 $GroupParams = @{
-                    'SessionObject' = $connection
+                    'SessionObject' = $session
                     'Path'          = "/groups/$($GroupId)"
                     'Method'        = 'DELETE '
                 }

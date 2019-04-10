@@ -32,15 +32,15 @@ function Get-AcasGroup {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
     }
     process {
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $ServerTypeParams = @{
-                'SessionObject' = $connection
+                'SessionObject' = $session
                 'Path'          = '/server/properties'
                 'Method'        = 'GET'
             }
@@ -49,7 +49,7 @@ function Get-AcasGroup {
 
             if ($Server.capabilities.multi_user -eq 'full') {
                 $GroupParams = @{
-                    'SessionObject' = $connection
+                    'SessionObject' = $session
                     'Path'          = '/groups'
                     'Method'        = 'GET'
                 }
@@ -61,7 +61,7 @@ function Get-AcasGroup {
                     $GroupProps.Add('GroupId', $Group.id)
                     $GroupProps.Add('Permissions', $Group.permissions)
                     $GroupProps.Add('UserCount', $Group.user_count)
-                    $GroupProps.Add('SessionId', $connection.SessionId)
+                    $GroupProps.Add('SessionId', $session.SessionId)
                     $GroupObj = [PSCustomObject]$GroupProps
                     $GroupObj.pstypenames.insert(0, 'Nessus.Group')
                     $GroupObj

@@ -43,15 +43,15 @@ function Remove-AcasScanHistory {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
 
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             Write-PSFMessage -Level Verbose -Mesage "Removing history Id ($HistoryId) from scan Id $($ScanId)"
 
-            $ScanHistoryDetails = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/history/$($HistoryId)" -Method 'Delete' -Parameter $Params
+            $ScanHistoryDetails = Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/history/$($HistoryId)" -Method 'Delete' -Parameter $params
 
             if ($ScanHistoryDetails -eq '') {
                 Write-PSFMessage -Level Verbose -Mesage 'History Removed'

@@ -21,13 +21,12 @@ function Disable-AcasPolicyPortScanner {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
  
     .EXAMPLE
-        PS> Get-Acas
+        PS> Disable-AcasPolicyPortScanner
     #>
     [CmdletBinding()]
     [OutputType([int])]
     param
     (
-        # Nessus session Id
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32]$SessionId,
@@ -40,40 +39,36 @@ function Disable-AcasPolicyPortScanner {
     )
 
     begin {
-        $sessions = Get-AcasSession | Select-Object -ExpandProperty sessionid
-        if ($SessionId -notin $sessions) {
-            throw "SessionId $($SessionId) is not present in the current sessions."
-        }
-        $Session = Get-AcasSession -SessionId $SessionId
+        $scanners = @{ }
+        foreach ($scanner in $ScanMethods) {
+            if ($scanner -eq 'TCP')
+            { $scanners['tcp_scanner'] = 'no' }
 
-        $Scanners = @{}
-        foreach ($Scanner in $ScanMethods) {
-            if ($Scanner -eq 'TCP')
-            {$Scanners['tcp_scanner'] = 'no'}
+            if ($scanner -eq 'UDP')
+            { $scanners['udp_scanner'] = 'no' }
 
-            if ($Scanner -eq 'UDP')
-            {$Scanners['udp_scanner'] = 'no'}
-
-            if ($Scanner -eq 'SYN')
-            {$Scanners['syn_scanner'] = 'no'}
+            if ($scanner -eq 'SYN')
+            { $scanners['syn_scanner'] = 'no' }
         }
 
-        $Settings = @{'settings' = $Scanners}
-        $SettingsJson = ConvertTo-Json -InputObject $Settings -Compress
+        $settings = @{'settings' = $scanners }
+        $settingsJson = ConvertTo-Json -InputObject $settings -Compress
     }
     process {
-        foreach ($PolicyToChange in $PolicyId) {
-            $RequestParams = @{
-                'SessionObject' = $Session
-                'Path'          = "/policies/$($PolicyToChange)"
-                'Method'        = 'PUT'
-                'ContentType'   = 'application/json'
-                'Parameter'     = $SettingsJson
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            foreach ($PolicyToChange in $PolicyId) {
+                $params = @{
+                    SessionObject   = $session
+                    Path            = "/policies/$($PolicyToChange)"
+                    Method          = 'PUT'
+                    ContentType     = 'application/json'
+                    Parameter       = $settingsJson
+                    EnableException = $EnableException
+                }
+
+                $null = Invoke-AcasRequest @params
+                Get-AcasPolicyPortScanner -SessionId $session.SessionId -PolicyId $PolicyToChange
             }
-
-            Invoke-AcasRequest @RequestParams | Out-Null
-            Get-AcasPolicyPortScanner -SessionId $SessionId -PolicyId $PolicyToChange
-
         }
     }
 }

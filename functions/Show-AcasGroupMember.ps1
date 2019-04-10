@@ -35,7 +35,7 @@ function Show-AcasGroupMember {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
@@ -43,9 +43,9 @@ function Show-AcasGroupMember {
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
     }
     process {
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $ServerTypeParams = @{
-                'SessionObject' = $connection
+                'SessionObject' = $session
                 'Path'          = '/server/properties'
                 'Method'        = 'GET'
             }
@@ -54,7 +54,7 @@ function Show-AcasGroupMember {
 
             if ($Server.capabilities.multi_user -eq 'full') {
                 $GroupParams = @{
-                    'SessionObject' = $connection
+                    'SessionObject' = $session
                     'Path'          = "/groups/$($GroupId)/users"
                     'Method'        = 'GET '
                 }
@@ -69,7 +69,7 @@ function Show-AcasGroupMember {
                     $UserProperties.Add('Type', $User.type)
                     $UserProperties.Add('Permission', $permidenum[$User.permissions])
                     $UserProperties.Add('LastLogin', $origin.AddSeconds($User.lastlogin).ToLocalTime())
-                    $UserProperties.Add('SessionId', $connection.SessionId)
+                    $UserProperties.Add('SessionId', $session.SessionId)
                     $UserObj = New-Object -TypeName psobject -Property $UserProperties
                     $UserObj.pstypenames[0] = 'Nessus.User'
                     $UserObj

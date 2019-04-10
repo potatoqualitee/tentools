@@ -68,7 +68,7 @@ function New-AcasScan {
         [Parameter(Mandatory = $False, ValueFromPipelineByPropertyName)]
         [Int]$FolderId,
         [Parameter(ValueFromPipelineByPropertyName)]
-        [Int]$ScannerId,
+        [Int]$scannerId,
         [Parameter(ValueFromPipelineByPropertyName)]
         [string[]]$Email,
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -84,14 +84,14 @@ function New-AcasScan {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0 
     }
     process {
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             # Join emails as a single comma separated string.
             $emails = $email -join ","
 
@@ -105,7 +105,7 @@ function New-AcasScan {
             }
 
             if ($FolderId) {$settings.Add('folder_id', $FolderId)}
-            if ($ScannerId) {$settings.Add('scanner_id', $ScannerId)}
+            if ($scannerId) {$settings.Add('scanner_id', $scannerId)}
             if ($Email.Length -gt 0) {$settings.Add('emails', $emails)}
             if ($Description.Length -gt 0) {$settings.Add('description', $Description)}
             if ($CreateDashboard) {$settings.Add('use_dashboard', $true)}
@@ -122,7 +122,7 @@ function New-AcasScan {
 
                 'Policy' {
                     $polUUID = $null
-                    $Policies = Get-AcasPolicy -SessionId $connection.SessionId
+                    $Policies = Get-AcasPolicy -SessionId $session.SessionId
                     foreach ($Policy in $Policies) {
                         if ($Policy.PolicyId -eq $PolicyId) {
                             Write-PSFMessage -Level Verbose -Mesage "Uising Poicy with UUID of $($Policy.PolicyUUID)"
@@ -145,7 +145,7 @@ function New-AcasScan {
             $ScanJson = ConvertTo-Json -InputObject $scanhash -Compress
 
             $ServerTypeParams = @{
-                'SessionObject' = $connection
+                'SessionObject' = $session
                 'Path'          = '/scans'
                 'Method'        = 'POST'
                 'ContentType'   = 'application/json'
@@ -171,7 +171,7 @@ function New-AcasScan {
                 $ScanProps.add('StartTime', $origin.AddSeconds($scan.starttime).ToLocalTime())
                 $ScanProps.add('Scheduled', $scan.control)
                 $ScanProps.add('DashboardEnabled', $scan.use_dashboard)
-                $ScanProps.Add('SessionId', $connection.SessionId)
+                $ScanProps.Add('SessionId', $session.SessionId)
 
                 $ScanObj = New-Object -TypeName psobject -Property $ScanProps
                 $ScanObj.pstypenames[0] = 'Nessus.Scan'

@@ -41,13 +41,13 @@ function Resume-AcasScan {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
 
-        foreach ($connection in $collection) {
-            $Scans = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/resume" -Method 'Post'
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            $Scans = Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/resume" -Method 'Post'
 
             if ($Scans -is [psobject]) {
                 $scan = $Scans.scan
@@ -64,7 +64,7 @@ function Resume-AcasScan {
                 $ScanProps.add('CreationDate', $origin.AddSeconds($scan.creation_date).ToLocalTime())
                 $ScanProps.add('LastModified', $origin.AddSeconds($scan.last_modification_date).ToLocalTime())
                 $ScanProps.add('StartTime', $origin.AddSeconds($scan.starttime).ToLocalTime())
-                $ScanProps.Add('SessionId', $connection.SessionId)
+                $ScanProps.Add('SessionId', $session.SessionId)
                 $ScanObj = New-Object -TypeName psobject -Property $ScanProps
                 $ScanObj.pstypenames[0] = 'Nessus.RunningScan'
                 $ScanObj

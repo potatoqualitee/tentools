@@ -54,15 +54,15 @@ function Remove-AcasPluginRule {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
     }
 
     process {
-        foreach ($connection in $collection) {
-            Invoke-AcasRequest -SessionObject $connection -Path ('/plugin-rules/{0}' -f $RuleId) -Method 'Delete'
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            Invoke-AcasRequest -SessionObject $session -Path ('/plugin-rules/{0}' -f $RuleId) -Method 'Delete'
         }
     }
 }

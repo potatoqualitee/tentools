@@ -72,7 +72,7 @@ function Export-AcasScan {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
@@ -97,7 +97,7 @@ function Export-AcasScan {
             }
         }
 
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             if ($HistoryId) {
                 $path = "/scans/$($ScanId)/export?history_id=$($HistoryId)"
             }
@@ -106,12 +106,12 @@ function Export-AcasScan {
             }
 
             Write-PSFMessage -Level Verbose -Mesage "Exporting scan with Id of $($ScanId) in $($Format) format."
-            $FileID = Invoke-AcasRequest -SessionObject $connection -Path $path  -Method 'Post' -Parameter $ExportParams
+            $FileID = Invoke-AcasRequest -SessionObject $session -Path $path  -Method 'Post' -Parameter $ExportParams
             if ($FileID -is [psobject]) {
                 $FileStatus = ''
                 while ($FileStatus.status -ne 'ready') {
                     try {
-                        $FileStatus = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/export/$($FileID.file)/status"  -Method 'Get'
+                        $FileStatus = Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($FileID.file)/status"  -Method 'Get'
                         Write-PSFMessage -Level Verbose -Mesage "Status of export is $($FileStatus.status)"
                     }
                     catch {
@@ -121,11 +121,11 @@ function Export-AcasScan {
                 }
                 if ($FileStatus.status -eq 'ready' -and $Format -eq 'CSV' -and $PSObject.IsPresent) {
                     Write-PSFMessage -Level Verbose -Mesage "Converting report to PSObject"
-                    Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' | ConvertFrom-Csv
+                    Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' | ConvertFrom-Csv
                 }
                 elseif ($FileStatus.status -eq 'ready') {
                     Write-PSFMessage -Level Verbose -Mesage "Downloading report to $($OutFile)"
-                    Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' -OutFile $OutFile
+                    Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' -OutFile $OutFile
                 }
             }
         }

@@ -43,18 +43,18 @@ function Show-AcasScanHost {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
-        $Params = @{ }
+        $params = @{ }
 
         if ($HistoryId) {
-            $Params.Add('history_id', $HistoryId)
+            $params.Add('history_id', $HistoryId)
         }
 
-        foreach ($connection in $collection) {
-            $ScanDetails = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $Params
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            $ScanDetails = Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $params
 
             if ($ScanDetails -is [psobject]) {
                 foreach ($Host in $ScanDetails.hosts) {
@@ -67,7 +67,7 @@ function Show-AcasScanHost {
                     $HostProps.Add('Low', $Host.low)
                     $HostProps.Add('Info', $Host.info)
                     $HostProps.Add('ScanId', $ScanId)
-                    $HostProps.Add('SessionId', $connection.SessionId)
+                    $HostProps.Add('SessionId', $session.SessionId)
                     $HostObj = New-Object -TypeName psobject -Property $HostProps
                     $HostObj.pstypenames[0] = 'Nessus.Scan.Host'
                     $HostObj

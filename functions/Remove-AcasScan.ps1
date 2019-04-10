@@ -36,15 +36,15 @@ function Remove-AcasScan {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
 
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             Write-PSFMessage -Level Verbose -Mesage "Removing scan with Id $($ScanId)"
 
-            $ScanDetails = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)" -Method 'Delete' -Parameter $Params
+            $ScanDetails = Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Delete' -Parameter $params
             if ($ScanDetails -eq 'null') {
                 Write-PSFMessage -Level Verbose -Mesage 'Scan Removed'
             }

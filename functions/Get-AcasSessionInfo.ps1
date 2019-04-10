@@ -41,7 +41,7 @@ function Get-AcasSessionInfo {
                 }
             }
 
-            foreach ($connection in $collection) {
+            foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
                 $RestMethodParams = @{
                     'Method'        = 'Get'
                     'URI'           = "$($connection.URI)/session"

@@ -21,7 +21,10 @@ function Invoke-AcasRequest {
         [String]$ContentType,
 
         [Parameter(Mandatory=$false)]
-        [String]$InFile
+        [String]$InFile,
+
+        [Parameter(Mandatory=$false)]
+        [switch]$EnableException
 
     )
 
@@ -57,7 +60,7 @@ function Invoke-AcasRequest {
     try
     {
         #$RestMethodParams.Uri
-        $Results = Invoke-RestMethod @RestMethodParams
+        $results = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
    
     }
     catch [Net.WebException] 
@@ -67,7 +70,7 @@ function Invoke-AcasRequest {
         {
             # Request failed. More than likely do to time-out.
             # Re-Authenticating using information from session.
-            write-verbose -Message 'The session has expired, Re-authenticating'
+            Write-Message -Level Verbose -Message 'The session has expired, Re-authenticating'
             $ReAuthParams = @{
                 'Method' = 'Post'
                 'URI' =  "$($SessionObject.URI)/session"
@@ -101,13 +104,17 @@ function Invoke-AcasRequest {
 
                 # Re-submit query with the new token and return results.
                 $RestMethodParams.Headers = @{'X-Cookie' = "token=$($Sessionobj.Token)"}
-                $Results = Invoke-RestMethod @RestMethodParams
+                try {
+                    $results = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
+                } catch {
+                    Stop-PSFFunction -Message "Failure" -ErrorRecord $_ -Continue
+                }
             }
         }
-        else
+        catch
         {
-            $PSCmdlet.ThrowTerminatingError($_)
+             Stop-PSFFunction -Message "Failure" -ErrorRecord $_ -Continue
         }
     }
-    $Results
+    $results
 }

@@ -38,15 +38,15 @@ function New-AcasGroup {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
     }
     process {
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $ServerTypeParams = @{
-                'SessionObject' = $connection
+                'SessionObject' = $session
                 'Path'          = '/server/properties'
                 'Method'        = 'GET'
             }
@@ -54,12 +54,12 @@ function New-AcasGroup {
             $Server = Invoke-AcasRequest @ServerTypeParams
 
             if ($Server.capabilities.multi_user -eq 'full') {
-                $Groups = Invoke-AcasRequest -SessionObject $connection -Path '/groups' -Method 'POST' -Parameter @{'name' = $Name }
+                $Groups = Invoke-AcasRequest -SessionObject $session -Path '/groups' -Method 'POST' -Parameter @{'name' = $Name }
                 $NewGroupProps = [ordered]@{ }
                 $NewGroupProps.Add('Name', $Groups.name)
                 $NewGroupProps.Add('GroupId', $Groups.id)
                 $NewGroupProps.Add('Permissions', $Groups.permissions)
-                $NewGroupProps.Add('SessionId', $connection.SessionId)
+                $NewGroupProps.Add('SessionId', $session.SessionId)
                 $NewGroupObj = [pscustomobject]$NewGroupProps
                 $NewGroupObj
             }

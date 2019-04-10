@@ -38,16 +38,16 @@ function Remove-AcasUser {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
     }
     process {
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             foreach ($uid in $UserId) {
                 Write-PSFMessage -Level Verbose -Mesage "Deleting user with Id $($uid)"
-                Invoke-AcasRequest -SessionObject $connection -Path "/users/$($uid)" -Method 'Delete'
+                Invoke-AcasRequest -SessionObject $session -Path "/users/$($uid)" -Method 'Delete'
             }
         }
     }

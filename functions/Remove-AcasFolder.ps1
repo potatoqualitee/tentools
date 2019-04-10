@@ -34,13 +34,13 @@ function Remove-NessusFolder {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
 
-        foreach ($connection in $collection) {
-            $Folder = Invoke-AcasRequest -SessionObject $connection -Path "/folders/$($FolderId)" -Method 'DELETE'
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            $Folder = Invoke-AcasRequest -SessionObject $session -Path "/folders/$($FolderId)" -Method 'DELETE'
         }
     }
 }

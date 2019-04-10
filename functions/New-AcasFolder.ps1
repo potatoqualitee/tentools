@@ -38,16 +38,16 @@ function New-AcasFolder {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
 
-        foreach ($connection in $collection) {
-            $Folder = Invoke-AcasRequest -SessionObject $connection -Path '/folders' -Method 'Post' -Parameter @{'name' = $Name }
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            $Folder = Invoke-AcasRequest -SessionObject $session -Path '/folders' -Method 'Post' -Parameter @{'name' = $Name }
 
             if ($Folder -is [psobject]) {
-                Get-AcasFolder -SessionId $connection.sessionid | Where-Object {
+                Get-AcasFolder -SessionId $session.sessionid | Where-Object {
                     $_.FolderId -eq $Folder.id
                 }
             }

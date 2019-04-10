@@ -28,7 +28,6 @@ function Add-AcasPolicyPortRange {
     [OutputType([int])]
     param
     (
-        # Nessus session Id
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32]$SessionId,
@@ -38,32 +37,27 @@ function Add-AcasPolicyPortRange {
         [string[]]$Port,
         [switch]$EnableException
     )
-
-    begin {
-        $sessions = Get-AcasSession | Select-Object -ExpandProperty sessionid
-        if ($SessionId -notin $sessions) {
-            throw "SessionId $($SessionId) is not present in the current sessions."
-        }
-        $Session = Get-AcasSession -SessionId $SessionId
-    }
     process {
-        foreach ($PolicyToChange in $PolicyId) {
-            try {
-                $Policy = Get-AcasPolicyDetail -SessionId $Session.SessionId -PolicyId $PolicyToChange
-                $Ports = "$($Policy.settings.portscan_range),$($Port -join ",")"
-                $RequestParams = @{
-                    'SessionObject' = $Session
-                    'Path'          = "/policies/$($PolicyToChange)"
-                    'Method'        = 'PUT'
-                    'ContentType'   = 'application/json'
-                    'Parameter'     = "{`"settings`": {`"portscan_range`": `"$($Ports)`"}}"
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            foreach ($PolicyToChange in $PolicyId) {
+                try {
+                    $policy = Get-AcasPolicyDetail -SessionId $session.SessionId -PolicyId $PolicyToChange
+                    $ports = "$($Policy.settings.portscan_range),$($Port -join ",")"
+                    $params = @{
+                        SessionObject   = $session
+                        Path            = "/policies/$($PolicyToChange)"
+                        Method          = 'PUT'
+                        ContentType     = 'application/json'
+                        Parameter       = "{`"settings`": {`"portscan_range`": `"$($Ports)`"}}"
+                        EnableException = $EnableException
+                    }
+   
+                    $null = Invoke-AcasRequest @params
+                    Get-AcasPolicyPortRange -SessionId $session.SessionId -PolicyId $PolicyToChange
                 }
-
-                Invoke-AcasRequest @RequestParams | Out-Null
-                Get-AcasPolicyPortRange -SessionId $SessionId -PolicyId $PolicyToChange
-            }
-            catch {
-                Stop-Function -Message "Failure" -ErrorRecord $_ -Continue
+                catch {
+                    Stop-Function -Message "Failure" -ErrorRecord $_ -Continue
+                }
             }
         }
     }

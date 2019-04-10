@@ -38,14 +38,14 @@ function Remove-AcasPolicy {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
 
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             Write-PSFMessage -Level Verbose -Mesage "Deleting policy with id $($PolicyId)."
-            $RemovedPolicy = Invoke-AcasRequest -SessionObject $connection -Path "/policies/$($PolicyId)" -Method 'DELETE'
+            $RemovedPolicy = Invoke-AcasRequest -SessionObject $session -Path "/policies/$($PolicyId)" -Method 'DELETE'
             Write-PSFMessage -Level Verbose -Mesage 'Policy deleted.'
         }
     }

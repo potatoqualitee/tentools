@@ -49,18 +49,18 @@ function Get-AcasScan {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
-        $Params = @{ }
+        $params = @{ }
 
         if ($FolderId) {
-            $Params.Add('folder_id', $FolderId)
+            $params.Add('folder_id', $FolderId)
         }
 
-        foreach ($connection in $collection) {
-            $Scans = Invoke-AcasRequest -SessionObject $connection -Path '/scans' -Method 'Get' -Parameter $Params
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            $Scans = Invoke-AcasRequest -SessionObject $session -Path '/scans' -Method 'Get' -Parameter $params
 
             if ($Scans -is [psobject]) {
 
@@ -94,7 +94,7 @@ function Get-AcasScan {
                         TimeZone         = $scan.timezone
                         Scheduled        = $scan.control
                         DashboardEnabled = $scan.use_dashboard
-                        SessionId        = $connection.SessionId
+                        SessionId        = $session.SessionId
                         CreationDate     = $origin.AddSeconds($scan.creation_date).ToLocalTime()
                         LastModified     = $origin.AddSeconds($scan.last_modification_date).ToLocalTime()
                         StartTime        = $StartTime

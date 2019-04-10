@@ -36,14 +36,14 @@ function Get-AcasServerInfo {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
 
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
 
-            $ServerInfo = Invoke-AcasRequest -SessionObject $connection -Path '/server/properties' -Method 'Get'
+            $ServerInfo = Invoke-AcasRequest -SessionObject $session -Path '/server/properties' -Method 'Get'
 
             if ($ServerInfo -is [psobject]) {
                 $SrvInfoProp = [ordered]@{ }

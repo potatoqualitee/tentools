@@ -39,11 +39,11 @@ function Get-AcasPolicyLocalPortEnumeration {
                 Stop-PSFFunction -Message "SessionId $($id) is not present in the current sessions."
             }
        
-            $Session = Get-AcasSession -SessionId $id
+            $session = Get-AcasSession -SessionId $id
 
             foreach ($PolicyToChange in $PolicyId) {
                 try {
-                    $Policy = Get-AcasPolicyDetail -SessionId $Session.SessionId -PolicyId $PolicyToChange
+                    $Policy = Get-AcasPolicyDetail -SessionId $session.SessionId -PolicyId $PolicyToChange
                     $UpdateProps = [ordered]@{
                         'PolicyId'             = $PolicyToChange
                         'WMINetstat'           = $Policy.settings.wmi_netstat_scanner

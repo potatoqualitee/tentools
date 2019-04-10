@@ -38,13 +38,13 @@ function Show-AcasPluginFamilyDetails {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
 
-        foreach ($connection in $collection) {
-            $FamilyDetails = Invoke-AcasRequest -SessionObject $connection -Path "/plugins/families/$($FamilyId)" -Method 'Get'
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            $FamilyDetails = Invoke-AcasRequest -SessionObject $session -Path "/plugins/families/$($FamilyId)" -Method 'Get'
             if ($FamilyDetails -is [Object]) {
                 $DetailProps = [ordered]@{ }
                 $DetailProps.Add('Name', $FamilyDetails.name)

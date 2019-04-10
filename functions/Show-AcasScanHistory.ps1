@@ -43,18 +43,18 @@ function Show-AcasScanHistory {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
-        $Params = @{ }
+        $params = @{ }
 
         if ($HistoryId) {
-            $Params.Add('history_id', $HistoryId)
+            $params.Add('history_id', $HistoryId)
         }
 
-        foreach ($connection in $collection) {
-            $ScanDetails = Invoke-AcasRequest -SessionObject $connection -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $Params
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            $ScanDetails = Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $params
 
             if ($ScanDetails -is [psobject]) {
                 foreach ($History in $ScanDetails.history) {
@@ -65,7 +65,7 @@ function Show-AcasScanHistory {
                     $HistoryProps['Type'] = $History.type
                     $HistoryProps['CreationDate'] = $origin.AddSeconds($History.creation_date).ToLocalTime()
                     $HistoryProps['LastModifiedDate'] = $origin.AddSeconds($History.last_modification_date).ToLocalTime()
-                    $HistoryProps['SessionId'] = $connection.SessionId
+                    $HistoryProps['SessionId'] = $session.SessionId
                     $HistObj = New-Object -TypeName psobject -Property $HistoryProps
                     $HistObj.pstypenames[0] = 'Nessus.Scan.History'
                     $HistObj

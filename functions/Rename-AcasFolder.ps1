@@ -38,13 +38,13 @@ function Rename-AcasFolder {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
 
-        foreach ($connection in $collection) {
-            $Folder = Invoke-AcasRequest -SessionObject $connection -Path "/folders/$($FolderId)" -Method 'PUT' -Parameter @{'name' = $Name}
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            $Folder = Invoke-AcasRequest -SessionObject $session -Path "/folders/$($FolderId)" -Method 'PUT' -Parameter @{'name' = $Name}
         }
     }
 }

@@ -34,13 +34,13 @@ function Show-AcasPlugin {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
 
-        foreach ($connection in $collection) {
-            $Plugin = Invoke-AcasRequest -SessionObject $connection -Path "/plugins/plugin/$($PluginId)" -Method 'Get'
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            $Plugin = Invoke-AcasRequest -SessionObject $session -Path "/plugins/plugin/$($PluginId)" -Method 'Get'
 
             if ($Plugin -is [psobject]) {
                 if ($Plugin.name -ne $null) {
@@ -60,7 +60,7 @@ function Show-AcasPlugin {
                     $PluginProps.Add('PluginId', $Plugin.id)
                     $PluginProps.Add('FamilyName', $Plugin.family_name)
                     $PluginProps.Add('Attributes', $Attributes)
-                    $PluginProps.Add('SessionId', $connection.SessionId)
+                    $PluginProps.Add('SessionId', $session.SessionId)
                     $PluginObj = New-Object -TypeName psobject -Property $PluginProps
                     $PluginObj.pstypenames[0] = 'Nessus.Plugin'
                     $PluginObj

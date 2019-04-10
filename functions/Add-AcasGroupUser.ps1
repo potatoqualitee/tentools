@@ -21,7 +21,7 @@ function Add-AcasGroupUser {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Add-AcasGroupUser
 
     #>
     [CmdletBinding()]
@@ -42,28 +42,30 @@ function Add-AcasGroupUser {
             $connections = $Global:NessusConn
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
 
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $ServerTypeParams = @{
-                'SessionObject' = $connection
-                'Path'          = '/server/properties'
-                'Method'        = 'GET'
+                SessionObject   = $session
+                Path            = '/server/properties'
+                Method          = 'GET'
+                EnableException = $EnableException
             }
 
             $Server = Invoke-AcasRequest @ServerTypeParams
 
             if ($Server.capabilities.multi_user -eq 'full') {
-                $GroupParams = @{
-                    'SessionObject' = $connection
-                    'Path'          = "/groups/$($GroupId)/users"
-                    'Method'        = 'POST'
-                    'Parameter'     = @{'user_id' = $UserId }
+                $params = @{
+                    SessionObject   = $session
+                    Path            = "/groups/$($GroupId)/users"
+                    Method          = 'POST'
+                    Parameter       = @{'user_id' = $UserId }
+                    EnableException = $EnableException
                 }
-                Invoke-AcasRequest @GroupParams
+                Invoke-AcasRequest @params
             }
             else {
                 Write-PSFMessage -Level Warning -Mesage "Server for session $($connection.sessionid) is not licenced for multiple users."

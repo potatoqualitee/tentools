@@ -44,20 +44,20 @@ function Set-AcasPolicyPortRange {
         if ($SessionId -notin $sessions) {
             throw "SessionId $($SessionId) is not present in the current sessions."
         }
-        $Session = Get-AcasSession -SessionId $SessionId
+        $session = Get-AcasSession -SessionId $session.SessionId
     }
     process {
         foreach ($PolicyToChange in $PolicyId) {
-            $RequestParams = @{
-                'SessionObject' = $Session
+            $params = @{
+                'SessionObject' = $session
                 'Path'          = "/policies/$($PolicyToChange)"
                 'Method'        = 'PUT'
                 'ContentType'   = 'application/json'
                 'Parameter'     = "{`"settings`": {`"portscan_range`": `"$($Port -join ",")`"}}"
             }
 
-            Invoke-AcasRequest @RequestParams | Out-Null
-            Get-AcasPolicyPortRange -SessionId $SessionId -PolicyId $PolicyToChange
+            $null = Invoke-AcasRequest @params
+            Get-AcasPolicyPortRange -SessionId $session.SessionId -PolicyId $PolicyToChange
         }
     }
 }

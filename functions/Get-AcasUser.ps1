@@ -36,7 +36,7 @@ function Get-AcasUser {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
@@ -44,9 +44,9 @@ function Get-AcasUser {
     process {
 
 
-        foreach ($connection in $collection) {
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
 
-            $Users = Invoke-AcasRequest -SessionObject $connection -Path '/users' -Method 'Get'
+            $Users = Invoke-AcasRequest -SessionObject $session -Path '/users' -Method 'Get'
 
             if ($Users -is [psobject]) {
                 $Users.users | ForEach-Object -process {
@@ -58,7 +58,7 @@ function Get-AcasUser {
                     $UserProperties.Add('Type', $_.type)
                     $UserProperties.Add('Permission', $permidenum[$_.permissions])
                     $UserProperties.Add('LastLogin', $origin.AddSeconds($_.lastlogin).ToLocalTime())
-                    $UserProperties.Add('SessionId', $connection.SessionId)
+                    $UserProperties.Add('SessionId', $session.SessionId)
                     $UserObj = New-Object -TypeName psobject -Property $UserProperties
                     $UserObj.pstypenames[0] = 'Nessus.User'
                     $UserObj

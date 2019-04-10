@@ -73,7 +73,7 @@ function Get-AcasPluginRule {
 
             foreach ($connection in $connections) {
                 if ($connection.SessionId -eq $id) {
-                    $collection += $connection
+                    $collection += $session
                 }
             }
         }
@@ -82,8 +82,8 @@ function Get-AcasPluginRule {
     }
 
     process {
-        foreach ($connection in $collection) {
-            $pRules = Invoke-AcasRequest -SessionObject $connection -Path '/plugin-rules' -Method 'Get'
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            $pRules = Invoke-AcasRequest -SessionObject $session -Path '/plugin-rules' -Method 'Get'
 
             if ($pRules -is [psobject]) {
                 foreach ($pRule in $pRules.plugin_rules) {
@@ -103,7 +103,7 @@ function Get-AcasPluginRule {
                     # Significant increase in web requests!
                     If ($Detail) {
                         # Provides the rule name in the returned object
-                        $objPluginDetails = Show-AcasPlugin -SessionId $SessionId -PluginId $pRule.plugin_id
+                        $objPluginDetails = Show-AcasPlugin -SessionId $session.SessionId -PluginId $pRule.plugin_id
                         $pRuleProps.add('Plugin', $objPluginDetails.Name)
                     }
 
@@ -113,7 +113,7 @@ function Get-AcasPluginRule {
                     $pRuleProps.add('Owner_ID', $pRule.owner_id)
                     $pRuleProps.add('Shared', $pRule.shared)
                     $pRuleProps.add('Permissions', $pRule.user_permissions)
-                    $pRuleProps.add('SessionId', $connection.SessionId)
+                    $pRuleProps.add('SessionId', $session.SessionId)
                     $pRuleObj = New-Object -TypeName psobject -Property $pRuleProps
                     $pRuleObj.pstypenames[0] = 'Nessus.PluginRules'
 

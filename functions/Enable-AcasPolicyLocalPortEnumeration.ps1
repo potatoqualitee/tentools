@@ -49,46 +49,42 @@ function Enable-AcasPolicyLocalPortEnumeration {
     )
 
     begin {
-        $sessions = Get-AcasSession | Select-Object -ExpandProperty sessionid
-        if ($SessionId -notin $sessions) {
-            throw "SessionId $($SessionId) is not present in the current sessions."
-        }
-        $Session = Get-AcasSession -SessionId $SessionId
+        $scanners = @{ }
+        foreach ($scanner in $ScanMethods) {
+            if ($scanner -eq 'WMINetstat')
+            { $scanners['wmi_netstat_scanner'] = 'yes' }
 
-        $Scanners = @{}
-        foreach ($Scanner in $ScanMethods) {
-            if ($Scanner -eq 'WMINetstat')
-            {$Scanners['wmi_netstat_scanner'] = 'yes'}
+            if ($scanner -eq 'SSHNetstat')
+            { $scanners['ssh_netstat_scanner'] = 'yes' }
 
-            if ($Scanner -eq 'SSHNetstat')
-            {$Scanners['ssh_netstat_scanner'] = 'yes'}
-
-            if ($Scanner -eq 'SNMPScanner')
-            {$Scanners['snmp_scanner'] = 'yes'}
+            if ($scanner -eq 'SNMPScanner')
+            { $scanners['snmp_scanner'] = 'yes' }
         }
 
         if ($VerifyOpenPorts)
-        {$Scanners['verify_open_ports'] = 'yes'}
+        { $scanners['verify_open_ports'] = 'yes' }
 
         if ($ScanOnlyIfLocalFails)
-        {$Scanners['only_portscan_if_enum_failed'] = 'yes'}
+        { $scanners['only_portscan_if_enum_failed'] = 'yes' }
 
-        $Settings = @{'settings' = $Scanners}
+        $Settings = @{'settings' = $scanners }
         $SettingsJson = ConvertTo-Json -InputObject $Settings -Compress
     }
     process {
-        foreach ($PolicyToChange in $PolicyId) {
-            $RequestParams = @{
-                'SessionObject' = $Session
-                'Path'          = "/policies/$($PolicyToChange)"
-                'Method'        = 'PUT'
-                'ContentType'   = 'application/json'
-                'Parameter'     = $SettingsJson
+        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            foreach ($PolicyToChange in $PolicyId) {
+                $params = @{
+                    SessionObject   = $session
+                    Path            = "/policies/$($PolicyToChange)"
+                    Method          = 'PUT'
+                    ContentType     = 'application/json'
+                    Parameter       = $SettingsJson
+                    EnableException = $EnableException
+                }
+
+                $null = Invoke-AcasRequest @params
+                Get-AcasPolicyLocalPortEnumeration -SessionId $session.SessionId -PolicyId $PolicyToChange
             }
-
-            Invoke-AcasRequest @RequestParams | Out-Null
-            Get-AcasPolicyLocalPortEnumeration -SessionId $SessionId -PolicyId $PolicyToChange
-
         }
     }
 }
