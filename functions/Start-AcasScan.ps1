@@ -36,41 +36,22 @@ function Start-AcasScan {
         [string[]]$AlternateTarget,
         [switch]$EnableException
     )
-
     begin {
-        
-    }
-    process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
         $params = @{ }
 
         if ($AlternateTarget) {
             $params.Add('alt_targets', $AlternateTarget)
         }
         $paramJson = ConvertTo-Json -InputObject $params -Compress
-
+    }
+    process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $Scans = Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json'
-
-            if ($Scans -is [psobject]) {
-
-                $ScanProps = [ordered]@{ }
-                $ScanProps.add('ScanUUID', $scans.scan_uuid)
-                $ScanProps.add('ScanId', $ScanId)
-                $ScanProps.add('SessionId', $session.SessionId)
-                $ScanObj = New-Object -TypeName psobject -Property $ScanProps
-                $ScanObj.pstypenames[0] = 'Nessus.LaunchedScan'
-                $ScanObj
+            foreach ($scans in (Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json')) {
+                [pscustomobject]@{
+                    ScanUUID  = $scans.scan_uuid
+                    ScanId    = $ScanId
+                    SessionId = $session.SessionId
+                }
             }
         }
     }

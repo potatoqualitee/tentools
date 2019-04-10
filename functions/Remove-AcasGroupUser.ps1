@@ -55,9 +55,9 @@ function Remove-AcasGroupUser {
                 Method        = 'GET'
             }
 
-            $Server = Invoke-AcasRequest @serverparams
+            $server = Invoke-AcasRequest @serverparams
 
-            if ($Server.capabilities.multi_user -eq 'full') {
+            if ($server.capabilities.multi_user -eq 'full') {
                 $groupparams = @{
                     SessionObject = $session
                     Path          = "/groups/$($GroupId)/users/$($UserId)"

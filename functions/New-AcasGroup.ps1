@@ -39,9 +39,9 @@ function New-AcasGroup {
                 Method        = 'GET'
             }
 
-            $Server = Invoke-AcasRequest @serverparams
+            $server = Invoke-AcasRequest @serverparams
 
-            if ($Server.capabilities.multi_user -eq 'full') {
+            if ($server.capabilities.multi_user -eq 'full') {
                 $groups = Invoke-AcasRequest -SessionObject $session -Path '/groups' -Method 'POST' -Parameter @{'name' = $Name }
                 [pscustomobject]@{ 
                     Name        = $groups.name

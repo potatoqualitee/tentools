@@ -55,9 +55,9 @@ function Add-AcasGroupUser {
                 EnableException = $EnableException
             }
 
-            $Server = Invoke-AcasRequest @serverparams
+            $server = Invoke-AcasRequest @serverparams
 
-            if ($Server.capabilities.multi_user -eq 'full') {
+            if ($server.capabilities.multi_user -eq 'full') {
                 $params = @{
                     SessionObject   = $session
                     Path            = "/groups/$($GroupId)/users"
