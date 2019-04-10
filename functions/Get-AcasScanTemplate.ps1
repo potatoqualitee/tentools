@@ -25,38 +25,19 @@ function Get-AcasScanTemplate {
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [switch]$EnableException
     )
-
-    begin {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
-    }
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $Templates = Invoke-AcasRequest -SessionObject $session -Path '/editor/scan/templates' -Method 'Get'
-
-            if ($Templates -is [psobject]) {
-                foreach ($Template in $Templates.templates) {
-                    $TmplProps = [ordered]@{ }
-                    $TmplProps.add('Name', $Template.name)
-                    $TmplProps.add('Title', $Template.title)
-                    $TmplProps.add('Description', $Template.desc)
-                    $TmplProps.add('UUID', $Template.uuid)
-                    $TmplProps.add('CloudOnly', $Template.cloud_only)
-                    $TmplProps.add('SubscriptionOnly', $Template.subscription_only)
-                    $TmplProps.add('SessionId', $session.SessionId)
-                    $Tmplobj = New-Object -TypeName psobject -Property $TmplProps
-                    $Tmplobj.pstypenames[0] = 'Nessus.ScanTemplate'
-                    $Tmplobj
-                }
+            foreach ($Template in $Templates.templates) {
+                [pscustomobject]@{ 
+                    Name             = $Template.name
+                    Title            = $Template.title
+                    Description      = $Template.desc
+                    UUID             = $Template.uuid
+                    CloudOnly        = $Template.cloud_only
+                    SubscriptionOnly = $Template.subscription_only
+                    SessionId        = $session.SessionId
+                } | Select-DefaultView -ExcludeProperty SessionId
             }
         }
     }

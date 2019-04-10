@@ -37,22 +37,7 @@ function Get-AcasScan {
         [string]$Status,
         [switch]$EnableException
     )
-
-    begin {
-        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-    }
     process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
         $params = @{ }
 
         if ($FolderId) {
@@ -60,45 +45,43 @@ function Get-AcasScan {
         }
 
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $Scans = Invoke-AcasRequest -SessionObject $session -Path '/scans' -Method 'Get' -Parameter $params
+            $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
+            $scans = Invoke-AcasRequest -SessionObject $session -Path '/scans' -Method 'Get' -Parameter $params
 
-            if ($Scans -is [psobject]) {
+            if ($Status.length -gt 0) {
+                $allscans = $scans.scans | Where-Object { $_.status -eq $Status.ToLower() }
+            }
+            else {
+                $allscans = $scans.scans
+            }
+            foreach ($scan in $allscans) {
 
-                if ($Status.length -gt 0) {
-                    $allscans = $Scans.scans | Where-Object { $_.status -eq $Status.ToLower() }
+                if ($scan.starttime -cnotlike "*T*") {
+                    $StartTime = $origin.AddSeconds($scan.starttime).ToLocalTime()
                 }
                 else {
-                    $allscans = $Scans.scans
+                    $StartTime = [datetime]::ParseExact($scan.starttime, "yyyyMMddTHHmmss",
+                        [System.Globalization.CultureInfo]::InvariantCulture,
+                        [System.Globalization.DateTimeStyles]::None)
                 }
-                foreach ($scan in $allscans) {
 
-                    if ($scan.starttime -cnotlike "*T*") {
-                        $StartTime = $origin.AddSeconds($scan.starttime).ToLocalTime()
-                    }
-                    else {
-                        $StartTime = [datetime]::ParseExact($scan.starttime, "yyyyMMddTHHmmss",
-                            [System.Globalization.CultureInfo]::InvariantCulture,
-                            [System.Globalization.DateTimeStyles]::None)
-                    }
-
-                    [pscustomobject]@{
-                        Name             = $scan.name
-                        ScanId           = $scan.id
-                        Status           = $scan.status
-                        Enabled          = $scan.enabled
-                        FolderId         = $scan.folder_id
-                        Owner            = $scan.owner
-                        UserPermission   = $permidenum[$scan.user_permissions]
-                        Rules            = $scan.rrules
-                        Shared           = $scan.shared
-                        TimeZone         = $scan.timezone
-                        Scheduled        = $scan.control
-                        DashboardEnabled = $scan.use_dashboard
-                        SessionId        = $session.SessionId
-                        CreationDate     = $origin.AddSeconds($scan.creation_date).ToLocalTime()
-                        LastModified     = $origin.AddSeconds($scan.last_modification_date).ToLocalTime()
-                        StartTime        = $StartTime
-                    }
+                [pscustomobject]@{
+                    Name             = $scan.name
+                    ScanId           = $scan.id
+                    Status           = $scan.status
+                    Enabled          = $scan.enabled
+                    FolderId         = $scan.folder_id
+                    Owner            = $scan.owner
+                    UserPermission   = $permidenum[$scan.user_permissions]
+                    Rules            = $scan.rrules
+                    Shared           = $scan.shared
+                    TimeZone         = $scan.timezone
+                    Scheduled        = $scan.control
+                    DashboardEnabled = $scan.use_dashboard
+                    SessionId        = $session.SessionId
+                    CreationDate     = $origin.AddSeconds($scan.creation_date).ToLocalTime()
+                    LastModified     = $origin.AddSeconds($scan.last_modification_date).ToLocalTime()
+                    StartTime        = $StartTime
                 }
             }
         }

@@ -25,42 +25,23 @@ function Get-AcasServerInfo {
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [switch]$EnableException
     )
-    begin {
+    foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-    }
-    process {
-        $collection = @()
+        $server = Invoke-AcasRequest -SessionObject $session -Path '/server/properties' -Method 'Get'
 
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
-
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-
-            $ServerInfo = Invoke-AcasRequest -SessionObject $session -Path '/server/properties' -Method 'Get'
-
-            if ($ServerInfo -is [psobject]) {
-                $SrvInfoProp = [ordered]@{ }
-                $SrvInfoProp.Add('NessusType', $ServerInfo.nessus_type)
-                $SrvInfoProp.Add('ServerVersion', $ServerInfo.server_version)
-                $SrvInfoProp.Add('UIVersion', $ServerInfo.nessus_ui_version)
-                $SrvInfoProp.Add('PluginSet', $ServerInfo.loaded_plugin_set)
-                $SrvInfoProp.Add('Feed', $ServerInfo.feed)
-                $SrvInfoProp.Add('FeedExpiration', $origin.AddSeconds($ServerInfo.expiration).ToLocalTime())
-                $SrvInfoProp.Add('Capabilities', $ServerInfo.capabilities)
-                $SrvInfoProp.Add('UUID', $ServerInfo.server_uuid)
-                $SrvInfoProp.Add('Update', $ServerInfo.update)
-                $SrvInfoProp.Add('Enterprise', $ServerInfo.enterprise)
-                $SrvInfoProp.Add('License', $ServerInfo.license)
-                $SrvInfoObj = New-Object -TypeName psobject -Property $SrvInfoProp
-                $SrvInfoObj.pstypenames[0] = 'Nessus.ServerInfo'
-                $SrvInfoObj
+        foreach ($serverinfo in $server) {
+            [pscustomobject]@{ 
+                NessusType     = $serverinfo.nessus_type
+                ServerVersion  = $serverinfo.server_version
+                UIVersion      = $serverinfo.nessus_ui_version
+                PluginSet      = $serverinfo.loaded_plugin_set
+                Feed           = $serverinfo.feed
+                FeedExpiration = $origin.AddSeconds($serverinfo.expiration).ToLocalTime()
+                Capabilities   = $serverinfo.capabilities
+                UUID           = $serverinfo.server_uuid
+                Update         = $serverinfo.update
+                Enterprise     = $serverinfo.enterprise
+                License        = $serverinfo.license
             }
         }
     }

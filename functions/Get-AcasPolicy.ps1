@@ -41,20 +41,20 @@ function Get-AcasPolicy {
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-            $Policies = Invoke-AcasRequest -SessionObject $session -Path '/policies' -Method 'Get'
+            $policies = Invoke-AcasRequest -SessionObject $session -Path '/policies' -Method 'Get'
 
-            if ($Policies -is [psobject]) {
+            if ($policies -is [psobject]) {
                 switch ($PSCmdlet.ParameterSetName) {
                     'ByName' {
-                        $collection = $Policies.policies | Where-Object { $_.name -eq $Name }
+                        $collection = $policies.policies | Where-Object { $_.name -eq $Name }
                     }
 
                     'ByID' {
-                        $collection = $Policies.policies | Where-Object { $_.id -eq $PolicyID }
+                        $collection = $policies.policies | Where-Object { $_.id -eq $PolicyID }
                     }
 
                     'All' {
-                        $collection = $Policies.policies
+                        $collection = $policies.policies
                     }
                 }
 

@@ -43,7 +43,7 @@ function Get-AcasPolicyDetail {
                     $PolicyId = $policy.PolicyId
                 }
                 else {
-                    Stop-PSFFunction -Message "Policy with name $($Name) was not found." -Continue
+                    Stop-PSFFunction -Message "Policy with name $($Name) was not found on $($session.Uri)" -Continue
                 }
             }
             if (-not $PSBoundParameters.PolicyId -and -not $PSBoundParameters.Name) {

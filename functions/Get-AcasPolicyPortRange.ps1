@@ -38,8 +38,8 @@ function Get-AcasPolicyPortRange {
                 try {
                     $policydetail = Get-AcasPolicyDetail -SessionId $session.SessionId -PolicyId $policy
                     [pscustomobject]@{
-                        'PolicyId'  = $policy
-                        'PortRange' = $policydetail.settings.portscan_range
+                        PolicyId  = $policy
+                        PortRange = $policydetail.settings.portscan_range
                     }
                 }
                 catch {

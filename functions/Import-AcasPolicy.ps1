@@ -53,23 +53,10 @@ function Import-AcasPolicy {
                 }
             }
         }
-
-        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
     }
     process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $connections = $global:NessusConn
-
-            foreach ($connection in $connections) {
-                if ($connection.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
-
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+            $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
             $fileinfo = Get-ItemProperty -Path $File
             $FilePath = $fileinfo.FullName
             $RestClient = New-Object RestSharp.RestClient
@@ -88,30 +75,29 @@ function Import-AcasPolicy {
             else {
                 $RestParams = New-Object -TypeName System.Collections.Specialized.OrderedDictionary
                 $RestParams.add('file', "$($fileinfo.name)")
-                if ($Encrypted) {
-                    $Credential = New-Object System.Management.Automation.PSCredential -ArgumentList 'user', $Password
+                if ($Encrypted -and ($Credential -or $Password)) {
+                    if (-not $Credential) {
+                        $Credential = New-Object System.Management.Automation.PSCredential -ArgumentList 'user', $Password
+                    }
                     $RestParams.Add('password', $Credential.GetNetworkCredential().Password)
                 }
 
-                $impParams = @{ 'Body' = $RestParams }
                 $Policy = Invoke-RestMethod -Method Post -Uri "$($connection.URI)/policies/import" -header @{'X-Cookie' = "token=$($connection.Token)" } -Body (ConvertTo-Json @{'file' = $fileinfo.name; } -Compress) -ContentType 'application/json'
-                $PolProps = [ordered]@{ }
-                $PolProps.Add('Name', $Policy.Name)
-                $PolProps.Add('PolicyId', $Policy.id)
-                $PolProps.Add('Description', $Policy.description)
-                $PolProps.Add('PolicyUUID', $Policy.template_uuid)
-                $PolProps.Add('Visibility', $Policy.visibility)
-                $PolProps['Shared'] = & { if ($Policy.shared -eq 1) { $True }else { $False } }
-                $PolProps.Add('Owner', $Policy.owner)
-                $PolProps.Add('UserId', $Policy.owner_id)
-                $PolProps.Add('NoTarget', $Policy.no_target)
-                $PolProps.Add('UserPermission', $Policy.user_permissions)
-                $PolProps.Add('Modified', $origin.AddSeconds($Policy.last_modification_date).ToLocalTime())
-                $PolProps.Add('Created', $origin.AddSeconds($Policy.creation_date).ToLocalTime())
-                $PolProps.Add('SessionId', $session.SessionId)
-                $PolObj = [PSCustomObject]$PolProps
-                $PolObj.pstypenames.insert(0, 'Nessus.Policy')
-                $PolObj
+                [pscustomobject]@{ 
+                    Name           = $Policy.Name
+                    PolicyId       = $Policy.id
+                    Description    = $Policy.description
+                    PolicyUUID     = $Policy.template_uuid
+                    Visibility     = $Policy.visibility
+                    Shared         = (if ($Policy.shared -eq 1) { $True }else { $False })
+                    Owner          = $Policy.owner
+                    UserId         = $Policy.owner_id
+                    NoTarget       = $Policy.no_target
+                    UserPermission = $Policy.user_permissions
+                    Modified       = $origin.AddSeconds($Policy.last_modification_date).ToLocalTime()
+                    Created        = $origin.AddSeconds($Policy.creation_date).ToLocalTime()
+                    SessionId      = $session.SessionId
+                }
             }
         }
     }
