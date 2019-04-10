@@ -21,37 +21,38 @@ function Get-AcasPolicyDetail {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-AcasPolicyDetail
     #>
     [CmdletBinding(DefaultParameterSetName = 'ByName')]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName, ParameterSetName = 'All')]
-        [Parameter(ParameterSetName = 'ByName')]
-        [Parameter(ParameterSetName = 'ByID')]
+        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $global:NessusConn.SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByID')]
-        [int32]$PolicyId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
+        [Parameter(Position = 1, ValueFromPipelineByPropertyName)]
+        [int32[]]$PolicyId,
+        [Parameter(Position = 1, ValueFromPipelineByPropertyName)]
         [string]$Name,
         [switch]$EnableException
     )
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            switch ($PSCmdlet.ParameterSetName) {
-                'ByName' {
-                    $policy = Get-AcasPolicy -Name $Name -SessionId $session.SessionId
-                    if ($policy) {
-                        $PolicyId = $policy.PolicyId
-                    }
-                    else {
-                        Stop-Function -Message "Policy with name $($Name) was not found." -Continue
-                    }
+            if ($PSBoundParameters.Name) {
+                $policy = Get-AcasPolicy -Name $Name -SessionId $session.SessionId
+                if ($policy) {
+                    $PolicyId = $policy.PolicyId
+                }
+                else {
+                    Stop-PSFFunction -Message "Policy with name $($Name) was not found." -Continue
                 }
             }
-            Write-PSFMessage -Level Verbose -Message "Getting details for policy with id $($PolicyId)."
-            Invoke-AcasRequest -SessionObject $session -Path "/policies/$($PolicyId)" -Method 'GET'
+            if (-not $PSBoundParameters.PolicyId -and -not $PSBoundParameters.Name) {
+                $PolicyId = (Get-AcasPolicy).PolicyId
+            }
+            foreach ($id in $PolicyId) {
+                Write-PSFMessage -Level Verbose -Message "Getting details for policy with id $($id)."
+                Invoke-AcasRequest -SessionObject $session -Path "/policies/$id" -Method 'GET'
+            }
         }
     }
 }

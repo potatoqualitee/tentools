@@ -45,18 +45,16 @@ function Get-AcasFolder {
     )
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $Folders = Invoke-AcasRequest -SessionObject $session -Path '/folders' -Method 'Get'
-            if ($Folders -is [psobject]) {
-                foreach ($folder in $Folders.folders) {
-                    [pscustomobject]@{
-                        Name      = $folder.name
-                        FolderId  = $folder.id
-                        Type      = $folder.type
-                        Default   = $folder.default_tag
-                        Unread    = $folder.unread_count
-                        SessionId = $session.SessionId
-                    } | Select-DefaultView -ExcludeProperty SessionId
-                }
+            $folders = Invoke-AcasRequest -SessionObject $session -Path '/folders' -Method 'Get'
+            foreach ($folder in $folders.folders) {
+                [pscustomobject]@{
+                    Name      = $folder.name
+                    FolderId  = $folder.id
+                    Type      = $folder.type
+                    Default   = $folder.default_tag
+                    Unread    = $folder.unread_count
+                    SessionId = $session.SessionId
+                } | Select-DefaultView -ExcludeProperty SessionId
             }
         }
     }

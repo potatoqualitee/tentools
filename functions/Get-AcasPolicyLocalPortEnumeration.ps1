@@ -47,7 +47,7 @@ function Get-AcasPolicyLocalPortEnumeration {
                     }
                 }
                 catch {
-                    Stop-Function -Message "Failure" -ErrorRecord $_ -Continue
+                    Stop-PSFFunction -Message "Failure" -ErrorRecord $_ -Continue
                 }
             }
         }

@@ -56,7 +56,7 @@ function Add-AcasPolicyPortRange {
                     Get-AcasPolicyPortRange -SessionId $session.SessionId -PolicyId $PolicyToChange
                 }
                 catch {
-                    Stop-Function -Message "Failure" -ErrorRecord $_ -Continue
+                    Stop-PSFFunction -Message "Failure" -ErrorRecord $_ -Continue
                 }
             }
         }

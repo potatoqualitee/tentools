@@ -43,7 +43,7 @@ function Get-AcasPolicyPortRange {
                     }
                 }
                 catch {
-                    Stop-Function -Message "Failure" -ErrorRecord $_ -Continue
+                    Stop-PSFFunction -Message "Failure" -ErrorRecord $_ -Continue
                 }
             }
         }
