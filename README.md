@@ -1,4 +1,6 @@
-<img align="left" src=https://user-images.githubusercontent.com/8278033/55955866-d3b64900-5c62-11e9-8175-92a8427d7f94.png alt="acas logo">  acas is PowerShell module helps automate DISA ACAS. It is a rewrite of Tenable's [Posh-Nessus](https://github.com/tenable/Posh-Nessus).
+<img align="left" src=https://user-images.githubusercontent.com/8278033/55955866-d3b64900-5c62-11e9-8175-92a8427d7f94.png alt="acastools logo">  acas is PowerShell module helps automate DISA ACAS. It is a rewrite of Tenable's [Posh-Nessus](https://github.com/tenable/Posh-Nessus).
+
+This toolset does this and that. If you have requests, please add them to the issues tab. Writing words here for now until better words can be worked out.
 
 ## Key links for reference:
 
@@ -7,20 +9,20 @@
 
 ## Installer
 
-acas works on PowerShell Core (aka PowerShell 6+). This means that you can run all commands on <strong>Windows</strong>, <strong>Linux</strong> and <strong>macOS </strong>.
+acastools works on PowerShell Core (aka PowerShell 6+). This means that you can run all commands on <strong>Windows</strong>, <strong>Linux</strong> and <strong>macOS </strong>.
 
-Run the following to install acas from the PowerShell Gallery (to install on a server or for all users, remove the `-Scope` parameter and run in an elevated session):
+Run the following to install acastools from the PowerShell Gallery (to install on a server or for all users, remove the `-Scope` parameter and run in an elevated session):
 
 ```powershell
-Install-Module acas -Scope CurrentUser
+Install-Module acastools -Scope CurrentUser
 ```
 
 If you need to install this module to an offline server, you can run
 
 ```powershell
-Save-Module acas -Path C:\temp
+Save-Module acastools -Path C:\temp
 ```
-And it will save all dependent modules. You can also [download the zip](https://github.com/potatoqualitee/acas/archive/master.zip) from our repo, but you'll also need to download [PSFramework](https://github.com/PowershellFrameworkCollective/psframework/archive/development.zip).
+And it will save all dependent modules. You can also [download the zip](https://github.com/potatoqualitee/acas/archive/master.zip) from our repo, but you'll also need to download [PSFramework](https://github.com/PowershellFrameworkCollective/psframework/archive/development.zip) and [PoshRSJob](https://github.com/proxb/PoshRSJob/archive/master.zip).
 
 Please rename the folders from `name-master` to `name` and store in your `$Env:PSModulePath`.
 
