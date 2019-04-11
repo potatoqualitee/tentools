@@ -192,13 +192,13 @@ function Test-AcasAccessibility {
 
     process {
         foreach ($Computer in $ComputerName) {
-
+            $stepCounter = 0
             if ($Computer -as [ipaddress]) {
-                Write-Warning "An IP address was specified instead of a hostname. Attempting to resolve hostname, this may be less accurate"
+                Write-Message -Level Warning -Message "An IP address was specified instead of a hostname. Attempting to resolve hostname, this may be less accurate"
                 $resolved = (Resolve-NetworkName -Computer $Computer -ErrorAction Ignore).ComputerName
 
                 if ($resolved -as [ipaddress]) {
-                    Stop-Function -Message "Unable to resolve $computer to a hostname. Please use the network name instead. You can potentially find the network name by using ping -a $computer" -Continue
+                    Stop-PSFFunction -Message "Unable to resolve $computer to a hostname. Please use the network name instead. You can potentially find the network name by using ping -a $computer" -Continue
                 }
                 else {
                     $Computer = $resolved
@@ -210,6 +210,7 @@ function Test-AcasAccessibility {
                 Credential   = $Credential
             }
 
+            Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $Computer and performing tests"
             Invoke-Command2 @splat -ScriptBlock $scriptblock -ArgumentList $ServiceAccount | Select-Object -Property ComputerName, ExecutedAsUser, Name, Value, Errors, Compliant
 
             try {
@@ -220,6 +221,7 @@ function Test-AcasAccessibility {
                 $stoperror = Get-ErrorMessage -Record $_
             }
 
+            Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Testing port 139 on $Computer"
             [PSCustomObject]@{
                 ComputerName   = $Computer.ToUpper()
                 ExecutedAsUser = "$env:USERDOMAIN\$env:USERNAME"
@@ -237,6 +239,7 @@ function Test-AcasAccessibility {
                 $stoperror = Get-ErrorMessage -Record $_
             }
 
+            Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Testing port 445 on $Computer"
             [PSCustomObject]@{
                 ComputerName   = $Computer.ToUpper()
                 ExecutedAsUser = "$env:USERDOMAIN\$env:USERNAME"
