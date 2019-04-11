@@ -1,106 +1,44 @@
-# Posh-Nessus
-PowerShell v3.0 (or above) module for automating Tenable Nessus 6.x vulnerability scans using the REST API introduced in version 6 of the scanner.
+<img align="left" src=https://user-images.githubusercontent.com/8278033/55955866-d3b64900-5c62-11e9-8175-92a8427d7f94.png alt="acas logo">  acas is PowerShell module helps automate DISA ACAS. It is a rewrite of Tenable's [Posh-Nessus](https://github.com/tenable/Posh-Nessus).
 
-** This Module is still in development **
+## Key links for reference:
 
-# Install
+- [acas overview](https://www.ask-acas.info/overview/) for discussion around contributing to the project
+- [Tenable Acas Blog](https://www.tenable.com/blog/tenable-selected-for-disa-s-acas-vulnerability-management-solution) for general discussion on the module and asking questions
 
-At the moment there is no installer for the module since it is in development. If you wish to try it out you can follow the steps bellow.
+## Installer
 
-First ensure you are running PowerShell 3.0 or preferably 4.0 by looking at the `$PSVersionTable` variable in a PowerShell session where `PSVesion` is the version of PowerShell.
+acas works on PowerShell Core (aka PowerShell 6+). This means that you can run all commands on <strong>Windows</strong>, <strong>Linux</strong> and <strong>macOS </strong>.
 
-```
-PS C:\> $PSVersionTable
+Run the following to install acas from the PowerShell Gallery (to install on a server or for all users, remove the `-Scope` parameter and run in an elevated session):
 
-Name                           Value
-----                           -----
-PSVersion                      4.0
-WSManStackVersion              3.0
-SerializationVersion           1.1.0.1
-CLRVersion                     4.0.30319.34209
-BuildVersion                   6.3.9600.17400
-PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0}
-PSRemotingProtocolVersion      2.2
-
+```powershell
+Install-Module acas -Scope CurrentUser
 ```
 
-From a PowerShell session running as administrator run:
+If you need to install this module to an offline server, you can run
+
+```powershell
+Save-Module acas -Path C:\temp
 ```
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force
-```
-List of commands to install the module that can be copy pasted in to a Powershell session:
+And it will save all dependent modules. You can also [download the zip](https://github.com/potatoqualitee/acas/archive/master.zip) from our repo, but you'll also need to download [PSFramework](https://github.com/PowershellFrameworkCollective/psframework/archive/development.zip).
 
-```PowerShell
-# Make sure the module is not loaded
-Remove-Module Posh-Nessus -ErrorAction SilentlyContinue
-# Download latest version
-$webclient = New-Object System.Net.WebClient
-$url = "https://github.com/tenable/Posh-Nessus/archive/master.zip"
-Write-Host "Downloading latest version of Posh-Nessus from $url" -ForegroundColor Cyan
-$file = "$($env:TEMP)\Posh-Nessus.zip"
-$webclient.DownloadFile($url,$file)
-Write-Host "File saved to $file" -ForegroundColor Green
-# Unblock and decompress
-Unblock-File -Path $file
-$targetondisk = "$([System.Environment]::GetFolderPath('MyDocuments'))\WindowsPowerShell\Modules"
-New-Item -ItemType Directory -Force -Path $targetondisk | out-null
-$shell_app=new-object -com shell.application
-$zip_file = $shell_app.namespace($file)
-Write-Host "Uncompressing the Zip file to $($targetondisk)" -ForegroundColor Cyan
-$destination = $shell_app.namespace($targetondisk)
-$destination.Copyhere($zip_file.items(), 0x10)
-# Rename and import
-Write-Host "Renaming folder" -ForegroundColor Cyan
-Rename-Item -Path ($targetondisk+"\Posh-Nessus-master") -NewName "Posh-Nessus" -Force
-Write-Host "Module has been installed" -ForegroundColor Green
-Import-Module -Name Posh-Nessus
-Get-Command -Module Posh-Nessus
-``` 
+Please rename the folders from `name-master` to `name` and store in your `$Env:PSModulePath`.
 
-## Basic Usage
-The module works by creating sessions to one or more Nessus 6 scanners and then using the Session ID of that session to run other cmdlets. To stablish a session the `New-NessusSession` cmdlet is used.
+## Usage scenarios
 
-```
-PS C:\> New-NessusSession -ComputerName 192.168.1.211 -Credentials (Get-Credential)
+- Do this
+- Do that
+- Do this
 
-cmdlet Get-Credential at command pipeline position 1
-Supply values for the following parameters:
-Credential
+## Usage examples
 
+Bunch of examples
 
-SessionId : 0
-URI       : https://192.168.1.211:8834
-Token     : 54ffb9f7447079978b6c584ba02c44720f029e468d8a3850
-
+```powershell
+Connect-AcasServce -ComputerName acas -Credential acasadmin
 ```
 
-Once a session is created the Session ID is given to the other cmdlets/functions to perform the desired task:
-```
-PS C:\> Get-NessusServerStatus -SessionId 0
+## Support
 
-
-Progress :
-Status   : ready
-
-
-
-PS C:\> Get-NessusSessionInfo -SessionId 0
-
-
-Id         : 2
-Name       : carlos
-UserName   : carlos
-Email      :
-Type       : local
-Permission : Sysadmin
-LastLogin  : 5/20/2015 9:16:30 PM
-Groups     :
-Connectors :
-
-```
-
-# Change Log
-
-## Version: 0.2
-
-* Fixed issue when starting scan with alternate targets. Missing Content Type header.
+* PowerShell v3 and above
+* Windows, macOS and Linux
