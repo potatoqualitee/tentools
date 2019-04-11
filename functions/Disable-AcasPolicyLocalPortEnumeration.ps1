@@ -72,10 +72,10 @@ function Disable-AcasPolicyLocalPortEnumeration {
     }
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            foreach ($PolicyToChange in $PolicyId) {
+            foreach ($policy in $PolicyId) {
                 $params = @{
                     SessionObject   = $session
-                    Path            = "/policies/$($PolicyToChange)"
+                    Path            = "/policies/$($policy)"
                     Method          = 'PUT'
                     ContentType     = 'application/json'
                     Parameter       = $settingsJson
@@ -83,7 +83,7 @@ function Disable-AcasPolicyLocalPortEnumeration {
                 }
 
                 $null = Invoke-AcasRequest @params
-                Get-AcasPolicyLocalPortEnumeration -SessionId $session.SessionId -PolicyId $PolicyToChange
+                Get-AcasPolicyLocalPortEnumeration -SessionId $session.SessionId -PolicyId $policy
             }
         }
     }

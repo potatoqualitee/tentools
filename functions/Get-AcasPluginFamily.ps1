@@ -15,7 +15,7 @@ function Get-AcasPluginFamily {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-AcasPluginFamily
     #>
     [CmdletBinding()]
     param
@@ -27,8 +27,7 @@ function Get-AcasPluginFamily {
     )
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $families = Invoke-AcasRequest -SessionObject $session -Path '/plugins/families' -Method 'Get'
-            if ($families -is [Object[]]) {
+            foreach ($families in (Invoke-AcasRequest -SessionObject $session -Path '/plugins/families' -Method 'Get')) {
                 foreach ($family in $families) {
                     [pscustomobject]@{
                         Name     = $family.name

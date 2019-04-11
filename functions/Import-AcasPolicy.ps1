@@ -53,7 +53,6 @@ function Import-AcasPolicy {
     }
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            
             $fileinfo = Get-ItemProperty -Path $File
             $FilePath = $fileinfo.FullName
             $RestClient = New-Object RestSharp.RestClient
@@ -64,7 +63,7 @@ function Import-AcasPolicy {
             $RestRequest.Resource = 'file/upload'
 
             [void]$RestRequest.AddFile('Filedata', $FilePath, 'application/octet-stream')
-            [void]$RestRequest.AddHeader('X-Cookie', "token=$($connection.Token)")
+            [void]$RestRequest.AddHeader('X-Cookie', "token=$($session.Token)")
             $result = $RestClient.Execute($RestRequest)
             if ($result.ErrorMessage.Length -gt 0) {
                 Write-Error -Message $result.ErrorMessage
@@ -79,7 +78,7 @@ function Import-AcasPolicy {
                     $RestParams.Add('password', $Credential.GetNetworkCredential().Password)
                 }
 
-                $Policy = Invoke-RestMethod -Method Post -Uri "$($connection.URI)/policies/import" -header @{'X-Cookie' = "token=$($connection.Token)" } -Body (ConvertTo-Json @{'file' = $fileinfo.name; } -Compress) -ContentType 'application/json'
+                $Policy = Invoke-RestMethod -Method Post -Uri "$($session.URI)/policies/import" -header @{'X-Cookie' = "token=$($session.Token)" } -Body (ConvertTo-Json @{'file' = $fileinfo.name; } -Compress) -ContentType 'application/json'
                 [pscustomobject]@{ 
                     Name           = $Policy.Name
                     PolicyId       = $Policy.id

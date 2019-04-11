@@ -15,7 +15,7 @@ function Get-AcasServerInfo {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-AcasServerInfo
     #>
     [CmdletBinding()]
     param
@@ -26,7 +26,8 @@ function Get-AcasServerInfo {
         [switch]$EnableException
     )
     foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-        
+        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0$origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
+        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
         $server = Invoke-AcasRequest -SessionObject $session -Path '/server/properties' -Method 'Get'
 
         foreach ($serverinfo in $server) {

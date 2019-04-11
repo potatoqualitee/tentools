@@ -85,7 +85,7 @@ function Import-AcasScan {
             $RestRequest.Resource = $URIPath
 
             [void]$RestRequest.AddFile('Filedata', $FilePath, 'application/octet-stream')
-            [void]$RestRequest.AddHeader('X-Cookie', "token=$($connection.Token)")
+            [void]$RestRequest.AddHeader('X-Cookie', "token=$($session.Token)")
             $result = $RestClient.Execute($RestRequest)
             if ($result.ErrorMessage.Length -gt 0) {
                 Write-Error -Message $result.ErrorMessage

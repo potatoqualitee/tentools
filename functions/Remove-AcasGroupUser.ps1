@@ -49,25 +49,25 @@ function Remove-AcasGroupUser {
     )
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $ServerTypeParams = @{
+            $serverparams = @{
                 SessionObject = $session
                 Path          = '/server/properties'
                 Method        = 'GET'
             }
 
-            $Server = Invoke-AcasRequest @ServerTypeParams
+            $server = Invoke-AcasRequest @serverparams
 
-            if ($Server.capabilities.multi_user -eq 'full') {
-                $GroupParams = @{
+            if ($server.capabilities.multi_user -eq 'full') {
+                $groupparams = @{
                     SessionObject = $session
                     Path          = "/groups/$($GroupId)/users/$($UserId)"
                     Method        = 'DELETE'
                 }
 
-                Invoke-AcasRequest @GroupParams
+                Invoke-AcasRequest @groupparams
             }
             else {
-                Write-PSFMessage -Level Warning -Message "Server for session $($connection.sessionid) is not licenced for multiple users."
+                Write-PSFMessage -Level Warning -Message "Server for session $($session.sessionid) is not licenced for multiple users"
             }
         }
     }

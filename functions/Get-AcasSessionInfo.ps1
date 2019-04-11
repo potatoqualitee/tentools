@@ -31,8 +31,8 @@ function Get-AcasSessionInfo {
             
             $RestMethodParams = @{
                 Method          = 'Get'
-                'URI'           = "$($connection.URI)/session"
-                'Headers'       = @{'X-Cookie' = "token=$($connection.Token)" }
+                'URI'           = "$($session.URI)/session"
+                'Headers'       = @{'X-Cookie' = "token=$($session.Token)" }
                 'ErrorVariable' = 'NessusSessionError'
             }
             $SessInfo = Invoke-RestMethod @RestMethodParams

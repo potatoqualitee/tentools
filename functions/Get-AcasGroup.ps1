@@ -28,23 +28,23 @@ function Get-AcasGroup {
     )
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $ServerTypeParams = @{
+            $serverparams = @{
                 SessionObject   = $session
                 Path            = '/server/properties'
                 Method          = 'GET'
                 EnableException = $EnableException
             }
 
-            $Server = Invoke-AcasRequest @ServerTypeParams
+            $server = Invoke-AcasRequest @serverparams
 
-            if ($Server.capabilities.multi_user -eq 'full') {
-                $groupParams = @{
+            if ($server.capabilities.multi_user -eq 'full') {
+                $groupparams = @{
                     SessionObject = $session
                     Path          = '/groups'
                     Method        = 'GET'
                 }
 
-                $groups = Invoke-AcasRequest @GroupParams
+                $groups = Invoke-AcasRequest @groupparams
                 foreach ($group in $groups.groups) {
                     [pscustomobject]@{ 
                         Name        = $group.name
@@ -56,7 +56,7 @@ function Get-AcasGroup {
                 }
             }
             else {
-                Write-PSFMessage -Level Warning -Message "Server for session $($connection.sessionid) is not licenced for multiple users."
+                Write-PSFMessage -Level Warning -Message "Server for session $($session.sessionid) is not licenced for multiple users"
             }
         }
     }

@@ -24,7 +24,7 @@ function Get-AcasScanHostDetail {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-AcasScanHostDetail
     #>
     [CmdletBinding()]
     Param

@@ -40,7 +40,6 @@ function Get-AcasPolicy {
     )
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            
             $policies = Invoke-AcasRequest -SessionObject $session -Path '/policies' -Method 'Get'
 
             if ($policies -is [psobject]) {
@@ -58,20 +57,20 @@ function Get-AcasPolicy {
                     }
                 }
 
-                foreach ($Policy in $collection) {
+                foreach ($policy in $collection) {
                     [pscustomobject]@{
-                        Name           = $Policy.Name
-                        PolicyId       = $Policy.id
-                        Description    = $Policy.description
-                        PolicyUUID     = $Policy.template_uuid
-                        Visibility     = $Policy.visibility
-                        Shared         = (if ($Policy.shared -eq 1) { $true } else { $false })
-                        Owner          = $Policy.owner
-                        UserId         = $Policy.owner_id
-                        NoTarget       = $Policy.no_target
-                        UserPermission = $Policy.user_permissions
-                        Modified       = $origin.AddSeconds($Policy.last_modification_date).ToLocalTime()
-                        Created        = $origin.AddSeconds($Policy.creation_date).ToLocalTime()
+                        Name           = $policy.Name
+                        PolicyId       = $policy.id
+                        Description    = $policy.description
+                        PolicyUUID     = $policy.template_uuid
+                        Visibility     = $policy.visibility
+                        Shared         = (if ($policy.shared -eq 1) { $true } else { $false })
+                        Owner          = $policy.owner
+                        UserId         = $policy.owner_id
+                        NoTarget       = $policy.no_target
+                        UserPermission = $policy.user_permissions
+                        Modified       = $origin.AddSeconds($policy.last_modification_date).ToLocalTime()
+                        Created        = $origin.AddSeconds($policy.creation_date).ToLocalTime()
                         SessionId      = $session.SessionId
                     }
                 }

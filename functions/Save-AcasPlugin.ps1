@@ -34,7 +34,7 @@ function Save-AcasPlugin {
 
         #Enabling TLS 1.2
         if ([Net.ServicePointManager]::SecurityProtocol -notlike '*TLS12*') {
-            Write-Output "Setting Security Protocol to TLS 1.2"
+            Write-PSFMessage -Level Verbose -Message "Setting Security Protocol to TLS 1.2"
             [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         }
     }
@@ -43,11 +43,11 @@ function Save-AcasPlugin {
         [string]$FolderName = Get-Date -f MMddyyyy
         $OutPath = $path + $FolderName
 
-        Write-Output "Prompting for CAC PIN"
+        Write-PSFMessage -Level Verbose -Message "Prompting for CAC PIN"
         $ACASFiles = Get-ACASFiles
 
         if (Test-Path -Path $outpath) {
-            Write-Output "Output folder exists"
+            Write-PSFMessage -Level Verbose -Message "Output folder exists"
         }
         else {
             $null = New-Item -Path $Path -Name $Foldername -ItemType directory
@@ -55,10 +55,10 @@ function Save-AcasPlugin {
 
         $FilesToDownload = $ACASFiles | Where-Object { $_.FileName -notlike "*diff*" -and $_.FileName -notlike "*md5*" } | Sort-Object length
         if ($FilesToDownload.count -ge 1) {
-            Write-Output "Found $($FilesToDownload.count) files to download."
+            Write-PSFMessage -Level Verbose -Message "Found $($FilesToDownload.count) files to download"
         }
         if ($FilesToDownload.count -ge 3) {
-            Write-Warning "More than 2 files found. Limited to 2 at a time. When the next download is started you may be prompted for your PIN again."
+            Write-PSFMessage -Level Verbose -Message "More than 2 files found. Limited to 2 at a time. When the next download is started you may be prompted for your PIN again"
         }
 
         #scriptblock for splitting into seperate jobs
@@ -73,29 +73,30 @@ function Save-AcasPlugin {
 
         foreach ($File in $FilesToDownload) {
             $FileLength = [math]::round($File.Length / 1mb)
-            Write-Output "Queueing download of $($file.FileName) which was last updated on $($file.PostedDate) and is $($FileLength)MB"
+            Write-PSFMessage -Level Verbose -Message "Queueing download of $($file.FileName) which was last updated on $($file.PostedDate) and is $($FileLength)MB"
         }
 
         $FilesToDownload | Start-RSjob -ScriptBlock $ScriptBlock -Throttle 2 | Wait-RSJob -ShowProgress | Receive-RSJob
         Get-RSJob | Remove-RSJob
 
         #make sure file hashes match what is reported on website
-        Write-Output "Checking file hashes"
+        Write-PSFMessage -Level Verbose -Message "Checking file hashes"
 
         $FilesToCheck = Get-ChildItem -literalpath $outpath
         foreach ($Check in $FilesToCheck) {
-            Write-Output "Checking hash on $($Check.Name)"
+            Write-PSFMessage -Level Verbose -Message "Checking hash on $($Check.Name)"
             $GetFileHash = Get-FileHash -Path $Check.FullName
             foreach ($ACASFile in $ACASFiles) {
                 if ($Check.Name -eq $ACASFile.FileName) {
                     if ($Acasfile.SHA256 -eq $GetFileHash.Hash) {
-                        Write-Output "Hash on $($Check.Name) was valid"
+                        Write-PSFMessage -Level Verbose -Message "Hash on $($Check.Name) was valid"
                     }
                     else {
-                        Write-Warning "Hash on $($Check.Name) was not valid"
+                        Write-PSFMessage -Level Verbose -Message "Hash on $($Check.Name) was not valid"
                     }
                 }
             }
+            Get-ChildItem -Path $Check.FullName
         }
     }
 }

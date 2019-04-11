@@ -37,15 +37,15 @@ function Get-AcasScan {
         [string]$Status,
         [switch]$EnableException
     )
-    process {
+    begin {
         $params = @{ }
 
         if ($FolderId) {
             $params.Add('folder_id', $FolderId)
         }
-
+    }
+    process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            
             $scans = Invoke-AcasRequest -SessionObject $session -Path '/scans' -Method 'Get' -Parameter $params
 
             if ($Status.length -gt 0) {

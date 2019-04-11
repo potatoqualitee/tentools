@@ -83,8 +83,8 @@ function Connect-AcasService {
             }
             catch {
                 $msg = Get-ErrorMessage -Record $_
-                if ($msg -eq "The remote server returned an error: (401) Unauthorized.") {
-                    $msg = "The remote server returned an error: (401) Unauthorized. This is likely due to a bad username/password."
+                if ($msg -eq "The remote server returned an error: (401) Unauthorized") {
+                    $msg = "The remote server returned an error: (401) Unauthorized. This is likely due to a bad username/password"
                 }
                 
                 Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
