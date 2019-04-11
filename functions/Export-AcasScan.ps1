@@ -104,12 +104,12 @@ function Export-AcasScan {
             }
 
             Write-PSFMessage -Level Verbose -Message "Exporting scan with Id of $($ScanId) in $($Format) format"
-            $FileID = Invoke-AcasRequest -SessionObject $session -Path $urlpath  -Method 'Post' -Parameter $ExportParams
-            if ($FileID -is [psobject]) {
+            
+            foreach ($fileid in (Invoke-AcasRequest -SessionObject $session -Path $urlpath  -Method 'Post' -Parameter $ExportParams)) {
                 $FileStatus = ''
                 while ($FileStatus.status -ne 'ready') {
                     try {
-                        $FileStatus = Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($FileID.file)/status"  -Method 'Get'
+                        $FileStatus = Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($fileid.file)/status"  -Method 'Get'
                         Write-PSFMessage -Level Verbose -Message "Status of export is $($FileStatus.status)"
                     }
                     catch {
@@ -119,12 +119,12 @@ function Export-AcasScan {
                 }
                 if ($FileStatus.status -eq 'ready' -and $Format -eq 'CSV' -and $PSObject.IsPresent) {
                     Write-PSFMessage -Level Verbose -Message "Converting report to PSObject"
-                    Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' | ConvertFrom-Csv
+                    Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($fileid.file)/download" -Method 'Get' | ConvertFrom-Csv
                 }
                 elseif ($FileStatus.status -eq 'ready') {
                     Write-PSFMessage -Level Verbose -Message "Downloading report to $($Path)"
-                    $filepath = "$path\$name-$scanid.$($Format.ToLower())"
-                    Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($FileID.file)/download" -Method 'Get' -OutFile $filepath
+                    $filepath = Resolve-PSFPath -Path "$path\$name-$scanid.$($Format.ToLower())" -NewChild
+                    Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($fileid.file)/download" -Method 'Get' -OutFile $filepath
                 }
                 Get-ChildItem -Path $Path
             }

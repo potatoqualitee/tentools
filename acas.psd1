@@ -33,19 +33,13 @@
     PowerShellVersion  = '3.0'
 
     # Modules that must be imported into the global environment prior to importing this module
-    RequiredModules    = @('PSFramework')
+    RequiredModules    = @('PSFramework', 'PoshRSJob')
 
     # Assemblies that must be loaded prior to importing this module
     RequiredAssemblies = @('bin\RestSharp.dll')
 
     # Format files (.ps1xml) to be loaded when importing this module
-    FormatsToProcess   = @('xml\Nessus.Session.ps1xml',
-        'xml\Nessus.ServerStatus.ps1xml',
-        'xml\Nessus.Scan.HostDetails.ps1xml',
-        'xml\Nessus.PluginFamily.ps1xml',
-        'xml\Nessus.PluginFamilyDetails.ps1xml',
-        'xml\Nessus.PolicyCopy.ps1xml'
-    )
+    FormatsToProcess   = @()
 
     # Functions to export from this module
     FunctionsToExport  = @(
