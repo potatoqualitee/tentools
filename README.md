@@ -37,7 +37,7 @@ Please rename the folders from `name-master` to `name` and store in your `$Env:P
 Bunch of examples
 
 ```powershell
-Connect-ScServce -ComputerName acas -Credential acasadmin
+Connect-ScService -ComputerName acas -Credential acasadmin
 ```
 
 ## Support
