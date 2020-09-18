@@ -64,18 +64,40 @@ function Connect-AcasService {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
         foreach ($computer in $ComputerName) {
-            $Uri = "https://$($computer):$($Port)"
-            if ($PSBoundParameters.Credential) {
-                $body = @{'username' = $Credential.UserName; 'password' = $Credential.GetNetworkCredential().password }
-            }
-            else {
-                $body = $null
-            }
-            $RestMethodParams = @{
-                Method        = 'Post'
-                URI           = "$($Uri)/session"
-                Body          = $body
-                ErrorVariable = 'NessusLoginError'
+            if ($Port -eq 443) {
+                $uri = "https://$($computer):$($Port)/rest"
+                $fulluri = "$uri/token"
+                $body = @{
+                    username = $Credential.UserName
+                    password = $Credential.GetNetworkCredential().password
+                    releaseSession = "FALSE"
+                } | ConvertTo-Json
+
+                $headers = @{"HTTP" = "X-SecurityCenter"}
+
+                $RestMethodParams = @{
+                    Headers       = $headers
+                    ContentType   = "application/json"
+                    Method        = 'POST'
+                    URI           = $fulluri
+                    Body          = $body
+                    ErrorVariable = 'NessusLoginError'
+                }
+            } else {
+                $Uri = "https://$($computer):$($Port)"
+                $fulluri = "$uri/session"
+                if ($PSBoundParameters.Credential) {
+                    $body = @{'username' = $Credential.UserName; 'password' = $Credential.GetNetworkCredential().password }
+                }
+                else {
+                    $body = $null
+                }
+                $RestMethodParams = @{
+                    Method        = 'Post'
+                    URI           = $fulluri
+                    Body          = $body
+                    ErrorVariable = 'NessusLoginError'
+                }
             }
 
             try {
@@ -97,11 +119,15 @@ function Connect-AcasService {
                 else {
                     $username = "$env:USERDOMAIN\$env:USERNAME"
                 }
+                $usertoken =  $token.token
+                if (-not $usertoken) {
+                    $usertoken = $token.response.token
+                }
                 $session = [PSCustomObject]@{
-                    URI        = $Uri
+                    URI        = $uri
                     UserName   = $username
                     Credential = $Credential
-                    Token      = $token.token
+                    Token      = $usertoken
                     SessionId  = $global:NessusConn.Count
                 }
                 [void]$global:NessusConn.Add($session)
