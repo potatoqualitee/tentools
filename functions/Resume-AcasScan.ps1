@@ -1,4 +1,4 @@
-function Resume-AcasScan {
+function Resume-ScScan {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Resume-AcasScan {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER ScanId
         Parameter description
@@ -18,7 +18,7 @@ function Resume-AcasScan {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding()]
     Param
@@ -31,8 +31,8 @@ function Resume-AcasScan {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            foreach ($scan in (Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/resume" -Method 'Post').scan) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
+            foreach ($scan in (Invoke-ScRequest -SessionObject $session -Path "/scans/$($ScanId)/resume" -Method 'Post').scan) {
                 [pscustomobject]@{
                     Name            = $scan.name
                     ScanId          = $ScanId

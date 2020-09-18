@@ -1,4 +1,4 @@
-function Get-AcasPolicyDetail {
+function Get-ScPolicyDetail {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Get-AcasPolicyDetail {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER PolicyId
         Parameter description
@@ -21,7 +21,7 @@ function Get-AcasPolicyDetail {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-AcasPolicyDetail
+        PS> Get-ScPolicyDetail
     #>
     [CmdletBinding(DefaultParameterSetName = 'ByName')]
     param
@@ -36,9 +36,9 @@ function Get-AcasPolicyDetail {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             if ($PSBoundParameters.Name) {
-                $policy = Get-AcasPolicy -Name $Name -SessionId $session.SessionId
+                $policy = Get-ScPolicy -Name $Name -SessionId $session.SessionId
                 if ($policy) {
                     $PolicyId = $policy.PolicyId
                 }
@@ -47,11 +47,11 @@ function Get-AcasPolicyDetail {
                 }
             }
             if (-not $PSBoundParameters.PolicyId -and -not $PSBoundParameters.Name) {
-                $PolicyId = (Get-AcasPolicy).PolicyId
+                $PolicyId = (Get-ScPolicy).PolicyId
             }
             foreach ($id in $PolicyId) {
                 Write-PSFMessage -Level Verbose -Message "Getting details for policy with id $($id)"
-                Invoke-AcasRequest -SessionObject $session -Path "/policies/$id" -Method 'GET'
+                Invoke-ScRequest -SessionObject $session -Path "/policies/$id" -Method 'GET'
             }
         }
     }

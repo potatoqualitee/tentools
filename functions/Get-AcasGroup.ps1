@@ -1,4 +1,4 @@
-function Get-AcasGroup {
+function Get-ScGroup {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Get-AcasGroup {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
@@ -15,7 +15,7 @@ function Get-AcasGroup {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding()]
     [OutputType([int])]
@@ -27,7 +27,7 @@ function Get-AcasGroup {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             $serverparams = @{
                 SessionObject   = $session
                 Path            = '/server/properties'
@@ -35,7 +35,7 @@ function Get-AcasGroup {
                 EnableException = $EnableException
             }
 
-            $server = Invoke-AcasRequest @serverparams
+            $server = Invoke-ScRequest @serverparams
 
             if ($server.capabilities.multi_user -eq 'full') {
                 $groupparams = @{
@@ -44,7 +44,7 @@ function Get-AcasGroup {
                     Method        = 'GET'
                 }
 
-                $groups = Invoke-AcasRequest @groupparams
+                $groups = Invoke-ScRequest @groupparams
                 foreach ($group in $groups.groups) {
                     [pscustomobject]@{ 
                         Name        = $group.name

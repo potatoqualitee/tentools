@@ -1,4 +1,4 @@
-function Save-AcasPlugin {
+function Save-ScPlugin {
     <#
 	.SYNOPSIS
     Saves ACAS plugin files from https://patches.csd.disa.mil/CollectionInfo.aspx?id=552
@@ -44,7 +44,7 @@ function Save-AcasPlugin {
         $OutPath = $path + $FolderName
 
         Write-PSFMessage -Level Verbose -Message "Prompting for CAC PIN"
-        $ACASFiles = Get-ACASFiles
+        $ACASFiles = Get-ScFiles
 
         if (Test-Path -Path $outpath) {
             Write-PSFMessage -Level Verbose -Message "Output folder exists"

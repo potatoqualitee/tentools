@@ -1,4 +1,4 @@
-function Get-AcasFolder {
+function Get-ScFolder {
     <#
     .Synopsis
         Gets folders configured on a Nessus Server.
@@ -7,7 +7,7 @@ function Get-AcasFolder {
         Gets folders configured on a Nessus Server.
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
@@ -15,7 +15,7 @@ function Get-AcasFolder {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        Get-AcasFolder 0
+        Get-ScFolder 0
 
         Name    : My Scans
         Id      : 2
@@ -44,8 +44,8 @@ function Get-AcasFolder {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $folders = Invoke-AcasRequest -SessionObject $session -Path '/folders' -Method 'Get'
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
+            $folders = Invoke-ScRequest -SessionObject $session -Path '/folders' -Method 'Get'
             foreach ($folder in $folders.folders) {
                 [pscustomobject]@{
                     Name      = $folder.name

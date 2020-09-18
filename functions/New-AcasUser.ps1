@@ -1,4 +1,4 @@
-function New-AcasUser {
+function New-ScUser {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function New-AcasUser {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER Credential
     Credential for connecting to the Nessus Server
@@ -30,7 +30,7 @@ function New-AcasUser {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding()]
     param
@@ -53,7 +53,7 @@ function New-AcasUser {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             $params = @{ }
             $params.Add('type', $Type.ToLower())
             $params.Add('permissions', $permenum[$Permission])
@@ -68,7 +68,7 @@ function New-AcasUser {
                 $params.Add('name', $Name)
             }
 
-            Invoke-AcasRequest -SessionObject $session -Path '/users' -Method 'Post' -Parameter $params
+            Invoke-ScRequest -SessionObject $session -Path '/users' -Method 'Post' -Parameter $params
         }
     }
 }

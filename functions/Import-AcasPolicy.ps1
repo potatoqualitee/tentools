@@ -1,4 +1,4 @@
-function Import-AcasPolicy {
+function Import-ScPolicy {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Import-AcasPolicy {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER File
         Parameter description
@@ -18,7 +18,7 @@ function Import-AcasPolicy {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding()]
     param
@@ -52,7 +52,7 @@ function Import-AcasPolicy {
         }
     }
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             $fileinfo = Get-ItemProperty -Path $File
             $FilePath = $fileinfo.FullName
             $RestClient = New-Object RestSharp.RestClient

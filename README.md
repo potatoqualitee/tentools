@@ -4,8 +4,8 @@ This toolset does this and that. If you have requests, please add them to the is
 
 ## Key links for reference:
 
-- [acas overview](https://www.ask-acas.info/overview/) for discussion around contributing to the project
-- [Tenable Acas Blog](https://www.tenable.com/blog/tenable-selected-for-disa-s-acas-vulnerability-management-solution) for general discussion on the module and asking questions
+- [acas overview](https://www.ask-Sc.info/overview/) for discussion around contributing to the project
+- [Tenable Acas Blog](https://www.tenable.com/blog/tenable-selected-for-disa-s-Sc-vulnerability-management-solution) for general discussion on the module and asking questions
 
 ## Installer
 
@@ -37,7 +37,7 @@ Please rename the folders from `name-master` to `name` and store in your `$Env:P
 Bunch of examples
 
 ```powershell
-Connect-AcasServce -ComputerName acas -Credential acasadmin
+Connect-ScServce -ComputerName acas -Credential acasadmin
 ```
 
 ## Support

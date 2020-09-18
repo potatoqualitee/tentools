@@ -1,4 +1,4 @@
-function Get-AcasGroupMember {
+function Get-ScGroupMember {
     <#
     .SYNOPSIS
         Short description
@@ -7,13 +7,13 @@ function Get-AcasGroupMember {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER GroupId
         Parameter description
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
 
     .NOTES
     General notes
@@ -29,14 +29,14 @@ function Get-AcasGroupMember {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             $serverparams = @{
                 SessionObject = $session
                 Path          = '/server/properties'
                 Method        = 'GET'
             }
 
-            $server = Invoke-AcasRequest @serverparams
+            $server = Invoke-ScRequest @serverparams
 
             if ($server.capabilities.multi_user -eq 'full') {
                 $groupparams = @{
@@ -45,7 +45,7 @@ function Get-AcasGroupMember {
                     Method        = 'GET '
                 }
 
-                foreach ($User in (Invoke-AcasRequest @groupparams).users) {
+                foreach ($User in (Invoke-ScRequest @groupparams).users) {
                     [pscustomobject]@{ 
                         Name       = $User.name
                         UserName   = $User.username

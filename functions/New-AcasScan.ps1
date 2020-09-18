@@ -1,4 +1,4 @@
-function New-AcasScan {
+function New-ScScan {
     <#
     .SYNOPSIS
         Short description
@@ -31,7 +31,7 @@ function New-AcasScan {
         Parameter description
 
     .PARAMETER ScannerId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER Email
         Parameter description
@@ -45,7 +45,7 @@ function New-AcasScan {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding(DefaultParameterSetName = 'Policy')]
     param
@@ -76,7 +76,7 @@ function New-AcasScan {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
              
             # Join emails as a single comma separated string.
             $emails = $email -join ","
@@ -108,7 +108,7 @@ function New-AcasScan {
 
                 'Policy' {
                     $polUUID = $null
-                    $Policies = Get-AcasPolicy -SessionId $session.SessionId
+                    $Policies = Get-ScPolicy -SessionId $session.SessionId
                     foreach ($Policy in $Policies) {
                         if ($Policy.PolicyId -eq $PolicyId) {
                             Write-PSFMessage -Level Verbose -Message "Uising Poicy with UUID of $($Policy.PolicyUUID)"
@@ -138,7 +138,7 @@ function New-AcasScan {
                 Parameter     = $ScanJson
             }
             
-            foreach ($scan in (Invoke-AcasRequest @serverparams).scan) {
+            foreach ($scan in (Invoke-ScRequest @serverparams).scan) {
                 [pscustomobject]@{
                     Name             = $scan.name
                     ScanId           = $scan.id

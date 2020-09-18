@@ -1,4 +1,4 @@
-function Set-AcasPolicyPortRange {
+function Set-ScPolicyPortRange {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Set-AcasPolicyPortRange {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER PolicyId
         Parameter description
@@ -21,7 +21,7 @@ function Set-AcasPolicyPortRange {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
 
     #>
 
@@ -39,7 +39,7 @@ function Set-AcasPolicyPortRange {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             foreach ($PolicyToChange in $PolicyId) {
                 $params = @{
                     SessionObject = $session
@@ -49,8 +49,8 @@ function Set-AcasPolicyPortRange {
                     Parameter     = "{`"settings`": {`"portscan_range`": `"$($Port -join ",")`"}}"
                 }
 
-                $null = Invoke-AcasRequest @params
-                Get-AcasPolicyPortRange -SessionId $session.SessionId -PolicyId $PolicyToChange
+                $null = Invoke-ScRequest @params
+                Get-ScPolicyPortRange -SessionId $session.SessionId -PolicyId $PolicyToChange
             }
         }
     }

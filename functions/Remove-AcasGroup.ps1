@@ -1,4 +1,4 @@
-function Remove-AcasGroup {
+function Remove-ScGroup {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Remove-AcasGroup {
         Long description
     
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
     
     .PARAMETER GroupId
         Parameter description
@@ -18,7 +18,7 @@ function Remove-AcasGroup {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding()]
     param
@@ -31,14 +31,14 @@ function Remove-AcasGroup {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             $serverparams = @{
                 SessionObject = $session
                 Path          = '/server/properties'
                 Method        = 'GET'
             }
 
-            $server = Invoke-AcasRequest @serverparams
+            $server = Invoke-ScRequest @serverparams
 
             if ($server.capabilities.multi_user -eq 'full') {
                 $groupparams = @{
@@ -47,7 +47,7 @@ function Remove-AcasGroup {
                     Method        = 'DELETE '
                 }
 
-                Invoke-AcasRequest @groupparams
+                Invoke-ScRequest @groupparams
             }
             else {
                 Write-PSFMessage -Level Warning -Message "Server for session $($session.sessionid) is not licenced for multiple users"

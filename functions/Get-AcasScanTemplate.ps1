@@ -1,4 +1,4 @@
-function Get-AcasScanTemplate {
+function Get-ScScanTemplate {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Get-AcasScanTemplate {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
@@ -15,7 +15,7 @@ function Get-AcasScanTemplate {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-AcasScanTemplate
+        PS> Get-ScScanTemplate
     #>
     [CmdletBinding()]
     param
@@ -26,8 +26,8 @@ function Get-AcasScanTemplate {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $Templates = Invoke-AcasRequest -SessionObject $session -Path '/editor/scan/templates' -Method 'Get'
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
+            $Templates = Invoke-ScRequest -SessionObject $session -Path '/editor/scan/templates' -Method 'Get'
             foreach ($Template in $Templates.templates) {
                 [pscustomobject]@{ 
                     Name             = $Template.name

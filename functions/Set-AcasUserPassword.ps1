@@ -1,4 +1,4 @@
-function Set-AcasUserPassword {
+function Set-ScUserPassword {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Set-AcasUserPassword {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER UserId
         Parameter description
@@ -21,7 +21,7 @@ function Set-AcasUserPassword {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
 
     #>
     [CmdletBinding()]
@@ -37,12 +37,12 @@ function Set-AcasUserPassword {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             foreach ($uid in $UserId) {
                 Write-PSFMessage -Level Verbose -Message "Updating user with Id $($uid)"
                 $params = @{'password' = $([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))) }
                 $paramJson = ConvertTo-Json -InputObject $params -Compress
-                Invoke-AcasRequest -SessionObject $session -Path "/users/$($uid)/chpasswd" -Method 'PUT' -Parameter $paramJson -ContentType 'application/json'
+                Invoke-ScRequest -SessionObject $session -Path "/users/$($uid)/chpasswd" -Method 'PUT' -Parameter $paramJson -ContentType 'application/json'
             }
         }
     }

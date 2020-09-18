@@ -1,4 +1,4 @@
-function Rename-AcasFolder {
+function Rename-ScFolder {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Rename-AcasFolder {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER FolderId
         Parameter description
@@ -16,7 +16,7 @@ function Rename-AcasFolder {
         Parameter description
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding()]
     param
@@ -31,8 +31,8 @@ function Rename-AcasFolder {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            Invoke-AcasRequest -SessionObject $session -Path "/folders/$($FolderId)" -Method 'PUT' -Parameter @{'name' = $Name }
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
+            Invoke-ScRequest -SessionObject $session -Path "/folders/$($FolderId)" -Method 'PUT' -Parameter @{'name' = $Name }
         }
     }
 }

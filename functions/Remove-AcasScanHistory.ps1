@@ -1,4 +1,4 @@
-function Remove-AcasScanHistory {
+function Remove-ScScanHistory {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Remove-AcasScanHistory {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER ScanId
         Parameter description
@@ -21,7 +21,7 @@ function Remove-AcasScanHistory {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding()]
     Param
@@ -36,9 +36,9 @@ function Remove-AcasScanHistory {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             Write-PSFMessage -Level Verbose -Message "Removing history Id ($HistoryId) from scan Id $($ScanId)"
-            Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/history/$($HistoryId)" -Method 'Delete' -Parameter $params
+            Invoke-ScRequest -SessionObject $session -Path "/scans/$($ScanId)/history/$($HistoryId)" -Method 'Delete' -Parameter $params
             Write-PSFMessage -Level Verbose -Message 'History Removed'
         }
     }

@@ -1,4 +1,4 @@
-function Remove-AcasSession {
+function Remove-ScSession {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Remove-AcasSession {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
@@ -15,7 +15,7 @@ function Remove-AcasSession {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding()]
     param(

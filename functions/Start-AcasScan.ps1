@@ -1,4 +1,4 @@
-function Start-AcasScan {
+function Start-ScScan {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Start-AcasScan {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER ScanId
         Parameter description
@@ -21,7 +21,7 @@ function Start-AcasScan {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding()]
     param
@@ -45,8 +45,8 @@ function Start-AcasScan {
         $paramJson = ConvertTo-Json -InputObject $params -Compress
     }
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            foreach ($scans in (Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json')) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
+            foreach ($scans in (Invoke-ScRequest -SessionObject $session -Path "/scans/$($ScanId)/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json')) {
                 [pscustomobject]@{
                     ScanUUID  = $scans.scan_uuid
                     ScanId    = $ScanId

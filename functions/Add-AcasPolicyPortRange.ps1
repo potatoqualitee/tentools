@@ -1,4 +1,4 @@
-function Add-AcasPolicyPortRange {
+function Add-ScPolicyPortRange {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Add-AcasPolicyPortRange {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER PolicyId
         Parameter description
@@ -21,7 +21,7 @@ function Add-AcasPolicyPortRange {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
 
     [CmdletBinding()]
@@ -38,10 +38,10 @@ function Add-AcasPolicyPortRange {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             foreach ($PolicyToChange in $PolicyId) {
                 try {
-                    $policy = Get-AcasPolicyDetail -SessionId $session.SessionId -PolicyId $PolicyToChange
+                    $policy = Get-ScPolicyDetail -SessionId $session.SessionId -PolicyId $PolicyToChange
                     $ports = "$($Policy.settings.portscan_range),$($Port -join ",")"
                     $params = @{
                         SessionObject   = $session
@@ -52,8 +52,8 @@ function Add-AcasPolicyPortRange {
                         EnableException = $EnableException
                     }
    
-                    $null = Invoke-AcasRequest @params
-                    Get-AcasPolicyPortRange -SessionId $session.SessionId -PolicyId $PolicyToChange
+                    $null = Invoke-ScRequest @params
+                    Get-ScPolicyPortRange -SessionId $session.SessionId -PolicyId $PolicyToChange
                 }
                 catch {
                     Stop-PSFFunction -Message "Failure" -ErrorRecord $_ -Continue

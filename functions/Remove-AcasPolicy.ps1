@@ -1,4 +1,4 @@
-function Remove-AcasPolicy {
+function Remove-ScPolicy {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Remove-AcasPolicy {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER PolicyId
         Parameter description
@@ -18,7 +18,7 @@ function Remove-AcasPolicy {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding()]
     param
@@ -31,9 +31,9 @@ function Remove-AcasPolicy {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             Write-PSFMessage -Level Verbose -Message "Deleting policy with id $($PolicyId)"
-            Invoke-AcasRequest -SessionObject $session -Path "/policies/$($PolicyId)" -Method 'DELETE'
+            Invoke-ScRequest -SessionObject $session -Path "/policies/$($PolicyId)" -Method 'DELETE'
             Write-PSFMessage -Level Verbose -Message 'Policy deleted.'
         }
     }

@@ -1,4 +1,4 @@
-function Remove-AcasGroupUser {
+function Remove-ScGroupUser {
     <#
     .SYNOPSIS
         Removes a Nessus group user
@@ -7,7 +7,7 @@ function Remove-AcasGroupUser {
         Can be used to clear a previously defined, scan report altering rule
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER Id
         ID number of the rule which would you like removed/deleted
@@ -18,19 +18,19 @@ function Remove-AcasGroupUser {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        Remove-AcasGroupUser -SessionId 0 -Id 500
+        Remove-ScGroupUser -SessionId 0 -Id 500
         Will delete a group user with an ID of 500
 
     .EXAMPLE
-        Get-AcasPluginRule -SessionId 0 | Remove-AcasGroupUser
+        Get-ScPluginRule -SessionId 0 | Remove-ScGroupUser
         Will delete all rules
 
     .EXAMPLE
-        Get-AcasPluginRule -SessionId 0 | ? {$_.Host -eq 'myComputer'} | Remove-AcasGroupUser
+        Get-ScPluginRule -SessionId 0 | ? {$_.Host -eq 'myComputer'} | Remove-ScGroupUser
         Will find all group users that match the computer name, and delete them
 
     .INPUTS
-        Can accept pipeline data from Get-AcasPluginRule
+        Can accept pipeline data from Get-ScPluginRule
 
     .OUTPUTS
         Empty, unless an error is received from the server
@@ -48,14 +48,14 @@ function Remove-AcasGroupUser {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             $serverparams = @{
                 SessionObject = $session
                 Path          = '/server/properties'
                 Method        = 'GET'
             }
 
-            $server = Invoke-AcasRequest @serverparams
+            $server = Invoke-ScRequest @serverparams
 
             if ($server.capabilities.multi_user -eq 'full') {
                 $groupparams = @{
@@ -64,7 +64,7 @@ function Remove-AcasGroupUser {
                     Method        = 'DELETE'
                 }
 
-                Invoke-AcasRequest @groupparams
+                Invoke-ScRequest @groupparams
             }
             else {
                 Write-PSFMessage -Level Warning -Message "Server for session $($session.sessionid) is not licenced for multiple users"

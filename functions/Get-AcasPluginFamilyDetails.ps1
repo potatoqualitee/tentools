@@ -1,4 +1,4 @@
-function Get-AcasPluginFamilyDetails {
+function Get-ScPluginFamilyDetails {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Get-AcasPluginFamilyDetails {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER FamilyId
         Parameter description
@@ -18,7 +18,7 @@ function Get-AcasPluginFamilyDetails {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding()]
     param
@@ -31,8 +31,8 @@ function Get-AcasPluginFamilyDetails {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            foreach ($detail in (Invoke-AcasRequest -SessionObject $session -Path "/plugins/families/$($FamilyId)" -Method 'Get')) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
+            foreach ($detail in (Invoke-ScRequest -SessionObject $session -Path "/plugins/families/$($FamilyId)" -Method 'Get')) {
                 [pscustomobject]@{
                     Name     = $detail.name
                     FamilyId = $detail.id

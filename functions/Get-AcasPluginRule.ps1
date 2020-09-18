@@ -1,4 +1,4 @@
-function Get-AcasPluginRule {
+function Get-ScPluginRule {
     <#
     .SYNOPSIS
         Gets a list of all Nessus plugin rules
@@ -7,7 +7,7 @@ function Get-AcasPluginRule {
         Gets a list of all Nessus plugin rules
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER Detail
         Does an additional lookup on each rule, to return the plugin name. Helpfule when reporting
@@ -18,11 +18,11 @@ function Get-AcasPluginRule {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-AcasPluginRule -SessionId 0
+        PS> Get-ScPluginRule -SessionId 0
         Gets all defined plugin rules
 
     .EXAMPLE
-        PS> Get-AcasPluginRule -SessionId 0 -Detail
+        PS> Get-ScPluginRule -SessionId 0 -Detail
         Gets all defined plugin rules with details
 
     #>
@@ -50,8 +50,8 @@ function Get-AcasPluginRule {
     }
 
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $rules = Invoke-AcasRequest -SessionObject $session -Path '/plugin-rules' -Method 'Get'
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
+            $rules = Invoke-ScRequest -SessionObject $session -Path '/plugin-rules' -Method 'Get'
 
             foreach ($rule in $rules.plugin_rules) {
                 if ($PSBoundParameters.PluginId -and ($rule.plugin_id -notin $PluginId)) {
@@ -66,7 +66,7 @@ function Get-AcasPluginRule {
                 If ($Detail) {
                     # Significant increase in web requests!
                     # Provides the rule name in the returned object
-                    $plugin = (Get-AcasPlugin -SessionId $session.SessionId -PluginId $rule.plugin_id).Name
+                    $plugin = (Get-ScPlugin -SessionId $session.SessionId -PluginId $rule.plugin_id).Name
                 }
                 else {
                     $plugin = $null

@@ -1,4 +1,4 @@
-function Get-AcasPlugin {
+function Get-ScPlugin {
     <#
     .SYNOPSIS
         Short description
@@ -7,13 +7,13 @@ function Get-AcasPlugin {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER PluginId
         Parameter description
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
 
     #>
     [CmdletBinding()]
@@ -27,8 +27,8 @@ function Get-AcasPlugin {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            foreach ($plugin in (Invoke-AcasRequest -SessionObject $session -Path "/plugins/plugin" -Method 'Get')) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
+            foreach ($plugin in (Invoke-ScRequest -SessionObject $session -Path "/plugins/plugin" -Method 'Get')) {
                 $attributes = [ordered]@{ }
                 foreach ($attribute in $plugin.attributes) {
                     # Some attributes have multiple values, i.e. osvdb. This causes errors when adding duplicates
@@ -49,7 +49,7 @@ function Get-AcasPlugin {
             }
             
             if ($PluginId) {
-                foreach ($plugin in (Invoke-AcasRequest -SessionObject $session -Path "/plugins/plugin/$($PluginId)" -Method 'Get')) {
+                foreach ($plugin in (Invoke-ScRequest -SessionObject $session -Path "/plugins/plugin/$($PluginId)" -Method 'Get')) {
                     $attributes = [ordered]@{ }
                     foreach ($attribute in $plugin.attributes) {
                         # Some attributes have multiple values, i.e. osvdb. This causes errors when adding duplicates

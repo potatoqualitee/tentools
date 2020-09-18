@@ -1,4 +1,4 @@
-function Export-AcasPolicy {
+function Export-ScPolicy {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Export-AcasPolicy {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER PolicyId
         Parameter description
@@ -21,7 +21,7 @@ function Export-AcasPolicy {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding()]
     param
@@ -36,9 +36,9 @@ function Export-AcasPolicy {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             Write-PSFMessage -Level Verbose -Message "Exporting policy with id $($PolicyId)"
-            $policy = Invoke-AcasRequest -SessionObject $session -Path "/policies/$($PolicyId)/export" -Method 'GET'
+            $policy = Invoke-ScRequest -SessionObject $session -Path "/policies/$($PolicyId)/export" -Method 'GET'
             if ($PSBoundParameters.OutFile) {
                 Write-PSFMessage -Level Verbose -Message "Saving policy as $($OutFile)"
                 $policy.Save($ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutFile))

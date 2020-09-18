@@ -1,4 +1,4 @@
-function Get-AcasServerInfo {
+function Get-ScServerInfo {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Get-AcasServerInfo {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
@@ -15,7 +15,7 @@ function Get-AcasServerInfo {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-AcasServerInfo
+        PS> Get-ScServerInfo
     #>
     [CmdletBinding()]
     param
@@ -25,10 +25,10 @@ function Get-AcasServerInfo {
         [int32[]]$SessionId = $global:NessusConn.SessionId,
         [switch]$EnableException
     )
-    foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+    foreach ($session in (Get-ScSession -SessionId $SessionId)) {
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0$origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-        $server = Invoke-AcasRequest -SessionObject $session -Path '/server/properties' -Method 'Get'
+        $server = Invoke-ScRequest -SessionObject $session -Path '/server/properties' -Method 'Get'
 
         foreach ($serverinfo in $server) {
             [pscustomobject]@{ 

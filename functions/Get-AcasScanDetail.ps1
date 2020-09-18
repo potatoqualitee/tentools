@@ -1,4 +1,4 @@
-function Get-AcasScanDetail {
+function Get-ScScanDetail {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Get-AcasScanDetail {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER ScanId
         Parameter description
@@ -21,7 +21,7 @@ function Get-AcasScanDetail {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding()]
     Param
@@ -43,8 +43,8 @@ function Get-AcasScanDetail {
         }
     }
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            foreach ($detail in (Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $params)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
+            foreach ($detail in (Invoke-ScRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $params)) {
                 $hosts = @()
                 $history = @()
 

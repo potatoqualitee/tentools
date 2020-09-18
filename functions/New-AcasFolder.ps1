@@ -1,4 +1,4 @@
-function New-AcasFolder {
+function New-ScFolder {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function New-AcasFolder {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER Name
         Parameter description
@@ -18,7 +18,7 @@ function New-AcasFolder {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding()]
     param
@@ -31,9 +31,9 @@ function New-AcasFolder {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $folder = Invoke-AcasRequest -SessionObject $session -Path '/folders' -Method 'Post' -Parameter @{'name' = $Name }
-            Get-AcasFolder -SessionId $session.sessionid | Where-Object FolderId -eq $folder.id
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
+            $folder = Invoke-ScRequest -SessionObject $session -Path '/folders' -Method 'Post' -Parameter @{'name' = $Name }
+            Get-ScFolder -SessionId $session.sessionid | Where-Object FolderId -eq $folder.id
         }
     }
 }

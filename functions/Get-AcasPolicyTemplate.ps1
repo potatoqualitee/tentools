@@ -1,4 +1,4 @@
-function Get-AcasPolicyTemplate {
+function Get-ScPolicyTemplate {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Get-AcasPolicyTemplate {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER Name
         Parameter description
@@ -21,7 +21,7 @@ function Get-AcasPolicyTemplate {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
 #>
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param
@@ -38,8 +38,8 @@ function Get-AcasPolicyTemplate {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            $templates = Invoke-AcasRequest -SessionObject $session -Path '/editor/policy/templates' -Method 'Get'
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
+            $templates = Invoke-ScRequest -SessionObject $session -Path '/editor/policy/templates' -Method 'Get'
 
             switch ($PSCmdlet.ParameterSetName) {
                 'ByName' {

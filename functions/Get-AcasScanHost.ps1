@@ -1,4 +1,4 @@
-function Get-AcasScanHost {
+function Get-ScScanHost {
     <#
     .SYNOPSIS
         Short description
@@ -10,7 +10,7 @@ function Get-AcasScanHost {
         Parameter description
 
     .PARAMETER ScanId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER HistoryId
         Parameter description
@@ -21,7 +21,7 @@ function Get-AcasScanHost {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-AcasScanHost
+        PS> Get-ScScanHost
     #>
     [CmdletBinding()]
     Param
@@ -43,8 +43,8 @@ function Get-AcasScanHost {
         }
     }
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            foreach ($Host in (Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $params).hosts) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
+            foreach ($Host in (Invoke-ScRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $params).hosts) {
                 [pscustomobject]@{
                     HostName  = $Host.hostname
                     HostId    = $Host.host_id

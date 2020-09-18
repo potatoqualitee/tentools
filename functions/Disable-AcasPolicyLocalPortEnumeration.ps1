@@ -1,4 +1,4 @@
-function Disable-AcasPolicyLocalPortEnumeration {
+function Disable-ScPolicyLocalPortEnumeration {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Disable-AcasPolicyLocalPortEnumeration {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER PolicyId
         Parameter description
@@ -27,7 +27,7 @@ function Disable-AcasPolicyLocalPortEnumeration {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding()]
     [OutputType([int])]
@@ -71,7 +71,7 @@ function Disable-AcasPolicyLocalPortEnumeration {
         $settingsJson = ConvertTo-Json -InputObject $settings -Compress
     }
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             foreach ($policy in $PolicyId) {
                 $params = @{
                     SessionObject   = $session
@@ -82,8 +82,8 @@ function Disable-AcasPolicyLocalPortEnumeration {
                     EnableException = $EnableException
                 }
 
-                $null = Invoke-AcasRequest @params
-                Get-AcasPolicyLocalPortEnumeration -SessionId $session.SessionId -PolicyId $policy
+                $null = Invoke-ScRequest @params
+                Get-ScPolicyLocalPortEnumeration -SessionId $session.SessionId -PolicyId $policy
             }
         }
     }

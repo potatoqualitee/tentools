@@ -1,4 +1,4 @@
-function Remove-AcasUser {
+function Remove-ScUser {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function Remove-AcasUser {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER UserId
         Parameter description
@@ -18,7 +18,7 @@ function Remove-AcasUser {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding()]
     Param
@@ -31,10 +31,10 @@ function Remove-AcasUser {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             foreach ($uid in $UserId) {
                 Write-PSFMessage -Level Verbose -Message "Deleting user with Id $($uid)"
-                Invoke-AcasRequest -SessionObject $session -Path "/users/$($uid)" -Method 'Delete'
+                Invoke-ScRequest -SessionObject $session -Path "/users/$($uid)" -Method 'Delete'
             }
         }
     }

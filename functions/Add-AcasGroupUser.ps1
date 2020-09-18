@@ -1,13 +1,14 @@
-function Add-AcasGroupUser {
+function Add-ScGroupUser {
     <#
     .SYNOPSIS
-        Short description
+        Adds a new Nessus plugin rule
 
     .DESCRIPTION
-        Long description
+        Can be used to alter report output for various reasons. i.e. vulnerability acceptance, verified
+        false-positive on non-credentialed scans, alternate mitigation in place, etc...
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER GroupId
         Parameter description
@@ -21,7 +22,7 @@ function Add-AcasGroupUser {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Add-AcasGroupUser
+        PS> Add-ScGroupUser
 
     #>
     [CmdletBinding()]
@@ -29,7 +30,7 @@ function Add-AcasGroupUser {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $Global:NessusConn.SessionId,
+        [int32[]]$SessionId = $global:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
         [Int32]$GroupId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 2)]
@@ -39,7 +40,7 @@ function Add-AcasGroupUser {
     process {
         $collection = @()
         foreach ($id in $SessionId) {
-            $sessions = $Global:NessusConn
+            $sessions = $global:NessusConn
             foreach ($session in $sessions) {
                 if ($session.SessionId -eq $id) {
                     $collection += $session
@@ -47,7 +48,7 @@ function Add-AcasGroupUser {
             }
         }
 
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             $serverparams = @{
                 SessionObject   = $session
                 Path            = '/server/properties'
@@ -55,7 +56,7 @@ function Add-AcasGroupUser {
                 EnableException = $EnableException
             }
 
-            $server = Invoke-AcasRequest @serverparams
+            $server = Invoke-ScRequest @serverparams
 
             if ($server.capabilities.multi_user -eq 'full') {
                 $params = @{
@@ -65,7 +66,7 @@ function Add-AcasGroupUser {
                     Parameter       = @{'user_id' = $UserId }
                     EnableException = $EnableException
                 }
-                Invoke-AcasRequest @params
+                Invoke-ScRequest @params
             }
             else {
                 Write-PSFMessage -Level Warning -Message "Server for session $($session.sessionid) is not licenced for multiple users"

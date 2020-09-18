@@ -1,4 +1,4 @@
-function New-AcasPolicy {
+function New-ScPolicy {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function New-AcasPolicy {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER Name
         Name for new policy
@@ -27,7 +27,7 @@ function New-AcasPolicy {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding()]
     param
@@ -51,9 +51,9 @@ function New-AcasPolicy {
             return
         }
 
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             if ($PSBoundParameters.TemplateName) {
-                $PolicyUUID = (Get-AcasPolicyTemplate -Name $TemplateName -SessionId $session.SessionId).PolicyUUID
+                $PolicyUUID = (Get-ScPolicyTemplate -Name $TemplateName -SessionId $session.SessionId).PolicyUUID
             }
 
             foreach ($policyid in $PolicyUUID) {
@@ -73,8 +73,8 @@ function New-AcasPolicy {
                     ContentType   = 'application/json'
                     Parameter     = $SettingsJson
                 }
-                $newpolicy = Invoke-AcasRequest @params
-                Get-AcasPolicy -PolicyID $newpolicy.policy_id -SessionId $session.sessionid
+                $newpolicy = Invoke-ScRequest @params
+                Get-ScPolicy -PolicyID $newpolicy.policy_id -SessionId $session.sessionid
             }
         }
     }

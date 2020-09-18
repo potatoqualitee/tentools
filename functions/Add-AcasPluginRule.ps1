@@ -1,14 +1,14 @@
-function Add-AcasPluginRule {
+function Add-ScPluginRule {
     <#
     .SYNOPSIS
-        Creates a new Nessus plugin rule
+        Adds a new Nessus plugin rule
 
     .DESCRIPTION
         Can be used to alter report output for various reasons. i.e. vulnerability acceptance, verified
         false-positive on non-credentialed scans, alternate mitigation in place, etc...
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER PluginId
         ID number of the plugin which would you like altered
@@ -28,12 +28,12 @@ function Add-AcasPluginRule {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Add-AcasPluginRule -SessionId 0 -PluginId 15901 -ComputerName 'WebServer' -Type Critical
+        PS> Add-ScPluginRule -SessionId 0 -PluginId 15901 -ComputerName 'WebServer' -Type Critical
         
         Creates a rule that changes the default severity of 'Medium', to 'Critical' for the defined computer and plugin ID
 
     .EXAMPLE
-        PS> $WebServers | % {Add-AcasPluginRule -SessionId 0 -PluginId 15901 -ComputerName $_ -Type Critical}
+        PS> $WebServers | % {Add-ScPluginRule -SessionId 0 -PluginId 15901 -ComputerName $_ -Type Critical}
         
         Creates a rule for a list computers, using the defined options
     #>
@@ -56,7 +56,7 @@ function Add-AcasPluginRule {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             
             $dtExpiration = $null
 
@@ -93,7 +93,7 @@ function Add-AcasPluginRule {
                 EnableException = $EnableException
             }
 
-            Invoke-AcasRequest @params
+            Invoke-ScRequest @params
         }
     }
 }

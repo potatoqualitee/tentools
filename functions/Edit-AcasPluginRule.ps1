@@ -1,4 +1,4 @@
-function Edit-AcasPluginRule {
+function Edit-ScPluginRule {
     <#
     .SYNOPSIS
         Edits a Nessus plugin rule
@@ -7,7 +7,7 @@ function Edit-AcasPluginRule {
         Can be used to change a previously defined, scan report altering rule
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-ScService.
 
     .PARAMETER Id
         ID number of the rule which would you like removed/deleted
@@ -30,17 +30,17 @@ function Edit-AcasPluginRule {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Edit-AcasPluginRule -SessionId 0 -Id 500 -ComputerName 'YourComputer' -Expiration (([datetime]::Now).AddDays(10)) -Type Low
+        PS> Edit-ScPluginRule -SessionId 0 -Id 500 -ComputerName 'YourComputer' -Expiration (([datetime]::Now).AddDays(10)) -Type Low
             
         Will edit a plugin rule with an ID of 500, to have a new computer name. Rule expires in 10 days
 
     .EXAMPLE
-        PS> Get-AcasPluginRule -SessionId 0 | Edit-AcasPluginRule -Type High
+        PS> Get-ScPluginRule -SessionId 0 | Edit-ScPluginRule -Type High
             
         Will alter all rules to now have a serverity of 'Info'
 
     .EXAMPLE
-        PS> Get-AcasPluginRule -SessionId 0 | ? {$_.Host -eq 'myComputer'} | Edit-AcasPluginRule -Type 'High'
+        PS> Get-ScPluginRule -SessionId 0 | ? {$_.Host -eq 'myComputer'} | Edit-ScPluginRule -Type 'High'
             
         Will find all plugin rules that match the computer name, and set their severity to high
     #>
@@ -65,7 +65,7 @@ function Edit-AcasPluginRule {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             
             $dtExpiration = $null
 
@@ -105,7 +105,7 @@ function Edit-AcasPluginRule {
                 EnableException = $EnableException
             }
 
-            Invoke-AcasRequest @params
+            Invoke-ScRequest @params
         }
     }
 }

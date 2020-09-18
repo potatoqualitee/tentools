@@ -1,4 +1,4 @@
-function Export-AcasScan {
+function Export-ScScan {
     <#
     .SYNOPSIS
         Short description
@@ -36,7 +36,7 @@ function Export-AcasScan {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Acas
+        PS> Get-Sc
     #>
     [CmdletBinding()]
     param
@@ -95,7 +95,7 @@ function Export-AcasScan {
         }
     }
     process {
-        foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
+        foreach ($session in (Get-ScSession -SessionId $SessionId)) {
             if ($HistoryId) {
                 $urlpath = "/scans/$($ScanId)/export?history_id=$($HistoryId)"
             }
@@ -105,11 +105,11 @@ function Export-AcasScan {
 
             Write-PSFMessage -Level Verbose -Message "Exporting scan with Id of $($ScanId) in $($Format) format"
             
-            foreach ($fileid in (Invoke-AcasRequest -SessionObject $session -Path $urlpath  -Method 'Post' -Parameter $ExportParams)) {
+            foreach ($fileid in (Invoke-ScRequest -SessionObject $session -Path $urlpath  -Method 'Post' -Parameter $ExportParams)) {
                 $FileStatus = ''
                 while ($FileStatus.status -ne 'ready') {
                     try {
-                        $FileStatus = Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($fileid.file)/status"  -Method 'Get'
+                        $FileStatus = Invoke-ScRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($fileid.file)/status"  -Method 'Get'
                         Write-PSFMessage -Level Verbose -Message "Status of export is $($FileStatus.status)"
                     }
                     catch {
@@ -119,12 +119,12 @@ function Export-AcasScan {
                 }
                 if ($FileStatus.status -eq 'ready' -and $Format -eq 'CSV' -and $PSObject.IsPresent) {
                     Write-PSFMessage -Level Verbose -Message "Converting report to PSObject"
-                    Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($fileid.file)/download" -Method 'Get' | ConvertFrom-Csv
+                    Invoke-ScRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($fileid.file)/download" -Method 'Get' | ConvertFrom-Csv
                 }
                 elseif ($FileStatus.status -eq 'ready') {
                     Write-PSFMessage -Level Verbose -Message "Downloading report to $($Path)"
                     $filepath = Resolve-PSFPath -Path "$path\$name-$scanid.$($Format.ToLower())" -NewChild
-                    Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($fileid.file)/download" -Method 'Get' -OutFile $filepath
+                    Invoke-ScRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($fileid.file)/download" -Method 'Get' -OutFile $filepath
                 }
                 Get-ChildItem -Path $Path
             }
