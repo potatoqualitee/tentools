@@ -1,10 +1,10 @@
 function Add-AcasGroupUser {
     <#
     .SYNOPSIS
-        Short description
+        Adds a user to a group
 
     .DESCRIPTION
-        Long description
+        Adds a user to a group
 
     .PARAMETER SessionId
         ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
