@@ -40,7 +40,7 @@ function Remove-AcasGroupUser {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
         [Int32]$GroupId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 2)]

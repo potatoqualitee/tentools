@@ -25,7 +25,7 @@ function Stop-AcasScan {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [switch]$EnableException
@@ -38,7 +38,7 @@ function Stop-AcasScan {
         $collection = @()
 
         foreach ($id in $SessionId) {
-            $sessions = $global:NessusConn
+            $sessions = $script:NessusConn
 
             foreach ($session in $sessions) {
                 if ($session.SessionId -eq $id) {

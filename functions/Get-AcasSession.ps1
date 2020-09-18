@@ -21,7 +21,7 @@ function Get-AcasSession {
     param(
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [switch]$EnableException
     )
     begin {
@@ -32,12 +32,12 @@ function Get-AcasSession {
         }
     }
     process {
-        Write-PSFMessage -level Verbose -Message "Connected sessions: $($global:NessusConn.Count)"
+        Write-PSFMessage -level Verbose -Message "Connected sessions: $($script:NessusConn.Count)"
         if ($PSBoundParameters.SessionId) {
-            $global:NessusConn | Where-Object SessionId -in $SessionId
+            $script:NessusConn | Where-Object SessionId -in $SessionId
         }
         else {
-            $global:NessusConn
+            $script:NessusConn
         }
     }
 }

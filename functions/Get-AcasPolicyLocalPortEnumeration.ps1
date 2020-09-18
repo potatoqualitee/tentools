@@ -26,7 +26,7 @@ function Get-AcasPolicyLocalPortEnumeration {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [int32[]]$PolicyId,
         [switch]$EnableException

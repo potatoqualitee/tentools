@@ -24,8 +24,8 @@ foreach ($function in (Get-ChildItem "$ModuleRoot\functions" -Filter "*.ps1" -Re
 }
 
 
-if (!(Test-Path variable:Global:NessusConn )) {
-    $global:NessusConn = New-Object System.Collections.ArrayList
+if (!(Test-Path variable:Script:NessusConn )) {
+    $script:NessusConn = New-Object System.Collections.ArrayList
 }
  
 # Variables

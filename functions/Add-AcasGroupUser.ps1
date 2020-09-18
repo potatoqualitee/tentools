@@ -29,7 +29,7 @@ function Add-AcasGroupUser {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $Global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
         [Int32]$GroupId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 2)]
@@ -39,7 +39,7 @@ function Add-AcasGroupUser {
     process {
         $collection = @()
         foreach ($id in $SessionId) {
-            $sessions = $Global:NessusConn
+            $sessions = $script:NessusConn
             foreach ($session in $sessions) {
                 if ($session.SessionId -eq $id) {
                     $collection += $session

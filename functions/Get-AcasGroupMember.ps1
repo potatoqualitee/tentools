@@ -23,7 +23,7 @@ function Get-AcasGroupMember {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
         [int32]$GroupId,
         [switch]$EnableException
