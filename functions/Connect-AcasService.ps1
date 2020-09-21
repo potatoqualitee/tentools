@@ -19,7 +19,7 @@ function Connect-AcasService {
         Use current credential for connecting to the Nessus Server
 
     .PARAMETER AcceptSelfSignedCert
-        Use current credential for connecting to the Nessus Server
+        Accept self signed cert
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
