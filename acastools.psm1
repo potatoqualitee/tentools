@@ -51,4 +51,12 @@ $script:severity = @{
     4 = 'Critical'
 }
 
+# to help switch between Nessus and tenable.sc
+$script:replace = @{
+    users   = 'user'
+    folders = 'folder'
+    groups  = 'group'
+    scans   = 'scan'
+}
+
 $script:origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0

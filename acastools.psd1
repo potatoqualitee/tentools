@@ -54,6 +54,7 @@
         'Enable-AcasPolicyPortScanner',
         'Export-AcasPolicy',
         'Export-AcasScan',
+        'Get-AcasFolder',
         'Get-AcasGroup',
         'Get-AcasPluginFamily',
         'Get-AcasPluginRule',

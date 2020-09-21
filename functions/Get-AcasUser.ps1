@@ -28,13 +28,8 @@ function Get-AcasUser {
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-            if ($session.sc) {
-                $path = '/user'
-            }
-            else {
-                $path = '/users'
-            }
-            $results = Invoke-AcasRequest -SessionObject $session -Path $path -Method 'Get'
+            
+            $results = Invoke-AcasRequest -SessionObject $session -Path '/users' -Method 'Get'
             if ($session.sc) {
                 foreach ($user in $results) {
                     [pscustomobject]@{

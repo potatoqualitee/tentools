@@ -38,15 +38,15 @@ function Get-AcasGroupMember {
 
             $server = Invoke-AcasRequest @serverparams
 
-            if ($server.capabilities.multi_user -eq 'full') {
+            if ($server.capabilities.multi_user -eq 'full' -or $session.sc) {
                 $groupparams = @{
                     SessionObject = $session
                     Path          = "/groups/$($GroupId)/users"
-                    Method        = 'GET '
+                    Method        = 'GET'
                 }
 
                 foreach ($User in (Invoke-AcasRequest @groupparams).users) {
-                    [pscustomobject]@{ 
+                    [pscustomobject]@{
                         Name       = $User.name
                         UserName   = $User.username
                         Email      = $User.email
@@ -57,9 +57,8 @@ function Get-AcasGroupMember {
                         SessionId  = $session.SessionId
                     }
                 }
-            }
-            else {
-                Write-PSFMessage -Level Warning -Message "Server for session $($session.sessionid) is not licenced for multiple users"
+            } else {
+                Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
             }
         }
     }

@@ -34,7 +34,7 @@ function Connect-AcasService {
     (
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 0)]
         [string[]]$ComputerName,
-        [int]$Port = 8834,
+        [int]$Port,
         [Management.Automation.PSCredential]$Credential,
         [switch]$UseDefaultCredential,
         [switch]$AcceptSelfSignedCert,
@@ -42,7 +42,7 @@ function Connect-AcasService {
         [string]$Type,
         [switch]$EnableException
     )
-    process {
+    begin {
         if (-not $PSBoundParameters.Credential) {
             $UseDefaultCredential = $true
         }
@@ -68,14 +68,37 @@ function Connect-AcasService {
         # Source: https://stackoverflow.com/questions/32355556/powershell-invoke-restmethod-over-https
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
+        if (-Not $Type) {
+            if ($Port -eq 443) {
+                $Type = "tenable.sc"
+            } else {
+                $Type = "Nessus"
+            }
+        }
+
+        if ($Type -and -not $Port) {
+            if ($Type -eq "tenable.sc") {
+                $Port = "443"
+            } else {
+                $Port = "8834"
+            }
+        }
+
+        if ($Port -eq 443 -and $Type -eq "tenable.sc") {
+            $sc = $true
+        } else {
+            $sc = $false
+        }
+    }
+    process {
         foreach ($computer in $ComputerName) {
             if ($Port -eq 443) {
                 $uri = "https://$($computer):$($Port)/rest"
                 $fulluri = "$uri/token"
                 if ($PSBoundParameters.Credential) {
                     $body = @{
-                        username = $Credential.UserName
-                        password = $Credential.GetNetworkCredential().password
+                        username       = $Credential.UserName
+                        password       = $Credential.GetNetworkCredential().password
                         releaseSession = "FALSE"
                     } | ConvertTo-Json
                 } else {
@@ -84,15 +107,15 @@ function Connect-AcasService {
                     } | ConvertTo-Json
                 }
 
-                $headers = @{"HTTP" = "X-SecurityCenter"}
+                $headers = @{"HTTP" = "X-SecurityCenter" }
 
                 $RestMethodParams = @{
-                    Headers       = $headers
-                    ContentType   = "application/json"
-                    Method        = 'POST'
-                    URI           = $fulluri
-                    Body          = $body
-                    ErrorVariable = 'NessusLoginError'
+                    Headers         = $headers
+                    ContentType     = "application/json"
+                    Method          = 'POST'
+                    URI             = $fulluri
+                    Body            = $body
+                    ErrorVariable   = 'NessusLoginError'
                     SessionVariable = 'websession'
                 }
             } else {
@@ -100,66 +123,54 @@ function Connect-AcasService {
                 $fulluri = "$uri/session"
                 if ($PSBoundParameters.Credential) {
                     $body = @{'username' = $Credential.UserName; 'password' = $Credential.GetNetworkCredential().password }
-                }
-                else {
+                } else {
                     $body = $null
                 }
                 $RestMethodParams = @{
-                    Method        = 'Post'
-                    URI           = $fulluri
-                    Body          = $body
-                    ErrorVariable = 'NessusLoginError'
+                    Method          = 'Post'
+                    URI             = $fulluri
+                    Body            = $body
+                    ErrorVariable   = 'NessusLoginError'
                     SessionVariable = 'websession'
                 }
             }
 
             try {
                 $token = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
-            }
-            catch {
+            } catch {
                 $msg = Get-ErrorMessage -Record $_
                 if ($msg -eq "The remote server returned an error: (401) Unauthorized") {
                     $msg = "The remote server returned an error: (401) Unauthorized. This is likely due to a bad username/password"
                 }
-                
-                Stop-PSFFunction -Message "$msg Detailed error: $_" -ErrorRecord $_ -Continue
+
+                Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
             }
-            
+
             if ($token) {
                 if ($PSBoundParameters.Credential) {
                     $username = $Credential.UserName
-                }
-                else {
+                } else {
                     $username = "$env:USERDOMAIN\$env:USERNAME"
                 }
-                $usertoken =  $token.token
+                $usertoken = $token.token
                 if (-not $usertoken) {
                     $usertoken = $token.response.token
                 }
-                
-                if (-Not $Type) {
-                    if ($Port -eq 443) {
-                        $Type = "tenable.sc"
-                    }
-                }
-                if ($Port -eq 443 -and $Type -eq "tenable.sc") {
-                    $sc = $true
-                } else {
-                    $sc = $false
-                }
 
                 $session = [PSCustomObject]@{
-                    URI        = $uri
-                    UserName   = $username
-                    Credential = $Credential
-                    Token      = $usertoken
-                    SessionId  = $script:NessusConn.Count
-                    WebSession = $websession
-                    Sc         = $sc
-                    Bound      = $PSBoundParameters
+                    URI          = $uri
+                    UserName     = $username
+                    ComputerName = $ComputerName
+                    Credential   = $Credential
+                    Token        = $usertoken
+                    SessionId    = $script:NessusConn.Count
+                    WebSession   = $websession
+                    Sc           = $sc
+                    Bound        = $PSBoundParameters
+                    ServerType   = $Type
                 }
                 [void]$script:NessusConn.Add($session)
-                $session | Select-DefaultView -Property SessionId, UserName, URI
+                $session | Select-DefaultView -Property SessionId, UserName, URI, ServerType
             }
         }
     }

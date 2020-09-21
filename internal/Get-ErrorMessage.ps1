@@ -11,7 +11,8 @@ function Get-ErrorMessage {
         if (-not $innermessage) { $innermessage = $Record.Exception.InnerException.InnerException.Message }
         if (-not $innermessage) { $innermessage = $Record.Exception.InnerException.Message }
         if (-not $innermessage) { $innermessage = $Record.Exception.Message }
-        return $innermessage
+        $detail = ($Record | ConvertFrom-Json).error_msg
+        return "$innermessage $detail"
     }
 
 }

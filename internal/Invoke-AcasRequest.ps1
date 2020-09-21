@@ -2,32 +2,30 @@ function Invoke-AcasRequest {
     [CmdletBinding()]
     Param
     (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory)]
         $SessionObject,
-
-        [Parameter(Mandatory = $false)]
         $Parameter,
-
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory)]
         [string]$Path,
-
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory)]
         [String]$Method,
-
-        [Parameter(Mandatory = $false)]
         [String]$OutFile,
-
-        [Parameter(Mandatory = $false)]
         [String]$ContentType,
-
-        [Parameter(Mandatory = $false)]
         [String]$InFile,
-
-        [Parameter(Mandatory = $false)]
         [switch]$EnableException
 
     )
+    begin {
+        if ($SessionObject.sc) {
+            foreach ($key in $replace.keys) {
+                $Path = $Path.Replace($key,$replace[$key])
+            }
+        }
+    }
     process {
+        if ($SessionObject.sc -and $Path -eq "/server/properties") {
+            return $null
+        }
         if ($SessionObject.sc) {
             $headers = @{
                 "X-SecurityCenter" = $SessionObject.Token
@@ -78,17 +76,19 @@ function Invoke-AcasRequest {
                 }
                 catch {
                     $msg = Get-ErrorMessage -Record $_
-                    Stop-PSFFunction -Message "$msg Detailed Error: $_" -ErrorRecord $_ -Continue
+                    Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
                 }
-            } else {
-            $msg = Get-ErrorMessage -Record $_
-            Stop-PSFFunction -Message "$msg Detailed Error: $_" -ErrorRecord $_ -Continue
+            }
+            else {
+                $msg = Get-ErrorMessage -Record $_
+                Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
             }
         } 
         catch {
             $msg = Get-ErrorMessage -Record $_
-            Stop-PSFFunction -Message "$msg Detailed Error: $_" -ErrorRecord $_ -Continue
+            Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
         }
+
         if ($results.response) {
             $results.response
         } else {

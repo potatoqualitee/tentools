@@ -57,7 +57,7 @@ function Add-AcasGroupUser {
 
             $server = Invoke-AcasRequest @serverparams
 
-            if ($server.capabilities.multi_user -eq 'full') {
+            if ($server.capabilities.multi_user -eq 'full' -or $null -eq $server) {
                 $params = @{
                     SessionObject   = $session
                     Path            = "/groups/$($GroupId)/users"
@@ -68,7 +68,7 @@ function Add-AcasGroupUser {
                 Invoke-AcasRequest @params
             }
             else {
-                Write-PSFMessage -Level Warning -Message "Server for session $($session.sessionid) is not licenced for multiple users"
+                Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
             }
         }
     }

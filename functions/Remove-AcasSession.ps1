@@ -55,7 +55,7 @@ function Remove-AcasSession {
                     Invoke-RestMethod @RestMethodParams
                 }
                 catch {
-                    Stop-Function -Message "Session with Id $($session.SessionId) seems to have expired" -Continue
+                    Stop-PSFFunction -Message "Session with Id $($session.SessionId) seems to have expired" -Continue
                 }
                 
                 Write-PSFMessage -Level Verbose -Message "Removing session from `$script:NessusConn"
