@@ -30,45 +30,47 @@ function Get-AcasUser {
             $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
             if ($session.sc) {
                 $path = '/user'
-            } else {
+            }
+            else {
                 $path = '/users'
             }
             $results = Invoke-AcasRequest -SessionObject $session -Path $path -Method 'Get'
             if ($session.sc) {
                 foreach ($user in $results) {
                     [pscustomobject]@{
-                            UserName   = $user.username
-                            FirstName  = $user.firstname
-                            LastName   = $user.lastname
-                            Title = $user.title
-                            Email      = $user.email
-                            Address = $user.address
-                            City = $user.city
-                            State = $user.state
-                            Country = $user.country
-                            UserId     = $user.id
-                            Status = $user.status
-                            Fax = $user.fax
-                            Type       = $user.type
-                            LastLogin  = $origin.AddSeconds($user.lastlogin).ToLocalTime()
-                            LastLoginIp = $user.lastLoginIP
-                            CreatedTime  = $origin.AddSeconds($user.createdTime).ToLocalTime()
-                            ModifiedTime  = $origin.AddSeconds($user.modifiedTime).ToLocalTime()
-                            MustChangePassword = $user.mustChangePassword
-                            Locked = $user.locked
-                            AuthType = $user.authType
-                            Fingerprint = $user.fingerprint
-                            Password = $user.password
-                            LdapUserName = $user.ldapUsername
-                            CanUse = $user.canUse
-                            CanManage = $user.canManage
-                            ApiKeys = $user.apiKeys
-                            Ldap = $user.ldap
-                            Role       = $user.role
-                            Preferences = $user.preferences
+                        UserName           = $user.username
+                        FirstName          = $user.firstname
+                        LastName           = $user.lastname
+                        Title              = $user.title
+                        Email              = $user.email
+                        Address            = $user.address
+                        City               = $user.city
+                        State              = $user.state
+                        Country            = $user.country
+                        UserId             = $user.id
+                        Status             = $user.status
+                        Fax                = $user.fax
+                        Type               = $user.type
+                        LastLogin          = $origin.AddSeconds($user.lastlogin).ToLocalTime()
+                        LastLoginIp        = $user.lastLoginIP
+                        CreatedTime        = $origin.AddSeconds($user.createdTime).ToLocalTime()
+                        ModifiedTime       = $origin.AddSeconds($user.modifiedTime).ToLocalTime()
+                        MustChangePassword = $user.mustChangePassword
+                        Locked             = $user.locked
+                        AuthType           = $user.authType
+                        Fingerprint        = $user.fingerprint
+                        Password           = $user.password
+                        LdapUserName       = $user.ldapUsername
+                        CanUse             = $user.canUse
+                        CanManage          = $user.canManage
+                        ApiKeys            = $user.apiKeys
+                        Ldap               = $user.ldap
+                        Role               = $user.role
+                        Preferences        = $user.preferences
                     }
                 }
-            } else {
+            }
+            else {
                 foreach ($user in $results.users) {
                     [pscustomobject]@{ 
                         Name       = $user.name
