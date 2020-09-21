@@ -28,11 +28,21 @@ function Invoke-AcasRequest {
 
     )
     process {
+        if ($SessionObject.sc) {
+            $headers = @{
+                "X-SecurityCenter" = $SessionObject.Token
+            }
+        } else {
+            $headers = @{
+                "X-Cookie" = "token=$($SessionObject.Token)"
+            }
+        }
         $RestMethodParams = @{
             Method          = $Method
             'URI'           = "$($SessionObject.URI)$($Path)"
-            'Headers'       = @{'X-Cookie' = "token=$($SessionObject.Token)" }
+            'Headers'       = $headers
             'ErrorVariable' = 'NessusUserError'
+            'WebSession'    = $SessionObject.WebSession
         }
 
         if ($Parameter) {
@@ -55,7 +65,6 @@ function Invoke-AcasRequest {
             #$RestMethodParams.Uri
             Write-PSFMessage -Level Verbose -Message "Connecting to $($SessionObject.URI)"
             $results = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
-   
         }
         catch [Net.WebException] {
             [int]$res = $_.Exception.Response.StatusCode
@@ -83,7 +92,7 @@ function Invoke-AcasRequest {
                 if ($NessusLoginError) {
                     Write-Error -Message 'Failed to Re-Authenticate the session. Session is being Removed.'
                     $FailedConnection = $SessionObject
-                    [void]$Global:NessusConn.Remove($FailedConnection)
+                    [void]$script:NessusConn.Remove($FailedConnection)
                 }
                 else {
                     Write-PSFMessage -Level Verbose -Message 'Updating session with new authentication token.'
@@ -96,8 +105,8 @@ function Invoke-AcasRequest {
                     $SessionProps.Add('SessionId', $SessionObject.SessionId)
                     $Sessionobj = New-Object -TypeName psobject -Property $SessionProps
                     $Sessionobj.pstypenames[0] = 'Nessus.Session'
-                    [void]$Global:NessusConn.Remove($SessionObject)
-                    [void]$Global:NessusConn.Add($Sessionobj)
+                    [void]$script:NessusConn.Remove($SessionObject)
+                    [void]$script:NessusConn.Add($Sessionobj)
 
                     # Re-submit query with the new token and return results.
                     $RestMethodParams.Headers = @{'X-Cookie' = "token=$($Sessionobj.Token)" }
@@ -109,12 +118,19 @@ function Invoke-AcasRequest {
                         Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
                     }
                 }
+            } else {
+            $msg = Get-ErrorMessage -Record $_
+            Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
             }
         } 
         catch {
             $msg = Get-ErrorMessage -Record $_
             Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
         }
-        $results
+        if ($results.response) {
+            $results.response
+        } else {
+            $results
+        }
     }
 }
