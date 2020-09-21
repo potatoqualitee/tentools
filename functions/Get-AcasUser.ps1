@@ -34,21 +34,51 @@ function Get-AcasUser {
                 $path = '/users'
             }
             $results = Invoke-AcasRequest -SessionObject $session -Path $path -Method 'Get'
-            if ($results.users) {
-                $users = $results.users
+            if ($session.sc) {
+                foreach ($user in $results) {
+                    [pscustomobject]@{
+                            UserName   = $user.username
+                            FirstName  = $user.firstname
+                            LastName   = $user.lastname
+                            Title = $user.title
+                            Email      = $user.email
+                            Address = $user.address
+                            City = $user.city
+                            State = $user.state
+                            Country = $user.country
+                            UserId     = $user.id
+                            Status = $user.status
+                            Fax = $user.fax
+                            Type       = $user.type
+                            LastLogin  = $origin.AddSeconds($user.lastlogin).ToLocalTime()
+                            LastLoginIp = $user.lastLoginIP
+                            CreatedTime  = $origin.AddSeconds($user.createdTime).ToLocalTime()
+                            ModifiedTime  = $origin.AddSeconds($user.modifiedTime).ToLocalTime()
+                            MustChangePassword = $user.mustChangePassword
+                            Locked = $user.locked
+                            AuthType = $user.authType
+                            Fingerprint = $user.fingerprint
+                            Password = $user.password
+                            LdapUserName = $user.ldapUsername
+                            CanUse = $user.canUse
+                            CanManage = $user.canManage
+                            ApiKeys = $user.apiKeys
+                            Ldap = $user.ldap
+                            Role       = $user.role
+                            Preferences = $user.preferences
+                    }
+                }
             } else {
-                $users = $results
-            }
-            foreach ($user in $users) {
-                [pscustomobject]@{ 
-                    Name       = $user.name
-                    UserName   = $user.username
-                    Email      = $user.email
-                    UserId     = $user.id
-                    Type       = $user.type
-                    Permission = $permidenum[$user.permissions]
-                    LastLogin  = $origin.AddSeconds($user.lastlogin).ToLocalTime()
-                    SessionId  = $session.SessionId
+                foreach ($user in $results.users) {
+                    [pscustomobject]@{ 
+                        Name       = $user.name
+                        UserName   = $user.username
+                        Email      = $user.email
+                        UserId     = $user.id
+                        Type       = $user.type
+                        Permission = $permidenum[$user.permissions]
+                        LastLogin  = $origin.AddSeconds($user.lastlogin).ToLocalTime()
+                    }
                 }
             }
         }
