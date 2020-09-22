@@ -1,0 +1,2 @@
+hostname
+ls -l /root
