@@ -4,7 +4,7 @@ version: "2.2"
 # mostly extending from main .yml
 services:
   nessus:
-    image: sometheycallme/docker-nessus
+    image: sometheycallme/docker-nessus:latest
     hostname: nessus
     command:
       - /bin/bash
