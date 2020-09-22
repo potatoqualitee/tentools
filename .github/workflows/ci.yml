@@ -9,6 +9,8 @@ jobs:
         run: docker ps
       - uses: whoan/docker-build-with-cache-action@master
         with:
+          username: potatoqualitee
+          password: "${{ secrets.DOCKER_PASSWORD }}"
           image_name: sometheycallme/docker-nessus
       #- name: Build the stack
       #  run: docker-compose up -d
