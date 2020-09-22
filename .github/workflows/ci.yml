@@ -17,4 +17,7 @@ jobs:
         run: curl -s --retry 10 --retry-connrefused https://localhost:8834/ --insecure
       - name: Execute commands inside container
         run: |
-          docker exec nessus bash -c 'ls -la'
+          docker cp setup-nessus.sh nessus:/tmp
+          docker exec nessus bash -c 'chmod +x /tmp/setup-nessus.sh'
+          docker exec nessus bash -c 'ls -la /tmp'
+          docker exec nessus bash -c '/tmp/setup-nessus.sh'
