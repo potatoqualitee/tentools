@@ -5,7 +5,7 @@ function Import-ModuleFile {
         [string]
         $Path
     )
-	
+
     if ($doDotSource) { . $Path }
     else { $ExecutionContext.InvokeCommand.InvokeScript($false, ([scriptblock]::Create([io.file]::ReadAllText($Path))), $null, $null) }
 }
@@ -27,7 +27,7 @@ foreach ($function in (Get-ChildItem "$ModuleRoot\functions" -Filter "*.ps1" -Re
 if (!(Test-Path variable:Script:NessusConn )) {
     $script:NessusConn = New-Object System.Collections.ArrayList
 }
- 
+
 # Variables
 $script:permidenum = @{
     16  = 'Read-Only'
@@ -60,3 +60,5 @@ $script:replace = @{
 }
 
 $script:origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
+
+$PSDefaultParameterValues['*:UseBasicParsing'] = $true
