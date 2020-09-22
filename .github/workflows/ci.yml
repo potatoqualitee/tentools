@@ -13,9 +13,11 @@ jobs:
         run: sleep 10
       - name: Test the port
         run: curl -s --retry 10 --retry-connrefused http://localhost:8834/
-      - name: Install PSFramework
+      - name: Trust PSGallery
         shell: pwsh
         run: Set-PSRepository PSGallery -InstallationPolicy Trusted
+      - name: Install PSFramework
+        shell: pwsh
         run: Install-Module PSFramework -ErrorAction Stop
       - name: Perform the import of acastools
         shell: pwsh
