@@ -1,7 +1,7 @@
 name: Docker Compose Actions Workflow
 on: push
 jobs:
-  start-container-and-test-commands:
+  run-all-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -9,8 +9,6 @@ jobs:
       #  run: docker-compose up -d
       - name: Startup the container
         run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus
-      #- name: Sleep for a bit so that it has time to start
-      #  run: sleep 10
       - name: Trust PSGallery
         shell: pwsh
         run: Set-PSRepository PSGallery -InstallationPolicy Trusted
