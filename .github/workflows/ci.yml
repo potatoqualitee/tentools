@@ -20,5 +20,5 @@ jobs:
       - name: Perform the import of acastools
         shell: pwsh
         run: Import-Module ./acastools.psd1 -ErrorAction Stop
-      - name: Test the port
-        run: curl -s --retry 10 --retry-connrefused https://localhost:8834/
+      - name: Test the port and accept self-signed cert
+        run: curl -s --retry 10 --retry-connrefused https://localhost:8834/ --insecure
