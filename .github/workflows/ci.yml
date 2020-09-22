@@ -4,10 +4,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: whoan/docker-build-with-cache-action@v5
-      with:
-        image_name: sometheycallme/docker-nessus
       - uses: actions/checkout@v2
+      - name: Check docker daemon
+        run: docker ps
+      - uses: whoan/docker-build-with-cache-action@master
+        with:
+          image_name: sometheycallme/docker-nessus
       #- name: Build the stack
       #  run: docker-compose up -d
       - name: Startup the container
