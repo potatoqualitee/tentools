@@ -1,0 +1,17 @@
+version: "2.2"
+#run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus
+
+# mostly extending from main .yml
+services:
+  nessus:
+    image: sometheycallme/docker-nessus
+    hostname: nessus
+    command:
+      - /bin/bash
+      - -c
+      - |
+        var=$$(echo 'foo')
+        echo $$var
+
+    ports:
+      - "8834:8834"

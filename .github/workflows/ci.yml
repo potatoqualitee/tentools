@@ -8,7 +8,8 @@ jobs:
       #- name: Build the stack
       #  run: docker-compose up -d
       - name: Startup the container
-        run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus
+        #run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus
+        run: docker-compose up -d
       - name: Trust PSGallery
         shell: pwsh
         run: Set-PSRepository PSGallery -InstallationPolicy Trusted
