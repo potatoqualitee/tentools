@@ -1,15 +1,12 @@
 name: Docker Compose Actions Workflow
 on: push
 jobs:
-  run-all-tests:
+  setup-vm:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      #- name: Build the stack
-      #  run: docker-compose up -d
       - name: Startup the container
-        #run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus
-        run: docker-compose up -d
+        run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
       - name: Trust PSGallery
         shell: pwsh
         run: Set-PSRepository PSGallery -InstallationPolicy Trusted
@@ -21,3 +18,15 @@ jobs:
         run: Import-Module ./acastools.psd1 -ErrorAction Stop
       - name: Test the port and accept self-signed cert
         run: curl -s --retry 10 --retry-connrefused https://localhost:8834/ --insecure
+      - name: Execute Docker commands
+        run: |
+          echo This job does not specify a container.
+          echo It runs directly on the virtual machine.
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run in container
+        run: |
+          echo This job does specify a container.
+          echo It runs in the container instead of the VM.
+          hostname
