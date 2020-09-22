@@ -18,7 +18,7 @@ jobs:
         run: Set-PSRepository PSGallery -InstallationPolicy Trusted
       - name: Install PSFramework
         shell: pwsh
-        run: Install-Module PSFramework -ErrorAction Stop
+        run: Install-Module PSFramework, PoshRSJob -ErrorAction Stop
       - name: Perform the import of acastools
         shell: pwsh
         run: Import-Module ./acastools.psd1 -ErrorAction Stop
