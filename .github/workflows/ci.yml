@@ -15,6 +15,7 @@ jobs:
         run: curl -s --retry 10 --retry-connrefused http://localhost:8834/
       - name: Install PSFramework
         shell: pwsh
+        run: Set-PSRepository PSGallery -InstallationPolicy Trusted
         run: Install-Module PSFramework -ErrorAction Stop
       - name: Perform the import of acastools
         shell: pwsh
