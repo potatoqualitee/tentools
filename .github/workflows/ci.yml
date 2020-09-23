@@ -39,4 +39,6 @@ jobs:
         if: steps.cache-psmodules.outputs.cache-hit == 'true'
         run: sleep 3
       - name: Test the port and accept self-signed cert
-        run: curl -s --retry 10 --retry-connrefused https://localhost:8834/ --insecure
+        run: |
+          curl -s --retry 10 --retry-connrefused https://localhost:8834 --insecure
+          curl 'https://localhost:8834/users' -H 'Content-Type: application/json' --data-binary '{"username":"admin","password":"admin1","permissions":128}' --insecure
