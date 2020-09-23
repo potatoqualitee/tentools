@@ -7,9 +7,10 @@ jobs:
       - uses: actions/checkout@v2
       - name: Startup the container
         run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
-      #- name: Install dependencies, import the module
-      #  shell: pwsh
-      #  run: |
+      - name: Install dependencies, import the module
+        shell: pwsh
+        run: |
+          sleep 10
       #    Set-PSRepository PSGallery -InstallationPolicy Trusted
       #    Install-Module PSFramework, PoshRSJob -ErrorAction Stop
       #    Import-Module ./acastools.psd1 -ErrorAction Stop
