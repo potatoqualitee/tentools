@@ -5,10 +5,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Cache Modules
+        id: cache-modules
+        uses: actions/cache@v2
+        with:
+          path: /home/runner/.local/share/powershell/Modules
+          key: ${{ runner.os }}-modules
       - name: Download and startup the container
         run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
       - name: Install dependencies, import the module
         #/home/runner/.local/share/powershell/Modules
+        #/var/lib/docker
         shell: pwsh
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
@@ -16,16 +23,13 @@ jobs:
           Import-Module ./acastools.psd1 -ErrorAction Stop
       - name: Test the port and accept self-signed cert
         run: curl -s --retry 20 --retry-connrefused https://localhost:8834/ --insecure
-      - name: Write license
+      - name: Write nessus license
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
         shell: bash
         env:
           NLICENSE: ${{secrets.LICENSE}}
       - name: Execute commands inside container
         run: |
-          docker info
-          ls -la
-          pwd
           docker cp /tmp/nessus.license nessus:/tmp
           docker cp setup-nessus.sh nessus:/tmp
           docker exec nessus bash -c 'chmod +x /tmp/setup-nessus.sh'
