@@ -17,7 +17,6 @@ jobs:
         run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
       - name: Install dependencies
         if: steps.cache-psmodules.outputs.cache-hit != 'true'
-        #/var/lib/docker
         shell: pwsh
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
