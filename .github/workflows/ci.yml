@@ -31,7 +31,6 @@ jobs:
           docker cp /tmp/nessus.license nessus:/tmp
           docker cp setup-nessus.sh nessus:/tmp
           docker exec nessus bash -c 'chmod +x /tmp/setup-nessus.sh'
-          docker exec nessus bash -c 'ls -la /tmp'
           docker exec nessus bash -c '/tmp/setup-nessus.sh'
       - name: Import acastools
         shell: pwsh
