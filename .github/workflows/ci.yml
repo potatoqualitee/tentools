@@ -54,5 +54,5 @@ jobs:
         run: |
           Import-Module ./acastools.psd1
           $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
-          Start-Sleep 30
-          Connect-AcasService -ComputerName localhost -AcceptSelfSignedCert -Credential $cred -ErrorAction Stop
+          Start-Sleep 60
+          Connect-AcasService -ComputerName localhost -AcceptSelfSignedCert -Credential $cred -EnableException
