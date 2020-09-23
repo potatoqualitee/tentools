@@ -21,8 +21,6 @@ jobs:
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module PSFramework, PoshRSJob -ErrorAction Stop
-      - name: Test the port and accept self-signed cert
-        run: curl -s --retry 20 --retry-connrefused https://localhost:8834/ --insecure
       - name: Write nessus license
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
         shell: bash
@@ -38,3 +36,5 @@ jobs:
       - name: Import acastools
         shell: pwsh
         run: Import-Module ./acastools.psd1
+      - name: Test the port and accept self-signed cert
+        run: curl -s --retry 10 --retry-connrefused https://localhost:8834/ --insecure
