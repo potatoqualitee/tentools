@@ -5,16 +5,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Cache Modules
-        id: cache-modules
+      - name: Cache PowerShell Modules
+        id: cache-psmodules
         uses: actions/cache@v2
         with:
-          path: /home/runner/.local/share/powershell/Modules/PSFramework
-          key: ${{ runner.os }}-modules
+          path: |
+            /home/runner/.local/share/powershell/Modules/PSFramework
+            /home/runner/.local/share/powershell/Modules/PoshRSJob
+          key: ${{ runner.os }}-psmodules
       - name: Download and startup the container
         run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
       - name: Install dependencies
-        if: steps.cache-modules.outputs.cache-hit != 'true'
+        if: steps.cache-psmodules.outputs.cache-hit != 'true'
         #/var/lib/docker
         shell: pwsh
         run: |
@@ -34,3 +36,6 @@ jobs:
           docker exec nessus bash -c 'chmod +x /tmp/setup-nessus.sh'
           docker exec nessus bash -c 'ls -la /tmp'
           docker exec nessus bash -c '/tmp/setup-nessus.sh'
+      - name: Import acastools
+        shell: pwsh
+        run: Import-Module ./acastools.psd1
