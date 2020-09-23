@@ -15,7 +15,7 @@ jobs:
           key: ${{ runner.os }}-psmodules
       - name: Download and startup the container
         run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
-      - name: Install dependencies
+      - name: Install PowerShell dependencies
         if: steps.cache-psmodules.outputs.cache-hit != 'true'
         shell: pwsh
         run: |
