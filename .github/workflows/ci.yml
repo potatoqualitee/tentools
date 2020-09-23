@@ -35,7 +35,7 @@ jobs:
           docker exec nessus bash -c '/tmp/setup-nessus.sh'
 
       # setup powershell
-      - name: Install PowerShell required modules
+      - name: Setup PowerShell module cache
         id: cache-psmodules
         uses: actions/cache@v2
         with:
@@ -43,6 +43,7 @@ jobs:
             /home/runner/.local/share/powershell/Modules/PSFramework
             /home/runner/.local/share/powershell/Modules/PoshRSJob
           key: ${{ runner.os }}-psmodules
+      - name: Install required PowerShell modules
         if: steps.cache-psmodules.outputs.cache-hit != 'true'
         shell: pwsh
         run: |
