@@ -10,10 +10,9 @@ jobs:
       - name: Install dependencies, import the module
         shell: pwsh
         run: |
-          sleep 10
-      #    Set-PSRepository PSGallery -InstallationPolicy Trusted
-      #    Install-Module PSFramework, PoshRSJob -ErrorAction Stop
-      #    Import-Module ./acastools.psd1 -ErrorAction Stop
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module PSFramework, PoshRSJob -ErrorAction Stop
+          Import-Module ./acastools.psd1 -ErrorAction Stop
       - name: Test the port and accept self-signed cert
         run: curl -s --retry 20 --retry-connrefused https://localhost:8834/ --insecure
       - name: Execute commands inside container
@@ -21,7 +20,6 @@ jobs:
           ls -la
           pwd
           docker cp setup-nessus.sh nessus:/tmp
-          #echo  ${{ secrets.LICENSE }} >> /tmp/nessus.license
           #docker cp /tmp/nessus.license nessus:/tmp
           #docker exec nessus bash -c 'chmod +x /tmp/setup-nessus.sh'
           docker exec nessus bash -c 'ls -la /tmp'
