@@ -13,14 +13,13 @@ jobs:
           key: ${{ runner.os }}-modules
       - name: Download and startup the container
         run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
-      - name: Install dependencies, import the module
-        #/home/runner/.local/share/powershell/Modules
+      - name: Install dependencies
+        if: steps.cache-modules.outputs.cache-hit != 'true'
         #/var/lib/docker
         shell: pwsh
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module PSFramework, PoshRSJob -ErrorAction Stop
-          Import-Module ./acastools.psd1 -ErrorAction Stop
       - name: Test the port and accept self-signed cert
         run: curl -s --retry 20 --retry-connrefused https://localhost:8834/ --insecure
       - name: Write nessus license
