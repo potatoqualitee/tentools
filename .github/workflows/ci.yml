@@ -13,7 +13,9 @@ jobs:
             /home/runner/.local/share/powershell/Modules/PSFramework
             /home/runner/.local/share/powershell/Modules/PoshRSJob
           key: ${{ runner.os }}-psmodules
-      - name: Download and startup the container
+      - name: Download the container
+        run: docker pull sometheycallme/docker-nessus:latest
+      - name: Startup the container
         run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
       - name: Install PowerShell dependencies
         if: steps.cache-psmodules.outputs.cache-hit != 'true'
