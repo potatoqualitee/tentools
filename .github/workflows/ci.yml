@@ -13,6 +13,8 @@ jobs:
           Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module PSFramework, PoshRSJob -ErrorAction Stop
           Import-Module ./acastools.psd1 -ErrorAction Stop
+          Import-Module PSFramework
+          Get-Module PSFramework | Select Path
       - name: Test the port and accept self-signed cert
         run: curl -s --retry 20 --retry-connrefused https://localhost:8834/ --insecure
       - name: Execute commands inside container
@@ -22,8 +24,8 @@ jobs:
         run: |
           ls -la
           pwd
-          'echo "$LICENSE" > /tmp/nessus.license'
-          docker cp /tmp/nessus.license nessus:/tmp
+          'echo "$LICENSE" > nessus.license'
+          docker cp nessus.license nessus:/tmp
           docker cp setup-nessus.sh nessus:/tmp
           docker exec nessus bash -c 'chmod +x /tmp/setup-nessus.sh'
           docker exec nessus bash -c 'ls -la /tmp'
