@@ -41,4 +41,4 @@ jobs:
       - name: Test the port and accept self-signed cert, add admin user
         run: |
           curl -s --retry 10 --retry-connrefused https://localhost:8834 --insecure > /dev/null
-          curl -s 'https://localhost:8834/users' -H 'Content-Type: application/json' --data-binary '{"username":"admin","password":"admin","permissions":128}' --insecure
+          curl -s 'https://localhost:8834/users' -H 'Content-Type: application/json' --data-binary '{"username":"admin","password":"admin123","permissions":128}' --insecure
