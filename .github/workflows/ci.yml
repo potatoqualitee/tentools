@@ -36,5 +36,8 @@ jobs:
       - name: Import acastools
         shell: pwsh
         run: Import-Module ./acastools.psd1
+      - name: Sleep if cache used to give nessus time to startup
+        if: steps.cache-psmodules.outputs.cache-hit = 'true'
+        run: sleep 3
       - name: Test the port and accept self-signed cert
         run: curl -s --retry 10 --retry-connrefused https://localhost:8834/ --insecure
