@@ -1,4 +1,4 @@
-name: Docker Compose Actions Workflow
+name: Actions Workflow
 on: push
 jobs:
   run-tests:
@@ -33,7 +33,6 @@ jobs:
           docker exec nessus bash -c 'chmod +x /tmp/setup-nessus.sh'
           docker exec nessus bash -c 'ls -la /tmp'
           docker exec nessus bash -c '/tmp/setup-nessus.sh'
-          ls -la /var/lib/docker
       - name: Import acastools
         shell: pwsh
         run: Import-Module ./acastools.psd1
