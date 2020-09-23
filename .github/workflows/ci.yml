@@ -17,6 +17,8 @@ jobs:
         run: curl -s --retry 10 --retry-connrefused https://localhost:8834/ --insecure
       - name: Execute commands inside container
         run: |
+          ls -la
+          pwd
           docker cp setup-nessus.sh nessus:/tmp
           #echo  ${{ secrets.LICENSE }} >> /tmp/nessus.license
           #docker cp /tmp/nessus.license nessus:/tmp
