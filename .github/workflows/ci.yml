@@ -57,5 +57,7 @@ jobs:
       - name: Test connect to container
         shell: pwsh
         run: |
+          Import-Module ./acastools.psd1
+          Get-Command -Module acastools
           $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
           Connect-AcasService -ComputerName localhost -AcceptSelfSignedCert -Credential $cred
