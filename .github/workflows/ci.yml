@@ -13,29 +13,9 @@ jobs:
       - name: Startup the container
         run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
 
-      # setup powershell
-      - name: Cache required PowerShell modules
-        id: cache-psmodules
-        uses: actions/cache@v2
-        with:
-          path: |
-            /home/runner/.local/share/powershell/Modules/PSFramework
-            /home/runner/.local/share/powershell/Modules/PoshRSJob
-          key: ${{ runner.os }}-psmodules
-      - name: Install PowerShell dependencies
-        if: steps.cache-psmodules.outputs.cache-hit != 'true'
-        shell: pwsh
-        run: |
-          Set-PSRepository PSGallery -InstallationPolicy Trusted
-          Install-Module PSFramework, PoshRSJob -ErrorAction Stop
-      - name: Import acastools
-        shell: pwsh
-        run: Import-Module ./acastools.psd1
-
       # setup nessus
-      - name: Sleep if cache used to give nessus time to startup
-        if: steps.cache-psmodules.outputs.cache-hit == 'true'
-        run: sleep 3
+      - name: Sleep to give nessus time to startup
+        run: sleep 10
       - name: Test the port and accept self-signed cert
         run: |
           curl -s --retry 10 --retry-connrefused https://localhost:8834 --insecure > /dev/null
@@ -54,7 +34,21 @@ jobs:
           docker exec nessus bash -c 'chmod +x /tmp/setup-nessus.sh'
           docker exec nessus bash -c '/tmp/setup-nessus.sh'
 
-      - name: Test connect to container
+      # setup powershell
+      - name: Install PowerShell required modules
+        id: cache-psmodules
+        uses: actions/cache@v2
+        with:
+          path: |
+            /home/runner/.local/share/powershell/Modules/PSFramework
+            /home/runner/.local/share/powershell/Modules/PoshRSJob
+          key: ${{ runner.os }}-psmodules
+        if: steps.cache-psmodules.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module PSFramework, PoshRSJob -ErrorAction Stop
+      - name: Import acastools and test connect to the container
         shell: pwsh
         run: |
           Import-Module ./acastools.psd1
