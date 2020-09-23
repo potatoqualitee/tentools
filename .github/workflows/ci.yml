@@ -9,7 +9,7 @@ jobs:
         id: cache-modules
         uses: actions/cache@v2
         with:
-          path: /home/runner/.local/share/powershell/Modules
+          path: /home/runner/.local/share/powershell/Modules/PSFramework
           key: ${{ runner.os }}-modules
       - name: Download and startup the container
         run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
