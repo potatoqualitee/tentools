@@ -16,11 +16,15 @@ jobs:
       - name: Test the port and accept self-signed cert
         run: curl -s --retry 20 --retry-connrefused https://localhost:8834/ --insecure
       - name: Execute commands inside container
+        env:
+          LICENSE: ${{secrets.LICENSE}}
+        shell: bash
         run: |
           ls -la
           pwd
+          'echo "$LICENSE" > /tmp/nessus.license'
+          docker cp /tmp/nessus.license nessus:/tmp
           docker cp setup-nessus.sh nessus:/tmp
-          #docker cp /tmp/nessus.license nessus:/tmp
-          #docker exec nessus bash -c 'chmod +x /tmp/setup-nessus.sh'
+          docker exec nessus bash -c 'chmod +x /tmp/setup-nessus.sh'
           docker exec nessus bash -c 'ls -la /tmp'
-          #docker exec nessus bash -c '/tmp/setup-nessus.sh'
+          docker exec nessus bash -c '/tmp/setup-nessus.sh'
