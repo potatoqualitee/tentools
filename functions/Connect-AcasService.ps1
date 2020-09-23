@@ -46,22 +46,29 @@ function Connect-AcasService {
         if (-not $PSBoundParameters.Credential) {
             $UseDefaultCredential = $true
         }
-        if ($AcceptSelfSignedCert -and [System.Net.ServicePointManager]::CertificatePolicy.ToString() -ne 'IgnoreCerts') {
-            $Domain = [AppDomain]::CurrentDomain
-            $DynAssembly = New-Object System.Reflection.AssemblyName('IgnoreCerts')
-            $AssemblyBuilder = $Domain.DefineDynamicAssembly($DynAssembly, [System.Reflection.Emit.AssemblyBuilderAccess]::Run)
-            $ModuleBuilder = $AssemblyBuilder.DefineDynamicModule('IgnoreCerts', $false)
-            $TypeBuilder = $ModuleBuilder.DefineType('IgnoreCerts', 'AutoLayout, AnsiClass, Class, Public, BeforeFieldInit', [System.Object], [System.Net.ICertificatePolicy])
-            $TypeBuilder.DefineDefaultConstructor('PrivateScope, Public, HideBySig, SpecialName, RTSpecialName') | Out-Null
-            $MethodInfo = [System.Net.ICertificatePolicy].GetMethod('CheckValidationResult')
-            $MethodBuilder = $TypeBuilder.DefineMethod($MethodInfo.Name, 'PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask', $MethodInfo.CallingConvention, $MethodInfo.ReturnType, ([Type[]] ($MethodInfo.GetParameters() | ForEach-Object { $_.ParameterType })))
-            $ILGen = $MethodBuilder.GetILGenerator()
-            $ILGen.Emit([Reflection.Emit.Opcodes]::Ldc_I4_1)
-            $ILGen.Emit([Reflection.Emit.Opcodes]::Ret)
-            $TypeBuilder.CreateType() | Out-Null
 
-            # Disable SSL certificate validation
-            [System.Net.ServicePointManager]::CertificatePolicy = New-Object IgnoreCerts
+        if ($PSVersionTable.PSEdition -eq 'Core') {
+            if ($AcceptSelfSignedCert) {
+                $PSDefaultParameterValues['Invoke-RestMethod:SkipCertificateCheck'] = $true
+            }
+        } else {
+            if ($AcceptSelfSignedCert -and [System.Net.ServicePointManager]::CertificatePolicy.ToString() -ne 'IgnoreCerts') {
+                $Domain = [AppDomain]::CurrentDomain
+                $DynAssembly = New-Object System.Reflection.AssemblyName('IgnoreCerts')
+                $AssemblyBuilder = $Domain.DefineDynamicAssembly($DynAssembly, [System.Reflection.Emit.AssemblyBuilderAccess]::Run)
+                $ModuleBuilder = $AssemblyBuilder.DefineDynamicModule('IgnoreCerts', $false)
+                $TypeBuilder = $ModuleBuilder.DefineType('IgnoreCerts', 'AutoLayout, AnsiClass, Class, Public, BeforeFieldInit', [System.Object], [System.Net.ICertificatePolicy])
+                $TypeBuilder.DefineDefaultConstructor('PrivateScope, Public, HideBySig, SpecialName, RTSpecialName') | Out-Null
+                $MethodInfo = [System.Net.ICertificatePolicy].GetMethod('CheckValidationResult')
+                $MethodBuilder = $TypeBuilder.DefineMethod($MethodInfo.Name, 'PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask', $MethodInfo.CallingConvention, $MethodInfo.ReturnType, ([Type[]] ($MethodInfo.GetParameters() | ForEach-Object { $_.ParameterType })))
+                $ILGen = $MethodBuilder.GetILGenerator()
+                $ILGen.Emit([Reflection.Emit.Opcodes]::Ldc_I4_1)
+                $ILGen.Emit([Reflection.Emit.Opcodes]::Ret)
+                $TypeBuilder.CreateType() | Out-Null
+
+                # Disable SSL certificate validation
+                [System.Net.ServicePointManager]::CertificatePolicy = New-Object IgnoreCerts
+            }
         }
 
         # Force usage of TSL1.2 as Nessus web server only supports this and will hang otherwise
