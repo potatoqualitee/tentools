@@ -38,7 +38,7 @@ jobs:
       - name: Sleep if cache used to give nessus time to startup
         if: steps.cache-psmodules.outputs.cache-hit == 'true'
         run: sleep 3
-      - name: Test the port and accept self-signed cert
+      - name: Test the port and accept self-signed cert, add admin user
         run: |
-          curl -s --retry 10 --retry-connrefused https://localhost:8834 --insecure
-          curl 'https://localhost:8834/users' -H 'Content-Type: application/json' --data-binary '{"username":"admin","password":"admin1","permissions":128}' --insecure
+          curl -s --retry 10 --retry-connrefused https://localhost:8834 --insecure > /dev/null
+          curl 'https://localhost:8834/users' -H 'Content-Type: application/json' --data-binary '{"username":"admin","password":"admin","permissions":128}' --insecure
