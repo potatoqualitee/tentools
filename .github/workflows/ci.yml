@@ -54,3 +54,4 @@ jobs:
             Path = "/tmp/nessus.license"
           }
           Initialize-TenServer @splat
+          $error
