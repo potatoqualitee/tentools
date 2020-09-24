@@ -7,7 +7,7 @@ Write-PSFMessage -Level Important -Message "Loading constants"
 . "$PSScriptRoot\constants.ps1"
 
 Write-PSFMessage -Level Important -Message "Importing Module"
-Import-Module "$PSScriptRoot\tentools.psd1"
+# Import-Module "$PSScriptRoot\..\tentools.psd1"
 
 $totalFailed = 0
 $totalRun = 0
