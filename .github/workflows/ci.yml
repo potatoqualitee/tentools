@@ -46,5 +46,6 @@ jobs:
             Credential = $cred
             EnableException = $true
             Port = 8834
+            Path = "nessus.license"
           }
           Initialize-TenServer @splat
