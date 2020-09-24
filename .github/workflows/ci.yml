@@ -15,24 +15,30 @@ jobs:
 
       # setup nessus
       - name: Sleep to give nessus time to startup
-        run: sleep 10
+        run: sleep 20
       - name: Test the port and accept self-signed cert
         run: |
           curl -s --retry 10 --retry-connrefused https://localhost:8834 --insecure > /dev/null
+      - name: Add admin user
+        run: |
+          curl -s 'https://localhost:8834/users' -H 'Content-Type: application/json' --data-binary '{"username":"admin","password":"admin123","permissions":128}' --insecure
       - name: Write nessus license
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
         shell: bash
         env:
           NLICENSE: ${{secrets.LICENSE}}
-      - name: Execute commands inside container
+      - name: Register Nessus license
         run: |
           docker cp /tmp/nessus.license nessus:/tmp
           docker cp setup-nessus.sh nessus:/tmp
           docker exec nessus bash -c 'chmod +x /tmp/setup-nessus.sh'
           docker exec nessus bash -c '/tmp/setup-nessus.sh'
-      - name: Add admin user
+      - name: Restart Nessus
         run: |
-          curl -s 'https://localhost:8834/users' -H 'Content-Type: application/json' --data-binary '{"username":"admin","password":"admin123","permissions":128}' --insecure
+          docker exec nessus bash -c '/sbin/service nessusd stop'
+          docker exec nessus bash -c '/sbin/service nessusd start'
+      - name: Sleep for a moment
+        run: sleep 10
 
       # setup powershell
       - name: Setup PowerShell module cache
