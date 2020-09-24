@@ -100,7 +100,7 @@ function Connect-AcasService {
     process {
         foreach ($computer in $ComputerName) {
             if ($Port -eq 443) {
-                $uri = "https://$($computer):$($Port)/rest"
+                $uri = "https://$($computer):$Port/rest"
                 $fulluri = "$uri/token"
                 if ($PSBoundParameters.Credential) {
                     $body = @{
@@ -126,7 +126,7 @@ function Connect-AcasService {
                     SessionVariable = 'websession'
                 }
             } else {
-                $Uri = "https://$($computer):$($Port)"
+                $Uri = "https://$($computer):$Port"
                 $fulluri = "$uri/session"
                 if ($PSBoundParameters.Credential) {
                     $body = @{'username' = $Credential.UserName; 'password' = $Credential.GetNetworkCredential().password }
@@ -150,7 +150,7 @@ function Connect-AcasService {
                     $msg = "The remote server returned an error: (401) Unauthorized. This is likely due to a bad username/password"
                 }
 
-                Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
+                Stop-PSFFunction -Message "$msg $_" -ErrorRecord $_ -Continue -EnableException:$EnableException
             }
 
             if ($token) {
