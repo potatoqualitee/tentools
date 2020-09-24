@@ -1,4 +1,4 @@
-function New-AcasAdminUser {
+function Initialize-AcasServer {
     <#
     .SYNOPSIS
         Creates a new admin the Nessus website then establishes a connection using those credentials
@@ -27,7 +27,7 @@ function New-AcasAdminUser {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> New-AcasAdminUser -ComputerName acas -Credential admin
+        PS> Initialize-AcasServer -ComputerName acas -Credential admin
     #>
     [CmdletBinding()]
     param
@@ -36,6 +36,7 @@ function New-AcasAdminUser {
         [string[]]$ComputerName,
         [int]$Port,
         [Management.Automation.PSCredential]$Credential,
+        [string]$Path,
         [switch]$AcceptSelfSignedCert,
         [ValidateSet("tenable.sc", "Nessus")]
         [string]$Type,
@@ -87,6 +88,14 @@ function New-AcasAdminUser {
         }
     }
     process {
+
+        if (-not (Test-Path -Path $Path)) {
+            Stop-PSFFunction -EnableException:$EnableException -Message "$Path not found"
+            return
+        }
+
+        $license = (Get-Content -Path $Path -Raw).Replace("`r`n", "")
+
         foreach ($computer in $ComputerName) {
             if ($Port -eq 443) {
                 $uri = "https://$($computer):$Port/rest"
@@ -99,7 +108,14 @@ function New-AcasAdminUser {
 
                 $headers = @{"HTTP" = "X-SecurityCenter" }
 
-                $RestMethodParams = @{
+                try {
+                    $null = Invoke-RestMethod @adminuserparams -ErrorAction Stop
+                } catch {
+                    $msg = Get-ErrorMessage -Record $_
+                    Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                }
+
+                $adminuserparams = @{
                     Headers         = $headers
                     ContentType     = "application/json"
                     Method          = 'POST'
@@ -110,13 +126,37 @@ function New-AcasAdminUser {
                 }
             } else {
                 $Uri = "https://$($computer):$Port"
+                $fulluri = "$uri/server/register"
+
+                $body = @{
+                    "key" = $license
+                } | ConvertTo-Json
+
+                $licenseparams = @{
+                    Method        = 'POST'
+                    ContentType   = "application/json"
+                    URI           = $fulluri
+                    Body          = $body
+                    ErrorVariable = 'NessusLicenseError'
+                }
+                #    "key":  "-----BEGIN TENABLE LICENSE-----\nd2Yya0hLZFV4bWlWWmQwWFd6Z1dhR25GRHUrdDl5d0RnM3U1NDBYTUl1Rlg1LzgyV1oweGtjUWQ0\ncVhhWXFPb2dJUUtxbjBTVTdUcnpyYnREL3RwWFVsVVRsWTk4TUtHZ3BHNkVmSGl0OURHSldCOGtH\nalNUTmRoODM4VFNNSXNOaCtiM1JKYXhmRm83d0ljbzRYR2ZJZU9DUk9BaDNyaldidytoZC9PY1Q1\nYkRlRVFkWnpQYkR1RjdKVXNMZkI0a3V2ZEplbmR0ZVpwUEVRNzduR200NFVtR2hUQUJLZDB5dEFE\nU0pGejhnaW15djZmWTZxRVBhcVM0UG4zTE5DUk5IbnlOdCtpcEtISjZDd01XS1d1a1J4MTljRm03\nR0VZQjBDc3dtM0FML3hTRDFRYSt2MDdUcHlqVkJscktrSmIvVnZIVkQxM0FZZUk1cXA3YWpLWC9Z\nWmNybnl4ZjF0MG1LVFJUMWVqQkd6RWhUUVVZQmlQNGF0Z0tvWllaQXRSellJU3M5NGU5VDBHaU8x\nYTMvc3U5d0hOcWN2REVIMGdEYjNQSG1lelVsa2ZmWlE1QTF2TXZxMGxqbVEwQW1tQ3FoMHE2dTQx\nYWNkamVkWnBKMzdUYkpHOERVMVBWRVE5WUJ0UFVXQVpYdUlqMEM5UXYvemd3NE1HQzBMd3hnb0ZQ\ncVhUN3ZEd3FJUUZ2ekhHZjIxV0JZeng1bDBDRG40TU03V3p5SWpadjhveE00aDRyQXNDV3E1TU52\nSStCVng2ZlF3U2RmOVFoK3QzSThwRUsyWXZ1dnFTcnBQMStDSFdlN1pzaVhSdEo1ZkVqTE1iT3Nw\nU2R5VEd1U3ZhekRZZzk2TmdYc01BWCszY2lUTjJYekZxYmdvbExXdGV3Rkw5NVBtUnJTWitSRjA9\nDQp7ImFjdGl2YXRpb25fY29kZSI6IkUyODItNEQwOC02NjE4LTMyODUtQ0I0NiIsInVwZGF0ZV9w\nYXNzd29yZCI6IjBiZGEwZGY2Y2ZmMDVlM2U4NTVlNGMwOWI4ZWQwOGUxIiwibmFtZSI6Ik5lc3N1\ncyBIb21lIiwidHlwZSI6ImhvbWUiLCJleHBpcmF0aW9uX2RhdGUiOjE3NTgzNzY0NzEsImlwcyI6\nMTYsInVwZGF0ZV9sb2dpbiI6IjNlNGFmNWNkZDQ3NzQ1MDg3YWYwOTViODBlNzRjYzQ2IiwiZHJt\nIjoiNmM0NmQyZjE5MGJlZGEyNjY4N2YyYTA5ODc4ZTU5ZWQifQ==\n-----END TENABLE LICENSE-----\n"
+                # "{`"key`":`"-----BEGIN TENABLE LICENSE-----\nd2Yya0hLZFV4bWlWWmQwWFd6Z1dhR25GRHUrdDl5d0RnM3U1NDBYTUl1Rlg1LzgyV1oweGtjUWQ0\ncVhhWXFPb2dJUUtxbjBTVTdUcnpyYnREL3RwWFVsVVRsWTk4TUtHZ3BHNkVmSGl0OURHSldCOGtH\nalNUTmRoODM4VFNNSXNOaCtiM1JKYXhmRm83d0ljbzRYR2ZJZU9DUk9BaDNyaldidytoZC9PY1Q1\nYkRlRVFkWnpQYkR1RjdKVXNMZkI0a3V2ZEplbmR0ZVpwUEVRNzduR200NFVtR2hUQUJLZDB5dEFE\nU0pGejhnaW15djZmWTZxRVBhcVM0UG4zTE5DUk5IbnlOdCtpcEtISjZDd01XS1d1a1J4MTljRm03\nR0VZQjBDc3dtM0FML3hTRDFRYSt2MDdUcHlqVkJscktrSmIvVnZIVkQxM0FZZUk1cXA3YWpLWC9Z\nWmNybnl4ZjF0MG1LVFJUMWVqQkd6RWhUUVVZQmlQNGF0Z0tvWllaQXRSellJU3M5NGU5VDBHaU8x\nYTMvc3U5d0hOcWN2REVIMGdEYjNQSG1lelVsa2ZmWlE1QTF2TXZxMGxqbVEwQW1tQ3FoMHE2dTQx\nYWNkamVkWnBKMzdUYkpHOERVMVBWRVE5WUJ0UFVXQVpYdUlqMEM5UXYvemd3NE1HQzBMd3hnb0ZQ\ncVhUN3ZEd3FJUUZ2ekhHZjIxV0JZeng1bDBDRG40TU03V3p5SWpadjhveE00aDRyQXNDV3E1TU52\nSStCVng2ZlF3U2RmOVFoK3QzSThwRUsyWXZ1dnFTcnBQMStDSFdlN1pzaVhSdEo1ZkVqTE1iT3Nw\nU2R5VEd1U3ZhekRZZzk2TmdYc01BWCszY2lUTjJYekZxYmdvbExXdGV3Rkw5NVBtUnJTWitSRjA9\nDQp7ImFjdGl2YXRpb25fY29kZSI6IkUyODItNEQwOC02NjE4LTMyODUtQ0I0NiIsInVwZGF0ZV9w\nYXNzd29yZCI6IjBiZGEwZGY2Y2ZmMDVlM2U4NTVlNGMwOWI4ZWQwOGUxIiwibmFtZSI6Ik5lc3N1\ncyBIb21lIiwidHlwZSI6ImhvbWUiLCJleHBpcmF0aW9uX2RhdGUiOjE3NTgzNzY0NzEsImlwcyI6\nMTYsInVwZGF0ZV9sb2dpbiI6IjNlNGFmNWNkZDQ3NzQ1MDg3YWYwOTViODBlNzRjYzQ2IiwiZHJt\nIjoiNmM0NmQyZjE5MGJlZGEyNjY4N2YyYTA5ODc4ZTU5ZWQifQ==\n-----END TENABLE LICENSE-----\n`"}"
+
+                try {
+                    $null = Invoke-WebRequest @licenseparams -ErrorAction Stop
+                } catch {
+                    $msg = Get-ErrorMessage -Record $_
+                    Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                }
+
                 $fulluri = "$uri/users"
                 $body = @{
                     username    = $Credential.UserName
                     password    = $Credential.GetNetworkCredential().password
                     permissions = "128"
                 } | ConvertTo-Json
-                $RestMethodParams = @{
+
+                $adminuserparams = @{
                     Method          = 'POST'
                     ContentType     = "application/json"
                     URI             = $fulluri
@@ -126,8 +166,10 @@ function New-AcasAdminUser {
                 }
             }
 
+
             try {
-                $null = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
+                $null = Invoke-RestMethod @adminuserparams -ErrorAction Stop
+                $null = $PSBoundParameters.Remove("Path")
                 Connect-AcasService @PSBoundParameters
             } catch {
                 $msg = Get-ErrorMessage -Record $_
