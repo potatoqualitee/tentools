@@ -73,6 +73,7 @@
         'Get-AcasUser',
         'Import-AcasPolicy',
         'Import-AcasScan',
+        'New-AcasAdminUser',
         'New-AcasGroup',
         'New-AcasPolicy',
         'New-AcasScan',
