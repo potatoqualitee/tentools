@@ -53,6 +53,11 @@ jobs:
         shell: pwsh
         run: |
           Import-Module ./acastools.psd1
-          $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
-          Start-Sleep 60
-          Connect-AcasService -ComputerName localhost -AcceptSelfSignedCert -Credential $cred -EnableException
+          $splat = @{
+            ComputerName = "localhost"
+            AcceptSelfSignedCert = $true
+            Credential = (New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force))
+            EnableException = $true
+          }
+          Connect-AcasService @splat
+          #Connect-AcasService -ComputerName localhost -AcceptSelfSignedCert -Credential (New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)) -EnableException
