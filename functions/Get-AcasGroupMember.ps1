@@ -41,20 +41,32 @@ function Get-AcasGroupMember {
             if ($server.capabilities.multi_user -eq 'full' -or $session.sc) {
                 $groupparams = @{
                     SessionObject = $session
-                    Path          = "/groups/$($GroupId)/users"
+                    Path          = "/groups/$GroupId/users"
                     Method        = 'GET'
                 }
 
-                foreach ($User in (Invoke-AcasRequest @groupparams).users) {
+                $results = (Invoke-AcasRequest @groupparams).users
+                if ($Session.sc) {
                     [pscustomobject]@{
-                        Name       = $User.name
-                        UserName   = $User.username
-                        Email      = $User.email
-                        UserId     = $_Userid
-                        Type       = $User.type
-                        Permission = $permidenum[$User.permissions]
-                        LastLogin  = $origin.AddSeconds($User.lastlogin).ToLocalTime()
-                        SessionId  = $session.SessionId
+                        UserName  = $user.username
+                        FirstName = $user.firstname
+                        LastName  = $user.lastname
+                        UserId    = $_Userid
+                        SessionId = $session.SessionId
+                    }
+                } else {
+                    $users = $results.users
+                    foreach ($user in $users) {
+                        [pscustomobject]@{
+                            Name       = $user.name
+                            UserName   = $user.username
+                            Email      = $user.email
+                            UserId     = $_Userid
+                            Type       = $user.type
+                            Permission = $permidenum[$user.permissions]
+                            LastLogin  = $origin.AddSeconds($user.lastlogin).ToLocalTime()
+                            SessionId  = $session.SessionId
+                        }
                     }
                 }
             } else {
