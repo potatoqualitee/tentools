@@ -47,7 +47,7 @@ function Initialize-TenServer {
     begin {
         if ($PSVersionTable.PSEdition -eq 'Core') {
             if ($AcceptSelfSignedCert) {
-                $PSDefaultParameterValues['*:SkipCertificateCheck'] = $true
+                $PSDefaultParameterValues['Invoke-RestMethod:SkipCertificateCheck'] = $true
             }
         } else {
             if ($AcceptSelfSignedCert -and [System.Net.ServicePointManager]::CertificatePolicy.ToString() -ne 'IgnoreCerts') {
@@ -143,7 +143,7 @@ function Initialize-TenServer {
                 }
 
                 try {
-                    $null = Invoke-WebRequest @licenseparams -ErrorAction Stop
+                    $null = Invoke-RestMethod @licenseparams -ErrorAction Stop
                 } catch {
                     $msg = Get-ErrorMessage -Record $_
                     Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
