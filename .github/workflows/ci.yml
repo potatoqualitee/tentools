@@ -49,7 +49,7 @@ jobs:
             ComputerName = "localhost"
             AcceptSelfSignedCert = $true
             Credential = $cred
-            EnableException = $true
+            EnableException = $false
             Port = 8834
             Path = "/tmp/nessus.license"
           }
