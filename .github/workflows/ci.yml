@@ -19,18 +19,23 @@ jobs:
       - name: Test the port and accept self-signed cert
         run: |
           curl -s --retry 10 --retry-connrefused https://localhost:8834 --insecure > /dev/null
+      - name: Write nessus license
+        run: 'echo "$NLICENSE" > /tmp/nessus.license'
+        shell: bash
+        env:
+          NLICENSE: ${{secrets.LICENSE}}
 
       # setup powershell
       - name: Setup PowerShell module cache
-        id: cache-psmodules
+        id: cache-psmodulesupdate
         uses: actions/cache@v2
         with:
           path: |
             /home/runner/.local/share/powershell/Modules/PSFramework
             /home/runner/.local/share/powershell/Modules/Pester
-          key: ${{ runner.os }}-psmodules
+          key: ${{ runner.os }}-psmodulesupdate
       - name: Install required PowerShell modules
-        if: steps.cache-psmodules.outputs.cache-hit != 'true'
+        if: steps.cache-psmodulesupdate.outputs.cache-hit != 'true'
         shell: pwsh
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
@@ -46,6 +51,6 @@ jobs:
             Credential = $cred
             EnableException = $true
             Port = 8834
-            Path = "nessus.license"
+            Path = "/tmp/nessus.license"
           }
           Initialize-TenServer @splat
