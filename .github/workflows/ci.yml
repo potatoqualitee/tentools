@@ -49,11 +49,11 @@ jobs:
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module PSFramework, PoshRSJob -ErrorAction Stop
-      - name: Import acastools and test connect to the container
+      - name: Import tentools and test connect to the container
         shell: pwsh
         run: |
           $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
-          Import-Module ./acastools.psd1
+          Import-Module ./tentools.psd1
           $splat = @{
             ComputerName = "localhost"
             AcceptSelfSignedCert = $true
@@ -61,4 +61,4 @@ jobs:
             EnableException = $true
             Port = 8834
           }
-          Connect-AcasService @splat
+          Connect-TenService @splat
