@@ -47,7 +47,7 @@ function Initialize-TenServer {
     begin {
         if ($PSVersionTable.PSEdition -eq 'Core') {
             if ($AcceptSelfSignedCert) {
-                $PSDefaultParameterValues['Invoke-RestMethod:SkipCertificateCheck'] = $true
+                $PSDefaultParameterValues['*:SkipCertificateCheck'] = $true
             }
         } else {
             if ($AcceptSelfSignedCert -and [System.Net.ServicePointManager]::CertificatePolicy.ToString() -ne 'IgnoreCerts') {
