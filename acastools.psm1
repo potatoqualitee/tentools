@@ -14,12 +14,12 @@ function Import-ModuleFile {
 if ($acas_dotsourcemodule) { $script:doDotSource }
 
 # Import all internal functions
-foreach ($function in (Get-ChildItem "$ModuleRoot\internal\" -Filter "*.ps1" -Recurse -ErrorAction Ignore)) {
+foreach ($function in (Get-ChildItem "$ModuleRoot\private\" -Filter "*.ps1" -Recurse -ErrorAction Ignore)) {
     . Import-ModuleFile -Path $function.FullName
 }
 
 # Import all public functions
-foreach ($function in (Get-ChildItem "$ModuleRoot\functions" -Filter "*.ps1" -Recurse -ErrorAction Ignore)) {
+foreach ($function in (Get-ChildItem "$ModuleRoot\public" -Filter "*.ps1" -Recurse -ErrorAction Ignore)) {
     . Import-ModuleFile -Path $function.FullName
 }
 
