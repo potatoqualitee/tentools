@@ -35,8 +35,7 @@ function Get-AcasSession {
         Write-PSFMessage -level Verbose -Message "Connected sessions: $($script:NessusConn.Count)"
         if ($PSBoundParameters.SessionId) {
             $script:NessusConn | Where-Object SessionId -in $SessionId
-        }
-        else {
+        } else {
             $script:NessusConn
         }
     }

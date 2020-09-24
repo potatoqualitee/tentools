@@ -29,7 +29,7 @@ function Get-AcasScanTemplate {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $Templates = Invoke-AcasRequest -SessionObject $session -Path '/editor/scan/templates' -Method 'Get'
             foreach ($Template in $Templates.templates) {
-                [pscustomobject]@{ 
+                [pscustomobject]@{
                     Name             = $Template.name
                     Title            = $Template.title
                     Description      = $Template.desc

@@ -32,7 +32,7 @@ function Stop-AcasScan {
     )
 
     begin {
-        
+
     }
     process {
         $collection = @()

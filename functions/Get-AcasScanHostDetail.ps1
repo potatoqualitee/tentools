@@ -50,7 +50,7 @@ function Get-AcasScanHostDetail {
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             foreach ($detail in (Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/hosts/$($HostId)" -Method 'Get' -Parameter $params)) {
-                [pscustomobject]@{ 
+                [pscustomobject]@{
                     Info            = $detail.info
                     Vulnerabilities = $detail.vulnerabilities
                     Compliance      = $detail.compliance

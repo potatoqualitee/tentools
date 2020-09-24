@@ -65,8 +65,7 @@ function Remove-AcasGroupUser {
                 }
 
                 Invoke-AcasRequest @groupparams
-            }
-            else {
+            } else {
                 Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
             }
         }

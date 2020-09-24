@@ -49,8 +49,7 @@ function Import-AcasScan {
     begin {
         if ($Encrypted) {
             $URIPath = 'file/upload?no_enc=1'
-        }
-        else {
+        } else {
             $URIPath = 'file/upload'
         }
 
@@ -89,8 +88,7 @@ function Import-AcasScan {
             $result = $RestClient.Execute($RestRequest)
             if ($result.ErrorMessage.Length -gt 0) {
                 Write-Error -Message $result.ErrorMessage
-            }
-            else {
+            } else {
                 $RestParams = New-Object -TypeName System.Collections.Specialized.OrderedDictionary
                 $RestParams.add('file', "$($fileinfo.name)")
                 if ($Encrypted -and ($Password -or $Credential)) {

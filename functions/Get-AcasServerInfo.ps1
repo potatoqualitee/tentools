@@ -31,7 +31,7 @@ function Get-AcasServerInfo {
         $server = Invoke-AcasRequest -SessionObject $session -Path '/server/properties' -Method 'Get'
 
         foreach ($serverinfo in $server) {
-            [pscustomobject]@{ 
+            [pscustomobject]@{
                 NessusType     = $serverinfo.nessus_type
                 ServerVersion  = $serverinfo.server_version
                 UIVersion      = $serverinfo.nessus_ui_version

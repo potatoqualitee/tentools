@@ -28,7 +28,7 @@ function Get-AcasUser {
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-            
+
             $results = Invoke-AcasRequest -SessionObject $session -Path '/users' -Method 'Get'
             if ($session.sc) {
                 foreach ($user in $results) {
@@ -64,10 +64,9 @@ function Get-AcasUser {
                         Preferences        = $user.preferences
                     }
                 }
-            }
-            else {
+            } else {
                 foreach ($user in $results.users) {
-                    [pscustomobject]@{ 
+                    [pscustomobject]@{
                         Name       = $user.name
                         UserName   = $user.username
                         Email      = $user.email

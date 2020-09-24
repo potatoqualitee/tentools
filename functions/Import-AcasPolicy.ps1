@@ -67,8 +67,7 @@ function Import-AcasPolicy {
             $result = $RestClient.Execute($RestRequest)
             if ($result.ErrorMessage.Length -gt 0) {
                 Write-Error -Message $result.ErrorMessage
-            }
-            else {
+            } else {
                 $RestParams = New-Object -TypeName System.Collections.Specialized.OrderedDictionary
                 $RestParams.add('file', "$($fileinfo.name)")
                 if ($Encrypted -and ($Credential -or $Password)) {
@@ -79,7 +78,7 @@ function Import-AcasPolicy {
                 }
 
                 $Policy = Invoke-RestMethod -Method Post -Uri "$($session.URI)/policies/import" -header @{'X-Cookie' = "token=$($session.Token)" } -Body (ConvertTo-Json @{'file' = $fileinfo.name; } -Compress) -ContentType 'application/json'
-                [pscustomobject]@{ 
+                [pscustomobject]@{
                     Name           = $Policy.Name
                     PolicyId       = $Policy.id
                     Description    = $Policy.description

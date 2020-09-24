@@ -66,8 +66,7 @@ function Add-AcasGroupUser {
                     EnableException = $EnableException
                 }
                 Invoke-AcasRequest @params
-            }
-            else {
+            } else {
                 Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
             }
         }

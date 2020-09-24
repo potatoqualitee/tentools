@@ -67,12 +67,11 @@ function Get-AcasPluginRule {
                     # Significant increase in web requests!
                     # Provides the rule name in the returned object
                     $plugin = (Get-AcasPlugin -SessionId $session.SessionId -PluginId $rule.plugin_id).Name
-                }
-                else {
+                } else {
                     $plugin = $null
                 }
 
-                [pscustomobject]@{ 
+                [pscustomobject]@{
                     Id          = $rule.id
                     Host        = $rule.host
                     PluginId    = $rule.plugin_id

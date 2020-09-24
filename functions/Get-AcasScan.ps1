@@ -50,16 +50,14 @@ function Get-AcasScan {
 
             if ($Status.length -gt 0) {
                 $allscans = $scans.scans | Where-Object { $_.status -eq $Status.ToLower() }
-            }
-            else {
+            } else {
                 $allscans = $scans.scans
             }
             foreach ($scan in $allscans) {
 
                 if ($scan.starttime -cnotlike "*T*") {
                     $StartTime = $origin.AddSeconds($scan.starttime).ToLocalTime()
-                }
-                else {
+                } else {
                     $StartTime = [datetime]::ParseExact($scan.starttime, "yyyyMMddTHHmmss",
                         [System.Globalization.CultureInfo]::InvariantCulture,
                         [System.Globalization.DateTimeStyles]::None)

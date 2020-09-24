@@ -34,8 +34,7 @@ function Get-AcasPlugin {
                     # Some attributes have multiple values, i.e. osvdb. This causes errors when adding duplicates
                     if ($attributes.Keys -contains $attribute.attribute_name) {
                         $attributes[$attribute.attribute_name] += ", $($attribute.attribute_value)"
-                    }
-                    else {
+                    } else {
                         $attributes.add("$($attribute.attribute_name)", "$($attribute.attribute_value)")
                     }
                 }
@@ -47,7 +46,7 @@ function Get-AcasPlugin {
                     SessionId  = $session.SessionId
                 }
             }
-            
+
             if ($PluginId) {
                 foreach ($plugin in (Invoke-AcasRequest -SessionObject $session -Path "/plugins/plugin/$($PluginId)" -Method 'Get')) {
                     $attributes = [ordered]@{ }
@@ -55,8 +54,7 @@ function Get-AcasPlugin {
                         # Some attributes have multiple values, i.e. osvdb. This causes errors when adding duplicates
                         if ($attributes.Keys -contains $attribute.attribute_name) {
                             $attributes[$attribute.attribute_name] += ", $($attribute.attribute_value)"
-                        }
-                        else {
+                        } else {
                             $attributes.add("$($attribute.attribute_name)", "$($attribute.attribute_value)")
                         }
                     }

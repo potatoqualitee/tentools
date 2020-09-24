@@ -43,14 +43,13 @@ function New-AcasGroup {
 
             if ($server.capabilities.multi_user -eq 'full') {
                 $groups = Invoke-AcasRequest -SessionObject $session -Path '/groups' -Method 'POST' -Parameter @{'name' = $Name }
-                [pscustomobject]@{ 
+                [pscustomobject]@{
                     Name        = $groups.name
                     GroupId     = $groups.id
                     Permissions = $groups.permissions
                     SessionId   = $session.SessionId
                 }
-            }
-            else {
+            } else {
                 Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
             }
         }

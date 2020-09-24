@@ -31,17 +31,17 @@ function Edit-AcasPluginRule {
 
     .EXAMPLE
         PS> Edit-AcasPluginRule -SessionId 0 -Id 500 -ComputerName 'YourComputer' -Expiration (([datetime]::Now).AddDays(10)) -Type Low
-            
+
         Will edit a plugin rule with an ID of 500, to have a new computer name. Rule expires in 10 days
 
     .EXAMPLE
         PS> Get-AcasPluginRule -SessionId 0 | Edit-AcasPluginRule -Type High
-            
+
         Will alter all rules to now have a serverity of 'Info'
 
     .EXAMPLE
         PS> Get-AcasPluginRule -SessionId 0 | ? {$_.Host -eq 'myComputer'} | Edit-AcasPluginRule -Type 'High'
-            
+
         Will find all plugin rules that match the computer name, and set their severity to high
     #>
     [CmdletBinding()]
@@ -66,7 +66,7 @@ function Edit-AcasPluginRule {
     )
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            
+
             $dtExpiration = $null
 
             If ($Expiration) {
@@ -95,7 +95,7 @@ function Edit-AcasPluginRule {
             }
 
             $pRuleJson = ConvertTo-Json -InputObject $pRulehash -Compress
-            
+
             $params = @{
                 SessionObject   = $session
                 Path            = ('/plugin-rules/{0}' -f $Id)

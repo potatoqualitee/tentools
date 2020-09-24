@@ -28,7 +28,7 @@ function Get-AcasSessionInfo {
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             Write-PSFMessage -Level Verbose -Message "Removing server session $($id)"
-            
+
             $RestMethodParams = @{
                 Method          = 'Get'
                 'URI'           = "$($session.URI)/session"
@@ -36,7 +36,7 @@ function Get-AcasSessionInfo {
                 'ErrorVariable' = 'NessusSessionError'
             }
             $SessInfo = Invoke-RestMethod @RestMethodParams
-            [pscustomobject]@{ 
+            [pscustomobject]@{
                 Id         = $SessInfo.id
                 Name       = $SessInfo.name
                 UserName   = $SessInfo.UserName

@@ -2,13 +2,13 @@ function Remove-AcasGroup {
     <#
     .SYNOPSIS
         Short description
-    
+
     .DESCRIPTION
         Long description
-    
+
     .PARAMETER SessionId
         ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
-    
+
     .PARAMETER GroupId
         Parameter description
 
@@ -48,8 +48,7 @@ function Remove-AcasGroup {
                 }
 
                 Invoke-AcasRequest @groupparams
-            }
-            else {
+            } else {
                 Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
             }
         }
