@@ -2,7 +2,7 @@ name: Actions Workflow
 on: push
 jobs:
   run-tests:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
 
@@ -18,7 +18,7 @@ jobs:
         run: sleep 10
       - name: Test the port and accept self-signed cert
         run: |
-          curl -s --retry 10 https://localhost:8834 --insecure > /dev/null
+          curl -s --retry 10 --retry-connrefused https://localhost:8834 --insecure > /dev/null
       - name: Add admin user
         run: |
           curl -s 'https://localhost:8834/users' -H 'Content-Type: application/json' --data-binary '{"username":"admin","password":"admin123","permissions":128}' --insecure
