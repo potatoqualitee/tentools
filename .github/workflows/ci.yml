@@ -35,8 +35,7 @@ jobs:
           docker exec nessus bash -c '/tmp/setup-nessus.sh'
       - name: Restart Nessus
         run: |
-          docker exec nessus bash -c '/sbin/service nessusd stop'
-          docker exec nessus bash -c '/sbin/service nessusd start'
+          curl 'https://localhost:8834/server/restart' -X 'POST' -H 'Content-Type: application/json' --insecure
       - name: Sleep for a moment
         run: sleep 10
 
