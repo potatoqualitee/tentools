@@ -1,7 +1,7 @@
 function New-AcasAdminUser {
     <#
     .SYNOPSIS
-        Creates a new admin the Nessus website
+        Creates a new admin the Nessus website then establishes a connection using those credentials
 
     .DESCRIPTION
     Creates a new admin the Nessus website
