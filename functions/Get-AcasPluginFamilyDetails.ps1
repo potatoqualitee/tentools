@@ -25,7 +25,7 @@ function Get-AcasPluginFamilyDetails {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [int]$FamilyId,
         [switch]$EnableException

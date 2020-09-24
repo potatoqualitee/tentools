@@ -1,10 +1,10 @@
 function Add-AcasGroupUser {
     <#
     .SYNOPSIS
-        Short description
+        Adds a user to a group
 
     .DESCRIPTION
-        Long description
+        Adds a user to a group
 
     .PARAMETER SessionId
         ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
@@ -29,7 +29,7 @@ function Add-AcasGroupUser {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $Global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
         [Int32]$GroupId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 2)]
@@ -39,7 +39,7 @@ function Add-AcasGroupUser {
     process {
         $collection = @()
         foreach ($id in $SessionId) {
-            $sessions = $Global:NessusConn
+            $sessions = $script:NessusConn
             foreach ($session in $sessions) {
                 if ($session.SessionId -eq $id) {
                     $collection += $session
@@ -57,7 +57,7 @@ function Add-AcasGroupUser {
 
             $server = Invoke-AcasRequest @serverparams
 
-            if ($server.capabilities.multi_user -eq 'full') {
+            if ($server.capabilities.multi_user -eq 'full' -or $null -eq $server) {
                 $params = @{
                     SessionObject   = $session
                     Path            = "/groups/$($GroupId)/users"
@@ -66,9 +66,8 @@ function Add-AcasGroupUser {
                     EnableException = $EnableException
                 }
                 Invoke-AcasRequest @params
-            }
-            else {
-                Write-PSFMessage -Level Warning -Message "Server for session $($session.sessionid) is not licenced for multiple users"
+            } else {
+                Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
             }
         }
     }

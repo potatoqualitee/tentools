@@ -22,14 +22,14 @@ function Get-AcasScanTemplate {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [switch]$EnableException
     )
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $Templates = Invoke-AcasRequest -SessionObject $session -Path '/editor/scan/templates' -Method 'Get'
             foreach ($Template in $Templates.templates) {
-                [pscustomobject]@{ 
+                [pscustomobject]@{
                     Name             = $Template.name
                     Title            = $Template.title
                     Description      = $Template.desc

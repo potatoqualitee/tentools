@@ -30,7 +30,7 @@ function Get-AcasPolicyTemplate {
         [Parameter(ParameterSetName = 'ByName')]
         [Parameter(ParameterSetName = 'ByUUID')]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
         [string]$Name,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByUUID')]

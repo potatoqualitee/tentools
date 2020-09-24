@@ -43,8 +43,7 @@ function Export-AcasPolicy {
                 Write-PSFMessage -Level Verbose -Message "Saving policy as $($OutFile)"
                 $policy.Save($ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutFile))
                 Get-ChildItem -Path $OutFile
-            }
-            else {
+            } else {
                 $policy
             }
             Write-PSFMessage -Level Verbose -Message 'Policy exported.'

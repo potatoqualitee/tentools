@@ -29,12 +29,12 @@ function Add-AcasPluginRule {
 
     .EXAMPLE
         PS> Add-AcasPluginRule -SessionId 0 -PluginId 15901 -ComputerName 'WebServer' -Type Critical
-        
+
         Creates a rule that changes the default severity of 'Medium', to 'Critical' for the defined computer and plugin ID
 
     .EXAMPLE
         PS> $WebServers | % {Add-AcasPluginRule -SessionId 0 -PluginId 15901 -ComputerName $_ -Type Critical}
-        
+
         Creates a rule for a list computers, using the defined options
     #>
     [CmdletBinding()]
@@ -42,7 +42,7 @@ function Add-AcasPluginRule {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [int32]$PluginId,
         [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
@@ -57,7 +57,7 @@ function Add-AcasPluginRule {
     )
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-            
+
             $dtExpiration = $null
 
             If ($Expiration) {

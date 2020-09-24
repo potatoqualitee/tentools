@@ -41,9 +41,8 @@ function Get-AcasPolicyPortRange {
                         PolicyId  = $policy
                         PortRange = $policydetail.settings.portscan_range
                     }
-                }
-                catch {
-                    Stop-PSFFunction -Message "Failure" -ErrorRecord $_ -Continue
+                } catch {
+                    Stop-PSFFunction -EnableException:$EnableException -Message "Failure" -ErrorRecord $_ -Continue
                 }
             }
         }

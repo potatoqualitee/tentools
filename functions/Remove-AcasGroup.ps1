@@ -2,13 +2,13 @@ function Remove-AcasGroup {
     <#
     .SYNOPSIS
         Short description
-    
+
     .DESCRIPTION
         Long description
-    
+
     .PARAMETER SessionId
         ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-AcasService.
-    
+
     .PARAMETER GroupId
         Parameter description
 
@@ -25,7 +25,7 @@ function Remove-AcasGroup {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
         [Int32]$GroupId,
         [switch]$EnableException
@@ -48,9 +48,8 @@ function Remove-AcasGroup {
                 }
 
                 Invoke-AcasRequest @groupparams
-            }
-            else {
-                Write-PSFMessage -Level Warning -Message "Server for session $($session.sessionid) is not licenced for multiple users"
+            } else {
+                Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
             }
         }
     }

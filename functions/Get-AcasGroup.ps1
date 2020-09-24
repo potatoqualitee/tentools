@@ -18,12 +18,11 @@ function Get-AcasGroup {
         PS> Get-Acas
     #>
     [CmdletBinding()]
-    [OutputType([int])]
     param
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [switch]$EnableException
     )
     process {
@@ -37,26 +36,29 @@ function Get-AcasGroup {
 
             $server = Invoke-AcasRequest @serverparams
 
-            if ($server.capabilities.multi_user -eq 'full') {
+            if ($server.capabilities.multi_user -eq 'full' -or $session.sc) {
                 $groupparams = @{
                     SessionObject = $session
                     Path          = '/groups'
                     Method        = 'GET'
                 }
 
-                $groups = Invoke-AcasRequest @groupparams
-                foreach ($group in $groups.groups) {
-                    [pscustomobject]@{ 
+                $results = Invoke-AcasRequest @groupparams
+                if ($results.groups) {
+                    $results = $results.groups
+                }
+                foreach ($group in $results) {
+                    [pscustomobject]@{
                         Name        = $group.name
+                        Description = $group.description
                         GroupId     = $group.id
                         Permissions = $group.permissions
                         UserCount   = $group.user_count
                         SessionId   = $session.SessionId
                     } | Select-DefaultView -ExcludeProperty SessionId
                 }
-            }
-            else {
-                Write-PSFMessage -Level Warning -Message "Server for session $($session.sessionid) is not licenced for multiple users"
+            } else {
+                Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
             }
         }
     }

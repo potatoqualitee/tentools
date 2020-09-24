@@ -26,7 +26,7 @@ function New-AcasGroup {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
         [string]$Name,
         [switch]$EnableException
@@ -43,15 +43,14 @@ function New-AcasGroup {
 
             if ($server.capabilities.multi_user -eq 'full') {
                 $groups = Invoke-AcasRequest -SessionObject $session -Path '/groups' -Method 'POST' -Parameter @{'name' = $Name }
-                [pscustomobject]@{ 
+                [pscustomobject]@{
                     Name        = $groups.name
                     GroupId     = $groups.id
                     Permissions = $groups.permissions
                     SessionId   = $session.SessionId
                 }
-            }
-            else {
-                Write-PSFMessage -Level Warning -Message "Server for session $($session.sessionid) is not licenced for multiple users"
+            } else {
+                Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
             }
         }
     }

@@ -22,13 +22,13 @@ function Get-AcasSessionInfo {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [switch]$EnableException
     )
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             Write-PSFMessage -Level Verbose -Message "Removing server session $($id)"
-            
+
             $RestMethodParams = @{
                 Method          = 'Get'
                 'URI'           = "$($session.URI)/session"
@@ -36,7 +36,7 @@ function Get-AcasSessionInfo {
                 'ErrorVariable' = 'NessusSessionError'
             }
             $SessInfo = Invoke-RestMethod @RestMethodParams
-            [pscustomobject]@{ 
+            [pscustomobject]@{
                 Id         = $SessInfo.id
                 Name       = $SessInfo.name
                 UserName   = $SessInfo.UserName

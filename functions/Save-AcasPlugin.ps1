@@ -25,11 +25,10 @@ function Save-AcasPlugin {
         $CertificateThumbprint = [System.Security.Cryptography.X509Certificates.X509Certificate2[]](Get-ChildItem Cert:\CurrentUser\My | Where-Object FriendlyName -like "*ID Certificate*") | Select-Object -ExpandProperty Thumbprint
         try {
             Import-Module PoshRSJob -ErrorAction Stop
-        }
-        catch {
+        } catch {
             $message = "Failed to load module, PoshRSJob is required for this function.
                         Install the module by running: 'Install-Module -Name PoshRSJob -Scope CurrentUser'"
-            Stop-PSFFunction -Message "Failure" -ErrorRecord $_ -Continue
+            Stop-PSFFunction -EnableException:$EnableException -Message "Failure" -ErrorRecord $_ -Continue
         }
 
         #Enabling TLS 1.2
@@ -48,8 +47,7 @@ function Save-AcasPlugin {
 
         if (Test-Path -Path $outpath) {
             Write-PSFMessage -Level Verbose -Message "Output folder exists"
-        }
-        else {
+        } else {
             $null = New-Item -Path $Path -Name $Foldername -ItemType directory
         }
 
@@ -90,8 +88,7 @@ function Save-AcasPlugin {
                 if ($Check.Name -eq $ACASFile.FileName) {
                     if ($Acasfile.SHA256 -eq $GetFileHash.Hash) {
                         Write-PSFMessage -Level Verbose -Message "Hash on $($Check.Name) was valid"
-                    }
-                    else {
+                    } else {
                         Write-PSFMessage -Level Verbose -Message "Hash on $($Check.Name) was not valid"
                     }
                 }

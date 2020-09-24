@@ -31,7 +31,7 @@ function Get-AcasScanHostDetail {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
@@ -50,7 +50,7 @@ function Get-AcasScanHostDetail {
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             foreach ($detail in (Invoke-AcasRequest -SessionObject $session -Path "/scans/$($ScanId)/hosts/$($HostId)" -Method 'Get' -Parameter $params)) {
-                [pscustomobject]@{ 
+                [pscustomobject]@{
                     Info            = $detail.info
                     Vulnerabilities = $detail.vulnerabilities
                     Compliance      = $detail.compliance

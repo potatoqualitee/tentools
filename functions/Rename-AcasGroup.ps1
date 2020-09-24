@@ -28,7 +28,7 @@ function Rename-AcasGroup {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
         [Int32]$GroupId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 2)]
@@ -55,9 +55,8 @@ function Rename-AcasGroup {
                 }
 
                 Invoke-AcasRequest @groupparams
-            }
-            else {
-                Write-PSFMessage -Level Warning -Message "Server for session $($session.sessionid) is not licenced for multiple users"
+            } else {
+                Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
             }
         }
     }

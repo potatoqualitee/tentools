@@ -21,7 +21,7 @@ function Get-AcasPlugin {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName)]
         [int32]$PluginId,
         [switch]$EnableException
@@ -34,8 +34,7 @@ function Get-AcasPlugin {
                     # Some attributes have multiple values, i.e. osvdb. This causes errors when adding duplicates
                     if ($attributes.Keys -contains $attribute.attribute_name) {
                         $attributes[$attribute.attribute_name] += ", $($attribute.attribute_value)"
-                    }
-                    else {
+                    } else {
                         $attributes.add("$($attribute.attribute_name)", "$($attribute.attribute_value)")
                     }
                 }
@@ -47,7 +46,7 @@ function Get-AcasPlugin {
                     SessionId  = $session.SessionId
                 }
             }
-            
+
             if ($PluginId) {
                 foreach ($plugin in (Invoke-AcasRequest -SessionObject $session -Path "/plugins/plugin/$($PluginId)" -Method 'Get')) {
                     $attributes = [ordered]@{ }
@@ -55,8 +54,7 @@ function Get-AcasPlugin {
                         # Some attributes have multiple values, i.e. osvdb. This causes errors when adding duplicates
                         if ($attributes.Keys -contains $attribute.attribute_name) {
                             $attributes[$attribute.attribute_name] += ", $($attribute.attribute_value)"
-                        }
-                        else {
+                        } else {
                             $attributes.add("$($attribute.attribute_name)", "$($attribute.attribute_value)")
                         }
                     }

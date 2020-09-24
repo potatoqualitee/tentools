@@ -22,23 +22,59 @@ function Get-AcasUser {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [switch]$EnableException
     )
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
             $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-            $Users = Invoke-AcasRequest -SessionObject $session -Path '/users' -Method 'Get'
-            $Users.users | ForEach-Object -process {
-                [pscustomobject]@{ 
-                    Name       = $_.name
-                    UserName   = $_.username
-                    Email      = $_.email
-                    UserId     = $_.id
-                    Type       = $_.type
-                    Permission = $permidenum[$_.permissions]
-                    LastLogin  = $origin.AddSeconds($_.lastlogin).ToLocalTime()
-                    SessionId  = $session.SessionId
+
+            $results = Invoke-AcasRequest -SessionObject $session -Path '/users' -Method 'Get'
+            if ($session.sc) {
+                foreach ($user in $results) {
+                    [pscustomobject]@{
+                        UserName           = $user.username
+                        FirstName          = $user.firstname
+                        LastName           = $user.lastname
+                        Title              = $user.title
+                        Email              = $user.email
+                        Address            = $user.address
+                        City               = $user.city
+                        State              = $user.state
+                        Country            = $user.country
+                        UserId             = $user.id
+                        Status             = $user.status
+                        Fax                = $user.fax
+                        Type               = $user.type
+                        LastLogin          = $origin.AddSeconds($user.lastlogin).ToLocalTime()
+                        LastLoginIp        = $user.lastLoginIP
+                        CreatedTime        = $origin.AddSeconds($user.createdTime).ToLocalTime()
+                        ModifiedTime       = $origin.AddSeconds($user.modifiedTime).ToLocalTime()
+                        MustChangePassword = $user.mustChangePassword
+                        Locked             = $user.locked
+                        AuthType           = $user.authType
+                        Fingerprint        = $user.fingerprint
+                        Password           = $user.password
+                        LdapUserName       = $user.ldapUsername
+                        CanUse             = $user.canUse
+                        CanManage          = $user.canManage
+                        ApiKeys            = $user.apiKeys
+                        Ldap               = $user.ldap
+                        Role               = $user.role
+                        Preferences        = $user.preferences
+                    }
+                }
+            } else {
+                foreach ($user in $results.users) {
+                    [pscustomobject]@{
+                        Name       = $user.name
+                        UserName   = $user.username
+                        Email      = $user.email
+                        UserId     = $user.id
+                        Type       = $user.type
+                        Permission = $permidenum[$user.permissions]
+                        LastLogin  = $origin.AddSeconds($user.lastlogin).ToLocalTime()
+                    }
                 }
             }
         }

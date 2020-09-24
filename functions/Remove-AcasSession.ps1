@@ -21,14 +21,14 @@ function Remove-AcasSession {
     param(
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [switch]$EnableException
     )
     process {
         # Finding and saving sessions in to a different Array so they can be
         # removed from the main one so as to not generate an modification
         # error for a collection in use.
-        $sessions = $global:NessusConn
+        $sessions = $script:NessusConn
         $toremove = New-Object -TypeName System.Collections.ArrayList
 
         if ($SessionId.Count -gt 0) {
@@ -53,13 +53,12 @@ function Remove-AcasSession {
                 }
                 try {
                     Invoke-RestMethod @RestMethodParams
+                } catch {
+                    Stop-PSFFunction -EnableException:$EnableException -Message "Session with Id $($session.SessionId) seems to have expired" -Continue
                 }
-                catch {
-                    Stop-Function -Message "Session with Id $($session.SessionId) seems to have expired" -Continue
-                }
-                
-                Write-PSFMessage -Level Verbose -Message "Removing session from `$global:NessusConn"
-                $null = $global:NessusConn.Remove($session)
+
+                Write-PSFMessage -Level Verbose -Message "Removing session from `$script:NessusConn"
+                $null = $script:NessusConn.Remove($session)
                 Write-PSFMessage -Level Verbose -Message "Session $($id) removed"
             }
         }

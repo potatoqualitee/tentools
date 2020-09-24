@@ -28,7 +28,7 @@ function Get-AcasScanDetail {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
@@ -50,7 +50,7 @@ function Get-AcasScanDetail {
 
                 # process host info.
                 foreach ($hostdetail in $detail.hosts) {
-                    $hosts += [pscustomobject]@{ 
+                    $hosts += [pscustomobject]@{
                         HostName = $hostdetail.hostname
                         HostId   = $hostdetail.host_id
                         Critical = $hostdetail.critical
@@ -62,7 +62,7 @@ function Get-AcasScanDetail {
                 }
                 # process history info.
                 foreach ($ScanHistory in $detail.history) {
-                    $history += [pscustomobject]@{ 
+                    $history += [pscustomobject]@{
                         HistoryId        = $ScanHistory.history_id
                         Uuid             = $ScanHistory.uuid
                         Status           = $ScanHistory.status
@@ -71,7 +71,7 @@ function Get-AcasScanDetail {
                         LastModifiedDate = $origin.AddSeconds($ScanHistory.last_modification_date).ToLocalTime()
                     }
                 }
-            
+
                 # process Scan Info
                 [pscustomobject]@{
                     Name                = $detail.info.name

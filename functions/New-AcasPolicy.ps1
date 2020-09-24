@@ -34,7 +34,7 @@ function New-AcasPolicy {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
         [string]$Name,
         [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
@@ -47,7 +47,7 @@ function New-AcasPolicy {
     )
     process {
         if (-not $PSBoundParameters.TemplateName -and -not $PSBoundParameters.PolicyUUID) {
-            Stop-PSFFunction -Message "Please specify either TemplateName or PolicyUUID"
+            Stop-PSFFunction -EnableException:$EnableException -Message "Please specify either TemplateName or PolicyUUID"
             return
         }
 

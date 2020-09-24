@@ -22,7 +22,7 @@ function Get-AcasServerInfo {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [switch]$EnableException
     )
     foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
@@ -31,7 +31,7 @@ function Get-AcasServerInfo {
         $server = Invoke-AcasRequest -SessionObject $session -Path '/server/properties' -Method 'Get'
 
         foreach ($serverinfo in $server) {
-            [pscustomobject]@{ 
+            [pscustomobject]@{
                 NessusType     = $serverinfo.nessus_type
                 ServerVersion  = $serverinfo.server_version
                 UIVersion      = $serverinfo.nessus_ui_version

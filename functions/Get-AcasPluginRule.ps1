@@ -31,7 +31,7 @@ function Get-AcasPluginRule {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName)]
         [int32[]]$PluginId,
         [Switch]$Detail,
@@ -67,12 +67,11 @@ function Get-AcasPluginRule {
                     # Significant increase in web requests!
                     # Provides the rule name in the returned object
                     $plugin = (Get-AcasPlugin -SessionId $session.SessionId -PluginId $rule.plugin_id).Name
-                }
-                else {
+                } else {
                     $plugin = $null
                 }
 
-                [pscustomobject]@{ 
+                [pscustomobject]@{
                     Id          = $rule.id
                     Host        = $rule.host
                     PluginId    = $rule.plugin_id

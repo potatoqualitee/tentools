@@ -29,7 +29,7 @@ function Get-AcasScan {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName)]
         [int32]$FolderId,
         [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
@@ -50,16 +50,14 @@ function Get-AcasScan {
 
             if ($Status.length -gt 0) {
                 $allscans = $scans.scans | Where-Object { $_.status -eq $Status.ToLower() }
-            }
-            else {
+            } else {
                 $allscans = $scans.scans
             }
             foreach ($scan in $allscans) {
 
                 if ($scan.starttime -cnotlike "*T*") {
                     $StartTime = $origin.AddSeconds($scan.starttime).ToLocalTime()
-                }
-                else {
+                } else {
                     $StartTime = [datetime]::ParseExact($scan.starttime, "yyyyMMddTHHmmss",
                         [System.Globalization.CultureInfo]::InvariantCulture,
                         [System.Globalization.DateTimeStyles]::None)

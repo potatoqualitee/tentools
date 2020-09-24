@@ -27,13 +27,13 @@
     Copyright          = 'Copyright (c) 2019, licensed under MIT'
 
     # Description of the functionality provided by this module
-    Description        = 'Automation for DISA ACAS, Tenable Nessus and more'
+    Description        = "Automation for DISA ACAS, including tenable.sc, Nessus and more. Based off of Carlos Perez's Posh-Nessus module."
 
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion  = '3.0'
 
     # Modules that must be imported into the global environment prior to importing this module
-    RequiredModules    = @('PSFramework', 'PoshRSJob')
+    RequiredModules    = @('PSFramework')
 
     # Assemblies that must be loaded prior to importing this module
     RequiredAssemblies = @('bin\RestSharp.dll')
@@ -54,6 +54,7 @@
         'Enable-AcasPolicyPortScanner',
         'Export-AcasPolicy',
         'Export-AcasScan',
+        'Get-AcasFolder',
         'Get-AcasGroup',
         'Get-AcasPluginFamily',
         'Get-AcasPluginRule',
@@ -72,6 +73,7 @@
         'Get-AcasUser',
         'Import-AcasPolicy',
         'Import-AcasScan',
+        'New-AcasAdminUser',
         'New-AcasGroup',
         'New-AcasPolicy',
         'New-AcasScan',
@@ -122,7 +124,7 @@
             Category     = "Security"
 
             # Keyword tags to help users find this module via navigations and search.
-            Tags         = @('nessus', 'tenable', 'acas', 'security', 'disa', 'dod')
+            Tags         = @('nessus', 'tenable', 'acas', 'security', 'disa', 'dod', 'tenable.sc', 'securitycenter', 'Assured Compliance Assessment Solution')
 
             # The web address of an icon which can be used in galleries to represent this module
             IconUri      = "https://user-images.githubusercontent.com/8278033/55955866-d3b64900-5c62-11e9-8175-92a8427d7f94.png"

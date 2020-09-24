@@ -2,37 +2,50 @@ function Invoke-AcasRequest {
     [CmdletBinding()]
     Param
     (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory)]
         $SessionObject,
-
-        [Parameter(Mandatory = $false)]
         $Parameter,
-
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory)]
         [string]$Path,
-
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory)]
         [String]$Method,
-
-        [Parameter(Mandatory = $false)]
         [String]$OutFile,
-
-        [Parameter(Mandatory = $false)]
         [String]$ContentType,
-
-        [Parameter(Mandatory = $false)]
         [String]$InFile,
-
-        [Parameter(Mandatory = $false)]
         [switch]$EnableException
 
     )
+    begin {
+        # to manage differences between nessus and tenable.sc
+        if ($SessionObject.sc) {
+            foreach ($key in $replace.keys) {
+                $Path = $Path.Replace($key, $replace[$key])
+            }
+            if ($Path -match '/group/' -and $Path -match '/user') {
+                $Path = $Path.Replace("/user", "?fields=users")
+            }
+        }
+    }
     process {
+        if ($SessionObject.sc -and $Path -eq "/server/properties") {
+            return $null
+        }
+
+        if ($SessionObject.sc) {
+            $headers = @{
+                "X-SecurityCenter" = $SessionObject.Token
+            }
+        } else {
+            $headers = @{
+                "X-Cookie" = "token=$($SessionObject.Token)"
+            }
+        }
         $RestMethodParams = @{
             Method          = $Method
             'URI'           = "$($SessionObject.URI)$($Path)"
-            'Headers'       = @{'X-Cookie' = "token=$($SessionObject.Token)" }
+            'Headers'       = $headers
             'ErrorVariable' = 'NessusUserError'
+            'WebSession'    = $SessionObject.WebSession
         }
 
         if ($Parameter) {
@@ -55,66 +68,32 @@ function Invoke-AcasRequest {
             #$RestMethodParams.Uri
             Write-PSFMessage -Level Verbose -Message "Connecting to $($SessionObject.URI)"
             $results = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
-   
-        }
-        catch [Net.WebException] {
+        } catch [Net.WebException] {
             [int]$res = $_.Exception.Response.StatusCode
             if ($res -eq 401) {
                 # Request failed. More than likely do to time-out.
                 # Re-Authenticating using information from session.
                 Write-PSFMessage -Level Verbose -Message 'The session has expired, Re-authenticating'
-
-                if ($SessionObject.Credential) {
-                    $body = @{'username' = $SessionObject.Credential.UserName; 'password' = $SessionObject.Credential.GetNetworkCredential().password }
+                try {
+                    $null = $script:NessusConn.Remove($SessionObject)
+                    $results = Invoke-RestMethod $SessionObject.PSBoundParameters -ErrorAction Stop
+                } catch {
+                    $msg = Get-ErrorMessage -Record $_
+                    Stop-PSFFunction -EnableException:$EnableException -Message $msg -ErrorRecord $_ -Continue
                 }
-                else {
-                    $body = $null
-                }
-
-                $ReAuthParams = @{
-                    Method          = 'Post'
-                    'URI'           = "$($SessionObject.URI)/session"
-                    'Body'          = $body
-                    'ErrorVariable' = 'NessusLoginError'
-                    'ErrorAction'   = 'SilentlyContinue'
-                }
-                $TokenResponse = Invoke-RestMethod @ReAuthParams
-
-                if ($NessusLoginError) {
-                    Write-Error -Message 'Failed to Re-Authenticate the session. Session is being Removed.'
-                    $FailedConnection = $SessionObject
-                    [void]$Global:NessusConn.Remove($FailedConnection)
-                }
-                else {
-                    Write-PSFMessage -Level Verbose -Message 'Updating session with new authentication token.'
-
-                    # Creating new object with updated token so as to replace in the array the old one.
-                    $SessionProps = New-Object -TypeName System.Collections.Specialized.OrderedDictionary
-                    $SessionProps.add('URI', $SessionObject.URI)
-                    $SessionProps.Add('Credential', $SessionObject.Credential)
-                    $SessionProps.add('Token', $TokenResponse.token)
-                    $SessionProps.Add('SessionId', $SessionObject.SessionId)
-                    $Sessionobj = New-Object -TypeName psobject -Property $SessionProps
-                    $Sessionobj.pstypenames[0] = 'Nessus.Session'
-                    [void]$Global:NessusConn.Remove($SessionObject)
-                    [void]$Global:NessusConn.Add($Sessionobj)
-
-                    # Re-submit query with the new token and return results.
-                    $RestMethodParams.Headers = @{'X-Cookie' = "token=$($Sessionobj.Token)" }
-                    try {
-                        $results = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
-                    }
-                    catch {
-                        $msg = Get-ErrorMessage -Record $_
-                        Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
-                    }
-                }
+            } else {
+                $msg = Get-ErrorMessage -Record $_
+                Stop-PSFFunction -EnableException:$EnableException -Message $msg -ErrorRecord $_ -Continue
             }
-        } 
-        catch {
+        } catch {
             $msg = Get-ErrorMessage -Record $_
-            Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
+            Stop-PSFFunction -EnableException:$EnableException -Message $msg -ErrorRecord $_ -Continue
         }
-        $results
+
+        if ($results.response) {
+            $results.response
+        } else {
+            $results
+        }
     }
 }

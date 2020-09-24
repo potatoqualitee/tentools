@@ -5,7 +5,7 @@ function Import-ModuleFile {
         [string]
         $Path
     )
-	
+
     if ($doDotSource) { . $Path }
     else { $ExecutionContext.InvokeCommand.InvokeScript($false, ([scriptblock]::Create([io.file]::ReadAllText($Path))), $null, $null) }
 }
@@ -24,10 +24,10 @@ foreach ($function in (Get-ChildItem "$ModuleRoot\functions" -Filter "*.ps1" -Re
 }
 
 
-if (!(Test-Path variable:Global:NessusConn )) {
-    $global:NessusConn = New-Object System.Collections.ArrayList
+if (!(Test-Path variable:Script:NessusConn )) {
+    $script:NessusConn = New-Object System.Collections.ArrayList
 }
- 
+
 # Variables
 $script:permidenum = @{
     16  = 'Read-Only'
@@ -51,4 +51,14 @@ $script:severity = @{
     4 = 'Critical'
 }
 
+# to help switch between Nessus and tenable.sc
+$script:replace = @{
+    users   = 'user'
+    folders = 'folder'
+    groups  = 'group'
+    scans   = 'scan'
+}
+
 $script:origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
+
+$PSDefaultParameterValues['*:UseBasicParsing'] = $true

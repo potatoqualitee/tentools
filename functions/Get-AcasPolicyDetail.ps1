@@ -28,7 +28,7 @@ function Get-AcasPolicyDetail {
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
-        [int32[]]$SessionId = $global:NessusConn.SessionId,
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName)]
         [int32[]]$PolicyId,
         [Parameter(Position = 1, ValueFromPipelineByPropertyName)]
@@ -41,9 +41,8 @@ function Get-AcasPolicyDetail {
                 $policy = Get-AcasPolicy -Name $Name -SessionId $session.SessionId
                 if ($policy) {
                     $PolicyId = $policy.PolicyId
-                }
-                else {
-                    Stop-PSFFunction -Message "Policy with name $($Name) was not found on $($session.Uri)" -Continue
+                } else {
+                    Stop-PSFFunction -EnableException:$EnableException -Message "Policy with name $($Name) was not found on $($session.Uri)" -Continue
                 }
             }
             if (-not $PSBoundParameters.PolicyId -and -not $PSBoundParameters.Name) {

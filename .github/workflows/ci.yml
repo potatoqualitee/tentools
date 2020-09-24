@@ -1,0 +1,64 @@
+name: Actions Workflow
+on: push
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # setup and run docker container
+      - name: Download the container
+        run: docker pull sometheycallme/docker-nessus:latest
+      # separate download and run just to see the timing
+      - name: Startup the container
+        run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
+
+      # setup nessus
+      - name: Sleep to give nessus time to startup
+        run: sleep 20
+      - name: Test the port and accept self-signed cert
+        run: |
+          curl -s --retry 10 --retry-connrefused https://localhost:8834 --insecure > /dev/null
+      - name: Add admin user
+        run: |
+          curl -s 'https://localhost:8834/users' -H 'Content-Type: application/json' --data-binary '{"username":"admin","password":"admin123","permissions":128}' --insecure
+      - name: Write nessus license
+        run: 'echo "$NLICENSE" > /tmp/nessus.license'
+        shell: bash
+        env:
+          NLICENSE: ${{secrets.LICENSE}}
+      - name: Register Nessus license
+        run: |
+          docker cp /tmp/nessus.license nessus:/tmp
+          docker cp setup-nessus.sh nessus:/tmp
+          docker exec nessus bash -c 'chmod +x /tmp/setup-nessus.sh'
+          docker exec nessus bash -c '/tmp/setup-nessus.sh'
+
+      # setup powershell
+      - name: Setup PowerShell module cache
+        id: cache-psmodules
+        uses: actions/cache@v2
+        with:
+          path: |
+            /home/runner/.local/share/powershell/Modules/PSFramework
+            /home/runner/.local/share/powershell/Modules/PoshRSJob
+          key: ${{ runner.os }}-psmodules
+      - name: Install required PowerShell modules
+        if: steps.cache-psmodules.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module PSFramework, PoshRSJob -ErrorAction Stop
+      - name: Import acastools and test connect to the container
+        shell: pwsh
+        run: |
+          $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
+          Import-Module ./acastools.psd1
+          $splat = @{
+            ComputerName = "localhost"
+            AcceptSelfSignedCert = $true
+            Credential = $cred
+            EnableException = $true
+            Port = 8834
+          }
+          Connect-AcasService @splat

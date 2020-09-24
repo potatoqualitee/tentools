@@ -1,10 +1,10 @@
-function Connect-AcasService {
+function New-AcasAdminUser {
     <#
     .SYNOPSIS
-        Creates a connection to the Nessus website
+        Creates a new admin the Nessus website then establishes a connection using those credentials
 
     .DESCRIPTION
-        Creates a connection to the Nessus website which persists through all commands.
+    Creates a new admin the Nessus website
 
     .PARAMETER ComputerName
         Target Nessus Server IP Address or FQDN
@@ -27,7 +27,7 @@ function Connect-AcasService {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Connect-AcasService -ComputerName acas -Credential admin
+        PS> New-AcasAdminUser -ComputerName acas -Credential admin
     #>
     [CmdletBinding()]
     param
@@ -36,17 +36,12 @@ function Connect-AcasService {
         [string[]]$ComputerName,
         [int]$Port,
         [Management.Automation.PSCredential]$Credential,
-        [switch]$UseDefaultCredential,
         [switch]$AcceptSelfSignedCert,
         [ValidateSet("tenable.sc", "Nessus")]
         [string]$Type,
         [switch]$EnableException
     )
     begin {
-        if (-not $PSBoundParameters.Credential) {
-            $UseDefaultCredential = $true
-        }
-
         if ($PSVersionTable.PSEdition -eq 'Core') {
             if ($AcceptSelfSignedCert) {
                 $PSDefaultParameterValues['Invoke-RestMethod:SkipCertificateCheck'] = $true
@@ -90,29 +85,17 @@ function Connect-AcasService {
                 $Port = "8834"
             }
         }
-
-        if ($Port -eq 443 -and $Type -eq "tenable.sc") {
-            $sc = $true
-        } else {
-            $sc = $false
-        }
     }
     process {
         foreach ($computer in $ComputerName) {
             if ($Port -eq 443) {
                 $uri = "https://$($computer):$Port/rest"
-                $fulluri = "$uri/token"
-                if ($PSBoundParameters.Credential) {
-                    $body = @{
-                        username       = $Credential.UserName
-                        password       = $Credential.GetNetworkCredential().password
-                        releaseSession = "FALSE"
-                    } | ConvertTo-Json
-                } else {
-                    $body = @{
-                        releaseSession = "FALSE"
-                    } | ConvertTo-Json
-                }
+                $fulluri = "$uri/user"
+                $body = @{
+                    username    = $Credential.UserName
+                    password    = $Credential.GetNetworkCredential().password
+                    permissions = "128"
+                } | ConvertTo-Json
 
                 $headers = @{"HTTP" = "X-SecurityCenter" }
 
@@ -127,14 +110,15 @@ function Connect-AcasService {
                 }
             } else {
                 $Uri = "https://$($computer):$Port"
-                $fulluri = "$uri/session"
-                if ($PSBoundParameters.Credential) {
-                    $body = @{'username' = $Credential.UserName; 'password' = $Credential.GetNetworkCredential().password }
-                } else {
-                    $body = $null
-                }
+                $fulluri = "$uri/users"
+                $body = @{
+                    username    = $Credential.UserName
+                    password    = $Credential.GetNetworkCredential().password
+                    permissions = "128"
+                } | ConvertTo-Json
                 $RestMethodParams = @{
-                    Method          = 'Post'
+                    Method          = 'POST'
+                    ContentType     = "application/json"
                     URI             = $fulluri
                     Body            = $body
                     ErrorVariable   = 'NessusLoginError'
@@ -143,41 +127,11 @@ function Connect-AcasService {
             }
 
             try {
-                $token = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
+                $null = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
+                Connect-AcasService @PSBoundParameters
             } catch {
                 $msg = Get-ErrorMessage -Record $_
-                if ($msg -eq "The remote server returned an error: (401) Unauthorized") {
-                    $msg = "The remote server returned an error: (401) Unauthorized. This is likely due to a bad username/password"
-                }
-
                 Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
-            }
-
-            if ($token) {
-                if ($PSBoundParameters.Credential) {
-                    $username = $Credential.UserName
-                } else {
-                    $username = "$env:USERDOMAIN\$env:USERNAME"
-                }
-                $usertoken = $token.token
-                if (-not $usertoken) {
-                    $usertoken = $token.response.token
-                }
-
-                $session = [PSCustomObject]@{
-                    URI          = $uri
-                    UserName     = $username
-                    ComputerName = $ComputerName
-                    Credential   = $Credential
-                    Token        = $usertoken
-                    SessionId    = $script:NessusConn.Count
-                    WebSession   = $websession
-                    Sc           = $sc
-                    Bound        = $PSBoundParameters
-                    ServerType   = $Type
-                }
-                [void]$script:NessusConn.Add($session)
-                $session | Select-DefaultView -Property SessionId, UserName, URI, ServerType
             }
         }
     }
