@@ -40,11 +40,11 @@ jobs:
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module PSFramework, Pester -ErrorAction Stop
-      - name: Import tentools and test connect to the container
+      - name: Initialize the nessus server with admin user and license
         shell: pwsh
         run: |
-          $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
           Import-Module ./tentools.psd1
+          $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
           $splat = @{
             ComputerName = "localhost"
             AcceptSelfSignedCert = $true
@@ -54,4 +54,7 @@ jobs:
             Path = "/tmp/nessus.license"
           }
           Initialize-TenServer @splat
-          $error
+      - name: Run Pester tests
+        shell: pwsh
+        run: |
+          ./tests/pester.ps1
