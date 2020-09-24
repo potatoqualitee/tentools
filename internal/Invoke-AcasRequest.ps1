@@ -16,9 +16,13 @@ function Invoke-AcasRequest {
 
     )
     begin {
+        # to manage differences between nessus and tenable.sc
         if ($SessionObject.sc) {
             foreach ($key in $replace.keys) {
-                $Path = $Path.Replace($key,$replace[$key])
+                $Path = $Path.Replace($key, $replace[$key])
+            }
+            if ($Path -match '/group/' -and $Path -match '/user') {
+                $Path = $Path.Replace("/user", "?fields=users")
             }
         }
     }
@@ -26,6 +30,7 @@ function Invoke-AcasRequest {
         if ($SessionObject.sc -and $Path -eq "/server/properties") {
             return $null
         }
+
         if ($SessionObject.sc) {
             $headers = @{
                 "X-SecurityCenter" = $SessionObject.Token
@@ -63,8 +68,7 @@ function Invoke-AcasRequest {
             #$RestMethodParams.Uri
             Write-PSFMessage -Level Verbose -Message "Connecting to $($SessionObject.URI)"
             $results = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
-        }
-        catch [Net.WebException] {
+        } catch [Net.WebException] {
             [int]$res = $_.Exception.Response.StatusCode
             if ($res -eq 401) {
                 # Request failed. More than likely do to time-out.
@@ -73,18 +77,15 @@ function Invoke-AcasRequest {
                 try {
                     $null = $script:NessusConn.Remove($SessionObject)
                     $results = Invoke-RestMethod $SessionObject.PSBoundParameters -ErrorAction Stop
-                }
-                catch {
+                } catch {
                     $msg = Get-ErrorMessage -Record $_
                     Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
                 }
-            }
-            else {
+            } else {
                 $msg = Get-ErrorMessage -Record $_
                 Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
             }
-        } 
-        catch {
+        } catch {
             $msg = Get-ErrorMessage -Record $_
             Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
         }
