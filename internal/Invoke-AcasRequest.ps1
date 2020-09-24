@@ -79,15 +79,15 @@ function Invoke-AcasRequest {
                     $results = Invoke-RestMethod $SessionObject.PSBoundParameters -ErrorAction Stop
                 } catch {
                     $msg = Get-ErrorMessage -Record $_
-                    Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
+                    Stop-PSFFunction -EnableException:$EnableException -Message $msg -ErrorRecord $_ -Continue
                 }
             } else {
                 $msg = Get-ErrorMessage -Record $_
-                Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
+                Stop-PSFFunction -EnableException:$EnableException -Message $msg -ErrorRecord $_ -Continue
             }
         } catch {
             $msg = Get-ErrorMessage -Record $_
-            Stop-PSFFunction -Message $msg -ErrorRecord $_ -Continue
+            Stop-PSFFunction -EnableException:$EnableException -Message $msg -ErrorRecord $_ -Continue
         }
 
         if ($results.response) {

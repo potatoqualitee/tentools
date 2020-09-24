@@ -51,12 +51,11 @@ function Add-AcasPolicyPortRange {
                         Parameter       = "{`"settings`": {`"portscan_range`": `"$($Ports)`"}}"
                         EnableException = $EnableException
                     }
-   
+
                     $null = Invoke-AcasRequest @params
                     Get-AcasPolicyPortRange -SessionId $session.SessionId -PolicyId $PolicyToChange
-                }
-                catch {
-                    Stop-PSFFunction -Message "Failure" -ErrorRecord $_ -Continue
+                } catch {
+                    Stop-PSFFunction -EnableException:$EnableException -Message "Failure" -ErrorRecord $_ -Continue
                 }
             }
         }

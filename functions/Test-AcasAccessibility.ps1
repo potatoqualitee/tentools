@@ -69,16 +69,14 @@ function Test-AcasAccessibility {
             }
             if ($PSBoundParameters.Credential) {
                 $executedasuser = $Credential.UserName
-            }
-            else {
+            } else {
                 $executedasuser = "$env:USERDOMAIN\$env:USERNAME"
             }
 
             $ServiceAccount = $args
             if ((Invoke-Command -ScriptBlock { net.exe localgroup administrators } | Out-String | Where-Object { $psitem -match "$ServiceAccount" })) {
                 $isadmin = $true
-            }
-            else {
+            } else {
                 $isadmin = $false
             }
             [PSCustomObject]@{
@@ -93,8 +91,7 @@ function Test-AcasAccessibility {
             try {
                 $WMIService = Get-Service -Name Winmgmt -ErrorAction Stop
                 $stoperror = "None"
-            }
-            catch {
+            } catch {
                 $stoperror = Get-ErrorMessage -Record $_
             }
 
@@ -119,8 +116,7 @@ function Test-AcasAccessibility {
             try {
                 $RemoteRegService = Get-Service -Name RemoteRegistry -ErrorAction Stop
                 $stoperror = "None"
-            }
-            catch {
+            } catch {
                 $stoperror = Get-ErrorMessage -Record $_
             }
 
@@ -146,8 +142,7 @@ function Test-AcasAccessibility {
                 # shhh, we decided on WmiObject over CimInstance because it is more reliable
                 $share = Get-WmiObject -Class Win32_Share -ErrorAction Stop
                 $stoperror = "None"
-            }
-            catch {
+            } catch {
                 $stoperror = Get-ErrorMessage -Record $_
             }
 
@@ -184,8 +179,7 @@ function Test-AcasAccessibility {
         }
         if ($PSBoundParameters.Credential) {
             $executedasuser = $Credential.UserName
-        }
-        else {
+        } else {
             $executedasuser = "$env:USERDOMAIN\$env:USERNAME"
         }
     }
@@ -198,9 +192,8 @@ function Test-AcasAccessibility {
                 $resolved = (Resolve-NetworkName -Computer $Computer -ErrorAction Ignore).ComputerName
 
                 if ($resolved -as [ipaddress]) {
-                    Stop-PSFFunction -Message "Unable to resolve $computer to a hostname. Please use the network name instead. You can potentially find the network name by using ping -a $computer" -Continue
-                }
-                else {
+                    Stop-PSFFunction -EnableException:$EnableException -Message "Unable to resolve $computer to a hostname. Please use the network name instead. You can potentially find the network name by using ping -a $computer" -Continue
+                } else {
                     $Computer = $resolved
                 }
             }
@@ -216,8 +209,7 @@ function Test-AcasAccessibility {
             try {
                 $Port139 = Test-NetConnection -ComputerName $computer -Port 139 -ErrorAction Stop
                 $stoperror = "None"
-            }
-            catch {
+            } catch {
                 $stoperror = Get-ErrorMessage -Record $_
             }
 
@@ -234,8 +226,7 @@ function Test-AcasAccessibility {
             try {
                 $Port445 = Test-NetConnection -ComputerName $computer -Port 445 -ErrorAction Stop
                 $stoperror = "None"
-            }
-            catch {
+            } catch {
                 $stoperror = Get-ErrorMessage -Record $_
             }
 

@@ -150,7 +150,7 @@ function Connect-AcasService {
                     $msg = "The remote server returned an error: (401) Unauthorized. This is likely due to a bad username/password"
                 }
 
-                Stop-PSFFunction -Message "$msg $_" -ErrorRecord $_ -Continue -EnableException:$EnableException
+                Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
             }
 
             if ($token) {

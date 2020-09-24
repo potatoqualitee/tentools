@@ -41,9 +41,8 @@ function Get-AcasPolicyPortScanner {
                     UDPScanner = $policydetail.settings.udp_scanner
                     TCPScanner = $policydetail.settings.tcp_scanner
                 }
-            }
-            catch {
-                Stop-PSFFunction -Message "Failure" -ErrorRecord $_ -Continue
+            } catch {
+                Stop-PSFFunction -EnableException:$EnableException -Message "Failure" -ErrorRecord $_ -Continue
             }
         }
     }

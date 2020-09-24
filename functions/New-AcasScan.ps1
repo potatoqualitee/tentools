@@ -77,7 +77,7 @@ function New-AcasScan {
     )
     process {
         foreach ($session in (Get-AcasSession -SessionId $SessionId)) {
-             
+
             # Join emails as a single comma separated string.
             $emails = $email -join ","
 
@@ -117,9 +117,8 @@ function New-AcasScan {
                     }
 
                     if ($null -eq $polUUID) {
-                        Stop-PSFFunction -Message 'Policy specified does not exist in session.' -Continue
-                    }
-                    else {
+                        Stop-PSFFunction -EnableException:$EnableException -Message 'Policy specified does not exist in session.' -Continue
+                    } else {
                         $scanhash = [pscustomobject]@{
                             uuid     = $polUUID
                             settings = $settings
@@ -137,7 +136,7 @@ function New-AcasScan {
                 ContentType   = 'application/json'
                 Parameter     = $ScanJson
             }
-            
+
             foreach ($scan in (Invoke-AcasRequest @serverparams).scan) {
                 [pscustomobject]@{
                     Name             = $scan.name
