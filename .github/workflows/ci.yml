@@ -2,7 +2,7 @@ name: Actions Workflow
 on: push
 jobs:
   run-tests:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -58,5 +58,6 @@ jobs:
             AcceptSelfSignedCert = $true
             Credential = (New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force))
             EnableException = $true
+            Port = 8834
           }
           Connect-AcasService @splat
