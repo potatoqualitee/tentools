@@ -52,11 +52,12 @@ jobs:
       - name: Import acastools and test connect to the container
         shell: pwsh
         run: |
+          $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
           Import-Module ./acastools.psd1
           $splat = @{
             ComputerName = "localhost"
             AcceptSelfSignedCert = $true
-            Credential = (New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force))
+            Credential = $cred
             EnableException = $true
             Port = 8834
           }
