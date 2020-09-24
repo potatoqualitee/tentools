@@ -2,7 +2,7 @@ name: Actions Workflow
 on: push
 jobs:
   run-tests:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -60,4 +60,3 @@ jobs:
             EnableException = $true
           }
           Connect-AcasService @splat
-          #Connect-AcasService -ComputerName localhost -AcceptSelfSignedCert -Credential (New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)) -EnableException
