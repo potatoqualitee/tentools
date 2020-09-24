@@ -34,7 +34,7 @@ foreach ($file in (Get-ChildItem "$PSScriptRoot\public" -Recurse -File -Filter "
     }
 }
 
-# $testresults | Sort-Object Describe, Context, Name, Result, Message | Format-List
+$testresults | Sort-Object Describe, Context, Name, Result, Message | Format-List
 
 if ($totalFailed -eq 0) { Write-PSFMessage -Level Critical -Message "All <c='em'>$totalRun</c> tests executed without failure" }
 else { Write-PSFMessage -Level Critical -Message "<c='em'>$totalFailed tests</c> out of <c='sub'>$totalRun</c> tests failed" }
