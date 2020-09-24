@@ -2,7 +2,7 @@ name: Actions Workflow
 on: push
 jobs:
   run-tests:
-    runs-on: ubuntu-20.04
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
 
