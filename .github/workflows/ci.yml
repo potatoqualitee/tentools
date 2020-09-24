@@ -33,11 +33,6 @@ jobs:
           docker cp setup-nessus.sh nessus:/tmp
           docker exec nessus bash -c 'chmod +x /tmp/setup-nessus.sh'
           docker exec nessus bash -c '/tmp/setup-nessus.sh'
-      - name: Restart Nessus
-        run: |
-          curl 'https://localhost:8834/server/restart' -X 'POST' -H 'Content-Type: application/json' --insecure
-      - name: Sleep for a moment
-        run: sleep 10
 
       # setup powershell
       - name: Setup PowerShell module cache
