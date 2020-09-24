@@ -5,7 +5,7 @@
 Describe "Integration Tests" -Tag "IntegrationTests" {
     BeforeAll {
         # Give it time to do whatever it needs to do
-        Start-Sleep 30
+        Start-Sleep 20
     }
     Context "Connect-TenServer" {
         It "Connects to a site" {
