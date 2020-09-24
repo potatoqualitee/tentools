@@ -19,9 +19,6 @@ jobs:
       - name: Test the port and accept self-signed cert
         run: |
           curl -s --retry 10 --retry-connrefused https://localhost:8834 --insecure > /dev/null
-      - name: Add admin user
-        run: |
-          curl -s 'https://localhost:8834/users' -H 'Content-Type: application/json' --data-binary '{"username":"admin","password":"admin123","permissions":128}' --insecure
       - name: Write nessus license
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
         shell: bash
@@ -33,6 +30,9 @@ jobs:
           docker cp setup-nessus.sh nessus:/tmp
           docker exec nessus bash -c 'chmod +x /tmp/setup-nessus.sh'
           docker exec nessus bash -c '/tmp/setup-nessus.sh'
+      - name: Add admin user
+        run: |
+          curl -s 'https://localhost:8834/users' -H 'Content-Type: application/json' --data-binary '{"username":"admin","password":"admin123","permissions":128}' --insecure
 
       # setup powershell
       - name: Setup PowerShell module cache
