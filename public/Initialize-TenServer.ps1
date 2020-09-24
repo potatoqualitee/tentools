@@ -143,7 +143,7 @@ function Initialize-TenServer {
                 }
 
                 try {
-                    $null = Invoke-WebRequest @licenseparams -ErrorAction Stop
+                    $null = Invoke-RestMethod @licenseparams -ErrorAction Stop
                 } catch {
                     $msg = Get-ErrorMessage -Record $_
                     Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
@@ -170,7 +170,7 @@ function Initialize-TenServer {
             try {
                 $null = Invoke-RestMethod @adminuserparams -ErrorAction Stop
                 $null = $PSBoundParameters.Remove("Path")
-                Connect-TenService @PSBoundParameters
+                Connect-TenServer @PSBoundParameters
             } catch {
                 $msg = Get-ErrorMessage -Record $_
                 Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue

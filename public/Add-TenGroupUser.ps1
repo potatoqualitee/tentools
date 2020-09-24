@@ -7,7 +7,7 @@ function Add-TenGroupUser {
         Adds a user to a group
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
 
     .PARAMETER GroupId
         Parameter description

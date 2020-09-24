@@ -7,7 +7,7 @@ function Get-TenSession {
         Long description
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
@@ -27,7 +27,7 @@ function Get-TenSession {
     begin {
         if (Test-PSFParameterBinding -Parameter SessionId) {
             if ($null -eq $SessionId) {
-                Write-PSFMessage -Level Warning -Message "No session specified. Have you connected using Connect-TenService during this session?"
+                Write-PSFMessage -Level Warning -Message "No session specified. Have you connected using Connect-TenServer during this session?"
             }
         }
     }

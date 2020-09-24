@@ -7,7 +7,7 @@ function Get-TenFolder {
         Gets folders configured on a Nessus Server.
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
