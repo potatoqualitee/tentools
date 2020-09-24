@@ -1,4 +1,4 @@
-function Connect-TenService {
+function Connect-TenServer {
     <#
     .SYNOPSIS
         Creates a connection to the Nessus website
@@ -27,7 +27,7 @@ function Connect-TenService {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Connect-TenService -ComputerName acas -Credential admin
+        PS> Connect-TenServer -ComputerName acas -Credential admin
     #>
     [CmdletBinding()]
     param

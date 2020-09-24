@@ -31,7 +31,7 @@ function New-TenScan {
         Parameter description
 
     .PARAMETER ScannerId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
 
     .PARAMETER Email
         Parameter description

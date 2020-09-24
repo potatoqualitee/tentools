@@ -77,7 +77,7 @@
         'New-TenGroup',
         'New-TenPolicy',
         'New-TenScan',
-        'Connect-TenService',
+        'Connect-TenServer',
         'New-TenUser',
         'Remove-TenGroup',
         'Remove-TenGroupUser',

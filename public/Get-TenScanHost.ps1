@@ -10,7 +10,7 @@ function Get-TenScanHost {
         Parameter description
 
     .PARAMETER ScanId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
 
     .PARAMETER HistoryId
         Parameter description

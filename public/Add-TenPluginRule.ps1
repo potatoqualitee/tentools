@@ -8,7 +8,7 @@ function Add-TenPluginRule {
         false-positive on non-credentialed scans, alternate mitigation in place, etc...
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
 
     .PARAMETER PluginId
         ID number of the plugin which would you like altered

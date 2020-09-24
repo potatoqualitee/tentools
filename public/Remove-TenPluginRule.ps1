@@ -7,7 +7,7 @@ function Remove-TenPluginRule {
         Can be used to clear a previously defined, scan report altering rule
 
     .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenService.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
 
     .PARAMETER RuleId
         RuleId number of the rule which would you like removed/deleted
