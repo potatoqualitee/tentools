@@ -2,7 +2,7 @@ name: Actions Workflow
 on: push
 jobs:
   run-tests:
-    runs-on: macos-latest
+    runs-on: ubuntu-16.04
     steps:
       - uses: actions/checkout@v2
 
