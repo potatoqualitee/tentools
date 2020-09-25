@@ -31,3 +31,6 @@ function Get-TenServerStatus {
         }
     }
 }
+# need bare invoker
+# {"code":503,"progress":100,"status":"loading"}
+# {"code":200,"progress":null,"status":"ready"}
