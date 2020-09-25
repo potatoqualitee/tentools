@@ -78,4 +78,4 @@ jobs:
           ./tests/pester.ps1
       - name: does it work now
         run: |
-          openssl s_client -showcerts -connect localhost:443
+          openssl s_client -showcerts -connect localhost:8834
