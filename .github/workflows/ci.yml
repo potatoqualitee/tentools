@@ -11,7 +11,7 @@ jobs:
         run: docker pull sometheycallme/docker-nessus:latest
       # separate download and run just to see the timing
       - name: Startup the container
-        run: docker run -p 8834:8834 -p 22:22 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
+        run: docker run -p 8834:8834 -p 2220:22 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
       # setup nessus
       - name: Sleep to give nessus time to startup
         run: sleep 25
