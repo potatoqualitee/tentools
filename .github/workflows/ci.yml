@@ -13,7 +13,9 @@ jobs:
       # separate download and run just to see the timing
       - name: Prep the container
         run: |
+          docker run sometheycallme/docker-nessus:latest bash -c "yum install -y openssh-clients"
           docker run sometheycallme/docker-nessus:latest bash -c "yum install -y openssh-server"
+          docker run sometheycallme/docker-nessus:latest bash -c "yum install -y openssh"
       # separate download and run just to see the timing
       - name: Startup the container
         run: docker run -p 8834:8834 -p 2220:22 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
