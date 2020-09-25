@@ -39,7 +39,7 @@ jobs:
         run: sleep 25
       - name: Test the port with CA cert
         run: |
-          curl -s --retry 10 --retry-connrefused https://localhost:8834 --insecure
+          openssl s_client -showcerts -connect localhost:8834
       - name: Write nessus license
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
         shell: bash
