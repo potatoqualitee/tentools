@@ -19,6 +19,7 @@ jobs:
       - name: Test the port and accept self-signed cert
         run: |
           curl -s --retry 10 --retry-connrefused https://localhost:8834 --insecure > /dev/null
+          ls /usr/local/share/ca-certificates/
       - name: Write nessus license
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
         shell: bash
