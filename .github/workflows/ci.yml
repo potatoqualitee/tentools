@@ -12,8 +12,14 @@ jobs:
       # separate download and run just to see the timing
       - name: Startup the container
         run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
-      - name: Sleep to give nessus time to start
-        run: sleep 20
+      # setup nessus
+      - name: Sleep to give nessus time to startup
+        run: sleep 25
+      - name: Write nessus license from secrets to disk
+        run: 'echo "$NLICENSE" > /tmp/nessus.license'
+        shell: bash
+        env:
+          NLICENSE: ${{secrets.LICENSE}}
 
       # setup powershell
       - name: Setup PowerShell module cache
