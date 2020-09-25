@@ -36,7 +36,7 @@ jobs:
 
       # setup nessus
       - name: Sleep to give nessus time to startup
-        run: sleep 25
+        run: sleep 35
       - name: Write nessus license from secrets to disk
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
         shell: bash
