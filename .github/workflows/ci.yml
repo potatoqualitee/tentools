@@ -12,37 +12,8 @@ jobs:
       # separate download and run just to see the timing
       - name: Startup the container
         run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
-
-      # setup cert to emulate prod
-      - name: Write CA Cert
-        run: 'echo "$CACERT" > /tmp/cacert.pem'
-        shell: bash
-        env:
-          CACERT: ${{secrets.CACERT}}
-      - name: Write SSL Key
-        run: 'echo "$SSLKEY" > /tmp/serverkey.pem'
-        shell: bash
-        env:
-          CACERT: ${{secrets.SSLKEY}}
-      - name: Write SSL Cert
-        run: 'echo "$SSLCERT" > /tmp/servercert.pem'
-        shell: bash
-        env:
-          CACERT: ${{secrets.SSLCERT}}
-
-      # setup nessus
-      - name: Sleep to give nessus time to startup
-        run: sleep 30
-      - name: Write nessus license from secrets to disk
-        run: 'echo "$NLICENSE" > /tmp/nessus.license'
-        shell: bash
-        env:
-          NLICENSE: ${{secrets.LICENSE}}
-      - name: Copy certs to docker
-        run: |
-          docker cp /tmp/serverkey.pem nessus:/opt/nessus/var/nessus/CA/serverkey.pem
-          docker cp /tmp/servercert.pem nessus:/opt/nessus/com/nessus/CA/servercert.pem
-          curl 'https://localhost:8834/server/restart' -X 'POST' -H 'Content-Type: application/json' --compressed --insecure
+      - name: Sleep to give nessus time to start
+        run: sleep 20
 
       # setup powershell
       - name: Setup PowerShell module cache
@@ -77,6 +48,3 @@ jobs:
         shell: pwsh
         run: |
           ./tests/pester.ps1
-      - name: does it work now
-        run: |
-          openssl s_client -showcerts -connect localhost:8834
