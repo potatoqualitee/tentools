@@ -14,19 +14,32 @@ jobs:
         run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
 
       # setup cert for giggles
-      - name: Use local cert
-        run: 'echo "$CACERT" > /tmp/cacert.txt'
+      - name: Write CA Cert
+        run: 'echo "$CACERT" > /tmp/cacert.pem'
         shell: bash
         env:
           CACERT: ${{secrets.CACERT}}
-          SSLKEY: ${{secrets.SSLKEY}}
-          SSLCERT: ${{secrets.SSLCERT}}
+      - name: Write SSL Key
+        run: 'echo "$SSLKEY" > /tmp/serverkey.pem'
+        shell: bash
+        env:
+          CACERT: ${{secrets.SSLKEY}}
+      - name: Write SSL Cert
+        run: 'echo "$SSLCERT" > /tmp/servercert.pem'
+        shell: bash
+        env:
+          CACERT: ${{secrets.SSLCERT}}
+      - name: Copy certs to docker
+        run: |
+          docker cp /tmp/serverkey.pem nessus:/opt/nessus/var/nessus/CA/serverkey.pem
+          docker cp /tmp/cert.pem nessus:/opt/nessus/com/nessus/CA/servercert.pem
+
       # setup nessus
       - name: Sleep to give nessus time to startup
         run: sleep 20
-      - name: Test the port and accept self-signed cert
+      - name: Test the port with self signed cert
         run: |
-          curl -s --retry 10 --retry-connrefused https://localhost:8834 --insecure > /dev/null
+          curl -s --retry 10 --retry-connrefused https://localhost:8834 --cacert /tmp/cacert.pem
       - name: Write nessus license
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
         shell: bash
