@@ -16,9 +16,6 @@ jobs:
           docker run sometheycallme/docker-nessus:latest bash -c "yum install -y openssh-clients"
           docker run sometheycallme/docker-nessus:latest bash -c "yum install -y openssh-server"
           docker run sometheycallme/docker-nessus:latest bash -c "yum install -y openssh"
-          docker run sometheycallme/docker-nessus:latest bash -c "ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''"
-          docker run sometheycallme/docker-nessus:latest bash -c "ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N ''"
-          docker run sometheycallme/docker-nessus:latest bash -c "/usr/sbin/sshd -D &"
       # separate download and run just to see the timing
       - name: Startup the container
         run: docker run -p 8834:8834 -p 2220:22 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
@@ -66,7 +63,6 @@ jobs:
           ./tests/pester.ps1
       - name: Enable ssh for complete testing
         run: |
-          docker exec -it nessus "yum install -y openssh-server"
-          docker exec -it nessus "ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''"
-          docker exec -it nessus "ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N ''"
-          docker exec -it nessus "/usr/sbin/sshd -D &"
+          docker exec -it nessus bash "ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''"
+          docker exec -it nessus bash "ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N ''"
+          docker exec -it nessus bash "/usr/sbin/sshd -D &"
