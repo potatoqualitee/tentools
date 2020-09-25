@@ -89,6 +89,7 @@
         'Remove-TenUser',
         'Rename-TenGroup',
         'Resume-TenScan',
+        'Restart-TenService',
         'Save-TenPlugin',
         'Set-TenPolicyPortRange',
         'Set-TenUserPassword',
