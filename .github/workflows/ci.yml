@@ -76,3 +76,6 @@ jobs:
         shell: pwsh
         run: |
           ./tests/pester.ps1
+      - name: does it work now
+        run: |
+          openssl s_client -showcerts -servername server -connect server:443
