@@ -37,9 +37,6 @@ jobs:
       # setup nessus
       - name: Sleep to give nessus time to startup
         run: sleep 25
-      - name: Test the port with CA cert
-        run: |
-          openssl s_client -showcerts -connect localhost:8834
       - name: Write nessus license
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
         shell: bash
