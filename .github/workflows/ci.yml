@@ -32,7 +32,7 @@ jobs:
       - name: Copy certs to docker
         run: |
           docker cp /tmp/serverkey.pem nessus:/opt/nessus/var/nessus/CA/serverkey.pem
-          docker cp /tmp/cert.pem nessus:/opt/nessus/com/nessus/CA/servercert.pem
+          docker cp /tmp/servercert.pem nessus:/opt/nessus/com/nessus/CA/servercert.pem
 
       # setup nessus
       - name: Sleep to give nessus time to startup
