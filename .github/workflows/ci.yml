@@ -16,7 +16,7 @@ jobs:
       # setup nessus
       - name: Enable ssh for complete testing
         run: |
-          docker exec nessus bash "yum install -y openssh-server"
+          docker exec nessus yum install -y openssh-server
 
       # setup nessus
       - name: Sleep to give nessus time to startup
