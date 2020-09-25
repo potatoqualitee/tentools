@@ -16,7 +16,7 @@ jobs:
       # setup nessus
       - name: Enable ssh for complete testing
         run: |
-          docker exec nessus yum yum --disablerepo=\* --enablerepo=base,updates update
+          docker exec nessus yum --disablerepo=\* --enablerepo=base,updates update
           docker exec nessus yum install -y openssh-server
           docker exec nessus ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''
           docker exec nessus ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N ''
