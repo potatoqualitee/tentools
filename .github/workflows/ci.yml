@@ -29,10 +29,6 @@ jobs:
         shell: bash
         env:
           CACERT: ${{secrets.SSLCERT}}
-      - name: Skip copying certs to docker
-        run: |
-          docker cp /tmp/serverkey.pem nessus:/opt/nessus/var/nessus/CA/serverkey.pem
-          docker cp /tmp/servercert.pem nessus:/opt/nessus/com/nessus/CA/servercert.pem
 
       # setup nessus
       - name: Sleep to give nessus time to startup
@@ -42,6 +38,11 @@ jobs:
         shell: bash
         env:
           NLICENSE: ${{secrets.LICENSE}}
+      - name: Copy certs to docker
+        run: |
+          docker cp /tmp/serverkey.pem nessus:/opt/nessus/var/nessus/CA/serverkey.pem
+          docker cp /tmp/servercert.pem nessus:/opt/nessus/com/nessus/CA/servercert.pem
+          curl 'https://localhost:8834/server/restart' -X 'POST' -H 'Content-Type: application/json' --compressed --insecure
 
       # setup powershell
       - name: Setup PowerShell module cache
