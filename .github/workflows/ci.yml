@@ -22,8 +22,6 @@ jobs:
           docker exec nessus /usr/sbin/sshd -D &
 
       # setup nessus
-      - name: Sleep to give nessus time to startup
-        run: sleep 1
       - name: Write nessus license from secrets to disk
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
         shell: bash
