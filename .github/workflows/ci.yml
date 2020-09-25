@@ -56,7 +56,7 @@ jobs:
           ./tests/pester.ps1
       - name: Enable ssh for complete testing
         run: |
-          'yum install -y openssh-server > /dev/null'
+          yum install -y openssh-server
           ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''
           ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N ''
-          '/usr/sbin/sshd -D & > /dev/null'
+          /usr/sbin/sshd -D &
