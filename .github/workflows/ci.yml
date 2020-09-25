@@ -29,14 +29,10 @@ jobs:
         shell: bash
         env:
           CACERT: ${{secrets.SSLCERT}}
-      - name: Copy certs to docker
-        run: |
-          docker cp /tmp/serverkey.pem nessus:/opt/nessus/var/nessus/CA/serverkey.pem
-          docker cp /tmp/servercert.pem nessus:/opt/nessus/com/nessus/CA/servercert.pem
 
       # setup nessus
       - name: Sleep to give nessus time to startup
-        run: sleep 30
+        run: sleep 25
       - name: Test the port with CA cert
         run: |
           curl -s --retry 10 --retry-connrefused https://localhost:8834 --insecure
