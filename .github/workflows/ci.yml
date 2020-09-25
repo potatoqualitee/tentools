@@ -54,3 +54,8 @@ jobs:
         shell: pwsh
         run: |
           ./tests/pester.ps1
+      - name: Test loading of winscp
+        shell: pwsh
+        run: |
+          Add-Type -Path "./bin/WinSCPnet.dll"
+          New-Object WinSCP.SessionOptions
