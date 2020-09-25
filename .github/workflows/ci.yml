@@ -14,7 +14,7 @@ jobs:
       - name: Prep the container
         run: |
           docker run sometheycallme/docker-nessus:latest bash -c "yum install -y openssh-server"
-          docker run sometheycallme/docker-nessus:latest bash -c "yum install -y openssh-client"
+          docker run sometheycallme/docker-nessus:latest bash -c "yum install -y openssh-clients"
           docker run sometheycallme/docker-nessus:latest bash -c "ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''"
           docker run sometheycallme/docker-nessus:latest bash -c "ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N ''"
           docker run sometheycallme/docker-nessus:latest bash -c "/usr/sbin/sshd -D &"
