@@ -11,7 +11,7 @@ jobs:
         run: docker pull sometheycallme/docker-nessus:latest
       # separate download and run just to see the timing
       - name: Startup the container
-        run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
+        run: docker run -p 8834:8834 -p 22:22 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
       # setup nessus
       - name: Sleep to give nessus time to startup
         run: sleep 25
@@ -54,8 +54,9 @@ jobs:
         shell: pwsh
         run: |
           ./tests/pester.ps1
-      - name: Test loading of winscp
-        shell: pwsh
+      - name: Enable ssh for complete testing
         run: |
-          Add-Type -Path "./bin/WinSCPnet.dll"
-          New-Object WinSCP.SessionOptions
+          'yum install -y openssh-server > /dev/null'
+          ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''
+          ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N ''
+          '/usr/sbin/sshd -D & > /dev/null'
