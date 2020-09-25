@@ -20,11 +20,15 @@ jobs:
         run: |
           curl -s --retry 10 --retry-connrefused https://localhost:8834 --insecure > /dev/null
           ls /usr/local/share/ca-certificates/
-      - name: Write nessus license
-        run: 'echo "$NLICENSE" > /tmp/nessus.license'
+      - name: Write nessus license and ca cert
+        run: |
+          'echo "$NLICENSE" > /tmp/nessus.license'
+          'echo "$CACERT" > /usr/local/share/ca-certificates/ca.crt'
+          'update-ca-certificates'
         shell: bash
         env:
           NLICENSE: ${{secrets.LICENSE}}
+          CACERT: ${{secrets.CACERT}}
 
       # setup powershell
       - name: Setup PowerShell module cache
