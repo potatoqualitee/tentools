@@ -13,6 +13,7 @@ jobs:
       # separate download and run just to see the timing
       - name: Prep the container
         run: |
+          docker run sometheycallme/docker-nessus:latest bash -c "yum update -y"
           docker run sometheycallme/docker-nessus:latest bash -c "yum install -y openssh-server"
           docker run sometheycallme/docker-nessus:latest bash -c "yum install -y openssh-clients"
           docker run sometheycallme/docker-nessus:latest bash -c "ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''"
