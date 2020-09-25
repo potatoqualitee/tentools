@@ -15,13 +15,7 @@ jobs:
 
       # setup cert for giggles
       - name: Use local cert
-        run: |
-          'echo "$CACERT" > /tmp/cacert.txt'
-          'echo "$SSLKEY" > /tmp/serverkey.txt'
-          'echo "$SSLCERT" > /tmp/servercert.txt'
-          docker cp /tmp/serverkey.txt nessus:/opt/nessus/var/nessus/CA/serverkey.pem
-          docker cp /tmp/cert.txt nessus:/opt/nessus/com/nessus/CA/servercert.pem
-          curl -s --retry 10 --retry-connrefused https://localhost:8834 --cacert /tmp/cacert.txt
+        run: 'echo "$CACERT" > /tmp/cacert.txt'
         shell: bash
         env:
           CACERT: ${{secrets.CACERT}}
