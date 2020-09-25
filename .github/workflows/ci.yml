@@ -27,7 +27,6 @@ jobs:
           NLICENSE: ${{secrets.LICENSE}}
       - name: Register local CA cert
         run: |
-          echo "$CACERT" > /usr/local/share/ca-certificates/ca.crt
           update-ca-certificates
         shell: bash
         env:
