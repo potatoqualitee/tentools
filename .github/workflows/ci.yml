@@ -36,7 +36,7 @@ jobs:
 
       # setup nessus
       - name: Sleep to give nessus time to startup
-        run: sleep 35
+        run: sleep 20
       - name: Write nessus license from secrets to disk
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
         shell: bash
@@ -78,4 +78,4 @@ jobs:
           ./tests/pester.ps1
       - name: does it work now
         run: |
-          openssl s_client -showcerts -servername server -connect server:443
+          openssl s_client -showcerts -connect localhost:443
