@@ -26,9 +26,9 @@ jobs:
           NLICENSE: ${{secrets.LICENSE}}
       - name: Use local cert
         run: |
-          echo "$CACERT" > /tmp/cacert.pem
-          echo "$SSLKEY" > /tmp/serverkey.pem
-          echo "$SSLCERT" > /tmp/servercert.pem
+          'echo "$CACERT" > /tmp/cacert.pem'
+          'echo "$SSLKEY" > /tmp/serverkey.pem'
+          'echo "$SSLCERT" > /tmp/servercert.pem'
           docker cp /tmp/serverkey.pem nessus:/opt/nessus/var/nessus/CA/serverkey.pem
           docker cp /tmp/cert.pem nessus:/opt/nessus/com/nessus/CA/servercert.pem
           sleep 20
