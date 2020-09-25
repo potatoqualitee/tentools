@@ -13,7 +13,7 @@ jobs:
       - name: Startup the container
         run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
 
-      # setup cert for giggles
+      # setup cert to emulate prod
       - name: Write CA Cert
         run: 'echo "$CACERT" > /tmp/cacert.pem'
         shell: bash
@@ -37,7 +37,7 @@ jobs:
       # setup nessus
       - name: Sleep to give nessus time to startup
         run: sleep 25
-      - name: Write nessus license
+      - name: Write nessus license from secrets to disk
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
         shell: bash
         env:
