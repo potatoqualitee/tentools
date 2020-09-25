@@ -13,6 +13,20 @@ jobs:
       - name: Startup the container
         run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
 
+      # setup cert for giggles
+      - name: Use local cert
+        run: |
+          'echo "$CACERT" > /tmp/cacert.txt'
+          'echo "$SSLKEY" > /tmp/serverkey.txt'
+          'echo "$SSLCERT" > /tmp/servercert.txt'
+          docker cp /tmp/serverkey.txt nessus:/opt/nessus/var/nessus/CA/serverkey.pem
+          docker cp /tmp/cert.txt nessus:/opt/nessus/com/nessus/CA/servercert.pem
+          curl -s --retry 10 --retry-connrefused https://localhost:8834 --cacert /tmp/cacert.txt
+        shell: bash
+        env:
+          CACERT: ${{secrets.CACERT}}
+          SSLKEY: ${{secrets.SSLKEY}}
+          SSLCERT: ${{secrets.SSLCERT}}
       # setup nessus
       - name: Sleep to give nessus time to startup
         run: sleep 20
@@ -24,20 +38,6 @@ jobs:
         shell: bash
         env:
           NLICENSE: ${{secrets.LICENSE}}
-      - name: Use local cert
-        run: |
-          'echo "$CACERT" > /tmp/cacert.pem'
-          'echo "$SSLKEY" > /tmp/serverkey.pem'
-          'echo "$SSLCERT" > /tmp/servercert.pem'
-          docker cp /tmp/serverkey.pem nessus:/opt/nessus/var/nessus/CA/serverkey.pem
-          docker cp /tmp/cert.pem nessus:/opt/nessus/com/nessus/CA/servercert.pem
-          sleep 20
-          curl -s --retry 10 --retry-connrefused https://localhost:8834 --cacert /tmp/cacert.pem
-        shell: bash
-        env:
-          CACERT: ${{secrets.CACERT}}
-          SSLKEY: ${{secrets.SSLKEY}}
-          SSLCERT: ${{secrets.SSLCERT}}
 
       # setup powershell
       - name: Setup PowerShell module cache
