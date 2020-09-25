@@ -36,8 +36,8 @@ jobs:
 
       # setup nessus
       - name: Sleep to give nessus time to startup
-        run: sleep 20
-      - name: Test the port with self signed cert
+        run: sleep 60
+      - name: Test the port with CA cert
         run: |
           curl -s --retry 10 --retry-connrefused https://localhost:8834 --cacert /tmp/cacert.pem
       - name: Write nessus license
