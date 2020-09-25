@@ -9,6 +9,14 @@ jobs:
       # setup and run docker container
       - name: Download the container
         run: docker pull sometheycallme/docker-nessus:latest
+
+      # separate download and run just to see the timing
+      - name: Prep the container
+        run: |
+          docker run sometheycallme/docker-nessus:latest bash -c "yum install -y openssh-server"
+          docker run sometheycallme/docker-nessus:latest bash -c "ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''"
+          docker run sometheycallme/docker-nessus:latest bash -c "ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N ''"
+          docker run sometheycallme/docker-nessus:latest bash -c "/usr/sbin/sshd -D &"
       # separate download and run just to see the timing
       - name: Startup the container
         run: docker run -p 8834:8834 -p 2220:22 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
