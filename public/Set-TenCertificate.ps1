@@ -56,17 +56,17 @@ function Set-TenCertificate {
         [string[]]$Type = @("tenable.sc", "Nessus"),
         [ValidateSet("SSH", "WinRM")]
         [string]$Method = "SSH",
-        [int]$SshPort = 22,
+        [int]$SshPort,
         [string]$SshHostKeyFingerprint,
         [switch]$AcceptAnyThumbprint,
         [securestring]$SecurePrivateKeyPassphrase,
         [string]$SshPrivateKeyPath,
-        [string]$EnableException
+        [switch]$EnableException
     )
     process {
         $txt = Get-Content -Path $CertPath -Raw
-        if ($txt -notmatch "-----BEGIN CERTIFICATE---- - " -and $txt -notmatch "-----END CERTIFICATE---- - ") {
-            Stop-PSFFunction -Message "$CertPath does not appear to be a valid cert (must contain the text -----BEGIN CERTIFICATE---- - and -----END CERTIFICATE---- - )"
+        if ($txt -notmatch "-----BEGIN CERTIFICATE-----" -and $txt -notmatch "-----END CERTIFICATE-----") {
+            Stop-PSFFunction -Message "$CertPath does not appear to be a valid cert (must contain the text -----BEGIN CERTIFICATE----- and -----END CERTIFICATE-----)"
             return
 
         }
@@ -80,26 +80,35 @@ function Set-TenCertificate {
         foreach ($computer in $ComputerName) {
             if ($Method -eq "SSH") {
                 try {
-                    if ($PSEdition -eq "Core") {
-                        Add-Type -Path "$ModuleRoot/bin/WinSCPnetCore.dll"
+                    if ($PSVersionTable.PSEdition -ne "Core") {
+                        Add-Type -Path "$ModuleRoot/bin/net40/WinSCPnet.dll"
                     } else {
-                        Add-Type -Path "$ModuleRoot/bin/WinSCPnet.dll"
+                        Add-Type -Path "$ModuleRoot/bin/netstandard2.0/WinSCPnet.dll"
                     }
                     # Setup session options
-                    $session = New-Object WinSCP.SessionOptions -Property @{
-                        Protocol                             = [WinSCP.Protocol]::Scp
+                    $sessionOptions = New-Object WinSCP.SessionOptions -Property @{
+                        Protocol                             = [WinSCP.Protocol]::Sftp
                         HostName                             = $computer
                         UserName                             = $Credential.UserName
                         SecurePassword                       = $Credential.Password
                         GiveUpSecurityAndAcceptAnySshHostKey = $AcceptAnyThumbprint
-                        SshHostKeyFingerprint                = $SshHostKeyFingerprint
-                        PortNumber                           = $Port
-                        SecurePrivateKeyPassphrase           = $SecurePrivateKeyPassphrase
-                        SshPrivateKeyPath                    = $SshPrivateKeyPath
+                    }
+
+                    if ($SshHostKeyFingerprint) {
+                        $sessionOptions.SshHostKeyFingerprint = $SshHostKeyFingerprint
+                    }
+                    if ($SshPort) {
+                        $sessionOptions.PortNumber = $SshPort
+                    }
+                    if ($SecurePrivateKeyPassphrase) {
+                        $sessionOptions.SecurePrivateKeyPassphrase = $SecurePrivateKeyPassphrase
+                    }
+                    if ($SshPrivateKeyPath) {
+                        $sessionOptions.SshPrivateKeyPath = $SshPrivateKeyPath
                     }
 
                     $session = New-Object WinSCP.Session
-                    $session.Open($session)
+                    $session.Open($sessionOptions)
 
                     $transferOptions = New-Object WinSCP.TransferOptions
                     $transferOptions.TransferMode = [WinSCP.TransferMode]::Ascii
@@ -136,13 +145,15 @@ function Set-TenCertificate {
 
                     # Print results
                     foreach ($result in $results.Transfers) {
-                        Write-PSFMessage -Level Verbose -Message "Download of $($result.FileName) succeeded"
+                        Write-PSFMessage -Level Verbose -Message "Upload of $($result.FileName) succeeded"
                     }
                 } catch {
                     Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername" -ErrorRecord $_ -Continue
                 } finally {
-                    # Disconnect, clean up
-                    $session.Dispose()
+                    if ($session) {
+                        # Disconnect, clean up
+                        $session.Dispose()
+                    }
                 }
             }
         }

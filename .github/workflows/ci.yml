@@ -31,7 +31,22 @@ jobs:
         shell: bash
         env:
           NLICENSE: ${{secrets.LICENSE}}
-
+      # setup cert to emulate prod
+      - name: Write CA Cert
+        run: 'echo "$CACERT" > /tmp/cacert.pem'
+        shell: bash
+        env:
+          CACERT: ${{secrets.CACERT}}
+      - name: Write SSL Key
+        run: 'echo "$SSLKEY" > /tmp/serverkey.pem'
+        shell: bash
+        env:
+          SSLKEY: ${{secrets.SSLKEY}}
+      - name: Write SSL Cert
+        run: 'echo "$SSLCERT" > /tmp/servercert.pem'
+        shell: bash
+        env:
+          SSLCERT: ${{secrets.SSLCERT}}
       # time to party
       - name: Setup PowerShell module cache
         id: cache-psmodulesupdate
