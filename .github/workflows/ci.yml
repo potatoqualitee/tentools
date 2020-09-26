@@ -14,18 +14,6 @@ jobs:
         run: docker run -p 8834:8834 -p 2220:22 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
 
       # setup nessus
-      - name: Enable ssh within the container for complete testing
-        run: |
-          # change password for root so that we can test Set-TenCertificate
-          docker exec nessus echo -e "0Eff92c0eff92c\n0Eff92c0eff92c" '|' passwd
-
-          # install ssh to test Set-TenCertificate
-          docker exec nessus yum install -y openssh-server
-          docker exec nessus ssh-keygen -P "" -t rsa -f /etc/ssh/ssh_host_rsa_key
-          docker exec nessus ssh-keygen -P "" -t dsa -f /etc/ssh/ssh_host_dsa_key
-          docker exec nessus ssh-keygen -P "" -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key
-          docker exec nessus ssh-keygen -P "" -t ed25519 -f /etc/ssh/ssh_host_ed25519_key
-          docker exec nessus /usr/sbin/sshd -D &
       - name: Write nessus license from secrets to disk
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
         shell: bash
@@ -47,6 +35,24 @@ jobs:
         shell: bash
         env:
           SSLCERT: ${{secrets.SSLCERT}}
+      - name: Copy certs to docker
+        run: |
+          docker cp /tmp/serverkey.pem nessus:/opt/nessus/var/nessus/CA/serverkey.pem
+          docker cp /tmp/servercert.pem nessus:/opt/nessus/com/nessus/CA/servercert.pem
+
+      - name: Enable ssh within the container for complete testing
+        run: |
+          # change password for root so that we can test Set-TenCertificate
+          docker exec nessus echo -e "0Eff92c0eff92c\n0Eff92c0eff92c" '|' passwd
+
+          # install ssh to test Set-TenCertificate
+          docker exec nessus yum install -y openssh-server
+          docker exec nessus ssh-keygen -P "" -t rsa -f /etc/ssh/ssh_host_rsa_key
+          docker exec nessus ssh-keygen -P "" -t dsa -f /etc/ssh/ssh_host_dsa_key
+          docker exec nessus ssh-keygen -P "" -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key
+          docker exec nessus ssh-keygen -P "" -t ed25519 -f /etc/ssh/ssh_host_ed25519_key
+          docker exec nessus /usr/sbin/sshd -D &
+
       # time to party
       - name: Setup PowerShell module cache
         id: cache-psmodulesupdate

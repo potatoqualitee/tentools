@@ -27,10 +27,10 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
         }
     }
     Context "Set-TenCertificate" {
-        It "Sets a Certificate" {
+        It -Skip "Sets a Certificate" {
             $cred = New-Object -TypeName PSCredential -ArgumentList "root", (ConvertTo-SecureString -String 0Eff92c0eff92c -AsPlainText -Force)
             Set-TenCertificate -ComputerName localhost -Credential $cred -CertPath /tmp/servercert.pem -KeyPath /tmp/serverkey.pem -AcceptAnyThumbprint -Type Nessus -Verbose
-            Reset-TenService
+            Restart-TenService
             $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
             $splat = @{
                 ComputerName         = "localhost"
