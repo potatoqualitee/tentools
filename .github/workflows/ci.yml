@@ -17,10 +17,11 @@ jobs:
       - name: Enable ssh within the container for complete testing
         run: |
           docker exec nessus yum install -y openssh-server
-          docker exec nessus ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''
-          docker exec nessus ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N ''
-          docker exec nessus ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N ''
-          docker exec nessus ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''
+          docker exec nessus ssh-keygen -P "" -t rsa -f /etc/ssh/ssh_host_rsa_key
+          docker exec nessus ssh-keygen -P "" -t dsa -f /etc/ssh/ssh_host_dsa_key
+          docker exec nessus ssh-keygen -P "" -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key
+          docker exec nessus ssh-keygen -P "" -t ed25519 -f /etc/ssh/ssh_host_ed25519_key
+          docker exec nessus echo 'root:password' | chpasswd
           docker exec nessus /usr/sbin/sshd -D &
       - name: Write nessus license from secrets to disk
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
@@ -47,7 +48,6 @@ jobs:
         shell: pwsh
         run: |
           Import-Module ./tentools.psd1
-          Set-TenSslCertificate
           $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
           $splat = @{
             ComputerName = "localhost"

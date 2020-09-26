@@ -100,7 +100,7 @@
         'Get-TenScanHistory',
         'Get-TenScanHost',
         'Get-TenScanHostDetail',
-        'Set-TenSslCertificate',
+        'Set-TenCertificate',
         'Start-TenScan',
         'Stop-TenScan',
         'Suspend-TenScan',
