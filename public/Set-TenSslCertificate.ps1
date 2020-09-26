@@ -48,16 +48,14 @@ function Set-TenSslCertificate {
     )
 
     process {
-
-        if ($PSEdition -eq "Core") {
-            Add-Type -Path "$ModuleRoot/bin/WinSCPnetCore.dll"
-        } else {
-            Add-Type -Path "$ModuleRoot/bin/WinSCPnet.dll"
-        }
-        write-warning done
-        return
         foreach ($computer in $ComputerName) {
             if ($Method -eq "SSH") {
+                if ($PSEdition -eq "Core") {
+                    Add-Type -Path "$ModuleRoot/bin/WinSCPnetCore.dll"
+                } else {
+                    Add-Type -Path "$ModuleRoot/bin/WinSCPnet.dll"
+                }
+                write-warning hello
                 try {
                     # Setup session options
                     $session = New-Object WinSCP.SessionOptions -Property @{
@@ -103,8 +101,8 @@ function Set-TenSslCertificate {
                             $results = $session.PutFiles($CaCertPath, "/tmp/custom_CA.inc")
                             #PLUGIN_SET = "205004261330"
                             #PLUGIN_FEED = "Custom"
-                            $dumpCommand = ""
-                            $session.ExecuteCommand($dumpCommand).Check()
+                            $command = ""
+                            $session.ExecuteCommand($command).Check()
                         }
                         if ($CaCertPlugin) {
                             $results = $session.PutFiles($CaCertPlugin, "/opt/sc/support/conf/SecurityCenter.key")

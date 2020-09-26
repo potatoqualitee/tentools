@@ -47,6 +47,7 @@ jobs:
         shell: pwsh
         run: |
           Import-Module ./tentools.psd1
+          Set-TenSslCertificate
           $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
           $splat = @{
             ComputerName = "localhost"
@@ -57,7 +58,6 @@ jobs:
             Path = "/tmp/nessus.license"
           }
           Initialize-TenServer @splat
-          Set-TenSslCertificate
       - name: Run Pester tests
         shell: pwsh
         run: |
