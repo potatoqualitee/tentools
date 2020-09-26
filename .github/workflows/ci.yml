@@ -16,7 +16,10 @@ jobs:
       # setup nessus
       - name: Enable ssh within the container for complete testing
         run: |
-          docker exec nessus echo 'Docker!' | passwd --stdin root
+          # change password for root so that we can test Set-TenCertificate
+          docker exec nessus echo -e "abcd1234\nabcd1234" | passwd
+
+          # install ssh to test Set-TenCertificate
           docker exec nessus yum install -y openssh-server
           docker exec nessus ssh-keygen -P "" -t rsa -f /etc/ssh/ssh_host_rsa_key
           docker exec nessus ssh-keygen -P "" -t dsa -f /etc/ssh/ssh_host_dsa_key
