@@ -9,12 +9,12 @@ jobs:
       # setup and run docker container
       - name: Download the container
         run: docker pull sometheycallme/docker-nessus:latest
-
       # separate download and run just to see the timing
       - name: Startup the container
         run: docker run -p 8834:8834 -p 2220:22 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
+
       # setup nessus
-      - name: Enable ssh for complete testing
+      - name: Enable ssh within the container for complete testing
         run: |
           docker exec nessus yum install -y openssh-server
           docker exec nessus ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''
@@ -22,15 +22,13 @@ jobs:
           docker exec nessus ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N ''
           docker exec nessus ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''
           docker exec nessus /usr/sbin/sshd -D &
-
-      # setup nessus
       - name: Write nessus license from secrets to disk
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
         shell: bash
         env:
           NLICENSE: ${{secrets.LICENSE}}
 
-      # setup powershell
+      # time to party
       - name: Setup PowerShell module cache
         id: cache-psmodulesupdate
         uses: actions/cache@v2
@@ -59,6 +57,7 @@ jobs:
             Path = "/tmp/nessus.license"
           }
           Initialize-TenServer @splat
+          Set-TenSslCertificate
       - name: Run Pester tests
         shell: pwsh
         run: |
