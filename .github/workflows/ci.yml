@@ -16,12 +16,12 @@ jobs:
       # setup nessus
       - name: Enable ssh within the container for complete testing
         run: |
+          docker exec nessus echo 'Docker!' | passwd --stdin root
           docker exec nessus yum install -y openssh-server
           docker exec nessus ssh-keygen -P "" -t rsa -f /etc/ssh/ssh_host_rsa_key
           docker exec nessus ssh-keygen -P "" -t dsa -f /etc/ssh/ssh_host_dsa_key
           docker exec nessus ssh-keygen -P "" -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key
           docker exec nessus ssh-keygen -P "" -t ed25519 -f /etc/ssh/ssh_host_ed25519_key
-          docker exec nessus echo 'root:bD0fJ0mW8RcwVgVHkA8gPdvOzPxiHZLt0AfdMK3d6L8' | chpasswd
           docker exec nessus /usr/sbin/sshd -D &
       - name: Write nessus license from secrets to disk
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
