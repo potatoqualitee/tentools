@@ -104,7 +104,8 @@
         'Start-TenScan',
         'Stop-TenScan',
         'Suspend-TenScan',
-        'Test-TenAccessibility'
+        'Test-TenAccessibility',
+        'Wait-TenServerReady'
     )
 
     # Cmdlets to export from this module
