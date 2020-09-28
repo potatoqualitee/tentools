@@ -39,12 +39,11 @@ jobs:
         run: |
           docker cp /tmp/serverkey.pem nessus:/opt/nessus/var/nessus/CA/serverkey.pem
           docker cp /tmp/servercert.pem nessus:/opt/nessus/com/nessus/CA/servercert.pem
-
+      - name: Change password for root so that we can test Set-TenCertificate
+        run: |
+          docker exec nessus echo -e "0Eff92c0eff92c\n0Eff92c0eff92c" '|' passwd
       - name: Enable ssh within the container for complete testing
         run: |
-          # change password for root so that we can test Set-TenCertificate
-          docker exec nessus echo -e "0Eff92c0eff92c\n0Eff92c0eff92c" '|' passwd
-
           # install ssh to test Set-TenCertificate
           docker exec nessus yum install -y openssh-server
           docker exec nessus ssh-keygen -P "" -t rsa -f /etc/ssh/ssh_host_rsa_key
@@ -54,20 +53,23 @@ jobs:
           docker exec nessus /usr/sbin/sshd -D &
 
       # time to party
+      - name: Set required PowerShell modules
+        id: psmodulecache
+        uses: potatoqualitee/psmodulecache@v1
+        with:
+          modules-to-cache: PSFramework, Pester
       - name: Setup PowerShell module cache
-        id: cache-psmodulesupdate
+        id: cacher
         uses: actions/cache@v2
         with:
-          path: |
-            /home/runner/.local/share/powershell/Modules/PSFramework
-            /home/runner/.local/share/powershell/Modules/Pester
-          key: ${{ runner.os }}-psmodulesupdate
+          path: ${{ steps.psmodulecache.outputs.modulepath }}
+          key: ${{ steps.psmodulecache.outputs.keygen }}
       - name: Install required PowerShell modules
-        if: steps.cache-psmodulesupdate.outputs.cache-hit != 'true'
+        if: steps.cacher.outputs.cache-hit != 'true'
         shell: pwsh
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
-          Install-Module PSFramework, Pester -ErrorAction Stop
+          Install-Module ${{ steps.psmodulecache.outputs.needed }} -ErrorAction Stop
       - name: Initialize the nessus server with admin user and license
         shell: pwsh
         run: |
@@ -82,7 +84,8 @@ jobs:
             Path = "/tmp/nessus.license"
           }
           Initialize-TenServer @splat
-          Restart-TenService
+          # Restart-TenService
+          # Wait-TenServerReady
           Start-Sleep 20
       - name: Run Pester tests
         shell: pwsh
