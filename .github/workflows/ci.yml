@@ -84,9 +84,7 @@ jobs:
             Path = "/tmp/nessus.license"
           }
           Initialize-TenServer @splat
-          # Restart-TenService
-          # Wait-TenServerReady
-          Start-Sleep 20
+          Wait-TenServerReady -ComputerName localhost -AcceptSelfSignedCert
       - name: Run Pester tests
         shell: pwsh
         run: |
