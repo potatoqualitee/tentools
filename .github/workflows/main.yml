@@ -10,7 +10,7 @@ jobs:
       - name: Change perms
         run: sudo chown -R runner /var/lib/docker/image
       - name: Setup Docker image cache
-        id: dockercacher
+        id: dockerimagecacher
         uses: actions/cache@v2
         with:
           path: /var/lib/docker/image

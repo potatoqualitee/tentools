@@ -40,7 +40,7 @@ function Wait-TenServerReady {
                 Start-Sleep 1
                 $i++
             }
-            until ($result.code -eq 200 -or $i -eq $Timeout)
+            until ($result.code -eq 200 -or $i -eq $Timeout -or $result.status -eq 'register')
             $result
         }
     }
