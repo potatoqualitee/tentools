@@ -36,8 +36,8 @@ jobs:
           SSLCERT: ${{secrets.SSLCERT}}
       - name: Trust the CA
         run: |
-          sudo cp /tmp/cacert.pem /usr/local/share/ca-certificates/ca.crt
-          sudo chmod 644 /usr/local/share/ca-certificates/ca.crt
+          sudo cp /tmp/cacert.pem /etc/ssl/certs/ca.crt
+          sudo chmod 644 /etc/ssl/certs/ca.crt
           sudo update-ca-certificates
       - name: Copy certs to docker
         run: |
