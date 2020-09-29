@@ -13,7 +13,7 @@ jobs:
         with:
           path: /var/lib/docker/image
           key: docker
-      - name: Download the container if required
+      - name: Download the image if required
         if: steps.dockercacher.outputs.cache-hit != 'true'
         run: docker pull sometheycallme/docker-nessus:latest
 
@@ -21,7 +21,6 @@ jobs:
       - name: Startup the container
         run: |
           docker run -p 8834:8834 -p 2220:22 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
-          sudo ls
       # setup nessus
       - name: Write nessus license from secrets to disk
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
@@ -76,6 +75,7 @@ jobs:
         shell: pwsh
         run: |
           Import-Module ./tentools.psd1
+          Wait-TenServerReady -ComputerName localhost
           $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
           $splat = @{
             ComputerName = "localhost"
