@@ -3,11 +3,10 @@ on: [push, pull_request]
 jobs:
   run-tests:
     runs-on: ubuntu-latest
+    env:
+      SSL_CERT_DIR: "/tmp"
     steps:
       - uses: actions/checkout@v2
-
-      - name: test
-        run: echo "" > /etc/ssl/certs/ca-certificates.crt
       # setup and run docker container
       - name: Download the container
         run: docker pull sometheycallme/docker-nessus:latest
@@ -37,6 +36,8 @@ jobs:
         shell: bash
         env:
           SSLCERT: ${{secrets.SSLCERT}}
+      - name: test
+        run: update-ca-certificates
       - name: Copy certs to docker
         run: |
           docker cp /tmp/serverkey.pem nessus:/opt/nessus/var/nessus/CA/serverkey.pem
