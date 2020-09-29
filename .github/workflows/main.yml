@@ -12,7 +12,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /var/lib/docker/image
-          key: docker
+          key: dockernessus
       - name: Download the image if required
         if: steps.dockercacher.outputs.cache-hit != 'true'
         run: docker pull sometheycallme/docker-nessus:latest
