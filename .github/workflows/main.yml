@@ -3,8 +3,6 @@ on: [push, pull_request]
 jobs:
   run-tests:
     runs-on: ubuntu-latest
-    env:
-      SSL_CERT_DIR: "/tmp"
     steps:
       - uses: actions/checkout@v2
       # setup and run docker container
@@ -36,8 +34,13 @@ jobs:
         shell: bash
         env:
           SSLCERT: ${{secrets.SSLCERT}}
-      - name: test
-        run: sudo update-ca-certificates
+      - name: Trust the CA
+        run: |
+          sudo mkdir /usr/local/share/ca-certificates/ent
+          sudo chmod 755 /usr/local/share/ca-certificates/ent
+          sudo cp /tmp/cacert.pem /usr/local/share/ca-certificates/ent/cacert.pem
+          sudo chmod 644 /usr/local/share/ca-certificates/ent/cacert.pem
+          sudo update-ca-certificates
       - name: Copy certs to docker
         run: |
           docker cp /tmp/serverkey.pem nessus:/opt/nessus/var/nessus/CA/serverkey.pem
@@ -80,14 +83,14 @@ jobs:
           $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
           $splat = @{
             ComputerName = "localhost"
-            AcceptSelfSignedCert = $true
+            AcceptSelfSignedCert = $false
             Credential = $cred
             EnableException = $true
             Port = 8834
             Path = "/tmp/nessus.license"
           }
           Initialize-TenServer @splat
-          Wait-TenServerReady -ComputerName localhost -AcceptSelfSignedCert
+          Wait-TenServerReady -ComputerName localhost
       - name: Run Pester tests
         shell: pwsh
         run: |
