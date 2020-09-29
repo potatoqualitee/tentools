@@ -36,7 +36,7 @@ jobs:
           SSLCERT: ${{secrets.SSLCERT}}
       - name: Trust the CA
         run: |
-          sudo openssl x509 -outform der -in /tmp/cacert.pem -out /usr/local/share/ca-certificate/ca.crt
+          sudo openssl x509 -outform der -in /tmp/cacert.pem -out /usr/local/share/ca-certificate
           sudo update-ca-certificates
       - name: Copy certs to docker
         run: |
