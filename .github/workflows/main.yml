@@ -93,3 +93,6 @@ jobs:
         shell: pwsh
         run: |
           ./tests/pester.ps1
+      # insist on big perms
+      - name: Change perms
+        run: sudo chown -R runner /var/lib/docker/image
