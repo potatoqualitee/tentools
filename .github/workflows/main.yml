@@ -6,6 +6,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: test
+        run: update-ca-certificates
       # setup and run docker container
       - name: Download the container
         run: docker pull sometheycallme/docker-nessus:latest
