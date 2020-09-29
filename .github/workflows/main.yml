@@ -13,8 +13,7 @@ jobs:
       - name: Startup the container
         run: |
           docker run -p 8834:8834 -p 2220:22 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
-          docker info
-          sudo ls /var/lib/docker
+          sudo ls /var/lib/docker/image
       # setup nessus
       - name: Write nessus license from secrets to disk
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
