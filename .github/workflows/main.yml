@@ -37,7 +37,7 @@ jobs:
         env:
           SSLCERT: ${{secrets.SSLCERT}}
       - name: test
-        run: update-ca-certificates
+        run: sudo update-ca-certificates
       - name: Copy certs to docker
         run: |
           docker cp /tmp/serverkey.pem nessus:/opt/nessus/var/nessus/CA/serverkey.pem
