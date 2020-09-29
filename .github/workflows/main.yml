@@ -6,14 +6,22 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # setup and run docker container
-      - name: Download the container
+      # Download docker container
+      - name: Setup Docker image cache
+        id: dockercacher
+        uses: actions/cache@v2
+        with:
+          path: /var/lib/docker/image
+          key: docker
+      - name: Download the container if required
+        if: steps.dockercacher.outputs.cache-hit != 'true'
         run: docker pull sometheycallme/docker-nessus:latest
+
       # separate download and run just to see the timing
       - name: Startup the container
         run: |
           docker run -p 8834:8834 -p 2220:22 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
-          sudo ls /var/lib/docker/image
+          sudo ls
       # setup nessus
       - name: Write nessus license from secrets to disk
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
