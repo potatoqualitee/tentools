@@ -44,27 +44,13 @@ jobs:
         run: |
           docker cp /tmp/serverkey.pem nessus:/opt/nessus/var/nessus/CA/serverkey.pem
           docker cp /tmp/servercert.pem nessus:/opt/nessus/com/nessus/CA/servercert.pem
-      - name: Install filezilla
-        run: sudo apt-get install filezilla
-      - name: Change password for root so that we can test Set-TenCertificate
-        run: |
-          docker exec nessus echo -e "0Eff92c0eff92c\n0Eff92c0eff92c" '|' passwd
-      - name: Enable ssh within the container for complete testing
-        run: |
-          # install ssh to test Set-TenCertificate
-          docker exec nessus yum install -y openssh-server
-          docker exec nessus ssh-keygen -P "" -t rsa -f /etc/ssh/ssh_host_rsa_key
-          docker exec nessus ssh-keygen -P "" -t dsa -f /etc/ssh/ssh_host_dsa_key
-          docker exec nessus ssh-keygen -P "" -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key
-          docker exec nessus ssh-keygen -P "" -t ed25519 -f /etc/ssh/ssh_host_ed25519_key
-          docker exec nessus /usr/sbin/sshd -D &
 
       # time to party
       - name: Set required PowerShell modules
         id: psmodulecache
         uses: potatoqualitee/psmodulecache@v1
         with:
-          modules-to-cache: PSFramework, Pester
+          modules-to-cache: PSFramework, PoshRSJob
       - name: Setup PowerShell module cache
         id: cacher
         uses: actions/cache@v2
