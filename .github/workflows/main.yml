@@ -6,6 +6,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Prep directory permission for caching
+        run: sudo chown -R runner /var/lib/docker/image
       # Download docker container
       - name: Setup Docker image cache
         id: dockercacher
@@ -91,6 +93,5 @@ jobs:
         shell: pwsh
         run: |
           ./tests/pester.ps1
-      # insist on big perms
-      - name: Add some chown
+      - name: Add more chown for caching
         run: sudo chown -R runner /var/lib/docker/image
