@@ -44,6 +44,8 @@ jobs:
         run: |
           docker cp /tmp/serverkey.pem nessus:/opt/nessus/var/nessus/CA/serverkey.pem
           docker cp /tmp/servercert.pem nessus:/opt/nessus/com/nessus/CA/servercert.pem
+      - name: Install filezilla
+        run: sudo apt-get install filezilla
       - name: Change password for root so that we can test Set-TenCertificate
         run: |
           docker exec nessus echo -e "0Eff92c0eff92c\n0Eff92c0eff92c" '|' passwd
