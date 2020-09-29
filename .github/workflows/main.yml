@@ -5,6 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
       # setup and run docker container
       - name: Download the container
         run: docker pull sometheycallme/docker-nessus:latest

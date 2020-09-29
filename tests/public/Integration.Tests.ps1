@@ -33,13 +33,13 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             Restart-TenService
             $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
             $splat = @{
-                ComputerName         = "localhost"
-                AcceptSelfSignedCert = $true
-                Credential           = $cred
-                EnableException      = $true
-                Port                 = 8834
+                ComputerName    = "localhost"
+                Credential      = $cred
+                EnableException = $true
+                Port            = 8834
             }
-            Start-Sleep 20
+            Start-Sleep 3
+            Wait-TenServerReady -ComputerName localhost
             (Connect-TenServer @splat).ComputerName | Should -Be "localhost"
         }
     }
