@@ -9,12 +9,6 @@ jobs:
       - name: Prep directory permission for caching
         run: |
           sudo chown runner /var/lib/docker/overlay2
-          sudo chown -R runner /var/lib/docker/overlay2/4ce7a3958c175e424a2b3af49628963156309929d5b30ef270713759de5312ed
-          sudo chown -R runner /var/lib/docker/overlay2/5d4dfed37744dc228d42c588bc0651a6ab3346d815148ff236f9e20450b8cc4a
-          sudo chown -R runner /var/lib/docker/overlay2/bb501c89e1a21377247fbfc8965725e61f157c14c2f09b033a32a4637633d9d5
-          sudo chown -R runner var/lib/docker/overlay2/bc6ab981a6a45dcf62e5880ebe1f168999dd2a7d6143a146e1801d0753d32e78
-          sudo chown -R runner /var/lib/docker/overlay2/3c7a0e42fdd32e21fcd3b11d7b25541ee36997bb4dc1950b4d771b1c635e8523
-          sudo chown -R runner /var/lib/docker/overlay2/be233a35cd1daa4cd893b649f7af61b923ae9658841dcc63ae841a142f2ef746
       # Download docker container
       - name: Setup Docker image cache
         id: dockercacher
@@ -109,4 +103,10 @@ jobs:
         run: |
           ./tests/pester.ps1
       - name: Add more chown for caching
-        run: sudo chown -R runner /var/lib/docker/overlay2
+        run: |
+          sudo chown -R runner /var/lib/docker/overlay2/4ce7a3958c175e424a2b3af49628963156309929d5b30ef270713759de5312ed
+          sudo chown -R runner /var/lib/docker/overlay2/5d4dfed37744dc228d42c588bc0651a6ab3346d815148ff236f9e20450b8cc4a
+          sudo chown -R runner /var/lib/docker/overlay2/bb501c89e1a21377247fbfc8965725e61f157c14c2f09b033a32a4637633d9d5
+          sudo chown -R runner var/lib/docker/overlay2/bc6ab981a6a45dcf62e5880ebe1f168999dd2a7d6143a146e1801d0753d32e78
+          sudo chown -R runner /var/lib/docker/overlay2/3c7a0e42fdd32e21fcd3b11d7b25541ee36997bb4dc1950b4d771b1c635e8523
+          sudo chown -R runner /var/lib/docker/overlay2/be233a35cd1daa4cd893b649f7af61b923ae9658841dcc63ae841a142f2ef746
