@@ -35,8 +35,11 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
         }
     }
     Context "Get-TenPlugin" {
-        It "Returns a no plugins just yet" {
-            Get-TenPlugin -PluginId 0 | Select-Object -ExpandProperty Attributes | Should -NotBe $null
+        It "Returns proper plugin information" {
+            $results = Get-TenPlugin -PluginId 10714
+            $results | Select-Object -ExpandProperty Name | Should -Be 'ZyXEL Router Default Telnet Password Present'
+            $results | Select-Object -ExpandProperty PluginId | Should -Be 10714
+            ($results | Select-Object -ExpandProperty Attributes).fname | Should -Be 'zyxel_pwd.nasl'
         }
     }
 }
