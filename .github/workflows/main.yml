@@ -50,7 +50,7 @@ jobs:
       - name: Download plugins
         run: |
           $ProgressPreference = "SilentlyContinue"
-          Invoke-WebRequest -Uri $TGZ -OutFile /tmp/all-2.0.tar.gz | Out-Null
+          Invoke-WebRequest -Uri $env:TGZ -OutFile /tmp/all-2.0.tar.gz | Out-Null
         shell: pwsh
         env:
           TGZ: ${{secrets.TGZ}}
