@@ -26,6 +26,12 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             Get-TenUser | Select-Object -ExpandProperty name | Should -Contain "admin"
         }
     }
+    Context "Get-TenFolder" {
+        It "Returns a folder" {
+            Get-TenFolder | Select-Object -ExpandProperty name | Should -Contain "Trash"
+        }
+    }
+
     Context "Set-TenCertificate" {
         It -Skip "Sets a Certificate" {
             $cred = New-Object -TypeName PSCredential -ArgumentList "root", (ConvertTo-SecureString -String 0Eff92c0eff92c -AsPlainText -Force)

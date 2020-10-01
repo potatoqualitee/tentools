@@ -64,6 +64,10 @@ function Set-TenCertificate {
         [switch]$EnableException
     )
     process {
+        if (-not (Get-Command WinScp)) {
+            Stop-PSFFunction -EnableException:$EnableException -Message "WinScp must be installed to run this command"
+            return
+        }
         $txt = Get-Content -Path $CertPath -Raw
         if ($txt -notmatch "-----BEGIN CERTIFICATE-----" -and $txt -notmatch "-----END CERTIFICATE-----") {
             Stop-PSFFunction -Message "$CertPath does not appear to be a valid cert (must contain the text -----BEGIN CERTIFICATE----- and -----END CERTIFICATE-----)"
