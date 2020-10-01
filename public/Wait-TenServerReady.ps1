@@ -37,7 +37,11 @@ function Wait-TenServerReady {
                 EnableException = $EnableException
             }
             do {
-                $result = Invoke-NonAuthRequest @params
+                try {
+                    $result = Invoke-NonAuthRequest @params -ErrorAction Ignore
+                } catch {
+                    Write-Warning what
+                }
                 Start-Sleep 1
                 $i++
 
