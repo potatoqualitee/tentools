@@ -24,6 +24,7 @@ function Wait-TenServerReady {
         [string[]]$ComputerName,
         [int]$Port = "8834",
         [switch]$AcceptSelfSignedCert,
+        [switch]$Register,
         [int]$Timeout = 60,
         [switch]$EnableException
     )
@@ -39,8 +40,14 @@ function Wait-TenServerReady {
                 $result = Invoke-NonAuthRequest @params
                 Start-Sleep 1
                 $i++
+
+                if ($Register) {
+                    $registerstatus = $result.status -eq 'register'
+                } else {
+                    $registerstatus = $false
+                }
             }
-            until ($result.code -eq 200 -or $i -eq $Timeout -or $result.status -eq 'register')
+            until ($result.code -eq 200 -or $i -eq $Timeout -or $registerstatus)
             $result
         }
     }
