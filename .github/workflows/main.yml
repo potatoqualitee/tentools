@@ -48,7 +48,7 @@ jobs:
           docker cp /tmp/servercert.pem nessus:/opt/nessus/com/nessus/CA/servercert.pem
 
       - name: Download plugins
-        run: 'wget ''$TGZ\'' -O /tmp/all-2.0.tar.gz'
+        run: 'wget ''$TGZ\'' -O /tmp/all-2.0.tar.gz -q'
         shell: bash
         env:
           TGZ: ${{secrets.TGZ}}
