@@ -54,9 +54,10 @@ jobs:
         shell: pwsh
         env:
           TGZ: ${{secrets.TGZ}}
-      - name: Copy tgz to docker
+      - name: Copy tgz to docker and register plugins
         run: |
           docker cp /tmp/all-2.0.tar.gz nessus:/tmp/all-2.0.tar.gz
+          docker exec nessus /opt/nessus/sbin/nessuscli update /tmp/all-2.0.tar.gz
 
       # time to party
       - name: Set required PowerShell modules
