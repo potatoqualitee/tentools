@@ -34,22 +34,9 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             Get-TenFolder | Select-Object -ExpandProperty name | Should -Contain "Trash"
         }
     }
-
-    Context "Set-TenCertificate" {
-        It -Skip "Sets a Certificate" {
-            $cred = New-Object -TypeName PSCredential -ArgumentList "root", (ConvertTo-SecureString -String 0Eff92c0eff92c -AsPlainText -Force)
-            Set-TenCertificate -ComputerName localhost -Credential $cred -CertPath /tmp/servercert.pem -KeyPath /tmp/serverkey.pem -AcceptAnyThumbprint -Type Nessus -Verbose
-            Restart-TenService
-            $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
-            $splat = @{
-                ComputerName    = "localhost"
-                Credential      = $cred
-                EnableException = $true
-                Port            = 8834
-            }
-            Start-Sleep 3
-            Wait-TenServerReady -ComputerName localhost
-            (Connect-TenServer @splat).ComputerName | Should -Be "localhost"
+    Context "Get-TenPlugin" {
+        It "Returns a no plugins just yet" {
+            Get-TenPlugin -PluginId 0 | Select-Object -ExpandProperty Attributes | Should -NotBe $null
         }
     }
 }
