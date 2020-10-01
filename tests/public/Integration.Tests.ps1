@@ -36,7 +36,7 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     }
     Context "Get-TenPlugin" {
         It "Returns proper plugin information" {
-            Start-Sleep 30
+            Wait-TenServerReady
             $results = Get-TenPlugin -PluginId 10714
             $results | Select-Object -ExpandProperty Name | Should -Be 'ZyXEL Router Default Telnet Password Present'
             $results | Select-Object -ExpandProperty PluginId | Should -Be 10714
