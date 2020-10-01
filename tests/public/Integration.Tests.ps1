@@ -5,7 +5,7 @@
 Describe "Integration Tests" -Tag "IntegrationTests" {
     BeforeAll {
         # Give it time to do whatever it needs to do
-        Wait-TenServer
+        Wait-TenServerReady -ComputerName localhost
     }
     BeforeEach {
         Write-Output -Message "Next test"
