@@ -8,7 +8,7 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
         Wait-TenServer
     }
     BeforeEach {
-        Write-PSFMessage -Level Important -Message "Next test"
+        Write-Output -Message "Next test"
     }
     Context "Connect-TenServer" {
         It "Connects to a site" {
