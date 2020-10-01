@@ -47,6 +47,15 @@ jobs:
           docker cp /tmp/serverkey.pem nessus:/opt/nessus/var/nessus/CA/serverkey.pem
           docker cp /tmp/servercert.pem nessus:/opt/nessus/com/nessus/CA/servercert.pem
 
+      - name: Download plugins
+        run: "wget '$TGZ' -O /tmp/all-2.0.tar.gz"
+        shell: bash
+        env:
+          TGZ: ${{secrets.TGZ}}
+      - name: Copy tgz to docker
+        run: |
+          docker cp /tmp/all-2.0.tar.gz nessus:/tmp/all-2.0.tar.gz
+
       # time to party
       - name: Set required PowerShell modules
         id: psmodulecache
