@@ -5,7 +5,10 @@
 Describe "Integration Tests" -Tag "IntegrationTests" {
     BeforeAll {
         # Give it time to do whatever it needs to do
-        Start-Sleep 20
+        Wait-TenServer
+    }
+    BeforeEach {
+        Write-PSFMessage -Level Important -Message "Next test"
     }
     Context "Connect-TenServer" {
         It "Connects to a site" {
