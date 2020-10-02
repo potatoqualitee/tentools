@@ -21,10 +21,9 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
                 Port                 = 8834
             }
             (Connect-TenServer @splat).ComputerName | Should -Be "localhost"
+            Restart-TenService
         }
     }
-
-    Restart-TenService
     # Give it time to do whatever it needs to do
     Wait-TenServerReady -ComputerName localhost
 
