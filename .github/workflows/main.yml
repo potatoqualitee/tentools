@@ -91,6 +91,9 @@ jobs:
         run: |
           docker cp /tmp/all-2.0.tar.gz nessus:/tmp/all-2.0.tar.gz
           docker exec nessus /opt/nessus/sbin/nessuscli update /tmp/all-2.0.tar.gz
+          #try again just in case
+          docker exec nessus /opt/nessus/sbin/nessuscli update /tmp/all-2.0.tar.gz
+          Start-Sleep 3
       - name: Run Pester tests
         shell: pwsh
         run: |
