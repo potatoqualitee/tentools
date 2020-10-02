@@ -38,7 +38,7 @@ function Wait-TenServerReady {
             }
             do {
                 try {
-                    $result = Invoke-NonAuthRequest @params -ErrorAction Stop
+                    $result = Invoke-NonAuthRequest @params -EnableException
                 } catch {
                     # keep trying
                 }
