@@ -13,6 +13,19 @@ jobs:
         run: docker run -p 8834:8834 -p 2220:22 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
 
       # setup nessus
+      - name: Download nessus plugins
+        run: |
+          $ProgressPreference = "SilentlyContinue"
+          Invoke-WebRequest -Uri $env:TGZ -OutFile /tmp/all-2.0.tar.gz | Out-Null
+        shell: pwsh
+        env:
+          TGZ: ${{secrets.TGZ}}
+      - name: Copy tgz to docker and register plugins
+        run: |
+          docker cp /tmp/all-2.0.tar.gz nessus:/tmp/all-2.0.tar.gz
+          docker exec nessus /opt/nessus/sbin/nessuscli update /tmp/all-2.0.tar.gz
+          docker exec nessus /opt/nessus/sbin/nessusd -R
+
       - name: Write nessus license from secrets to disk
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
         shell: bash
@@ -80,18 +93,6 @@ jobs:
             Path = "/tmp/nessus.license"
           }
           Initialize-TenServer @splat
-      - name: Download nessus plugins
-        run: |
-          $ProgressPreference = "SilentlyContinue"
-          Invoke-WebRequest -Uri $env:TGZ -OutFile /tmp/all-2.0.tar.gz | Out-Null
-        shell: pwsh
-        env:
-          TGZ: ${{secrets.TGZ}}
-      - name: Copy tgz to docker and register plugins
-        run: |
-          docker cp /tmp/all-2.0.tar.gz nessus:/tmp/all-2.0.tar.gz
-          docker exec nessus /opt/nessus/sbin/nessuscli update /tmp/all-2.0.tar.gz
-          docker exec nessus /opt/nessus/sbin/nessusd -R
       - name: Run Pester tests
         shell: pwsh
         run: |
