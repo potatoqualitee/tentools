@@ -93,6 +93,8 @@ jobs:
             Path = "/tmp/nessus.license"
           }
           Initialize-TenServer @splat
+          Restart-TenService
+          Start-Sleep 20
       - name: Run Pester tests
         shell: pwsh
         run: |

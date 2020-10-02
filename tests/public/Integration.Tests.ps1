@@ -21,10 +21,6 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
                 Port                 = 8834
             }
             (Connect-TenServer @splat).ComputerName | Should -Be "localhost"
-            Restart-TenService
-            # Give it time to do whatever it needs to do
-            Wait-TenServerReady -ComputerName localhost
-            (Connect-TenServer @splat).ComputerName | Should -Be "localhost"
         }
     }
 
@@ -40,7 +36,6 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     }
     Context "Get-TenPlugin" {
         It "Returns proper plugin information" {
-            Wait-TenServerReady -ComputerName localhost
             $results = Get-TenPlugin -PluginId 10714
             $results | Select-Object -ExpandProperty Name | Should -Be 'ZyXEL Router Default Telnet Password Present'
             $results | Select-Object -ExpandProperty PluginId | Should -Be 10714
