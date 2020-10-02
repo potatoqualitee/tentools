@@ -24,7 +24,7 @@ jobs:
         run: |
           docker cp /tmp/all-2.0.tar.gz nessus:/tmp/all-2.0.tar.gz
           docker exec nessus /opt/nessus/sbin/nessuscli update /tmp/all-2.0.tar.gz
-          docker exec nessus /opt/nessus/sbin/nessusd -R
+          # docker exec nessus /opt/nessus/sbin/nessusd -R
 
       - name: Write nessus license from secrets to disk
         run: 'echo "$NLICENSE" > /tmp/nessus.license'

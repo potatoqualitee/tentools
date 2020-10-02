@@ -24,6 +24,10 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
         }
     }
 
+    Restart-TenService
+    # Give it time to do whatever it needs to do
+    Wait-TenServerReady -ComputerName localhost
+
     Context "Get-TenUser" {
         It "Returns a user" {
             Get-TenUser | Select-Object -ExpandProperty name | Should -Contain "admin"
