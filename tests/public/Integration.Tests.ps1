@@ -22,10 +22,11 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             }
             (Connect-TenServer @splat).ComputerName | Should -Be "localhost"
             Restart-TenService
+            # Give it time to do whatever it needs to do
+            Wait-TenServerReady -ComputerName localhost
+            (Connect-TenServer @splat).ComputerName | Should -Be "localhost"
         }
     }
-    # Give it time to do whatever it needs to do
-    Wait-TenServerReady -ComputerName localhost
 
     Context "Get-TenUser" {
         It "Returns a user" {
