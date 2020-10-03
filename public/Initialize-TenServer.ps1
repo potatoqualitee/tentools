@@ -99,6 +99,7 @@ function Initialize-TenServer {
         $license = (Get-Content -Path $Path -Raw).Replace("`r`n", "")
 
         foreach ($computer in $ComputerName) {
+            Wait-TenServerReady -ComputerName $computr -Port $Port -Register
             if ($Port -eq 443) {
                 $uri = "https://$($computer):$Port/rest"
                 $fulluri = "$uri/user"
