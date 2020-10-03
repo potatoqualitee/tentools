@@ -62,10 +62,8 @@ jobs:
           $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
           $splat = @{
             ComputerName = "localhost"
-            AcceptSelfSignedCert = $false
             Credential = $cred
             EnableException = $true
-            Port = 8834
             Path = "/tmp/nessus.license"
           }
           Initialize-TenServer @splat
@@ -74,6 +72,13 @@ jobs:
         run: |
           Import-Module ./tentools.psd1
           Get-TenServerStatus -ComputerName localhost
+          $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
+          $splat = @{
+            ComputerName = "localhost"
+            Credential = $cred
+            EnableException = $true
+          }
+          Connect-TenServer @splat
       - name: Run Pester tests
         shell: pwsh
         run: |
