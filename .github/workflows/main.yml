@@ -15,7 +15,7 @@ jobs:
 
       # Setup docker image
       - name: Download the image
-        run: docker pull ghcr.io/potatoqualitee/nessus7:latest
+        run: docker pull ghcr.io/potatoqualitee/nessus:latest
       - name: Startup the container
         run: docker run -p 8834:8834 -p 2220:22 --hostname nessus --name nessus -d ghcr.io/potatoqualitee/nessus7:latest
 
