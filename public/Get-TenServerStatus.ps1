@@ -20,23 +20,14 @@ function Get-TenServerStatus {
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 0)]
-        [string[]]$ComputerName,
-        [int]$Port = "8834",
-        [switch]$AcceptSelfSignedCert,
+        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Alias('Index')]
+        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [switch]$EnableException
     )
     process {
-        foreach ($computer in $ComputerName) {
-            $params = @{
-                ComputerName         = $computer
-                Port                 = $Port
-                Path                 = "/server/status"
-                AcceptSelfSignedCert = $AcceptSelfSignedCert
-                EnableException      = $EnableException
-            }
-
-            Invoke-NonAuthRequest @params
+        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+            Invoke-TenRequest -SessionObject $session -Path '/server/status' -Method 'Get'
         }
     }
 }

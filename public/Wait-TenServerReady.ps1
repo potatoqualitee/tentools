@@ -29,32 +29,17 @@ function Wait-TenServerReady {
         [switch]$EnableException
     )
     process {
-        if ($Register) {
-            $progressmessage = "Please wait while Nessus prepares the files needed to scan your assets."
-        } else {
-            $progressmessage = "Waiting for server to be ready."
-        }
         foreach ($computer in $ComputerName) {
             $params = @{
-                ComputerName         = $computer
-                Port                 = $Port
-                Path                 = "/server/status"
-                AcceptSelfSignedCert = $AcceptSelfSignedCert
-                EnableException      = $EnableException
+                ComputerName    = $computer
+                Port            = $Port
+                Path            = "/server/status"
+                EnableException = $EnableException
             }
             do {
-                $i++
-                $helper = @{
-                    StepNumber = $i
-                    Activity   = "Loading"
-                    Message    = $progressmessage
-                    TotalSteps = $Timeout
-                }
-                Write-ProgressHelper @helper
-
-                $result = Invoke-NonAuthRequest @params -WarningAction SilentlyContinue
+                $result = Invoke-NonAuthRequest @params
                 Start-Sleep 1
-
+                $i++
 
                 if ($Register) {
                     $registerstatus = $result.status -eq 'register'

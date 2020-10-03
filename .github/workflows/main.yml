@@ -6,20 +6,26 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # Setup docker image
-      - name: Download the image if required
-        run: docker pull sometheycallme/docker-nessus:latest
-      - name: Startup the container
-        run: docker run -p 8834:8834 -p 2220:22 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
+      - name: Login to ghcr
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GHCR_TOKEN }}
 
-      # setup nessus
+      # Setup docker image
+      - name: Download the image
+        run: docker pull ghcr.io/potatoqualitee/nessus7:latest
+      - name: Startup the container
+        run: docker run -p 8834:8834 -p 2220:22 --hostname nessus --name nessus -d ghcr.io/potatoqualitee/nessus7:latest
+
       - name: Write nessus license from secrets to disk
         run: 'echo "$NLICENSE" > /tmp/nessus.license'
         shell: bash
         env:
           NLICENSE: ${{secrets.LICENSE}}
 
-      # setup CA certificate trust to emulate prod
+      # setup CA certificate trust on runner to emulate prod
       - name: Write CA Cert
         run: 'echo "$CACERT" > /tmp/cacert.pem'
         shell: bash
@@ -30,22 +36,6 @@ jobs:
           sudo cp /tmp/cacert.pem /etc/ssl/certs/ca.crt
           sudo chmod 644 /etc/ssl/certs/ca.crt
           sudo update-ca-certificates
-
-      # setup cert in container to emulate prod
-      - name: Write SSL Key
-        run: 'echo "$SSLKEY" > /tmp/serverkey.pem'
-        shell: bash
-        env:
-          SSLKEY: ${{secrets.SSLKEY}}
-      - name: Write SSL Cert
-        run: 'echo "$SSLCERT" > /tmp/servercert.pem'
-        shell: bash
-        env:
-          SSLCERT: ${{secrets.SSLCERT}}
-      - name: Copy certs to docker
-        run: |
-          docker cp /tmp/serverkey.pem nessus:/opt/nessus/var/nessus/CA/serverkey.pem
-          docker cp /tmp/servercert.pem nessus:/opt/nessus/com/nessus/CA/servercert.pem
 
       # time to party
       - name: Set required PowerShell modules
@@ -69,14 +59,11 @@ jobs:
         shell: pwsh
         run: |
           Import-Module ./tentools.psd1
-          Wait-TenServerReady -ComputerName localhost -Register
           $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
           $splat = @{
             ComputerName = "localhost"
-            AcceptSelfSignedCert = $false
             Credential = $cred
             EnableException = $true
-            Port = 8834
             Path = "/tmp/nessus.license"
           }
           Initialize-TenServer @splat

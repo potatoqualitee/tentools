@@ -99,7 +99,6 @@ function Initialize-TenServer {
         $license = (Get-Content -Path $Path -Raw).Replace("`r`n", "")
 
         foreach ($computer in $ComputerName) {
-            Wait-TenServerReady -ComputerName $computer -Port $Port -Register
             if ($Port -eq 443) {
                 $uri = "https://$($computer):$Port/rest"
                 $fulluri = "$uri/user"
@@ -150,7 +149,6 @@ function Initialize-TenServer {
                     Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
                 }
 
-                # id = 2 for sc managed
                 $fulluri = "$uri/users"
                 $body = @{
                     username    = $Credential.UserName

@@ -3,6 +3,10 @@
 
 
 Describe "Integration Tests" -Tag "IntegrationTests" {
+    BeforeAll {
+        # Give it time to do whatever it needs to do
+        Wait-TenServerReady -ComputerName localhost
+    }
     BeforeEach {
         Write-Output -Message "Next test"
     }
@@ -30,12 +34,22 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             Get-TenFolder | Select-Object -ExpandProperty name | Should -Contain "Trash"
         }
     }
-    Context "Get-TenPlugin" {
-        It "Returns proper plugin information" {
-            $results = Get-TenPlugin -PluginId 100000
-            $results | Select-Object -ExpandProperty Name | Should -Be 'Test Plugin for tentools'
-            $results | Select-Object -ExpandProperty PluginId | Should -Be 100000
-            ($results | Select-Object -ExpandProperty Attributes).fname | Should -Be 'tentools_test.nasl'
+
+    Context "Set-TenCertificate" {
+        It -Skip "Sets a Certificate" {
+            $cred = New-Object -TypeName PSCredential -ArgumentList "root", (ConvertTo-SecureString -String 0Eff92c0eff92c -AsPlainText -Force)
+            Set-TenCertificate -ComputerName localhost -Credential $cred -CertPath /tmp/servercert.pem -KeyPath /tmp/serverkey.pem -AcceptAnyThumbprint -Type Nessus -Verbose
+            Restart-TenService
+            $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
+            $splat = @{
+                ComputerName    = "localhost"
+                Credential      = $cred
+                EnableException = $true
+                Port            = 8834
+            }
+            Start-Sleep 3
+            Wait-TenServerReady -ComputerName localhost
+            (Connect-TenServer @splat).ComputerName | Should -Be "localhost"
         }
     }
 }
