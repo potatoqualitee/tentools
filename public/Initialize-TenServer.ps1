@@ -149,6 +149,7 @@ function Initialize-TenServer {
                     Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
                 }
 
+                # id = 2 for sc managed
                 $fulluri = "$uri/users"
                 $body = @{
                     username    = $Credential.UserName
@@ -171,6 +172,7 @@ function Initialize-TenServer {
                 $null = Invoke-RestMethod @adminuserparams -ErrorAction Stop
                 $null = $PSBoundParameters.Remove("Path")
                 Connect-TenServer @PSBoundParameters
+                Restart-TenService
             } catch {
                 $msg = Get-ErrorMessage -Record $_
                 Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
