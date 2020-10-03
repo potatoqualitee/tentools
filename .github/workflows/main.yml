@@ -59,7 +59,6 @@ jobs:
         shell: pwsh
         run: |
           Import-Module ./tentools.psd1
-          Wait-TenServerReady -ComputerName localhost -Register
           $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
           $splat = @{
             ComputerName = "localhost"

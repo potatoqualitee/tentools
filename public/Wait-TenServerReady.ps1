@@ -45,7 +45,7 @@ function Wait-TenServerReady {
                 $i++
                 $helper = @{
                     StepNumber = $i
-                    Activity   = "Waiting"
+                    Activity   = "Loading"
                     Message    = $progressmessage
                     TotalSteps = $Timeout
                 }
