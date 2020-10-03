@@ -27,7 +27,7 @@ function Initialize-TenServer {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Initialize-TenServer -ComputerName acas -Credential admin
+        PS> Initialize-TenServer -ComputerName localhost -Path $home\Downloads\nessus.license -Credential admin
     #>
     [CmdletBinding()]
     param

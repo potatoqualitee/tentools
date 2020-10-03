@@ -167,7 +167,7 @@ function Connect-TenServer {
                 $session = [PSCustomObject]@{
                     URI          = $uri
                     UserName     = $username
-                    ComputerName = $ComputerName
+                    ComputerName = $computer
                     Credential   = $Credential
                     Token        = $usertoken
                     SessionId    = $script:NessusConn.Count

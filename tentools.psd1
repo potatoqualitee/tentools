@@ -33,7 +33,7 @@
     PowerShellVersion  = '3.0'
 
     # Modules that must be imported into the global environment prior to importing this module
-    RequiredModules    = @('PSFramework')
+    RequiredModules    = @('PSFramework', 'PoshRSJob')
 
     # Assemblies that must be loaded prior to importing this module
     RequiredAssemblies = @('bin\RestSharp.dll')
@@ -89,6 +89,7 @@
         'Remove-TenUser',
         'Rename-TenGroup',
         'Resume-TenScan',
+        'Restart-TenService',
         'Save-TenPlugin',
         'Set-TenPolicyPortRange',
         'Set-TenUserPassword',
@@ -99,10 +100,12 @@
         'Get-TenScanHistory',
         'Get-TenScanHost',
         'Get-TenScanHostDetail',
+        'Set-TenCertificate',
         'Start-TenScan',
         'Stop-TenScan',
         'Suspend-TenScan',
-        'Test-TenAccessibility'
+        'Test-TenAccessibility',
+        'Wait-TenServerReady'
     )
 
     # Cmdlets to export from this module

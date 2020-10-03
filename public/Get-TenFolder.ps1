@@ -15,7 +15,7 @@ function Get-TenFolder {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        Get-TenFolder 0
+        Get-TenFolder
 
         Name    : My Scans
         Id      : 2

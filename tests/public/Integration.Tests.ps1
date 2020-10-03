@@ -5,7 +5,10 @@
 Describe "Integration Tests" -Tag "IntegrationTests" {
     BeforeAll {
         # Give it time to do whatever it needs to do
-        Start-Sleep 20
+        Wait-TenServerReady -ComputerName localhost
+    }
+    BeforeEach {
+        Write-Output -Message "Next test"
     }
     Context "Connect-TenServer" {
         It "Connects to a site" {
@@ -17,13 +20,27 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
                 EnableException      = $true
                 Port                 = 8834
             }
-            Connect-TenServer @splat
+            (Connect-TenServer @splat).ComputerName | Should -Be "localhost"
         }
     }
 
     Context "Get-TenUser" {
         It "Returns a user" {
             Get-TenUser | Select-Object -ExpandProperty name | Should -Contain "admin"
+        }
+    }
+    Context "Get-TenFolder" {
+        It "Returns a folder" {
+            Get-TenFolder | Select-Object -ExpandProperty name | Should -Contain "Trash"
+        }
+    }
+
+    Context "Get-TenPlugin" {
+        It "Returns proper plugin information" {
+            $results = Get-TenPlugin -PluginId 100000
+            $results | Select-Object -ExpandProperty Name | Should -Be 'Test Plugin for tentools'
+            $results | Select-Object -ExpandProperty PluginId | Should -Be 100000
+            ($results | Select-Object -ExpandProperty Attributes).fname | Should -Be 'tentools_test.nasl'
         }
     }
 }

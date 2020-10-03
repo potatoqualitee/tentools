@@ -1,4 +1,4 @@
-function Get-TenServerStatus {
+function Restart-TenService {
     <#
     .SYNOPSIS
         Short description
@@ -8,6 +8,12 @@ function Get-TenServerStatus {
 
     .PARAMETER SessionId
         ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
+
+    .PARAMETER ScanId
+        Parameter description
+
+    .PARAMETER AlternateTarget
+        Parameter description
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
@@ -20,17 +26,19 @@ function Get-TenServerStatus {
     [CmdletBinding()]
     param
     (
+        # Nessus session Id
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
         [switch]$EnableException
     )
+    begin {
+        $params = @{ }
+        $paramJson = ConvertTo-Json -InputObject $params -Compress
+    }
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            Invoke-TenRequest -SessionObject $session -Path '/server/status' -Method 'Get'
+            Invoke-TenRequest -SessionObject $session -Path "/server/restart" -Method 'Post' -Parameter $paramJson -ContentType 'application/json'
         }
     }
 }
-# need bare invoker
-# {"code":503,"progress":100,"status":"loading"}
-# {"code":200,"progress":null,"status":"ready"}
