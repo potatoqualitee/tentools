@@ -36,10 +36,11 @@ function Wait-TenServerReady {
         }
         foreach ($computer in $ComputerName) {
             $params = @{
-                ComputerName    = $computer
-                Port            = $Port
-                Path            = "/server/status"
-                EnableException = $EnableException
+                ComputerName         = $computer
+                Port                 = $Port
+                Path                 = "/server/status"
+                AcceptSelfSignedCert = $AcceptSelfSignedCert
+                EnableException      = $EnableException
             }
             do {
                 $i++
