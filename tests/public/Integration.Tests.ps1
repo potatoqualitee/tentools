@@ -5,7 +5,7 @@
 Describe "Integration Tests" -Tag "IntegrationTests" {
     BeforeAll {
         # Give it time to do whatever it needs to do
-        # Wait-TenServerReady -ComputerName localhost -Timeout 300
+        Wait-TenServerReady -ComputerName localhost
     }
     BeforeEach {
         Write-Output -Message "Next test"
@@ -36,10 +36,10 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     }
     Context "Get-TenPlugin" {
         It "Returns proper plugin information" {
-            $results = Get-TenPlugin -PluginId 10714
-            $results | Select-Object -ExpandProperty Name | Should -Be 'ZyXEL Router Default Telnet Password Present'
-            $results | Select-Object -ExpandProperty PluginId | Should -Be 10714
-            ($results | Select-Object -ExpandProperty Attributes).fname | Should -Be 'zyxel_pwd.nasl'
+            $results = Get-TenPlugin -PluginId 100000
+            $results | Select-Object -ExpandProperty Name | Should -Be 'Test Plugin for tentools'
+            $results | Select-Object -ExpandProperty PluginId | Should -Be 100000
+            ($results | Select-Object -ExpandProperty Attributes).fname | Should -Be 'tentools_test.nasl'
         }
     }
 }
