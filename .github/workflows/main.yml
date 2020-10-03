@@ -69,6 +69,11 @@ jobs:
             Path = "/tmp/nessus.license"
           }
           Initialize-TenServer @splat
+      - name: See status
+        shell: pwsh
+        run: |
+          Import-Module ./tentools.psd1
+          Get-TenServerStatus -ComputerName localhost
       - name: Run Pester tests
         shell: pwsh
         run: |
