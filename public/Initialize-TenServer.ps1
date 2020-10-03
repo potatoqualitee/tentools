@@ -99,6 +99,7 @@ function Initialize-TenServer {
         $license = (Get-Content -Path $Path -Raw).Replace("`r`n", "")
 
         foreach ($computer in $ComputerName) {
+            $null = Wait-TenServerReady -ComputerName $computer -Port $Port -Register -WarningAction SilentlyContinue
             if ($Port -eq 443) {
                 $uri = "https://$($computer):$Port/rest"
                 $fulluri = "$uri/user"
@@ -171,6 +172,7 @@ function Initialize-TenServer {
                 $null = Invoke-RestMethod @adminuserparams -ErrorAction Stop
                 $null = $PSBoundParameters.Remove("Path")
                 Connect-TenServer @PSBoundParameters
+                $null = Restart-TenService
             } catch {
                 $msg = Get-ErrorMessage -Record $_
                 Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
