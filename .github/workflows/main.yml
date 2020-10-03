@@ -71,7 +71,6 @@ jobs:
         shell: pwsh
         run: |
           Import-Module ./tentools.psd1
-          Get-TenServerStatus -ComputerName localhost
           $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
           $splat = @{
             ComputerName = "localhost"
