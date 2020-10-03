@@ -1,12 +1,13 @@
 ﻿Write-Host -Object "Running $PSCommandpath" -ForegroundColor Cyan
 . "$PSScriptRoot\..\constants.ps1"
 
+
 Describe "Integration Tests" -Tag "IntegrationTests" {
     BeforeEach {
-        Write-Warning -Message "Next test"
+        Write-Output -Message "Next test"
     }
-    Context "All commands" {
-        It "Connect-TenServer connects to a site" {
+    Context "Connect-TenServer" {
+        It "Connects to a site" {
             $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
             $splat = @{
                 ComputerName         = "localhost"
@@ -17,15 +18,20 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             }
             (Connect-TenServer @splat).ComputerName | Should -Be "localhost"
         }
+    }
 
-        It "Get-TenUser returns a user" {
+    Context "Get-TenUser" {
+        It "Returns a user" {
             Get-TenUser | Select-Object -ExpandProperty name | Should -Contain "admin"
         }
-        It "Get-TenFolder a folder" {
+    }
+    Context "Get-TenFolder" {
+        It "Returns a folder" {
             Get-TenFolder | Select-Object -ExpandProperty name | Should -Contain "Trash"
         }
-
-        It "Get-TenPlugin returns proper plugin information" {
+    }
+    Context "Get-TenPlugin" {
+        It "Returns proper plugin information" {
             $results = Get-TenPlugin -PluginId 100000
             $results | Select-Object -ExpandProperty Name | Should -Be 'Test Plugin for tentools'
             $results | Select-Object -ExpandProperty PluginId | Should -Be 100000
