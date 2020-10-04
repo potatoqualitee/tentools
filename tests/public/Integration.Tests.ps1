@@ -3,12 +3,9 @@
 
 
 Describe "Integration Tests" -Tag "IntegrationTests" {
-    BeforeAll {
-        # Give it time to do whatever it needs to do
-        Wait-TenServerReady -ComputerName localhost
-    }
     BeforeEach {
         Write-Output -Message "Next test"
+        Wait-TenServerReady -ComputerName localhost
     }
     Context "Connect-TenServer" {
         It "Connects to a site" {
