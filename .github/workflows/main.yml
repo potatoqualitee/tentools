@@ -64,7 +64,7 @@ jobs:
             ComputerName = "localhost"
             Credential = $cred
             EnableException = $true
-            Path = "/tmp/nessus.license"
+            LicensePath = "/tmp/nessus.license"
           }
           Initialize-TenServer @splat
       - name: Run Pester tests
