@@ -170,7 +170,7 @@ function Initialize-TenServer {
 
             try {
                 $null = Invoke-RestMethod @adminuserparams -ErrorAction Stop
-                $null = $PSBoundParameters.Remove("Path")
+                $null = $PSBoundParameters.Remove("LicensePath")
                 Connect-TenServer @PSBoundParameters
                 $null = Restart-TenService
             } catch {
