@@ -43,6 +43,20 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
         }
     }
 
+    Context "Get-TenGroup" {
+        It "Doesn't return a group but does return a warning" {
+            Get-TenGroup -WarningVariable warning
+            $warning | Should -match "not licenced for multiple users"
+        }
+    }
+
+    Context "Get-TenGroupMember" {
+        It "Doesn't return a group member but does return a warning" {
+            Get-TenGroupMember -GroupId 0 -WarningVariable warning
+            $warning | Should -match "not licenced for multiple users"
+        }
+    }
+
     Context "Get-TenPlugin" {
         It "Returns proper plugin information" {
             $results = Get-TenPlugin -PluginId 100000
@@ -52,16 +66,11 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
         }
     }
 
-    Context "Get-TenGroup" {
-        It "Doesn't return a group but does return a warning" {
-            Get-TenGroup -WarningVariable warning
-            $warning | Should -match "not licenced for multiple users"
-        }
-    }
-    Context "Get-TenGroupMember" {
-        It "Doesn't return a group member but does return a warning" {
-            Get-TenGroupMember -GroupId 0 -WarningVariable warning
-            $warning | Should -match "not licenced for multiple users"
+    Context "Get-TenPluginFamily" {
+        # does not support tenable.sc
+        It "Returns proper plugin family information" {
+            $results = Get-TenPluginFamily -FamilyId 1
+            $results | Select-Object -ExpandProperty Name | Should -Be 'Misc.'
         }
     }
 }
