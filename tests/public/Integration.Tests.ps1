@@ -25,11 +25,10 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             $script:version = ([version]((Get-TenSession).ServerVersion)).Major
         }
     }
-    Write-Warning "$script:version"
     Context "Get-TenUser" {
         It "Returns a user..or doesnt" {
             if ($script:version -eq 18) {
-                Get-TenUser | Select-Object -ExpandProperty name | Should -BeNullOrEmpty
+                Get-TenUser -WarningAction SilentlyContinue | Select-Object -ExpandProperty name | Should -BeNullOrEmpty
             } else {
                 Get-TenUser | Select-Object -ExpandProperty name | Should -Contain "admin"
             }
