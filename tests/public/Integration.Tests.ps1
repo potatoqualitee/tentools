@@ -6,6 +6,8 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     BeforeAll {
         # Ensure Nessus is warmed up
         Wait-TenServerReady -ComputerName localhost
+        $PSBoundParameters['*:WarningAction'] = "SilentlyContinue"
+        $PSBoundParameters['*:WarningVariable'] = "warning"
     }
     BeforeEach {
         Write-Output -Message "Next test"
@@ -47,6 +49,13 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             $results | Select-Object -ExpandProperty Name | Should -Be 'Test Plugin for tentools'
             $results | Select-Object -ExpandProperty PluginId | Should -Be 100000
             ($results | Select-Object -ExpandProperty Attributes).fname | Should -Be 'tentools_test.nasl'
+        }
+    }
+
+    Context "Get-TenGroup" {
+        It "Doesn't return a group but does return a warning" {
+            Get-TenGroup
+            $warning | Should -match "not licenced for multiple users"
         }
     }
 }
