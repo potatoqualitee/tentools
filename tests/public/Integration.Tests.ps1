@@ -58,4 +58,10 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             $warning | Should -match "not licenced for multiple users"
         }
     }
+    Context "Get-TenGroupMember" {
+        It "Doesn't return a group member but does return a warning" {
+            Get-TenGroupMember -GroupId 0 -WarningVariable warning
+            $warning | Should -match "not licenced for multiple users"
+        }
+    }
 }
