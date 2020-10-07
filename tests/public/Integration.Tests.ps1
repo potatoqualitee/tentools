@@ -22,7 +22,7 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             }
             (Connect-TenServer @splat).ComputerName | Should -Be "localhost"
             # Nessus has restricted some API access in higher versions
-            $script:version = ([version]((Get-TenSession -WarningAction SilentlyContinue).ServerVersion)).Major
+            $script:version = ([version]((Get-TenSession).ServerVersion)).Major
         }
     }
     Context "Get-TenUser" {
