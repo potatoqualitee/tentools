@@ -3,10 +3,13 @@
 
 
 Describe "Integration Tests" -Tag "IntegrationTests" {
+    BeforeAll {
+        # Give Nessus time to warm up
+        Start-Sleep 30
+    }
     BeforeEach {
         Write-Output -Message "Next test"
         Wait-TenServerReady -ComputerName localhost
-        Start-Sleep 60
     }
     Context "Connect-TenServer" {
         It "Connects to a site" {
@@ -47,7 +50,7 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             $results = Get-TenPlugin -PluginId 100000
             $results | Select-Object -ExpandProperty Name | Should -Be 'Test Plugin for tentools'
             $results | Select-Object -ExpandProperty PluginId | Should -Be 100000
-            ($results | Select-Object -ExpandProperty Attributes).fname | Should -Be 'tentools_test.nasl'
+            ($results | Select-Object -ExpandProperty Attributes).fname | Should -match 'tentools_test.nasl'
         }
     }
 }
