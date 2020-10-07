@@ -76,7 +76,8 @@ function Invoke-TenRequest {
                 Write-PSFMessage -Level Verbose -Message 'The session has expired, Re-authenticating'
                 try {
                     $null = $script:NessusConn.Remove($SessionObject)
-                    $null = Connect-TenServer $SessionObject.PSBoundParameters -ErrorAction Stop
+                    $bound = $SessionObject.Bound
+                    $null = Connect-TenServer @bound -ErrorAction Stop
                     $results = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
                 } catch {
                     $msg = Get-ErrorMessage -Record $_
@@ -86,7 +87,8 @@ function Invoke-TenRequest {
                 Write-PSFMessage -Level Verbose -Message 'Got a 403 forbidden, this happens sometimes for unknown reasons. Re-authenticating'
                 try {
                     $null = $script:NessusConn.Remove($SessionObject)
-                    $null = Connect-TenServer $SessionObject.PSBoundParameters -ErrorAction Stop
+                    $bound = $SessionObject.Bound
+                    $null = Connect-TenServer @bound -ErrorAction Stop
                     $results = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
                 } catch {
                     $msg = Get-ErrorMessage -Record $_

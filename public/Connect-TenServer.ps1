@@ -168,18 +168,20 @@ function Connect-TenServer {
                 }
 
                 $session = [PSCustomObject]@{
-                    URI          = $uri
-                    UserName     = $username
-                    ComputerName = $computer
-                    Credential   = $Credential
-                    Token        = $usertoken
-                    SessionId    = $script:NessusConn.Count
-                    WebSession   = $websession
-                    Sc           = $sc
-                    Bound        = $PSBoundParameters
-                    ServerType   = $Type
+                    URI           = $uri
+                    UserName      = $username
+                    ComputerName  = $computer
+                    Credential    = $Credential
+                    Token         = $usertoken
+                    SessionId     = $script:NessusConn.Count
+                    WebSession    = $websession
+                    Sc            = $sc
+                    Bound         = $PSBoundParameters
+                    ServerType    = $Type
+                    ServerVersion = $null
                 }
                 $null = $script:NessusConn.Add($session)
+                $script:NessusConn[0].ServerVersion = (Get-TenServerInfo).ServerVersion
                 $session | Select-DefaultView -Property SessionId, UserName, URI, ServerType
             }
         }

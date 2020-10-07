@@ -6,7 +6,6 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     BeforeAll {
         # Give Nessus time to warm up
         Wait-TenServerReady -ComputerName localhost
-        Start-Sleep 20
     }
     BeforeEach {
         Write-Output -Message "Next test"
@@ -25,14 +24,19 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
         }
     }
 
-    # sometimes the first command just fails for no reason. Run once.
-    $null = Get-TenUser -EnableException:$false -WarningAction SilentlyContinue
+    # Nessus has restricted some API access in higher versions
+    $version = [version]((Get-TenSession).ServerVersion)
 
     Context "Get-TenUser" {
-        It "Returns a user" {
-            Get-TenUser | Select-Object -ExpandProperty name | Should -Contain "admin"
+        It "Returns a user..or doesnt" {
+            if ($version.Major -lt 18) {
+                Get-TenUser | Select-Object -ExpandProperty name | Should -Contain "admin"
+            } else {
+                Get-TenUser | Select-Object -ExpandProperty name | Should -BeNullOrEmpty
+            }
         }
     }
+
     Context "Get-TenFolder" {
         It "Returns a folder" {
             Get-TenFolder | Select-Object -ExpandProperty name | Should -Contain "Trash"
