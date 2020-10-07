@@ -54,7 +54,7 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
 
     Context "Get-TenGroup" {
         It "Doesn't return a group but does return a warning" {
-            Get-TenGroup
+            Get-TenGroup -WarningVariable warning
             $warning | Should -match "not licenced for multiple users"
         }
     }
