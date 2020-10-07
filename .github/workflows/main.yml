@@ -67,9 +67,9 @@ jobs:
             LicensePath = "/tmp/nessus.license"
           }
           Initialize-TenServer @splat
-      - name: Sleep for 30 seconds to give Nessus time to initialize
+      - name: Sleep to give Nessus time to initialize
         shell: pwsh
-        run: Start-Sleep 30
+        run: Start-Sleep 20
       - name: Run Pester tests
         shell: pwsh
         run: |

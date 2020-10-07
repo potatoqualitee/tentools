@@ -25,14 +25,14 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     }
 
     # Nessus has restricted some API access in higher versions
-    $version = [version]((Get-TenSession).ServerVersion)
-
+    $version = ([version]((Get-TenSession).ServerVersion)).Major
+    Write-Warning $version
     Context "Get-TenUser" {
         It "Returns a user..or doesnt" {
-            if ($version.Major -lt 18) {
-                Get-TenUser | Select-Object -ExpandProperty name | Should -Contain "admin"
-            } else {
+            if ($version -eq 18) {
                 Get-TenUser | Select-Object -ExpandProperty name | Should -BeNullOrEmpty
+            } else {
+                Get-TenUser | Select-Object -ExpandProperty name | Should -Contain "admin"
             }
         }
     }
