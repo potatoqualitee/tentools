@@ -28,8 +28,7 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     Context "Get-TenUser" {
         It "Returns a user..or doesnt" {
             if ($script:version -eq 18) {
-                Write-Warning 18
-                Get-TenUser | Select-Object -ExpandProperty name | Should -BeNullOrEmpty
+                Get-TenUser  3>$null | Select-Object -ExpandProperty name | Should -BeNullOrEmpty
             } else {
                 Get-TenUser | Select-Object -ExpandProperty name | Should -Contain "admin"
             }

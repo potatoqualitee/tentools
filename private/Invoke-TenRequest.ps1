@@ -77,7 +77,7 @@ function Invoke-TenRequest {
                 try {
                     $null = $script:NessusConn.Remove($SessionObject)
                     $bound = $SessionObject.Bound
-                    $null = Connect-TenServer @bound -ErrorAction Stop
+                    $null = Connect-TenServer @bound
                     $results = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
                 } catch {
                     $msg = Get-ErrorMessage -Record $_
@@ -88,7 +88,7 @@ function Invoke-TenRequest {
                 try {
                     $null = $script:NessusConn.Remove($SessionObject)
                     $bound = $SessionObject.Bound
-                    $null = Connect-TenServer @bound -ErrorAction Stop
+                    $null = Connect-TenServer @bound
                     $results = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
                 } catch {
                     $msg = Get-ErrorMessage -Record $_
