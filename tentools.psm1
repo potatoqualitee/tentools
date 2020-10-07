@@ -24,7 +24,7 @@ foreach ($function in (Get-ChildItem "$ModuleRoot\public" -Filter "*.ps1" -Recur
 }
 
 
-if (!(Test-Path variable:Script:NessusConn )) {
+if ( -not (Test-Path variable:Script:NessusConn )) {
     $script:NessusConn = New-Object System.Collections.ArrayList
 }
 

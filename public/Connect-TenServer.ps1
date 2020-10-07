@@ -43,6 +43,9 @@ function Connect-TenServer {
         [switch]$EnableException
     )
     begin {
+        # support just one session for now by resetting the variable
+        $script:NessusConn = New-Object System.Collections.ArrayList
+
         if (-not $PSBoundParameters.Credential) {
             $UseDefaultCredential = $true
         }
@@ -176,7 +179,7 @@ function Connect-TenServer {
                     Bound        = $PSBoundParameters
                     ServerType   = $Type
                 }
-                [void]$script:NessusConn.Add($session)
+                $null = $script:NessusConn.Add($session)
                 $session | Select-DefaultView -Property SessionId, UserName, URI, ServerType
             }
         }
