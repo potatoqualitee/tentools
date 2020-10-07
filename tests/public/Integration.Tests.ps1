@@ -6,6 +6,7 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     BeforeEach {
         Write-Output -Message "Next test"
         Wait-TenServerReady -ComputerName localhost
+        Start-Sleep 60
     }
     Context "Connect-TenServer" {
         It "Connects to a site" {

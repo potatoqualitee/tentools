@@ -172,6 +172,7 @@ function Initialize-TenServer {
                 $null = Invoke-RestMethod @adminuserparams -ErrorAction Stop
                 $null = $PSBoundParameters.Remove("LicensePath")
                 Connect-TenServer @PSBoundParameters
+                Restart-TenService
             } catch {
                 $msg = Get-ErrorMessage -Record $_
                 Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
