@@ -4,10 +4,8 @@
 
 Describe "Integration Tests" -Tag "IntegrationTests" {
     BeforeAll {
-        # Give Nessus time to warm up
+        # Ensure Nessus is warmed up
         Wait-TenServerReady -ComputerName localhost
-        # Sleep to give it even more time
-        Start-Sleep 30
     }
     BeforeEach {
         Write-Output -Message "Next test"
