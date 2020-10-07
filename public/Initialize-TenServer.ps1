@@ -38,7 +38,7 @@ function Initialize-TenServer {
         [Parameter(Mandatory)]
         [Management.Automation.PSCredential]$Credential,
         [Parameter(Mandatory)]
-        [string]$Path,
+        [string]$LicensePath,
         [switch]$AcceptSelfSignedCert,
         [ValidateSet("tenable.sc", "Nessus")]
         [string]$Type,
@@ -91,14 +91,15 @@ function Initialize-TenServer {
     }
     process {
 
-        if (-not (Test-Path -Path $Path)) {
-            Stop-PSFFunction -EnableException:$EnableException -Message "$Path not found"
+        if (-not (Test-Path -Path $LicensePath)) {
+            Stop-PSFFunction -EnableException:$EnableException -Message "$LicensePath not found"
             return
         }
 
-        $license = (Get-Content -Path $Path -Raw).Replace("`r`n", "")
+        $license = (Get-Content -Path $LicensePath -Raw).Replace("`r`n", "")
 
         foreach ($computer in $ComputerName) {
+            $null = Wait-TenServerReady -ComputerName $computer -Port $Port -Register -WarningAction SilentlyContinue
             if ($Port -eq 443) {
                 $uri = "https://$($computer):$Port/rest"
                 $fulluri = "$uri/user"
@@ -169,8 +170,9 @@ function Initialize-TenServer {
 
             try {
                 $null = Invoke-RestMethod @adminuserparams -ErrorAction Stop
-                $null = $PSBoundParameters.Remove("Path")
+                $null = $PSBoundParameters.Remove("LicensePath")
                 Connect-TenServer @PSBoundParameters
+                Restart-TenService
             } catch {
                 $msg = Get-ErrorMessage -Record $_
                 Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
