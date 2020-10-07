@@ -25,6 +25,9 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
         }
     }
 
+    # sometimes the first command just fails for no reason. Run once.
+    $null = Get-TenUser -EnableException:$false -WarningAction SilentlyContinue
+
     Context "Get-TenUser" {
         It "Returns a user" {
             Get-TenUser | Select-Object -ExpandProperty name | Should -Contain "admin"
