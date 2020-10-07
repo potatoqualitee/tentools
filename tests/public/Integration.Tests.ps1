@@ -5,7 +5,7 @@
 Describe "Integration Tests" -Tag "IntegrationTests" {
     BeforeAll {
         # Give Nessus time to warm up
-        Start-Sleep 30
+        Start-Sleep 45
     }
     BeforeEach {
         Write-Output -Message "Next test"
