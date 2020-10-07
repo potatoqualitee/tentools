@@ -6,7 +6,7 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     BeforeAll {
         # Give Nessus time to warm up
         Wait-TenServerReady -ComputerName localhost
-        Start-Sleep 90
+        Start-Sleep 20
     }
     BeforeEach {
         Write-Output -Message "Next test"
@@ -27,15 +27,6 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
 
     Context "Get-TenUser" {
         It "Returns a user" {
-            $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
-            $splat = @{
-                ComputerName         = "localhost"
-                AcceptSelfSignedCert = $false
-                Credential           = $cred
-                EnableException      = $true
-                Port                 = 8834
-            }
-            (Connect-TenServer @splat).ComputerName | Should -Be "localhost"
             Get-TenUser | Select-Object -ExpandProperty name | Should -Contain "admin"
         }
     }
