@@ -30,7 +30,7 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             if ($script:version -eq 18) {
                 Get-TenUser -WarningAction SilentlyContinue | Select-Object -ExpandProperty name | Should -BeNullOrEmpty
             } else {
-                Get-TenUser | Select-Object -ExpandProperty name | Should -Contain "admin"
+                Get-TenUser -WarningAction SilentlyContinue | Select-Object -ExpandProperty name | Should -Contain "admin"
             }
         }
     }
