@@ -22,15 +22,16 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             }
             (Connect-TenServer @splat).ComputerName | Should -Be "localhost"
             # Nessus has restricted some API access in higher versions
-            $script:version = ([version]((Get-TenSession).ServerVersion)).Major
+            $script:version = ([version]((Get-TenSession -WarningAction SilentlyContinue).ServerVersion)).Major
         }
     }
     Context "Get-TenUser" {
         It "Returns a user..or doesnt" {
             if ($script:version -eq 18) {
-                Get-TenUser -WarningAction SilentlyContinue | Select-Object -ExpandProperty name | Should -BeNullOrEmpty
+                Write-Warning 18
+                Get-TenUser | Select-Object -ExpandProperty name | Should -BeNullOrEmpty
             } else {
-                Get-TenUser -WarningAction SilentlyContinue | Select-Object -ExpandProperty name | Should -Contain "admin"
+                Get-TenUser | Select-Object -ExpandProperty name | Should -Contain "admin"
             }
         }
     }
