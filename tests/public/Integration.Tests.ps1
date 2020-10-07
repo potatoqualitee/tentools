@@ -21,15 +21,14 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
                 Port                 = 8834
             }
             (Connect-TenServer @splat).ComputerName | Should -Be "localhost"
+            # Nessus has restricted some API access in higher versions
+            $script:version = ([version]((Get-TenSession).ServerVersion)).Major
         }
     }
-
-    # Nessus has restricted some API access in higher versions
-    $version = ([version]((Get-TenSession).ServerVersion)).Major
-    Write-Warning $version
+    Write-Warning "$script:version"
     Context "Get-TenUser" {
         It "Returns a user..or doesnt" {
-            if ($version -eq 18) {
+            if ($script:version -eq 18) {
                 Get-TenUser | Select-Object -ExpandProperty name | Should -BeNullOrEmpty
             } else {
                 Get-TenUser | Select-Object -ExpandProperty name | Should -Contain "admin"
