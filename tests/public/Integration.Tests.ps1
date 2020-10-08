@@ -76,14 +76,14 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     Context "Add-TenPluginRule" {
         It "Adds a plugin rule" {
             $results = Add-TenPluginRule -PluginId 100000 -Type High -ComputerName localhost
-            $results | Select-Object -ExpandProperty PluginId | Should -Be 100000
+            $results | Select-Object -ExpandProperty Id | Should -Be 100000
         }
     }
 
     Context "Get-TenPluginRule" {
         It "Returns proper plugin rule information" {
             $results = Get-TenPluginRule
-            $results | Select-Object -ExpandProperty Name | Should -Contain 'High'
+            $results | Select-Object -ExpandProperty Type | Should -Contain 'High'
         }
     }
 }
