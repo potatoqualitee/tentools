@@ -51,6 +51,10 @@ function Get-TenPluginRule {
 
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+            if ($session.sc) {
+                Stop-PSFFunction -Message "tenable.sc not supported"
+                return
+            }
             $rules = Invoke-TenRequest -SessionObject $session -Path '/plugin-rules' -Method 'Get'
 
             foreach ($rule in $rules.plugin_rules) {

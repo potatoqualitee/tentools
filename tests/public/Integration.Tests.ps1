@@ -30,7 +30,7 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     Context "Get-TenUser" {
         It "Returns a user..or doesnt" {
             if ($script:version -eq 18) {
-                Get-TenUser  3>$null | Select-Object -ExpandProperty name | Should -BeNullOrEmpty
+                Get-TenUser 3>$null | Select-Object -ExpandProperty name | Should -BeNullOrEmpty
             } else {
                 Get-TenUser | Select-Object -ExpandProperty name | Should -Contain "admin"
             }
@@ -45,14 +45,14 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
 
     Context "Get-TenGroup" {
         It "Doesn't return a group but does return a warning" {
-            Get-TenGroup -WarningVariable warning
+            Get-TenGroup -WarningVariable warning 3>$null
             $warning | Should -match "not licenced for multiple users"
         }
     }
 
     Context "Get-TenGroupMember" {
         It "Doesn't return a group member but does return a warning" {
-            Get-TenGroupMember -GroupId 0 -WarningVariable warning
+            Get-TenGroupMember -GroupId 0 -WarningVariable warning 3>$null
             $warning | Should -match "not licenced for multiple users"
         }
     }
@@ -67,10 +67,23 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     }
 
     Context "Get-TenPluginFamily" {
-        # does not support tenable.sc
         It "Returns proper plugin family information" {
             $results = Get-TenPluginFamily -FamilyId 1
             $results | Select-Object -ExpandProperty Name | Should -Be 'Misc.'
+        }
+    }
+
+    Context "Add-TenPluginRule" {
+        It "Adds a plugin rule" {
+            $results = Add-TenPluginRule -PluginId 100000 -Type High -ComputerName localhost
+            $results | Select-Object -ExpandProperty PluginId | Should -Be 100000
+        }
+    }
+
+    Context "Get-TenPluginRule" {
+        It "Returns proper plugin rule information" {
+            $results = Get-TenPluginRule
+            $results | Select-Object -ExpandProperty Name | Should -Contain 'High'
         }
     }
 }
