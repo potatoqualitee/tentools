@@ -84,7 +84,7 @@ function Import-TenPolicy {
                     Description    = $Policy.description
                     PolicyUUID     = $Policy.template_uuid
                     Visibility     = $Policy.visibility
-                    Shared         = (if ($Policy.shared -eq 1) { $True }else { $False })
+                    Shared         = $(if ($Policy.shared -eq 1) { $True }else { $False })
                     Owner          = $Policy.owner
                     UserId         = $Policy.owner_id
                     NoTarget       = $Policy.no_target

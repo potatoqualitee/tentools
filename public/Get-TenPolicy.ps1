@@ -64,7 +64,7 @@ function Get-TenPolicy {
                         Description    = $policy.description
                         PolicyUUID     = $policy.template_uuid
                         Visibility     = $policy.visibility
-                        Shared         = (if ($policy.shared -eq 1) { $true } else { $false })
+                        Shared         = $(if ($policy.shared -eq 1) { $true } else { $false })
                         Owner          = $policy.owner
                         UserId         = $policy.owner_id
                         NoTarget       = $policy.no_target
