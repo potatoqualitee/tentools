@@ -75,6 +75,7 @@
         'Import-TenPolicy',
         'Import-TenScan',
         'Initialize-TenServer',
+        'Invoke-TenRequest',
         'New-TenGroup',
         'New-TenPolicy',
         'New-TenScan',
