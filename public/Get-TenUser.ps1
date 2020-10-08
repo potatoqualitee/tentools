@@ -27,6 +27,12 @@ function Get-TenUser {
     )
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+
+            if (-not $session.sc -and $session.ServerVersion -ge 18) {
+                Stop-PSFFunction -Message "Nessus 8 and above not supported"
+                return
+            }
+
             $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
 
             $results = Invoke-TenRequest -SessionObject $session -Path '/users' -Method 'Get'
