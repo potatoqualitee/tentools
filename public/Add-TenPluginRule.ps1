@@ -93,7 +93,8 @@ function Add-TenPluginRule {
                 EnableException = $EnableException
             }
 
-            Invoke-TenRequest @params
+            $null = Invoke-TenRequest @params
+            Get-TenPluginRule | Select-Object -Last 1 # probably a bad idea :D
         }
     }
 }

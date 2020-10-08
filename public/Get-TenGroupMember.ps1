@@ -47,12 +47,14 @@ function Get-TenGroupMember {
 
                 $results = (Invoke-TenRequest @groupparams).users
                 if ($Session.sc) {
-                    [pscustomobject]@{
-                        UserName  = $user.username
-                        FirstName = $user.firstname
-                        LastName  = $user.lastname
-                        UserId    = $_Userid
-                        SessionId = $session.SessionId
+                    foreach ($user in $results) {
+                        [pscustomobject]@{
+                            UserName  = $user.username
+                            FirstName = $user.firstname
+                            LastName  = $user.lastname
+                            UserId    = $User.id
+                            SessionId = $session.SessionId
+                        } | Select-DefaultView -Property UserId, UserName, FirstName, LastName
                     }
                 } else {
                     $users = $results.users
@@ -61,12 +63,12 @@ function Get-TenGroupMember {
                             Name       = $user.name
                             UserName   = $user.username
                             Email      = $user.email
-                            UserId     = $_Userid
+                            UserId     = $User.id
                             Type       = $user.type
                             Permission = $permidenum[$user.permissions]
                             LastLogin  = $origin.AddSeconds($user.lastlogin).ToLocalTime()
                             SessionId  = $session.SessionId
-                        }
+                        } | Select-DefaultView -Property UserId, UserName, Name, Email, Type, Permission, LastLogin
                     }
                 }
             } else {

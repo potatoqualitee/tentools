@@ -21,8 +21,13 @@ function Invoke-TenRequest {
             foreach ($key in $replace.keys) {
                 $Path = $Path.Replace($key, $replace[$key])
             }
+
             if ($Path -match '/group/' -and $Path -match '/user') {
                 $Path = $Path.Replace("/user", "?fields=users")
+            }
+
+            if ($Path -match '/plugins/families/') {
+                $Path = $Path.Replace("/plugins/families/", "/pluginFamily/")
             }
         }
     }

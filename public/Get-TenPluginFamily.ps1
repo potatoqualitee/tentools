@@ -23,17 +23,19 @@ function Get-TenPluginFamily {
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
+        [Parameter(Mandatory)]
+        [int32[]]$FamilyId,
         [switch]$EnableException
     )
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            foreach ($families in (Invoke-TenRequest -SessionObject $session -Path '/plugins/families' -Method 'Get')) {
-                foreach ($family in $families) {
-                    [pscustomobject]@{
-                        Name     = $family.name
-                        FamilyId = $family.id
-                        Count    = $family.count
-                    }
+            foreach ($id in $FamilyId) {
+                $family = Invoke-TenRequest -SessionObject $session -Path "/plugins/families/$FamilyId" -Method 'Get'
+                [pscustomobject]@{
+                    FamilyId = $family.id
+                    Name     = $family.name
+                    Count    = $family.plugins.count
+                    Plugins  = $family.plugins
                 }
             }
         }
