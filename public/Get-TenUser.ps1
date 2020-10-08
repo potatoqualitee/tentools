@@ -28,7 +28,7 @@ function Get-TenUser {
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
 
-            if (-not $session.sc -and $session.ServerVersionMajor -ge 18) {
+            if (-not $session.sc -and $session.ServerVersionMajor -ge 8) {
                 Stop-PSFFunction -Message "Nessus 8 and above not supported :("
                 return
             }

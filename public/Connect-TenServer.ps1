@@ -182,8 +182,8 @@ function Connect-TenServer {
                     ServerVersionMajor = $null
                 }
                 $null = $script:NessusConn.Add($session)
-                $script:NessusConn[0].ServerVersion = (Get-TenServerInfo).ServerVersion
-                $script:NessusConn[0].ServerVersionMajor = ([version]((Get-TenServerInfo).ServerVersion)).Major
+                $script:NessusConn[0].ServerVersion = (Get-TenServerInfo).UIVersion
+                $script:NessusConn[0].ServerVersionMajor = ([version]((Get-TenServerInfo).UIVersion)).Major
                 $session | Select-DefaultView -Property SessionId, UserName, URI, ServerType
             }
         }

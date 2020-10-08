@@ -29,7 +29,7 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     }
     Context "Get-TenUser" {
         It "Returns a user..or doesnt" {
-            if ($script:version -eq 18) {
+            if ($script:version -ge 8) {
                 Get-TenUser 3>$null | Select-Object -ExpandProperty name | Should -BeNullOrEmpty
             } else {
                 Get-TenUser | Select-Object -ExpandProperty name | Should -Contain "admin"
