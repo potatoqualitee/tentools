@@ -17,7 +17,7 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
             $splat = @{
                 ComputerName         = "localhost"
-                AcceptSelfSignedCert = $false
+                AcceptSelfSignedCert = $true
                 Credential           = $cred
                 EnableException      = $true
                 Port                 = 8834

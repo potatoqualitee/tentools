@@ -22,6 +22,7 @@ jobs:
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module PSFramework, PoshRSJob -ErrorAction Stop
+          
       - name: Initialize the nessus server with admin user and license
         shell: pwsh
         run: |
@@ -35,9 +36,11 @@ jobs:
             AcceptSelfSignedCert = $true
           }
           Initialize-TenServer @splat
+
       - name: Sleep to give Nessus time to initialize
         shell: pwsh
         run: Start-Sleep 20
+
       - name: Run Pester tests
         shell: pwsh
         run: |
