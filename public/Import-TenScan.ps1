@@ -32,13 +32,13 @@ function Import-TenScan {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [ValidateScript( { Test-Path -Path $_ })]
         [string]$File,
-        [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$Encrypted,
         [Parameter(ValueFromPipelineByPropertyName)]
         [securestring]$Password,

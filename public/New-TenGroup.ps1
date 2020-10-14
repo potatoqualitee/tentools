@@ -24,10 +24,10 @@ function New-TenGroup {
     [OutputType([int])]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string]$Name,
         [switch]$EnableException
     )

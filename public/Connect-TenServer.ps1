@@ -32,7 +32,7 @@ function Connect-TenServer {
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 0)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string[]]$ComputerName,
         [int]$Port,
         [Management.Automation.PSCredential]$Credential,

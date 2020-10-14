@@ -29,7 +29,7 @@ function Get-TenPluginRule {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [int32[]]$PluginId,
         [Switch]$Detail,
         [switch]$EnableException

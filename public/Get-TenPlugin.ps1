@@ -19,10 +19,10 @@ function Get-TenPlugin {
     [CmdletBinding()]
     Param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Position = 1, ValueFromPipelineByPropertyName, Mandatory)]
+        [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
         [int32]$PluginId,
         [switch]$EnableException
     )
@@ -44,8 +44,7 @@ function Get-TenPlugin {
                         PluginId   = $plugin.id
                         FamilyName = $plugin.family_name
                         Attributes = $attributes
-                        SessionId  = $session.SessionId
-                    } | Select-DefaultView -Property Name, PluginId, FamilyName, Attributes
+                    }
                 }
             }
         }

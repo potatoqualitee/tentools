@@ -38,12 +38,12 @@ function Remove-TenGroupUser {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [Int32]$GroupId,
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 2)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [Int32]$UserId,
         [switch]$EnableException
     )

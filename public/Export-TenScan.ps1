@@ -41,10 +41,10 @@ function Export-TenScan {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32]$SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [Parameter(Position = 2)]
         [ValidateSet('Nessus', 'HTML', 'PDF', 'CSV', 'DB')]
@@ -53,12 +53,12 @@ function Export-TenScan {
         [String]$Path,
         [Parameter(ValueFromPipelineByPropertyName)]
         [Switch]$PSObject,
-        [Parameter(Position = 3, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [ValidateSet('Vuln_Hosts_Summary', 'Vuln_By_Host',
             'Compliance_Exec', 'Remediations',
             'Vuln_By_Plugin', 'Compliance', 'All')]
         [string[]]$Chapters,
-        [Parameter(Position = 4, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Int32]$HistoryID,
         [Parameter(ValueFromPipelineByPropertyName)]
         [securestring]$Password,

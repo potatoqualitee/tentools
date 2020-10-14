@@ -6,9 +6,6 @@ function Get-TenPolicyTemplate {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER Name
         Parameter description
 
@@ -26,14 +23,9 @@ function Get-TenPolicyTemplate {
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName, ParameterSetName = 'All')]
-        [Parameter(ParameterSetName = 'ByName')]
-        [Parameter(ParameterSetName = 'ByUUID')]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
+        [Parameter(ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
         [string]$Name,
-        [Parameter(Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByUUID')]
+        [Parameter(ValueFromPipelineByPropertyName, ParameterSetName = 'ByUUID')]
         [string]$PolicyUUID,
         [switch]$EnableException
     )

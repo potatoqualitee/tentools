@@ -50,18 +50,18 @@ function New-TenScan {
     [CmdletBinding(DefaultParameterSetName = 'Policy')]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string]$Name,
-        [Parameter(Mandatory, Position = 2, ParameterSetName = 'Template', ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'Template', ValueFromPipelineByPropertyName)]
         [string]$PolicyUUID,
-        [Parameter(Mandatory, Position = 2, ParameterSetName = 'Policy', ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'Policy', ValueFromPipelineByPropertyName)]
         [int]$PolicyId,
-        [Parameter(Mandatory, Position = 3, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string[]]$Target,
-        [Parameter(Mandatory, Position = 4, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [bool]$Enabled,
         [Parameter(Mandatory = $False, ValueFromPipelineByPropertyName)]
         [string]$Description,

@@ -27,14 +27,14 @@ function Get-TenPolicy {
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName, ParameterSetName = 'All')]
+        [Parameter(ValueFromPipelineByPropertyName, ParameterSetName = 'All')]
         [Parameter(ParameterSetName = 'ByName')]
         [Parameter(ParameterSetName = 'ByID')]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
+        [Parameter(ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
         [string]$Name,
-        [Parameter(Position = 1, ValueFromPipelineByPropertyName, ParameterSetName = 'ByID')]
+        [Parameter(ValueFromPipelineByPropertyName, ParameterSetName = 'ByID')]
         [string]$PolicyID,
         [switch]$EnableException
     )

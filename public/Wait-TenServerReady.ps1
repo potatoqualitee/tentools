@@ -20,7 +20,7 @@ function Wait-TenServerReady {
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 0)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string[]]$ComputerName,
         [int]$Port = "8834",
         [switch]$AcceptSelfSignedCert,

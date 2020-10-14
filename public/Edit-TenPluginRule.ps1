@@ -47,20 +47,20 @@ function Edit-TenPluginRule {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32]$SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$Id,
-        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$PluginId,
-        [Parameter(Position = 3, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('IPAddress', 'IP', 'Host')]
         [String]$ComputerName = '*',
-        [Parameter(Mandatory, Position = 4, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [ValidateSet('Critical', 'High', 'Medium', 'Low', 'Info', 'Exclude')]
         [String]$Type,
-        [Parameter(Position = 5, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Object]$Expiration, #TODO: Validate the Expiratoin date, but still allow nulls
         [switch]$EnableException
     )
