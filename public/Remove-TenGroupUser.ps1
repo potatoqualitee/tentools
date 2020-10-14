@@ -49,15 +49,7 @@ function Remove-TenGroupUser {
     )
     process {
         foreach ($session in (Get-TenSession)) {
-            $serverparams = @{
-                SessionObject = $session
-                Path          = '/server/properties'
-                Method        = 'GET'
-            }
-
-            $server = Invoke-TenRequest @serverparams
-
-            if ($server.capabilities.multi_user -eq 'full') {
+            if ($session.MultiUser) {
                 $groupparams = @{
                     SessionObject = $session
                     Path          = "/groups/$GroupId/users/$UserId"

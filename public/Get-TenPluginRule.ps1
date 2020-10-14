@@ -30,9 +30,6 @@ function Get-TenPluginRule {
     param
     (
         [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Position = 1, ValueFromPipelineByPropertyName)]
         [int32[]]$PluginId,
         [Switch]$Detail,
         [switch]$EnableException

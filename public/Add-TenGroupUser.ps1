@@ -38,16 +38,7 @@ function Add-TenGroupUser {
     )
     process {
         foreach ($session in (Get-TenSession)) {
-            $serverparams = @{
-                SessionObject   = $session
-                Path            = '/server/properties'
-                Method          = 'GET'
-                EnableException = $EnableException
-            }
-
-            $server = Invoke-TenRequest @serverparams
-
-            if ($server.capabilities.multi_user -eq 'full' -or $null -eq $server) {
+            if ($session.MultiUser) {
                 $params = @{
                     SessionObject   = $session
                     Path            = "/groups/$GroupId/users"

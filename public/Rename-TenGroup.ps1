@@ -37,15 +37,7 @@ function Rename-TenGroup {
     )
     process {
         foreach ($session in (Get-TenSession)) {
-            $serverparamsramsramsrams = @{
-                SessionObject = $session
-                Path          = '/server/properties'
-                Method        = 'GET'
-            }
-
-            $server = Invoke-TenRequest @serverparamsramsramsrams
-
-            if ($server.capabilities.multi_user -eq 'full') {
+            if ($session.MultiUser) {
                 $groupparams = @{
                     SessionObject = $session
                     Path          = "/groups/$GroupId"

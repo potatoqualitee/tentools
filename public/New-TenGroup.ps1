@@ -33,15 +33,7 @@ function New-TenGroup {
     )
     process {
         foreach ($session in (Get-TenSession)) {
-            $serverparams = @{
-                SessionObject = $session
-                Path          = '/server/properties'
-                Method        = 'GET'
-            }
-
-            $server = Invoke-TenRequest @serverparams
-
-            if ($server.capabilities.multi_user -eq 'full') {
+            if ($session.MultiUser) {
                 $groups = Invoke-TenRequest -SessionObject $session -Path '/groups' -Method 'POST' -Parameter @{'name' = $Name }
                 [pscustomobject]@{
                     Name        = $groups.name
