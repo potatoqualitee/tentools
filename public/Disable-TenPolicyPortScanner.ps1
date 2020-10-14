@@ -59,7 +59,7 @@ function Disable-TenPolicyPortScanner {
             foreach ($policy in $PolicyId) {
                 $params = @{
                     SessionObject   = $session
-                    Path            = "/policies/$($policy)"
+                    Path            = "/policies/$policy"
                     Method          = 'PUT'
                     ContentType     = 'application/json'
                     Parameter       = $settingsJson

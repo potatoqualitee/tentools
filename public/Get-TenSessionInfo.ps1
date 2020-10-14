@@ -27,7 +27,7 @@ function Get-TenSessionInfo {
     )
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            Write-PSFMessage -Level Verbose -Message "Removing server session $($id)"
+            Write-PSFMessage -Level Verbose -Message "Removing server session $id"
 
             $RestMethodParams = @{
                 Method          = 'Get'

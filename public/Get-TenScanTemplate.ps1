@@ -27,7 +27,7 @@ function Get-TenScanTemplate {
     )
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            $Templates = Invoke-TenRequest -SessionObject $session -Path '/editor/scan/templates' -Method 'Get'
+            $Templates = Invoke-TenRequest -SessionObject $session -Path '/editor/scan/templates' -Method GET
             foreach ($Template in $Templates.templates) {
                 [pscustomobject]@{
                     Name             = $Template.name

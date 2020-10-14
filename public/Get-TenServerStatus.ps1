@@ -27,7 +27,7 @@ function Get-TenServerStatus {
     )
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            Invoke-TenRequest -SessionObject $session -Path '/server/status' -Method 'Get'
+            Invoke-TenRequest -SessionObject $session -Path '/server/status' -Method GET
         }
     }
 }

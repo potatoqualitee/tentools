@@ -48,7 +48,7 @@ function Rename-TenGroup {
             if ($server.capabilities.multi_user -eq 'full') {
                 $groupparams = @{
                     SessionObject = $session
-                    Path          = "/groups/$($GroupId)"
+                    Path          = "/groups/$GroupId"
                     Method        = 'PUT'
                     ContentType   = 'application/json'
                     Parameter     = (ConvertTo-Json -InputObject @{'name' = $Name } -Compress)

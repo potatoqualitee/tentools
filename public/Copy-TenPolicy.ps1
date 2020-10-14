@@ -32,7 +32,7 @@ function Copy-TenPolicy {
     )
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            $CopiedPolicy = Invoke-TenRequest -SessionObject $session -Path "/policies/$($PolicyId)/copy" -Method 'Post'
+            $CopiedPolicy = Invoke-TenRequest -SessionObject $session -Path "/policies/$PolicyId/copy" -Method 'Post'
             [PSCustomObject]@{
                 Name      = $CopiedPolicy.Name
                 PolicyId  = $CopiedPolicy.Id

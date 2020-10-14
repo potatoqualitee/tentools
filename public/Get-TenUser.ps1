@@ -35,7 +35,7 @@ function Get-TenUser {
 
             $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
 
-            $results = Invoke-TenRequest -SessionObject $session -Path '/users' -Method 'Get'
+            $results = Invoke-TenRequest -SessionObject $session -Path '/users' -Method GET
             if ($session.sc) {
                 foreach ($user in $results) {
                     [pscustomobject]@{

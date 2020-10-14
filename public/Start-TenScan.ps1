@@ -46,7 +46,7 @@ function Start-TenScan {
     }
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            foreach ($scans in (Invoke-TenRequest -SessionObject $session -Path "/scans/$($ScanId)/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json')) {
+            foreach ($scans in (Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json')) {
                 [pscustomobject]@{
                     ScanUUID  = $scans.scan_uuid
                     ScanId    = $ScanId

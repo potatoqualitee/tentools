@@ -39,10 +39,10 @@ function Set-TenUserPassword {
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
             foreach ($uid in $UserId) {
-                Write-PSFMessage -Level Verbose -Message "Updating user with Id $($uid)"
+                Write-PSFMessage -Level Verbose -Message "Updating user with Id $uid"
                 $params = @{'password' = $([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))) }
                 $paramJson = ConvertTo-Json -InputObject $params -Compress
-                Invoke-TenRequest -SessionObject $session -Path "/users/$($uid)/chpasswd" -Method 'PUT' -Parameter $paramJson -ContentType 'application/json'
+                Invoke-TenRequest -SessionObject $session -Path "/users/$uid/chpasswd" -Method 'PUT' -Parameter $paramJson -ContentType 'application/json'
             }
         }
     }

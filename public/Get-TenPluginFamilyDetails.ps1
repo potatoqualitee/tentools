@@ -32,7 +32,7 @@ function Get-TenPluginFamilyDetails {
     )
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            foreach ($detail in (Invoke-TenRequest -SessionObject $session -Path "/plugins/families/$($FamilyId)" -Method 'Get')) {
+            foreach ($detail in (Invoke-TenRequest -SessionObject $session -Path "/plugins/families/$($FamilyId)" -Method GET)) {
                 [pscustomobject]@{
                     Name     = $detail.name
                     FamilyId = $detail.id

@@ -46,7 +46,7 @@ function Get-TenScan {
     }
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            $scans = Invoke-TenRequest -SessionObject $session -Path '/scans' -Method 'Get' -Parameter $params
+            $scans = Invoke-TenRequest -SessionObject $session -Path '/scans' -Method GET -Parameter $params
 
             if ($Status.length -gt 0) {
                 $allscans = $scans.scans | Where-Object { $_.status -eq $Status.ToLower() }

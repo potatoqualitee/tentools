@@ -37,8 +37,8 @@ function Remove-TenScanHistory {
     )
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            Write-PSFMessage -Level Verbose -Message "Removing history Id ($HistoryId) from scan Id $($ScanId)"
-            Invoke-TenRequest -SessionObject $session -Path "/scans/$($ScanId)/history/$($HistoryId)" -Method 'Delete' -Parameter $params
+            Write-PSFMessage -Level Verbose -Message "Removing history Id ($HistoryId) from scan Id $ScanId"
+            Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/history/$($HistoryId)" -Method 'Delete' -Parameter $params
             Write-PSFMessage -Level Verbose -Message 'History Removed'
         }
     }

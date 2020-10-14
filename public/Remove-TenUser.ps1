@@ -33,8 +33,8 @@ function Remove-TenUser {
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
             foreach ($uid in $UserId) {
-                Write-PSFMessage -Level Verbose -Message "Deleting user with Id $($uid)"
-                Invoke-TenRequest -SessionObject $session -Path "/users/$($uid)" -Method 'Delete'
+                Write-PSFMessage -Level Verbose -Message "Deleting user with Id $uid"
+                Invoke-TenRequest -SessionObject $session -Path "/users/$uid" -Method 'Delete'
             }
         }
     }

@@ -40,39 +40,18 @@ function Get-TenPolicy {
     )
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            $policies = Invoke-TenRequest -SessionObject $session -Path '/policies' -Method 'Get'
+            $policies = Invoke-TenRequest -SessionObject $session -Path '/policies' -Method GET |
+            ConvertFrom-Response
 
-            if ($policies -is [psobject]) {
-                switch ($PSCmdlet.ParameterSetName) {
-                    'ByName' {
-                        $collection = $policies.policies | Where-Object { $_.name -eq $Name }
-                    }
-
-                    'ByID' {
-                        $collection = $policies.policies | Where-Object { $_.id -eq $PolicyID }
-                    }
-
-                    'All' {
-                        $collection = $policies.policies
-                    }
+            switch ($PSCmdlet.ParameterSetName) {
+                'ByName' {
+                    $policies | Where-Object Name -eq $Name
                 }
-
-                foreach ($policy in $collection) {
-                    [pscustomobject]@{
-                        Name           = $policy.Name
-                        PolicyId       = $policy.id
-                        Description    = $policy.description
-                        PolicyUUID     = $policy.template_uuid
-                        Visibility     = $policy.visibility
-                        Shared         = $(if ($policy.shared -eq 1) { $true } else { $false })
-                        Owner          = $policy.owner
-                        UserId         = $policy.owner_id
-                        NoTarget       = $policy.no_target
-                        UserPermission = $policy.user_permissions
-                        Modified       = $origin.AddSeconds($policy.last_modification_date).ToLocalTime()
-                        Created        = $origin.AddSeconds($policy.creation_date).ToLocalTime()
-                        SessionId      = $session.SessionId
-                    }
+                'ByID' {
+                    $policies | Where-Object Id -eq $PolicyID
+                }
+                default {
+                    $policies
                 }
             }
         }

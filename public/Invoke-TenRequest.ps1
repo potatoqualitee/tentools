@@ -29,6 +29,14 @@ function Invoke-TenRequest {
             if ($Path -match '/plugins/families/') {
                 $Path = $Path.Replace("/plugins/families/", "/pluginFamily/")
             }
+
+            if ($Path -match '/policies') {
+                if ($Path -notmatch '/policies/') {
+                    $Path = $Path.Replace("/policies", "/policy?filter=usable&fields=name%2Cdescription%2Ctags%2Ctype%2CcreatedTime%2CownerGroup%2Cgroups%2Cowner%2CmodifiedTime%2CpolicyTemplate%2CcanUse%2CcanManage%2Cstatus")
+                } else {
+                    $Path = $Path.Replace("/policies", "/policy?filter=usable&fields=name%2Cdescription%2Ctags%2Ctype%2CcreatedTime%2CownerGroup%2Cgroups%2Cowner%2CmodifiedTime%2CpolicyTemplate%2CcanUse%2CcanManage%2Cstatus")
+                }
+            }
         }
     }
     process {
@@ -79,17 +87,6 @@ function Invoke-TenRequest {
                 # Request failed. More than likely do to time-out.
                 # Re-Authenticating using information from session.
                 Write-PSFMessage -Level Verbose -Message 'The session has expired, Re-authenticating'
-                try {
-                    $null = $script:NessusConn.Remove($SessionObject)
-                    $bound = $SessionObject.Bound
-                    $null = Connect-TenServer @bound
-                    $results = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
-                } catch {
-                    $msg = Get-ErrorMessage -Record $_
-                    Stop-PSFFunction -EnableException:$EnableException -Message $msg -ErrorRecord $_ -Continue
-                }
-            } elseif ($res = 403) {
-                Write-PSFMessage -Level Verbose -Message 'Got a 403 forbidden, this happens sometimes for unknown reasons. Re-authenticating'
                 try {
                     $null = $script:NessusConn.Remove($SessionObject)
                     $bound = $SessionObject.Bound

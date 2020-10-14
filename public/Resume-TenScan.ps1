@@ -32,7 +32,7 @@ function Resume-TenScan {
     )
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            foreach ($scan in (Invoke-TenRequest -SessionObject $session -Path "/scans/$($ScanId)/resume" -Method 'Post').scan) {
+            foreach ($scan in (Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/resume" -Method 'Post').scan) {
                 [pscustomobject]@{
                     Name            = $scan.name
                     ScanId          = $ScanId

@@ -60,7 +60,7 @@ function Remove-TenGroupUser {
             if ($server.capabilities.multi_user -eq 'full') {
                 $groupparams = @{
                     SessionObject = $session
-                    Path          = "/groups/$($GroupId)/users/$($UserId)"
+                    Path          = "/groups/$GroupId/users/$UserId"
                     Method        = 'DELETE'
                 }
 

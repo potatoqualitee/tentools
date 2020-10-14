@@ -29,7 +29,7 @@ function Get-TenPlugin {
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
             if ($PluginId) {
-                foreach ($plugin in (Invoke-TenRequest -SessionObject $session -Path "/plugins/plugin/$PluginId" -Method 'Get')) {
+                foreach ($plugin in (Invoke-TenRequest -SessionObject $session -Path "/plugins/plugin/$PluginId" -Method GET)) {
                     $attributes = [ordered]@{ }
                     foreach ($attribute in $plugin.attributes) {
                         # Some attributes have multiple values, i.e. osvdb. This causes errors when adding duplicates

@@ -44,7 +44,7 @@ function Get-TenScanHost {
     }
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            foreach ($Host in (Invoke-TenRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $params).hosts) {
+            foreach ($Host in (Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId" -Method GET -Parameter $params).hosts) {
                 [pscustomobject]@{
                     HostName  = $Host.hostname
                     HostId    = $Host.host_id

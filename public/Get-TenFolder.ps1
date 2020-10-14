@@ -45,7 +45,7 @@ function Get-TenFolder {
     )
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            $folders = Invoke-TenRequest -SessionObject $session -Path '/folders' -Method 'Get'
+            $folders = Invoke-TenRequest -SessionObject $session -Path '/folders' -Method GET
             foreach ($folder in $folders.folders) {
                 [pscustomobject]@{
                     Name      = $folder.name

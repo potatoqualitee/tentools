@@ -32,8 +32,8 @@ function Remove-TenPolicy {
     )
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            Write-PSFMessage -Level Verbose -Message "Deleting policy with id $($PolicyId)"
-            Invoke-TenRequest -SessionObject $session -Path "/policies/$($PolicyId)" -Method 'DELETE'
+            Write-PSFMessage -Level Verbose -Message "Deleting policy with id $PolicyId"
+            Invoke-TenRequest -SessionObject $session -Path "/policies/$PolicyId" -Method 'DELETE'
             Write-PSFMessage -Level Verbose -Message 'Policy deleted.'
         }
     }

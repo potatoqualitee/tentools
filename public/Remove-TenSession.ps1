@@ -33,7 +33,7 @@ function Remove-TenSession {
 
         if ($SessionId.Count -gt 0) {
             foreach ($id in $SessionId) {
-                Write-PSFMessage -Level Verbose -Message "Removing server session $($id)"
+                Write-PSFMessage -Level Verbose -Message "Removing server session $id"
 
                 foreach ($session in $sessions) {
                     if ($session.SessionId -eq $id) {
@@ -59,7 +59,7 @@ function Remove-TenSession {
 
                 Write-PSFMessage -Level Verbose -Message "Removing session from `$script:NessusConn"
                 $null = $script:NessusConn.Remove($session)
-                Write-PSFMessage -Level Verbose -Message "Session $($id) removed"
+                Write-PSFMessage -Level Verbose -Message "Session $id removed"
             }
         }
     }

@@ -50,7 +50,7 @@ function Add-TenGroupUser {
             if ($server.capabilities.multi_user -eq 'full' -or $null -eq $server) {
                 $params = @{
                     SessionObject   = $session
-                    Path            = "/groups/$($GroupId)/users"
+                    Path            = "/groups/$GroupId/users"
                     Method          = 'POST'
                     Parameter       = @{'user_id' = $UserId }
                     EnableException = $EnableException

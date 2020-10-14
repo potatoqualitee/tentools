@@ -49,7 +49,7 @@ function Get-TenScanHostDetail {
     }
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            foreach ($detail in (Invoke-TenRequest -SessionObject $session -Path "/scans/$($ScanId)/hosts/$($HostId)" -Method 'Get' -Parameter $params)) {
+            foreach ($detail in (Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/hosts/$($HostId)" -Method GET -Parameter $params)) {
                 [pscustomobject]@{
                     Info            = $detail.info
                     Vulnerabilities = $detail.vulnerabilities

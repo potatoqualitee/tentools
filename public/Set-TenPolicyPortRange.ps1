@@ -43,7 +43,7 @@ function Set-TenPolicyPortRange {
             foreach ($PolicyToChange in $PolicyId) {
                 $params = @{
                     SessionObject = $session
-                    Path          = "/policies/$($PolicyToChange)"
+                    Path          = "/policies/$PolicyToChange"
                     Method        = 'PUT'
                     ContentType   = 'application/json'
                     Parameter     = "{`"settings`": {`"portscan_range`": `"$($Port -join ",")`"}}"

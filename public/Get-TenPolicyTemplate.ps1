@@ -39,7 +39,7 @@ function Get-TenPolicyTemplate {
     )
     process {
         foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            $templates = Invoke-TenRequest -SessionObject $session -Path '/editor/policy/templates' -Method 'Get'
+            $templates = Invoke-TenRequest -SessionObject $session -Path '/editor/policy/templates' -Method GET
 
             switch ($PSCmdlet.ParameterSetName) {
                 'ByName' {
