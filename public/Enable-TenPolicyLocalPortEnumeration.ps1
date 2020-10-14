@@ -71,7 +71,7 @@ function Enable-TenPolicyLocalPortEnumeration {
         $SettingsJson = ConvertTo-Json -InputObject $Settings -Compress
     }
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             foreach ($policy in $PolicyId) {
                 $params = @{
                     SessionObject   = $session

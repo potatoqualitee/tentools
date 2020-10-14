@@ -25,7 +25,7 @@ function Get-TenServerInfo {
         [int32[]]$SessionId = $script:NessusConn.SessionId,
         [switch]$EnableException
     )
-    foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+    foreach ($session in (Get-TenSession)) {
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
         $server = Invoke-TenRequest -SessionObject $session -Path '/server/properties' -Method GET
 

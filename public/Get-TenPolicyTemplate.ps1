@@ -38,7 +38,7 @@ function Get-TenPolicyTemplate {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             $templates = Invoke-TenRequest -SessionObject $session -Path '/editor/policy/templates' -Method GET
 
             switch ($PSCmdlet.ParameterSetName) {

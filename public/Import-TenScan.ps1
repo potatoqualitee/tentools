@@ -72,7 +72,7 @@ function Import-TenScan {
         }
     }
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
             $fileinfo = Get-ItemProperty -Path $File
             $FilePath = $fileinfo.FullName

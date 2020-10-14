@@ -45,7 +45,7 @@ function Get-TenScan {
         }
     }
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             $scans = Invoke-TenRequest -SessionObject $session -Path '/scans' -Method GET -Parameter $params
 
             if ($Status.length -gt 0) {

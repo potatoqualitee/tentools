@@ -51,7 +51,7 @@ function New-TenPolicy {
             return
         }
 
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             if ($PSBoundParameters.TemplateName) {
                 $PolicyUUID = (Get-TenPolicyTemplate -Name $TemplateName -SessionId $session.SessionId).PolicyUUID
             }

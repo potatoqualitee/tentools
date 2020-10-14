@@ -65,7 +65,7 @@ function Edit-TenPluginRule {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
 
             $dtExpiration = $null
 

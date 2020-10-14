@@ -43,7 +43,7 @@ function Get-TenScanDetail {
         }
     }
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             foreach ($detail in (Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId" -Method GET -Parameter $params)) {
                 $hosts = @()
                 $history = @()

@@ -26,7 +26,7 @@ function Get-TenScanTemplate {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             $Templates = Invoke-TenRequest -SessionObject $session -Path '/editor/scan/templates' -Method GET
             foreach ($Template in $Templates.templates) {
                 [pscustomobject]@{

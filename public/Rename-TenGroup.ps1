@@ -36,7 +36,7 @@ function Rename-TenGroup {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             $serverparamsramsramsrams = @{
                 SessionObject = $session
                 Path          = '/server/properties'

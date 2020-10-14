@@ -76,7 +76,7 @@ function New-TenScan {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
 
             # Join emails as a single comma separated string.
             $emails = $email -join ","

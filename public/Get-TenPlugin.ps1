@@ -27,7 +27,7 @@ function Get-TenPlugin {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             if ($PluginId) {
                 foreach ($plugin in (Invoke-TenRequest -SessionObject $session -Path "/plugins/plugin/$PluginId" -Method GET)) {
                     $attributes = [ordered]@{ }

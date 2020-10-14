@@ -39,7 +39,7 @@ function Get-TenPolicy {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             $policies = Invoke-TenRequest -SessionObject $session -Path '/policies' -Method GET |
             ConvertFrom-Response
 

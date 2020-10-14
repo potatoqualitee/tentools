@@ -47,7 +47,7 @@ function Stop-TenScan {
             }
         }
 
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             $Scans = Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/stop" -Method 'Post'
 
             if ($Scans -is [psobject]) {

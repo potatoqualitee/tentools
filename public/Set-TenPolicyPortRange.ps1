@@ -39,7 +39,7 @@ function Set-TenPolicyPortRange {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             foreach ($PolicyToChange in $PolicyId) {
                 $params = @{
                     SessionObject = $session

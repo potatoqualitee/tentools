@@ -26,7 +26,7 @@ function Suspend-TenScan {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             foreach ($scan in (Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/pause" -Method 'Post').scan) {
                 [pscustomobject]@{
                     Name            = $scan.name

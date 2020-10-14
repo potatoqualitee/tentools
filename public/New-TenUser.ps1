@@ -53,7 +53,7 @@ function New-TenUser {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             $params = @{ }
             $params.Add('type', $Type.ToLower())
             $params.Add('permissions', $permenum[$Permission])

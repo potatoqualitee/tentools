@@ -29,7 +29,7 @@ function Remove-TenScan {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             Write-PSFMessage -Level Verbose -Message "Removing scan with Id $ScanId"
             Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId" -Method 'Delete' -Parameter $params
             Write-PSFMessage -Level Verbose -Message 'Scan Removed'

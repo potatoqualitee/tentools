@@ -31,7 +31,7 @@ function Remove-TenUser {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             foreach ($uid in $UserId) {
                 Write-PSFMessage -Level Verbose -Message "Deleting user with Id $uid"
                 Invoke-TenRequest -SessionObject $session -Path "/users/$uid" -Method 'Delete'

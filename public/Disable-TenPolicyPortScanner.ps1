@@ -55,7 +55,7 @@ function Disable-TenPolicyPortScanner {
         $settingsJson = ConvertTo-Json -InputObject $settings -Compress
     }
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             foreach ($policy in $PolicyId) {
                 $params = @{
                     SessionObject   = $session

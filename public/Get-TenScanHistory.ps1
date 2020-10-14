@@ -38,7 +38,7 @@ function Get-TenScanHistory {
         }
     }
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             foreach ($ScanDetails in (Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId" -Method GET -Parameter $params).history) {
                 [pscustomobject]@{
                     HistoryId        = $History.history_id

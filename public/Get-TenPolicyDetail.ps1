@@ -36,7 +36,7 @@ function Get-TenPolicyDetail {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             if ($PSBoundParameters.Name) {
                 $policy = Get-TenPolicy -Name $Name -SessionId $session.SessionId
                 if ($policy) {

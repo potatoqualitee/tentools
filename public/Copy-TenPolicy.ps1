@@ -31,7 +31,7 @@ function Copy-TenPolicy {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             $CopiedPolicy = Invoke-TenRequest -SessionObject $session -Path "/policies/$PolicyId/copy" -Method 'Post'
             [PSCustomObject]@{
                 Name      = $CopiedPolicy.Name

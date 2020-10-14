@@ -29,7 +29,7 @@ function Get-TenGroupMember {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             $serverparams = @{
                 SessionObject = $session
                 Path          = '/server/properties'

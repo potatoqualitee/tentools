@@ -31,7 +31,7 @@ function New-TenFolder {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             $folder = Invoke-TenRequest -SessionObject $session -Path '/folders' -Method 'Post' -Parameter @{'name' = $Name }
             Get-TenFolder -SessionId $session.sessionid | Where-Object FolderId -eq $folder.id
         }

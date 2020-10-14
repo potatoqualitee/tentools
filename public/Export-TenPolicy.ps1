@@ -36,7 +36,7 @@ function Export-TenPolicy {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             Write-PSFMessage -Level Verbose -Message "Exporting policy with id $PolicyId"
             $policy = Invoke-TenRequest -SessionObject $session -Path "/policies/$PolicyId/export" -Method GET
             if ($PSBoundParameters.OutFile) {

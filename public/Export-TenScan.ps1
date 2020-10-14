@@ -94,7 +94,7 @@ function Export-TenScan {
         }
     }
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             if ($HistoryId) {
                 $urlpath = "/scans/$ScanId/export?history_id=$($HistoryId)"
             } else {

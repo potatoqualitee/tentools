@@ -38,24 +38,15 @@ function Get-TenFolder {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            $folders = Invoke-TenRequest -SessionObject $session -Path '/folders' -Method GET
-            foreach ($folder in $folders.folders) {
-                [pscustomobject]@{
-                    Name      = $folder.name
-                    FolderId  = $folder.id
-                    Type      = $folder.type
-                    Default   = $folder.default_tag
-                    Unread    = $folder.unread_count
-                    SessionId = $session.SessionId
-                } | Select-DefaultView -ExcludeProperty SessionId
+        foreach ($session in (Get-TenSession)) {
+            if ($session.sc) {
+                Stop-PSFFunction -Message "tenable.sc not supported" -Continue
             }
+            Invoke-TenRequest -SessionObject $session -Path '/folders' -Method GET |
+            ConvertFrom-Response
         }
     }
 }
