@@ -27,12 +27,9 @@ function Get-TenScan {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [int32]$FolderId,
-        [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [ValidateSet('Completed', 'Imported', 'Running', 'Paused', 'Canceled')]
         [string]$Status,
         [switch]$EnableException
@@ -48,39 +45,10 @@ function Get-TenScan {
         foreach ($session in (Get-TenSession)) {
             $scans = Invoke-TenRequest -SessionObject $session -Path '/scans' -Method GET -Parameter $params
 
-            if ($Status.length -gt 0) {
-                $allscans = $scans.scans | Where-Object { $_.status -eq $Status.ToLower() }
+            if ($Status) {
+                $scans.usable | ConvertFrom-Response | Where-Object { $_.status -eq $Status.ToLower() }
             } else {
-                $allscans = $scans.scans
-            }
-            foreach ($scan in $allscans) {
-
-                if ($scan.starttime -cnotlike "*T*") {
-                    $StartTime = $origin.AddSeconds($scan.starttime).ToLocalTime()
-                } else {
-                    $StartTime = [datetime]::ParseExact($scan.starttime, "yyyyMMddTHHmmss",
-                        [System.Globalization.CultureInfo]::InvariantCulture,
-                        [System.Globalization.DateTimeStyles]::None)
-                }
-
-                [pscustomobject]@{
-                    Name             = $scan.name
-                    ScanId           = $scan.id
-                    Status           = $scan.status
-                    Enabled          = $scan.enabled
-                    FolderId         = $scan.folder_id
-                    Owner            = $scan.owner
-                    UserPermission   = $permidenum[$scan.user_permissions]
-                    Rules            = $scan.rrules
-                    Shared           = $scan.shared
-                    TimeZone         = $scan.timezone
-                    Scheduled        = $scan.control
-                    DashboardEnabled = $scan.use_dashboard
-                    SessionId        = $session.SessionId
-                    CreationDate     = $origin.AddSeconds($scan.creation_date).ToLocalTime()
-                    LastModified     = $origin.AddSeconds($scan.last_modification_date).ToLocalTime()
-                    StartTime        = $StartTime
-                }
+                $scans.usable | ConvertFrom-Response
             }
         }
     }
