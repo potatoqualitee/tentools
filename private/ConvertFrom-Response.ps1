@@ -38,25 +38,19 @@ function ConvertFrom-Response {
                 }
             }
         }
-    }
-    process {
-        foreach ($object in $InputObject) {
-            # if it's usable AND managable
-            # then add a column for those then use them
-            Write-Debug "Processing object"
-            # determine if it has an inner field to extract
-            $field = $object | Get-Member -Type NoteProperty
-            if ($field.Count -eq 1) {
-                Write-Debug "Found inner object"
-                $name = $field.Name
-                $object = $object.$name
-            }
 
+        function Convert-Row {
+            param (
+                [object[]]$Object,
+                [string]$Type
+            )
             # get columns to convert to camel case
-            $fields = $object | Get-Member -Type NoteProperty | Sort-Object Name
-
-            foreach ($row in $object) {
+            $fields = $Object | Get-Member -Type NoteProperty | Sort-Object Name
+            foreach ($row in $Object) {
                 $hash = @{}
+                if ($Type) {
+                    $hash["Type"] = $Type
+                }
                 foreach ($name in $fields.Name) {
                     # Proper case first letter, tenable takes care of the rest
                     $first = $name.Substring(0, 1).ToUpperInvariant()
@@ -85,19 +79,53 @@ function ConvertFrom-Response {
                 if ('Id' -in $keys) {
                     $null = $order.Add("Id")
                 }
+                if ($Type) {
+                    $null = $order.Add("Type")
+                }
                 if ('Name' -in $keys) {
                     $null = $order.Add("Name")
                 }
                 if ('Description' -in $keys) {
                     $null = $order.Add("Description")
                 }
-                foreach ($column in ($keys | Where-Object { $PSItem -notin "Id", "Name", "Description" })) {
+                foreach ($column in ($keys | Where-Object { $PSItem -notin "Id", "Type", "Name", "Description" })) {
                     $null = $order.Add($column)
                 }
 
                 Write-Debug "Columns: $order"
                 Write-Debug "Count: $($hash.Count)"
                 [pscustomobject]$hash | Select-Object -Property $order
+            }
+        }
+    }
+    process {
+        foreach ($object in $InputObject) {
+            Write-Debug "Processing object"
+
+            # determine if it has an inner field to extract
+            $fields = $object | Get-Member -Type NoteProperty
+
+            # IF EVERY ONE HAS MULTIPLES INSIDE
+            if ($fields.Count -eq 1) {
+                Write-Verbose "Found one inner object"
+                $name = $fields.Name
+                Convert-Row -Object $object.$name -Type $null
+            } else {
+                Write-Verbose "Found multiple inner objects"
+                $result = $true
+                foreach ($definition in $fields.Definition) {
+                    if (-not $definition.StartsWith("Object[]")) {
+                        $result = $false
+                    }
+                }
+                if ($result) {
+                    foreach ($field in $fields) {
+                        $name = (Get-Culture).TextInfo.ToTitleCase($field.Name)
+                        Convert-Row -Object $object.$name -Type $name
+                    }
+                } else {
+                    Convert-Row -Object $object
+                }
             }
         }
     }
