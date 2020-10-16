@@ -32,9 +32,9 @@ function Invoke-TenRequest {
 
             if ($Path -match '/policies') {
                 if ($Path -notmatch '/policies/') {
-                    $Path = $Path.Replace("/policies", "/policy?filter=usable&fields=name%2Cdescription%2Ctags%2Ctype%2CcreatedTime%2CownerGroup%2Cgroups%2Cowner%2CmodifiedTime%2CpolicyTemplate%2CcanUse%2CcanManage%2Cstatus")
+                    $Path = $Path.Replace("/policies", "/policy?filter=*&fields=name%2Cdescription%2Ctags%2Ctype%2CcreatedTime%2CownerGroup%2Cgroups%2Cowner%2CmodifiedTime%2CpolicyTemplate%2CcanUse%2CcanManage%2Cstatus")
                 } else {
-                    $Path = $Path.Replace("/policies", "/policy?filter=usable&fields=name%2Cdescription%2Ctags%2Ctype%2CcreatedTime%2CownerGroup%2Cgroups%2Cowner%2CmodifiedTime%2CpolicyTemplate%2CcanUse%2CcanManage%2Cstatus")
+                    $Path = $Path.Replace("/policies", "/policy?filter=*&fields=name%2Cdescription%2Ctags%2Ctype%2CcreatedTime%2CownerGroup%2Cgroups%2Cowner%2CmodifiedTime%2CpolicyTemplate%2CcanUse%2CcanManage%2Cstatus")
                 }
             }
         }
