@@ -27,9 +27,6 @@ function Get-TenPolicyDetail {
     param
     (
         [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(ValueFromPipelineByPropertyName)]
         [int32[]]$PolicyId,
         [Parameter(ValueFromPipelineByPropertyName)]
         [string]$Name,

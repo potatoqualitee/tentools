@@ -62,7 +62,9 @@ function ConvertFrom-Response {
                         "Shared" {
                             $hash["Shared"] = $(if ($row.shared -eq 1) { $true } else { $false })
                         }
-                        # $permidenum[$scan.user_permissions]
+                        "User_permissions" {
+                            $hash["UserPermissions"] = $permidenum[$row.user_permissions]
+                        }
                         default {
                             # remove _, cap all words
                             $key = Convert-Name $column

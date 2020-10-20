@@ -18,6 +18,10 @@ function Invoke-TenRequest {
     begin {
         # to manage differences between nessus and tenable.sc
         if ($SessionObject.sc) {
+            $replace = @{
+                "/plugins/families/" = "/pluginFamily/"
+            }
+
             foreach ($key in $replace.keys) {
                 $Path = $Path.Replace($key, $replace[$key])
             }
@@ -26,15 +30,12 @@ function Invoke-TenRequest {
                 $Path = $Path.Replace("/user", "?fields=users")
             }
 
-            if ($Path -match '/plugins/families/') {
-                $Path = $Path.Replace("/plugins/families/", "/pluginFamily/")
-            }
-
             if ($Path -match '/policies') {
                 if ($Path -notmatch '/policies/') {
-                    $Path = $Path.Replace("/policies", "/policy?filter=*&fields=name%2Cdescription%2Ctags%2Ctype%2CcreatedTime%2CownerGroup%2Cgroups%2Cowner%2CmodifiedTime%2CpolicyTemplate%2CcanUse%2CcanManage%2Cstatus")
+                    $Path = $Path.Replace("/policies", "/policy?filter=*&fields=name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
                 } else {
-                    $Path = $Path.Replace("/policies", "/policy?filter=*&fields=name%2Cdescription%2Ctags%2Ctype%2CcreatedTime%2CownerGroup%2Cgroups%2Cowner%2CmodifiedTime%2CpolicyTemplate%2CcanUse%2CcanManage%2Cstatus")
+                    $id = Split-path $Path -Leaf
+                    $Path = $Path.Replace("/policies/", "/policy/$($id)?fields=name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
                 }
             }
         }
