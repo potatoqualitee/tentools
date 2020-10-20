@@ -38,6 +38,15 @@ function Invoke-TenRequest {
                     $Path = $Path.Replace("/policies/", "/policy/$($id)?fields=name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
                 }
             }
+
+            if ($Path -match '/editor/policy') {
+                if ($Path -notmatch '/policies/') {
+                    $Path = $Path.Replace("/editor/policy", "/policy?filter=*&fields=name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
+                } else {
+                    $id = Split-path $Path -Leaf
+                    $Path = $Path.Replace("/editor/policy/", "/policy/$($id)?fields=name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
+                }
+            }
         }
     }
     process {

@@ -47,8 +47,8 @@ function Get-TenPolicyDetail {
             }
             foreach ($id in $PolicyId) {
                 Write-PSFMessage -Level Verbose -Message "Getting details for policy with id $id"
-                Invoke-TenRequest -SessionObject $session -Path "/policies/$id" -Method GET |
-                ConvertFrom-Response
+                Invoke-TenRequest -SessionObject $session -Path "/editor/policy/$id" -Method GET |
+                    ConvertFrom-Response
             }
         }
     }
