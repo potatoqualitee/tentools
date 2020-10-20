@@ -94,10 +94,10 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             ContentType = "application/json"
             Parameter   = '{"uuid":"bbd4f805-3966-d464-b2d1-0079eb89d69708c3a05ec2812bcf","settings":{"display_unreachable_hosts":"no","log_live_hosts":"yes","reverse_lookup":"no","allow_post_scan_editing":"yes","udp_scanner":"no","syn_scanner":"yes","syn_firewall_detection":"Automatic (normal)","tcp_scanner":"no","tcp_firewall_detection":"Automatic (normal)","portscan_range":"default","unscanned_closed":"no","wol_wait_time":"5","wol_mac_addresses":"","scan_netware_hosts":"no","scan_network_printers":"no","ping_the_remote_host":"yes","udp_ping":"no","icmp_ping":"yes","icmp_ping_retries":"2","icmp_unreach_means_host_down":"no","tcp_ping":"yes","tcp_ping_dest_ports":"built-in","arp_ping":"yes","fast_network_discovery":"no","test_local_nessus_host":"yes","discovery_mode":"Host enumeration","acls":[{"object_type":"policy","permissions":0,"type":"default"}],"description":"","name":"Test Policy"}}'
         }
-        $null = Invoke-TenRequest @params -Verbose
+        Invoke-TenRequest @params -Verbose
         It "Returns proper policy information" {
-            #$results = Get-TenPolicy
-            #$results | Select-Object -ExpandProperty Name | Should -Be 'Test Policy'
+            $results = Get-TenPolicy
+            $results | Select-Object -ExpandProperty Name | Should -Be 'Test Policy'
         }
     }
 }

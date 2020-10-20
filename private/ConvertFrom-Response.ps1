@@ -101,6 +101,9 @@ function ConvertFrom-Response {
         }
     }
     process {
+        if ($null -eq $InputObject) {
+            return
+        }
         foreach ($object in $InputObject) {
             Write-Debug "Processing object"
 
