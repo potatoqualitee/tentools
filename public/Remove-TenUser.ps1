@@ -23,18 +23,18 @@ function Remove-TenUser {
     [CmdletBinding()]
     Param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32[]]$UserId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             foreach ($uid in $UserId) {
-                Write-PSFMessage -Level Verbose -Message "Deleting user with Id $($uid)"
-                Invoke-TenRequest -SessionObject $session -Path "/users/$($uid)" -Method 'Delete'
+                Write-PSFMessage -Level Verbose -Message "Deleting user with Id $uid"
+                Invoke-TenRequest -SessionObject $session -Path "/users/$uid" -Method 'Delete'
             }
         }
     }

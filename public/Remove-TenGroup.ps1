@@ -23,27 +23,19 @@ function Remove-TenGroup {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [Int32]$GroupId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            $serverparams = @{
-                SessionObject = $session
-                Path          = '/server/properties'
-                Method        = 'GET'
-            }
-
-            $server = Invoke-TenRequest @serverparams
-
-            if ($server.capabilities.multi_user -eq 'full') {
+        foreach ($session in (Get-TenSession)) {
+            if ($session.MultiUser) {
                 $groupparams = @{
                     SessionObject = $session
-                    Path          = "/groups/$($GroupId)"
+                    Path          = "/groups/$GroupId"
                     Method        = 'DELETE '
                 }
 

@@ -24,24 +24,16 @@ function New-TenGroup {
     [OutputType([int])]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string]$Name,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            $serverparams = @{
-                SessionObject = $session
-                Path          = '/server/properties'
-                Method        = 'GET'
-            }
-
-            $server = Invoke-TenRequest @serverparams
-
-            if ($server.capabilities.multi_user -eq 'full') {
+        foreach ($session in (Get-TenSession)) {
+            if ($session.MultiUser) {
                 $groups = Invoke-TenRequest -SessionObject $session -Path '/groups' -Method 'POST' -Parameter @{'name' = $Name }
                 [pscustomobject]@{
                     Name        = $groups.name

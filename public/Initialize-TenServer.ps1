@@ -90,7 +90,6 @@ function Initialize-TenServer {
         }
     }
     process {
-
         if (-not (Test-Path -Path $LicensePath)) {
             Stop-PSFFunction -EnableException:$EnableException -Message "$LicensePath not found"
             return

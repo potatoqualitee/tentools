@@ -29,10 +29,7 @@ function Get-TenPluginRule {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [int32[]]$PluginId,
         [Switch]$Detail,
         [switch]$EnableException
@@ -50,12 +47,12 @@ function Get-TenPluginRule {
     }
 
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             if ($session.sc) {
-                Stop-PSFFunction -Message "tenable.sc not supported"
-                return
+                Stop-PSFFunction -Message "tenable.sc not supported" -Continue
             }
-            $rules = Invoke-TenRequest -SessionObject $session -Path '/plugin-rules' -Method 'Get'
+
+            $rules = Invoke-TenRequest -SessionObject $session -Path '/plugin-rules' -Method GET
 
             foreach ($rule in $rules.plugin_rules) {
                 if ($PSBoundParameters.PluginId -and ($rule.plugin_id -notin $PluginId)) {

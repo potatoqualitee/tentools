@@ -26,29 +26,21 @@ function Rename-TenGroup {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 1)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [Int32]$GroupId,
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 2)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string]$Name,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            $serverparamsramsramsrams = @{
-                SessionObject = $session
-                Path          = '/server/properties'
-                Method        = 'GET'
-            }
-
-            $server = Invoke-TenRequest @serverparamsramsramsrams
-
-            if ($server.capabilities.multi_user -eq 'full') {
+        foreach ($session in (Get-TenSession)) {
+            if ($session.MultiUser) {
                 $groupparams = @{
                     SessionObject = $session
-                    Path          = "/groups/$($GroupId)"
+                    Path          = "/groups/$GroupId"
                     Method        = 'PUT'
                     ContentType   = 'application/json'
                     Parameter     = (ConvertTo-Json -InputObject @{'name' = $Name } -Compress)

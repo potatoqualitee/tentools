@@ -21,17 +21,17 @@ function Remove-TenScan {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            Write-PSFMessage -Level Verbose -Message "Removing scan with Id $($ScanId)"
-            Invoke-TenRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Delete' -Parameter $params
+        foreach ($session in (Get-TenSession)) {
+            Write-PSFMessage -Level Verbose -Message "Removing scan with Id $ScanId"
+            Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId" -Method 'Delete' -Parameter $params
             Write-PSFMessage -Level Verbose -Message 'Scan Removed'
         }
     }

@@ -27,7 +27,7 @@ function Restart-TenService {
     param
     (
         # Nessus session Id
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
         [switch]$EnableException
@@ -37,7 +37,7 @@ function Restart-TenService {
         $paramJson = ConvertTo-Json -InputObject $params -Compress
     }
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             Invoke-TenRequest -SessionObject $session -Path "/server/restart" -Method 'Post' -Parameter $paramJson -ContentType 'application/json'
         }
     }

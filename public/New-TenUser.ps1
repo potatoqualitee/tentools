@@ -35,12 +35,12 @@ function New-TenUser {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, Position = 1)]
+        [Parameter(Mandatory)]
         [Management.Automation.PSCredential]$Credential,
-        [Parameter(Mandatory, Position = 2)]
+        [Parameter(Mandatory)]
         [ValidateSet('Read-Only', 'Regular', 'Administrator', 'Sysadmin')]
         [string]$Permission,
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -53,7 +53,7 @@ function New-TenUser {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             $params = @{ }
             $params.Add('type', $Type.ToLower())
             $params.Add('permissions', $permenum[$Permission])

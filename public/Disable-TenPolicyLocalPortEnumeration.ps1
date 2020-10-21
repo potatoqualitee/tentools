@@ -33,12 +33,12 @@ function Disable-TenPolicyLocalPortEnumeration {
     [OutputType([int])]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32]$SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32[]]$PolicyId,
-        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [ValidateSet('WMINetstat', 'SSHNetstat', 'SNMPScanner')]
         [string[]]$ScanMethods,
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -71,11 +71,11 @@ function Disable-TenPolicyLocalPortEnumeration {
         $settingsJson = ConvertTo-Json -InputObject $settings -Compress
     }
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             foreach ($policy in $PolicyId) {
                 $params = @{
                     SessionObject   = $session
-                    Path            = "/policies/$($policy)"
+                    Path            = "/policies/$policy"
                     Method          = 'PUT'
                     ContentType     = 'application/json'
                     Parameter       = $settingsJson

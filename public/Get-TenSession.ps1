@@ -19,7 +19,7 @@ function Get-TenSession {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
         [switch]$EnableException

@@ -40,23 +40,23 @@ function Add-TenPluginRule {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$PluginId,
-        [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('IPAddress', 'IP', 'Host')]
         [String]$ComputerName = '*',
-        [Parameter(Mandatory, Position = 3, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [ValidateSet('Critical', 'High', 'Medium', 'Low', 'Info', 'Exclude')]
         [String]$Type,
-        [Parameter(Position = 4, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [datetime]$Expiration,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
 
             $dtExpiration = $null
 

@@ -41,10 +41,10 @@ function Export-TenScan {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32]$SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [Parameter(Position = 2)]
         [ValidateSet('Nessus', 'HTML', 'PDF', 'CSV', 'DB')]
@@ -53,12 +53,12 @@ function Export-TenScan {
         [String]$Path,
         [Parameter(ValueFromPipelineByPropertyName)]
         [Switch]$PSObject,
-        [Parameter(Position = 3, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [ValidateSet('Vuln_Hosts_Summary', 'Vuln_By_Host',
             'Compliance_Exec', 'Remediations',
             'Vuln_By_Plugin', 'Compliance', 'All')]
         [string[]]$Chapters,
-        [Parameter(Position = 4, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Int32]$HistoryID,
         [Parameter(ValueFromPipelineByPropertyName)]
         [securestring]$Password,
@@ -94,20 +94,20 @@ function Export-TenScan {
         }
     }
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             if ($HistoryId) {
-                $urlpath = "/scans/$($ScanId)/export?history_id=$($HistoryId)"
+                $urlpath = "/scans/$ScanId/export?history_id=$($HistoryId)"
             } else {
-                $urlpath = "/scans/$($ScanId)/export"
+                $urlpath = "/scans/$ScanId/export"
             }
 
-            Write-PSFMessage -Level Verbose -Message "Exporting scan with Id of $($ScanId) in $($Format) format"
+            Write-PSFMessage -Level Verbose -Message "Exporting scan with Id of $ScanId in $($Format) format"
 
             foreach ($fileid in (Invoke-TenRequest -SessionObject $session -Path $urlpath  -Method 'Post' -Parameter $ExportParams)) {
                 $FileStatus = ''
                 while ($FileStatus.status -ne 'ready') {
                     try {
-                        $FileStatus = Invoke-TenRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($fileid.file)/status"  -Method 'Get'
+                        $FileStatus = Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/export/$($fileid.file)/status"  -Method GET
                         Write-PSFMessage -Level Verbose -Message "Status of export is $($FileStatus.status)"
                     } catch {
                         break
@@ -116,11 +116,11 @@ function Export-TenScan {
                 }
                 if ($FileStatus.status -eq 'ready' -and $Format -eq 'CSV' -and $PSObject.IsPresent) {
                     Write-PSFMessage -Level Verbose -Message "Converting report to PSObject"
-                    Invoke-TenRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($fileid.file)/download" -Method 'Get' | ConvertFrom-Csv
+                    Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/export/$($fileid.file)/download" -Method GET | ConvertFrom-Csv
                 } elseif ($FileStatus.status -eq 'ready') {
                     Write-PSFMessage -Level Verbose -Message "Downloading report to $($Path)"
                     $filepath = Resolve-PSFPath -Path "$path\$name-$scanid.$($Format.ToLower())" -NewChild
-                    Invoke-TenRequest -SessionObject $session -Path "/scans/$($ScanId)/export/$($fileid.file)/download" -Method 'Get' -OutFile $filepath
+                    Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/export/$($fileid.file)/download" -Method GET -OutFile $filepath
                 }
                 Get-ChildItem -Path $Path
             }

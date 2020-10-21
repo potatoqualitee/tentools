@@ -29,14 +29,14 @@ function Get-TenScanHostDetail {
     [CmdletBinding()]
     Param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
-        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$HostId,
-        [Parameter(Position = 3, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [int32]$HistoryId,
         [switch]$EnableException
     )
@@ -48,8 +48,8 @@ function Get-TenScanHostDetail {
         }
     }
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            foreach ($detail in (Invoke-TenRequest -SessionObject $session -Path "/scans/$($ScanId)/hosts/$($HostId)" -Method 'Get' -Parameter $params)) {
+        foreach ($session in (Get-TenSession)) {
+            foreach ($detail in (Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/hosts/$($HostId)" -Method GET -Parameter $params)) {
                 [pscustomobject]@{
                     Info            = $detail.info
                     Vulnerabilities = $detail.vulnerabilities

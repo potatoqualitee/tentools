@@ -24,10 +24,10 @@ function Get-TenScanHistory {
     [CmdletBinding()]
     Param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [switch]$EnableException
     )
@@ -38,8 +38,8 @@ function Get-TenScanHistory {
         }
     }
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            foreach ($ScanDetails in (Invoke-TenRequest -SessionObject $session -Path "/scans/$($ScanId)" -Method 'Get' -Parameter $params).history) {
+        foreach ($session in (Get-TenSession)) {
+            foreach ($ScanDetails in (Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId" -Method GET -Parameter $params).history) {
                 [pscustomobject]@{
                     HistoryId        = $History.history_id
                     UUID             = $History.uuid

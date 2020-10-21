@@ -20,14 +20,14 @@ function Get-TenSessionInfo {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            Write-PSFMessage -Level Verbose -Message "Removing server session $($id)"
+        foreach ($session in (Get-TenSession)) {
+            Write-PSFMessage -Level Verbose -Message "Removing server session $id"
 
             $RestMethodParams = @{
                 Method          = 'Get'

@@ -23,17 +23,17 @@ function Remove-TenPolicy {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$PolicyId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            Write-PSFMessage -Level Verbose -Message "Deleting policy with id $($PolicyId)"
-            Invoke-TenRequest -SessionObject $session -Path "/policies/$($PolicyId)" -Method 'DELETE'
+        foreach ($session in (Get-TenSession)) {
+            Write-PSFMessage -Level Verbose -Message "Deleting policy with id $PolicyId"
+            Invoke-TenRequest -SessionObject $session -Path "/policies/$PolicyId" -Method 'DELETE'
             Write-PSFMessage -Level Verbose -Message 'Policy deleted.'
         }
     }

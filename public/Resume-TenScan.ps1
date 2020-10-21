@@ -23,16 +23,16 @@ function Resume-TenScan {
     [CmdletBinding()]
     Param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            foreach ($scan in (Invoke-TenRequest -SessionObject $session -Path "/scans/$($ScanId)/resume" -Method 'Post').scan) {
+        foreach ($session in (Get-TenSession)) {
+            foreach ($scan in (Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/resume" -Method 'Post').scan) {
                 [pscustomobject]@{
                     Name            = $scan.name
                     ScanId          = $ScanId

@@ -20,14 +20,14 @@ function Get-TenServerStatus {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            Invoke-TenRequest -SessionObject $session -Path '/server/status' -Method 'Get'
+        foreach ($session in (Get-TenSession)) {
+            Invoke-TenRequest -SessionObject $session -Path '/server/status' -Method GET
         }
     }
 }

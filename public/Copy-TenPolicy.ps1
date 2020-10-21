@@ -23,16 +23,16 @@ function Copy-TenPolicy {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$PolicyId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            $CopiedPolicy = Invoke-TenRequest -SessionObject $session -Path "/policies/$($PolicyId)/copy" -Method 'Post'
+        foreach ($session in (Get-TenSession)) {
+            $CopiedPolicy = Invoke-TenRequest -SessionObject $session -Path "/policies/$PolicyId/copy" -Method 'Post'
             [PSCustomObject]@{
                 Name      = $CopiedPolicy.Name
                 PolicyId  = $CopiedPolicy.Id

@@ -29,21 +29,21 @@ function Set-TenPolicyPortRange {
     [OutputType([int])]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32]$SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32[]]$PolicyId,
-        [Parameter(Mandatory, Position = 2, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string[]]$Port,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             foreach ($PolicyToChange in $PolicyId) {
                 $params = @{
                     SessionObject = $session
-                    Path          = "/policies/$($PolicyToChange)"
+                    Path          = "/policies/$PolicyToChange"
                     Method        = 'PUT'
                     ContentType   = 'application/json'
                     Parameter     = "{`"settings`": {`"portscan_range`": `"$($Port -join ",")`"}}"

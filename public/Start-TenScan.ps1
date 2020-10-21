@@ -27,12 +27,12 @@ function Start-TenScan {
     param
     (
         # Nessus session Id
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
-        [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [string[]]$AlternateTarget,
         [switch]$EnableException
     )
@@ -45,8 +45,8 @@ function Start-TenScan {
         $paramJson = ConvertTo-Json -InputObject $params -Compress
     }
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            foreach ($scans in (Invoke-TenRequest -SessionObject $session -Path "/scans/$($ScanId)/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json')) {
+        foreach ($session in (Get-TenSession)) {
+            foreach ($scans in (Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json')) {
                 [pscustomobject]@{
                     ScanUUID  = $scans.scan_uuid
                     ScanId    = $ScanId

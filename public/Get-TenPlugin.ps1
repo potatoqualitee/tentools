@@ -19,17 +19,17 @@ function Get-TenPlugin {
     [CmdletBinding()]
     Param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Position = 1, ValueFromPipelineByPropertyName, Mandatory)]
+        [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
         [int32]$PluginId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             if ($PluginId) {
-                foreach ($plugin in (Invoke-TenRequest -SessionObject $session -Path "/plugins/plugin/$PluginId" -Method 'Get')) {
+                foreach ($plugin in (Invoke-TenRequest -SessionObject $session -Path "/plugins/plugin/$PluginId" -Method GET)) {
                     $attributes = [ordered]@{ }
                     foreach ($attribute in $plugin.attributes) {
                         # Some attributes have multiple values, i.e. osvdb. This causes errors when adding duplicates
@@ -44,8 +44,7 @@ function Get-TenPlugin {
                         PluginId   = $plugin.id
                         FamilyName = $plugin.family_name
                         Attributes = $attributes
-                        SessionId  = $session.SessionId
-                    } | Select-DefaultView -Property Name, PluginId, FamilyName, Attributes
+                    }
                 }
             }
         }

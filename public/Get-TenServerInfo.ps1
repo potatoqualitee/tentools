@@ -20,15 +20,14 @@ function Get-TenServerInfo {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
         [switch]$EnableException
     )
-    foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+    foreach ($session in (Get-TenSession)) {
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-        $server = Invoke-TenRequest -SessionObject $session -Path '/server/properties' -Method 'Get'
-
+        $server = Invoke-TenRequest -SessionObject $session -Path '/server/properties' -Method GET
         foreach ($serverinfo in $server) {
             [pscustomobject]@{
                 NessusType     = $serverinfo.nessus_type

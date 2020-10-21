@@ -24,16 +24,13 @@ function Get-TenPolicyLocalPortEnumeration {
     [OutputType([int])]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32[]]$PolicyId,
         [switch]$EnableException
     )
 
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             foreach ($policy in $PolicyId) {
                 try {
                     $policydetail = Get-TenPolicyDetail -SessionId $session.SessionId -PolicyId $policy

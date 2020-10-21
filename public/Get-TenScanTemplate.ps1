@@ -20,14 +20,14 @@ function Get-TenScanTemplate {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            $Templates = Invoke-TenRequest -SessionObject $session -Path '/editor/scan/templates' -Method 'Get'
+        foreach ($session in (Get-TenSession)) {
+            $Templates = Invoke-TenRequest -SessionObject $session -Path '/editor/scan/templates' -Method GET
             foreach ($Template in $Templates.templates) {
                 [pscustomobject]@{
                     Name             = $Template.name

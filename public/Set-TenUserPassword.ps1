@@ -27,22 +27,22 @@ function Set-TenUserPassword {
     [CmdletBinding()]
     Param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32[]]$UserId,
-        [Parameter(Mandatory, Position = 3, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [securestring]$Password,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
             foreach ($uid in $UserId) {
-                Write-PSFMessage -Level Verbose -Message "Updating user with Id $($uid)"
+                Write-PSFMessage -Level Verbose -Message "Updating user with Id $uid"
                 $params = @{'password' = $([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))) }
                 $paramJson = ConvertTo-Json -InputObject $params -Compress
-                Invoke-TenRequest -SessionObject $session -Path "/users/$($uid)/chpasswd" -Method 'PUT' -Parameter $paramJson -ContentType 'application/json'
+                Invoke-TenRequest -SessionObject $session -Path "/users/$uid/chpasswd" -Method 'PUT' -Parameter $paramJson -ContentType 'application/json'
             }
         }
     }

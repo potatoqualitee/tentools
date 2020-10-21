@@ -32,7 +32,7 @@ function Connect-TenServer {
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 0)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string[]]$ComputerName,
         [int]$Port,
         [Management.Automation.PSCredential]$Credential,
@@ -180,10 +180,13 @@ function Connect-TenServer {
                     ServerType         = $Type
                     ServerVersion      = $null
                     ServerVersionMajor = $null
+                    MultiUser          = $null
                 }
                 $null = $script:NessusConn.Add($session)
-                $script:NessusConn[0].ServerVersion = (Get-TenServerInfo).UIVersion
-                $script:NessusConn[0].ServerVersionMajor = ([version]((Get-TenServerInfo).UIVersion)).Major
+                $info = Get-TenServerInfo
+                $script:NessusConn[0].MultiUser = ($info.capabilities.multi_user -eq 'full' -or $sc)
+                $script:NessusConn[0].ServerVersion = $info.UIVersion
+                $script:NessusConn[0].ServerVersionMajor = ([version]($info.UIVersion)).Major
                 $session | Select-DefaultView -Property SessionId, UserName, URI, ServerType
             }
         }

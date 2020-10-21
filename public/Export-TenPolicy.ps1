@@ -26,19 +26,19 @@ function Export-TenPolicy {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32]$SessionId,
-        [Parameter(Mandatory, Position = 1, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$PolicyId,
-        [Parameter(Position = 2, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [string]$OutFile,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
-            Write-PSFMessage -Level Verbose -Message "Exporting policy with id $($PolicyId)"
-            $policy = Invoke-TenRequest -SessionObject $session -Path "/policies/$($PolicyId)/export" -Method 'GET'
+        foreach ($session in (Get-TenSession)) {
+            Write-PSFMessage -Level Verbose -Message "Exporting policy with id $PolicyId"
+            $policy = Invoke-TenRequest -SessionObject $session -Path "/policies/$PolicyId/export" -Method GET
             if ($PSBoundParameters.OutFile) {
                 Write-PSFMessage -Level Verbose -Message "Saving policy as $($OutFile)"
                 $policy.Save($ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutFile))

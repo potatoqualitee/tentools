@@ -20,13 +20,13 @@ function Get-TenUser {
     [CmdletBinding()]
     param
     (
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Index')]
         [int32[]]$SessionId = $script:NessusConn.SessionId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession -SessionId $SessionId)) {
+        foreach ($session in (Get-TenSession)) {
 
             if (-not $session.sc -and $session.ServerVersionMajor -ge 8) {
                 Stop-PSFFunction -Message "Nessus 8 and above not supported :("
@@ -35,7 +35,7 @@ function Get-TenUser {
 
             $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
 
-            $results = Invoke-TenRequest -SessionObject $session -Path '/users' -Method 'Get'
+            $results = Invoke-TenRequest -SessionObject $session -Path '/users' -Method GET
             if ($session.sc) {
                 foreach ($user in $results) {
                     [pscustomobject]@{
