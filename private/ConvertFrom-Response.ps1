@@ -45,6 +45,9 @@ function ConvertFrom-Response {
                 [string]$Type
             )
             # get columns to convert to camel case
+            if ($null -eq $Object) {
+                return $null
+            }
             $fields = $Object | Get-Member -Type NoteProperty | Sort-Object Name
             foreach ($row in $Object) {
                 $hash = @{}
@@ -114,11 +117,8 @@ function ConvertFrom-Response {
             if ($fields.Count -eq 1) {
                 Write-Verbose "Found one inner object"
                 $name = $fields.Name
-                if ($object.$name) {
-                    Convert-Row -Object $object.$name -Type $null
-                } else {
-                    Convert-Row -Object $object -Type $null
-                }
+                # figure out why this is failing
+                Convert-Row -Object $object.$name -Type $null
             } else {
                 Write-Verbose "Found multiple inner objects"
                 $result = $true
