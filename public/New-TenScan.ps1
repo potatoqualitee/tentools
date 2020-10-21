@@ -6,9 +6,6 @@ function New-TenScan {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        Parameter description
-
     .PARAMETER Name
         Parameter description
 
@@ -50,9 +47,6 @@ function New-TenScan {
     [CmdletBinding(DefaultParameterSetName = 'Policy')]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string]$Name,
         [Parameter(Mandatory, ParameterSetName = 'Template', ValueFromPipelineByPropertyName)]
@@ -108,7 +102,7 @@ function New-TenScan {
 
                 'Policy' {
                     $polUUID = $null
-                    $Policies = Get-TenPolicy -SessionId $session.SessionId
+                    $Policies = Get-TenPolicy
                     foreach ($Policy in $Policies) {
                         if ($Policy.PolicyId -eq $PolicyId) {
                             Write-PSFMessage -Level Verbose -Message "Uising Poicy with UUID of $($Policy.PolicyUUID)"

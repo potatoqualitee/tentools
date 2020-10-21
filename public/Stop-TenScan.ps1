@@ -6,9 +6,6 @@ function Stop-TenScan {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER ScanId
         Parameter description
 
@@ -23,9 +20,6 @@ function Stop-TenScan {
     [CmdletBinding()]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [switch]$EnableException
@@ -35,18 +29,6 @@ function Stop-TenScan {
 
     }
     process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $sessions = $script:NessusConn
-
-            foreach ($session in $sessions) {
-                if ($session.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
-
         foreach ($session in (Get-TenSession)) {
             $Scans = Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/stop" -Method 'Post'
 

@@ -6,9 +6,6 @@ function Get-TenPolicyLocalPortEnumeration {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER PolicyId
         Parameter description
 
@@ -33,7 +30,7 @@ function Get-TenPolicyLocalPortEnumeration {
         foreach ($session in (Get-TenSession)) {
             foreach ($policy in $PolicyId) {
                 try {
-                    $policydetail = Get-TenPolicyDetail -SessionId $session.SessionId -PolicyId $policy
+                    $policydetail = Get-TenPolicyDetail -PolicyId $policy
                     [pscustomobject]@{
                         PolicyId             = $policy
                         WMINetstat           = $policydetail.settings.wmi_netstat_scanner

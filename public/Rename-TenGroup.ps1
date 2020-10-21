@@ -6,9 +6,6 @@ function Rename-TenGroup {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER GroupId
         Parameter description
 
@@ -26,9 +23,6 @@ function Rename-TenGroup {
     [CmdletBinding()]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [Int32]$GroupId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]

@@ -7,9 +7,6 @@ function Add-TenPluginRule {
         Can be used to alter report output for various reasons. i.e. vulnerability acceptance, verified
         false-positive on non-credentialed scans, alternate mitigation in place, etc...
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER PluginId
         ID number of the plugin which would you like altered
 
@@ -28,21 +25,18 @@ function Add-TenPluginRule {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Add-TenPluginRule -SessionId 0 -PluginId 15901 -ComputerName 'WebServer' -Type Critical
+        PS> Add-TenPluginRule -PluginId 15901 -ComputerName 'WebServer' -Type Critical
 
         Creates a rule that changes the default severity of 'Medium', to 'Critical' for the defined computer and plugin ID
 
     .EXAMPLE
-        PS> $WebServers | % {Add-TenPluginRule -SessionId 0 -PluginId 15901 -ComputerName $_ -Type Critical}
+        PS> $WebServers | % {Add-TenPluginRule -PluginId 15901 -ComputerName $_ -Type Critical}
 
         Creates a rule for a list computers, using the defined options
     #>
     [CmdletBinding()]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$PluginId,
         [Parameter(ValueFromPipelineByPropertyName)]

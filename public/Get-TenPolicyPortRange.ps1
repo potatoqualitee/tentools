@@ -29,7 +29,7 @@ function Get-TenPolicyPortRange {
         foreach ($session in (Get-TenSession)) {
             foreach ($policy in $PolicyId) {
                 try {
-                    $policydetail = Get-TenPolicyDetail -SessionId $session.SessionId -PolicyId $policy
+                    $policydetail = Get-TenPolicyDetail -PolicyId $policy
                     [pscustomobject]@{
                         PolicyId  = $policy
                         PortRange = $policydetail.settings.portscan_range

@@ -54,7 +54,7 @@ function Get-TenPolicyTemplate {
                     CloudOnly        = $template.cloud_only
                     SubscriptionOnly = $template.subscription_only
                     SessionId        = $session.SessionId
-                } | Select-DefaultView -ExcludeProperty SessionId
+                }
             }
         }
     }

@@ -28,7 +28,7 @@ function Get-TenPolicyPortScanner {
     process {
         foreach ($policy in $PolicyId) {
             try {
-                $policydetail = Get-TenPolicyDetail -SessionId $session.SessionId -PolicyId $policy
+                $policydetail = Get-TenPolicyDetail -PolicyId $policy
                 [pscustomobject]@{
                     PolicyId   = $policy
                     SYNScanner = $policydetail.settings.syn_scanner

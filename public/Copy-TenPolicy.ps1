@@ -6,9 +6,6 @@ function Copy-TenPolicy {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER PolicyId
         Parameter description
 
@@ -23,9 +20,6 @@ function Copy-TenPolicy {
     [CmdletBinding()]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$PolicyId,
         [switch]$EnableException
@@ -34,9 +28,8 @@ function Copy-TenPolicy {
         foreach ($session in (Get-TenSession)) {
             $CopiedPolicy = Invoke-TenRequest -SessionObject $session -Path "/policies/$PolicyId/copy" -Method 'Post'
             [PSCustomObject]@{
-                Name      = $CopiedPolicy.Name
-                PolicyId  = $CopiedPolicy.Id
-                SessionId = $session.SessionId
+                Name     = $CopiedPolicy.Name
+                PolicyId = $CopiedPolicy.Id
             }
         }
     }

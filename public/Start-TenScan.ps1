@@ -6,9 +6,6 @@ function Start-TenScan {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER ScanId
         Parameter description
 
@@ -27,9 +24,6 @@ function Start-TenScan {
     param
     (
         # Nessus session Id
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [Parameter(ValueFromPipelineByPropertyName)]

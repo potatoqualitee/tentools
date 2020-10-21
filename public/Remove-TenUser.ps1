@@ -6,9 +6,6 @@ function Remove-TenUser {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER UserId
         Parameter description
 
@@ -23,9 +20,6 @@ function Remove-TenUser {
     [CmdletBinding()]
     Param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32[]]$UserId,
         [switch]$EnableException

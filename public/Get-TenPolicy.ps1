@@ -6,9 +6,6 @@ function Get-TenPolicy {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER Name
         Parameter description
 
@@ -27,11 +24,6 @@ function Get-TenPolicy {
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName, ParameterSetName = 'All')]
-        [Parameter(ParameterSetName = 'ByName')]
-        [Parameter(ParameterSetName = 'ByID')]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
         [string]$Name,
         [Parameter(ValueFromPipelineByPropertyName, ParameterSetName = 'ByID')]
@@ -41,7 +33,7 @@ function Get-TenPolicy {
     process {
         foreach ($session in (Get-TenSession)) {
             $policies = Invoke-TenRequest -SessionObject $session -Path '/policies' -Method GET |
-            ConvertFrom-Response
+                ConvertFrom-Response
 
             switch ($PSCmdlet.ParameterSetName) {
                 'ByName' {

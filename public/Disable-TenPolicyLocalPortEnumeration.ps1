@@ -6,9 +6,6 @@ function Disable-TenPolicyLocalPortEnumeration {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER PolicyId
         Parameter description
 
@@ -33,9 +30,6 @@ function Disable-TenPolicyLocalPortEnumeration {
     [OutputType([int])]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32]$SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32[]]$PolicyId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
@@ -83,7 +77,7 @@ function Disable-TenPolicyLocalPortEnumeration {
                 }
 
                 $null = Invoke-TenRequest @params
-                Get-TenPolicyLocalPortEnumeration -SessionId $session.SessionId -PolicyId $policy
+                Get-TenPolicyLocalPortEnumeration -PolicyId $policy
             }
         }
     }

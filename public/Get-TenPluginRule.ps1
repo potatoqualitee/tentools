@@ -6,9 +6,6 @@ function Get-TenPluginRule {
     .DESCRIPTION
         Gets a list of all Nessus plugin rules
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER Detail
         Does an additional lookup on each rule, to return the plugin name. Helpfule when reporting
 
@@ -18,11 +15,11 @@ function Get-TenPluginRule {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-TenPluginRule -SessionId 0
+        PS> Get-TenPluginRule
         Gets all defined plugin rules
 
     .EXAMPLE
-        PS> Get-TenPluginRule -SessionId 0 -Detail
+        PS> Get-TenPluginRule -Detail
         Gets all defined plugin rules with details
 
     #>
@@ -84,7 +81,7 @@ function Get-TenPluginRule {
                     Permissions = $rule.user_permissions
                     Plugin      = $plugin
                     SessionId   = $session.SessionId
-                } | Select-DefaultView -ExcludeProperty SessionId
+                }
             }
         }
     }

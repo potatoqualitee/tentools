@@ -49,8 +49,12 @@ function ConvertFrom-Response {
                 return $null
             }
             $fields = $Object | Get-Member -Type NoteProperty | Sort-Object Name
+
             foreach ($row in $Object) {
-                $hash = @{}
+                $uri = [uri]$session.Uri
+                $hash = @{
+                    ServerUri = "$($uri.Host):$($uri.Port)"
+                }
                 if ($Type) {
                     $hash["Type"] = $Type
                 }
@@ -80,7 +84,7 @@ function ConvertFrom-Response {
                 # Set column order
                 $order = New-Object System.Collections.ArrayList
                 $keys = $hash.Keys
-
+                $null = $order.Add("ServerUri")
                 if ('Id' -in $keys) {
                     $null = $order.Add("Id")
                 }
@@ -93,7 +97,7 @@ function ConvertFrom-Response {
                 if ('Description' -in $keys) {
                     $null = $order.Add("Description")
                 }
-                foreach ($column in ($keys | Where-Object { $PSItem -notin "Id", "Type", "Name", "Description" })) {
+                foreach ($column in ($keys | Where-Object { $PSItem -notin "ServerUri", "Id", "Type", "Name", "Description" })) {
                     $null = $order.Add($column)
                 }
 

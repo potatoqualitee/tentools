@@ -6,9 +6,6 @@ function Add-TenPolicyPortRange {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER PolicyId
         Parameter description
 
@@ -28,9 +25,6 @@ function Add-TenPolicyPortRange {
     [OutputType([int])]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32]$SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32[]]$PolicyId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
@@ -41,7 +35,7 @@ function Add-TenPolicyPortRange {
         foreach ($session in (Get-TenSession)) {
             foreach ($PolicyToChange in $PolicyId) {
                 try {
-                    $policy = Get-TenPolicyDetail -SessionId $session.SessionId -PolicyId $PolicyToChange
+                    $policy = Get-TenPolicyDetail -PolicyId $PolicyToChange
                     $ports = "$($Policy.settings.portscan_range),$($Port -join ",")"
                     $params = @{
                         SessionObject   = $session
@@ -53,7 +47,7 @@ function Add-TenPolicyPortRange {
                     }
 
                     $null = Invoke-TenRequest @params
-                    Get-TenPolicyPortRange -SessionId $session.SessionId -PolicyId $PolicyToChange
+                    Get-TenPolicyPortRange -PolicyId $PolicyToChange
                 } catch {
                     Stop-PSFFunction -EnableException:$EnableException -Message "Failure" -ErrorRecord $_ -Continue
                 }

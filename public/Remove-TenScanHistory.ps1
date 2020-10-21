@@ -6,9 +6,6 @@ function Remove-TenScanHistory {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER ScanId
         Parameter description
 
@@ -26,9 +23,6 @@ function Remove-TenScanHistory {
     [CmdletBinding()]
     Param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
@@ -38,7 +32,7 @@ function Remove-TenScanHistory {
     process {
         foreach ($session in (Get-TenSession)) {
             Write-PSFMessage -Level Verbose -Message "Removing history Id ($HistoryId) from scan Id $ScanId"
-            Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/history/$($HistoryId)" -Method 'Delete' -Parameter $params
+            Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/history/$HistoryId" -Method 'Delete' -Parameter $params
             Write-PSFMessage -Level Verbose -Message 'History Removed'
         }
     }

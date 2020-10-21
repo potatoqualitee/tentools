@@ -6,9 +6,6 @@ function Get-TenPolicyDetail {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER PolicyId
         Parameter description
 
@@ -35,7 +32,7 @@ function Get-TenPolicyDetail {
     process {
         foreach ($session in (Get-TenSession)) {
             if ($PSBoundParameters.Name) {
-                $policy = Get-TenPolicy -Name $Name -SessionId $session.SessionId
+                $policy = Get-TenPolicy -Name $Name
                 if ($policy) {
                     $PolicyId = $policy.PolicyId
                 } else {

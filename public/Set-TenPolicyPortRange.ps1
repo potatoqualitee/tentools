@@ -6,9 +6,6 @@ function Set-TenPolicyPortRange {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER PolicyId
         Parameter description
 
@@ -29,9 +26,6 @@ function Set-TenPolicyPortRange {
     [OutputType([int])]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32]$SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32[]]$PolicyId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]

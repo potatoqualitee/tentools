@@ -6,9 +6,6 @@ function Get-TenPlugin {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER PluginId
         Parameter description
 
@@ -19,9 +16,6 @@ function Get-TenPlugin {
     [CmdletBinding()]
     Param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
         [int32]$PluginId,
         [switch]$EnableException
