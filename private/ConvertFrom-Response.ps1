@@ -114,9 +114,11 @@ function ConvertFrom-Response {
             if ($fields.Count -eq 1) {
                 Write-Verbose "Found one inner object"
                 $name = $fields.Name
-                # figure out why this is failing
-                write-warning "$($object.$name)"
-                Convert-Row -Object $object.$name -Type $null
+                if ($object.$name) {
+                    Convert-Row -Object $object.$name -Type $null
+                } else {
+                    Convert-Row -Object $object -Type $null
+                }
             } else {
                 Write-Verbose "Found multiple inner objects"
                 $result = $true
