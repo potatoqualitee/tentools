@@ -34,14 +34,14 @@ function Remove-TenPluginRule {
     #>
     [CmdletBinding()]
     param
-    (eption
+    (
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [int32]$RuleId,
+        [switch]$EnableException
     )
-    Get-process {
+    process {
         foreach ($session in (Get-TenSession)) {
             Invoke-TenRequest -SessionObject $session -Path ('/plugin-rules/{0}' -f $RuleId) -Method 'Delete'
         }
     }
-}           Invoke-TenRequest -SessionObject $session -Path ('/plugin-rules/{0}' -f $RuleId) -Method 'Delete'
-}
-}
 }
