@@ -26,9 +26,6 @@ function Get-TenScanHost {
     [CmdletBinding()]
     Param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [Parameter(ValueFromPipelineByPropertyName)]

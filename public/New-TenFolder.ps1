@@ -6,9 +6,6 @@ function New-TenFolder {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER Name
         Parameter description
 
@@ -23,9 +20,6 @@ function New-TenFolder {
     [CmdletBinding()]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string]$Name,
         [switch]$EnableException
@@ -33,7 +27,7 @@ function New-TenFolder {
     process {
         foreach ($session in (Get-TenSession)) {
             $folder = Invoke-TenRequest -SessionObject $session -Path '/folders' -Method 'Post' -Parameter @{'name' = $Name }
-            Get-TenFolder -SessionId $session.sessionid | Where-Object FolderId -eq $folder.id
+            Get-TenFolder | Where-Object FolderId -eq $folder.id
         }
     }
 }

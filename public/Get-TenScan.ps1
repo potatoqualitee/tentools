@@ -6,9 +6,6 @@ function Get-TenScan {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER FolderId
         Parameter description
 

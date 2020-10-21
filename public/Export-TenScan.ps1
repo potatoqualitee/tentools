@@ -41,9 +41,6 @@ function Export-TenScan {
     [CmdletBinding()]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32]$SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [Parameter(Position = 2)]
@@ -96,18 +93,18 @@ function Export-TenScan {
     process {
         foreach ($session in (Get-TenSession)) {
             if ($HistoryId) {
-                $urlpath = "/scans/$ScanId/export?history_id=$($HistoryId)"
+                $urlpath = "/scans/$ScanId/export?history_id=$HistoryId"
             } else {
                 $urlpath = "/scans/$ScanId/export"
             }
 
             Write-PSFMessage -Level Verbose -Message "Exporting scan with Id of $ScanId in $($Format) format"
 
-            foreach ($fileid in (Invoke-TenRequest -SessionObject $session -Path $urlpath  -Method 'Post' -Parameter $ExportParams)) {
+            foreach ($fileid in (Invoke-TenRequest -SessionObject $session -Path $urlpath -Method 'Post' -Parameter $ExportParams)) {
                 $FileStatus = ''
                 while ($FileStatus.status -ne 'ready') {
                     try {
-                        $FileStatus = Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/export/$($fileid.file)/status"  -Method GET
+                        $FileStatus = Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/export/$($fileid.file)/status" -Method GET
                         Write-PSFMessage -Level Verbose -Message "Status of export is $($FileStatus.status)"
                     } catch {
                         break

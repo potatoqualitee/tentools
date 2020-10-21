@@ -6,9 +6,6 @@ function Enable-TenPolicyPortScanner {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER PolicyId
         Parameter description
 
@@ -27,9 +24,6 @@ function Enable-TenPolicyPortScanner {
     [OutputType([int])]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32]$SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32[]]$PolicyId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
@@ -67,7 +61,7 @@ function Enable-TenPolicyPortScanner {
                 }
 
                 $null = Invoke-TenRequest @params
-                Get-TenPolicyPortScanner -SessionId $session.SessionId -PolicyId $policy
+                Get-TenPolicyPortScanner -PolicyId $policy
             }
         }
     }

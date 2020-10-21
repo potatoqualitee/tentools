@@ -6,9 +6,6 @@ function New-TenUser {
     .DESCRIPTION
         Long description
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER Credential
     Credential for connecting to the Nessus Server
 
@@ -35,9 +32,6 @@ function New-TenUser {
     [CmdletBinding()]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32[]]$SessionId = $script:NessusConn.SessionId,
         [Parameter(Mandatory)]
         [Management.Automation.PSCredential]$Credential,
         [Parameter(Mandatory)]

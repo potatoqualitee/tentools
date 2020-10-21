@@ -6,9 +6,6 @@ function Edit-TenPluginRule {
     .DESCRIPTION
         Can be used to change a previously defined, scan report altering rule
 
-    .PARAMETER SessionId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
-
     .PARAMETER Id
         ID number of the rule which would you like removed/deleted
 
@@ -30,26 +27,23 @@ function Edit-TenPluginRule {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Edit-TenPluginRule -SessionId 0 -Id 500 -ComputerName 'YourComputer' -Expiration (([datetime]::Now).AddDays(10)) -Type Low
+        PS> Edit-TenPluginRule -Id 500 -ComputerName 'YourComputer' -Expiration (([datetime]::Now).AddDays(10)) -Type Low
 
         Will edit a plugin rule with an ID of 500, to have a new computer name. Rule expires in 10 days
 
     .EXAMPLE
-        PS> Get-TenPluginRule -SessionId 0 | Edit-TenPluginRule -Type High
+        PS> Get-TenPluginRule | Edit-TenPluginRule -Type High
 
         Will alter all rules to now have a serverity of 'Info'
 
     .EXAMPLE
-        PS> Get-TenPluginRule -SessionId 0 | ? {$_.Host -eq 'myComputer'} | Edit-TenPluginRule -Type 'High'
+        PS> Get-TenPluginRule | ? {$_.Host -eq 'myComputer'} | Edit-TenPluginRule -Type 'High'
 
         Will find all plugin rules that match the computer name, and set their severity to high
     #>
     [CmdletBinding()]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [Alias('Index')]
-        [int32]$SessionId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$Id,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
