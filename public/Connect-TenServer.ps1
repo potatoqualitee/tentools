@@ -43,9 +43,6 @@ function Connect-TenServer {
         [switch]$EnableException
     )
     begin {
-        # support just one session for now by resetting the variable
-        $script:NessusConn = New-Object System.Collections.ArrayList
-
         if (-not $PSBoundParameters.Credential) {
             $UseDefaultCredential = $true
         }
@@ -182,11 +179,15 @@ function Connect-TenServer {
                     ServerVersionMajor = $null
                     MultiUser          = $null
                 }
+                $oldsession = $script:NessusConn | Where-Object { $PSItem.Uri -eq $uri -and $PSItem.Username }
+                if ($oldsession) {
+                    $null = $script:NessusConn.Remove($oldsession)
+                }
                 $null = $script:NessusConn.Add($session)
                 $info = Get-TenServerInfo
-                $script:NessusConn[0].MultiUser = ($info.capabilities.multi_user -eq 'full' -or $sc)
-                $script:NessusConn[0].ServerVersion = $info.UIVersion
-                $script:NessusConn[0].ServerVersionMajor = ([version]($info.UIVersion)).Major
+                $script:NessusConn[$($script:NessusConn.Count) - 1].MultiUser = ($info.capabilities.multi_user -eq 'full' -or $sc)
+                $script:NessusConn[$($script:NessusConn.Count) - 1].ServerVersion = $info.UIVersion
+                $script:NessusConn[$($script:NessusConn.Count) - 1].ServerVersionMajor = ([version]($info.UIVersion)).Major
                 $session | Select-DefaultView -Property SessionId, UserName, URI, ServerType
             }
         }

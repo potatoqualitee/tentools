@@ -29,18 +29,6 @@ function Stop-TenScan {
 
     }
     process {
-        $collection = @()
-
-        foreach ($id in $SessionId) {
-            $sessions = $script:NessusConn
-
-            foreach ($session in $sessions) {
-                if ($session.SessionId -eq $id) {
-                    $collection += $session
-                }
-            }
-        }
-
         foreach ($session in (Get-TenSession)) {
             $Scans = Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/stop" -Method 'Post'
 
