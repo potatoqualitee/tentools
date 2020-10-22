@@ -33,7 +33,7 @@ function Get-TenPolicy {
     process {
         foreach ($session in (Get-TenSession)) {
             $policies = Invoke-TenRequest -SessionObject $session -Path '/policies' -Method GET |
-                ConvertFrom-Response
+                ConvertFrom-TenRestResponse
 
             switch ($PSCmdlet.ParameterSetName) {
                 'ByName' {

@@ -1,4 +1,4 @@
-function ConvertFrom-Response {
+function ConvertFrom-TenRestResponse {
     [CmdletBinding()]
     param
     (
@@ -28,8 +28,8 @@ function ConvertFrom-Response {
             if ($Key -notmatch 'date' -and $Key -notmatch 'time') {
                 return $Value
             } else {
-                $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
                 if ($Value -cnotlike "*T*") {
+                    $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
                     return $origin.AddSeconds($Value).ToLocalTime()
                 } else {
                     return [datetime]::ParseExact($Value, "yyyyMMddTHHmmss",
@@ -72,6 +72,14 @@ function ConvertFrom-Response {
                         "User_permissions" {
                             $hash["UserPermissions"] = $permidenum[$row.user_permissions]
                         }
+                        { $PSItem -match "Modifi" } {
+                            $value = Convert-Value -Key $column -Value $row.$column
+                            $hash["Modified"] = $value
+                        }
+                        { $PSItem -match "Creat" } {
+                            $value = Convert-Value -Key $column -Value $row.$column
+                            $hash["Created"] = $value
+                        }
                         default {
                             # remove _, cap all words
                             $key = Convert-Name $column
@@ -97,7 +105,7 @@ function ConvertFrom-Response {
                 if ('Description' -in $keys) {
                     $null = $order.Add("Description")
                 }
-                foreach ($column in ($keys | Where-Object { $PSItem -notin "ServerUri", "Id", "Type", "Name", "Description" })) {
+                foreach ($column in ($keys | Sort-Object | Where-Object { $PSItem -notin "ServerUri", "Id", "Type", "Name", "Description" })) {
                     $null = $order.Add($column)
                 }
 
@@ -121,7 +129,6 @@ function ConvertFrom-Response {
             if ($fields.Count -eq 1) {
                 Write-Verbose "Found one inner object"
                 $name = $fields.Name
-                # figure out why this is failing
                 Convert-Row -Object $object.$name -Type $null
             } else {
                 Write-Verbose "Found multiple inner objects"

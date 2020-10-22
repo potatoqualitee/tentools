@@ -24,6 +24,7 @@ function Get-TenPolicyDetail {
     param
     (
         [Parameter(ValueFromPipelineByPropertyName)]
+        [Alias('Id')]
         [int32[]]$PolicyId,
         [Parameter(ValueFromPipelineByPropertyName)]
         [string]$Name,
@@ -45,7 +46,7 @@ function Get-TenPolicyDetail {
             foreach ($id in $PolicyId) {
                 Write-PSFMessage -Level Verbose -Message "Getting details for policy with id $id"
                 Invoke-TenRequest -SessionObject $session -Path "/editor/policy/$id" -Method GET |
-                    ConvertFrom-Response
+                    ConvertFrom-TenRestResponse
             }
         }
     }

@@ -40,11 +40,11 @@ function Invoke-TenRequest {
                 }
 
                 if ($Path -match '/editor/policy') {
-                    if ($Path -notmatch '/policies/') {
-                        $Path = $Path.Replace("/editor/policy", "/policy?filter=*&fields=name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
+                    if ($Path -notmatch '/editor/policy/') {
+                        $Path = $Path.Replace("/editor/policy", "/policy?filter=*&expand=policyTemplate&fields=preferences,families,auditFiles,name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
                     } else {
                         $id = Split-path $Path -Leaf
-                        $Path = $Path.Replace("/editor/policy/", "/policy/$($id)?fields=name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
+                        $Path = $Path.Replace("/editor/policy/", "/policy/$($id)?expand=policyTemplate&fields=preferences,families,auditFiles,name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
                     }
                 }
             }

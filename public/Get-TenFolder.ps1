@@ -43,7 +43,7 @@ function Get-TenFolder {
                 Stop-PSFFunction -Message "tenable.sc not supported" -Continue
             }
             Invoke-TenRequest -SessionObject $session -Path '/folders' -Method GET |
-            ConvertFrom-Response
+                ConvertFrom-TenRestResponse
         }
     }
 }

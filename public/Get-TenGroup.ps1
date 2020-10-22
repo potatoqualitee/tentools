@@ -29,7 +29,7 @@ function Get-TenGroup {
                 }
 
                 Invoke-TenRequest @groupparams |
-                ConvertFrom-Response
+                    ConvertFrom-TenRestResponse
 
             } else {
                 Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
