@@ -43,9 +43,9 @@ function Get-TenScan {
             $scans = Invoke-TenRequest -SessionObject $session -Path '/scans' -Method GET -Parameter $params
 
             if ($Status) {
-                $scans | ConvertFrom-Response | Where-Object { $_.status -eq $Status.ToLower() }
+                $scans | ConvertFrom-TenRestResponse | Where-Object { $_.status -eq $Status.ToLower() }
             } else {
-                $scans | ConvertFrom-Response
+                $scans | ConvertFrom-TenRestResponse
             }
         }
     }

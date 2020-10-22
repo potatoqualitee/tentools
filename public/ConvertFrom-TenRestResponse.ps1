@@ -1,4 +1,4 @@
-function ConvertFrom-Response {
+function ConvertFrom-TenRestResponse {
     [CmdletBinding()]
     param
     (
@@ -28,8 +28,8 @@ function ConvertFrom-Response {
             if ($Key -notmatch 'date' -and $Key -notmatch 'time') {
                 return $Value
             } else {
-                $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
                 if ($Value -cnotlike "*T*") {
+                    $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
                     return $origin.AddSeconds($Value).ToLocalTime()
                 } else {
                     return [datetime]::ParseExact($Value, "yyyyMMddTHHmmss",
@@ -51,10 +51,22 @@ function ConvertFrom-Response {
             $fields = $Object | Get-Member -Type NoteProperty | Sort-Object Name
 
             foreach ($row in $Object) {
-                $uri = [uri]$session.Uri
-                $hash = @{
-                    ServerUri = "$($uri.Host):$($uri.Port)"
+                if (-not $session) {
+                    $tempsession = Get-TenSession
+                    if ($tempsession.SessionId.Count -eq 1) {
+                        $session = $tempsession
+                    }
                 }
+
+                if ($session) {
+                    $uri = [uri]$session.Uri
+                    $hash = @{
+                        ServerUri = "$($uri.Host):$($uri.Port)"
+                    }
+                } else {
+                    $hash = @{}
+                }
+
                 if ($Type) {
                     $hash["Type"] = $Type
                 }
@@ -72,6 +84,14 @@ function ConvertFrom-Response {
                         "User_permissions" {
                             $hash["UserPermissions"] = $permidenum[$row.user_permissions]
                         }
+                        { $PSItem -match "Modifi" } {
+                            $value = Convert-Value -Key $column -Value $row.$column
+                            $hash["Modified"] = $value
+                        }
+                        { $PSItem -match "Creat" } {
+                            $value = Convert-Value -Key $column -Value $row.$column
+                            $hash["Created"] = $value
+                        }
                         default {
                             # remove _, cap all words
                             $key = Convert-Name $column
@@ -84,7 +104,9 @@ function ConvertFrom-Response {
                 # Set column order
                 $order = New-Object System.Collections.ArrayList
                 $keys = $hash.Keys
-                $null = $order.Add("ServerUri")
+                if ($session) {
+                    $null = $order.Add("ServerUri")
+                }
                 if ('Id' -in $keys) {
                     $null = $order.Add("Id")
                 }
@@ -97,7 +119,7 @@ function ConvertFrom-Response {
                 if ('Description' -in $keys) {
                     $null = $order.Add("Description")
                 }
-                foreach ($column in ($keys | Where-Object { $PSItem -notin "ServerUri", "Id", "Type", "Name", "Description" })) {
+                foreach ($column in ($keys | Sort-Object | Where-Object { $PSItem -notin "ServerUri", "Id", "Type", "Name", "Description" })) {
                     $null = $order.Add($column)
                 }
 
@@ -118,16 +140,25 @@ function ConvertFrom-Response {
             $fields = $object | Get-Member -Type NoteProperty
 
             # IF EVERY ONE HAS MULTIPLES INSIDE
+            if ($fields.Count -eq 0) {
+                Write-Verbose "Found no inner objects"
+                try {
+                    $object = $object | ConvertFrom-Json -ErrorAction Stop
+                    $fields = $object | Get-Member -Type NoteProperty -ErrorAction Stop
+                } catch {
+                    # just tryin', move along
+                }
+            }
+
             if ($fields.Count -eq 1) {
                 Write-Verbose "Found one inner object"
                 $name = $fields.Name
-                # figure out why this is failing
                 Convert-Row -Object $object.$name -Type $null
             } else {
                 Write-Verbose "Found multiple inner objects"
                 $result = $true
                 foreach ($definition in $fields.Definition) {
-                    if (-not $definition.StartsWith("Object[]")) {
+                    if (-not $definition.Contains("Object[]")) {
                         $result = $false
                     }
                 }

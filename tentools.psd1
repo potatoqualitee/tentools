@@ -47,6 +47,7 @@
         'Add-TenPluginRule',
         'Add-TenPolicyPortRange',
         'Connect-TenServer',
+        'ConvertFrom-TenRestResponse',
         'Copy-TenPolicy',
         'Disable-TenPolicyLocalPortEnumeration',
         'Disable-TenPolicyPortScanner',
