@@ -117,7 +117,6 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
         It "Returns proper policy detail information" {
             $results = Get-TenPolicy | Select-Object Id | Get-TenPolicyDetail
             $results | Select-Object -ExpandProperty Title | Should -Contain 'Host Discovery'
-            $results | Select-Object -ExpandProperty Title | Should -Contain 'Basic Network Scan'
         }
     }
 }
