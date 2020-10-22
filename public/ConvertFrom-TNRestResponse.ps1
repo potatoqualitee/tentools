@@ -142,11 +142,16 @@ function ConvertFrom-TNRestResponse {
             # IF EVERY ONE HAS MULTIPLES INSIDE
             if ($fields.Count -eq 0) {
                 Write-Verbose "Found no inner objects"
-                try {
-                    $object = $object | ConvertFrom-Json -ErrorAction Stop
-                    $fields = $object | Get-Member -Type NoteProperty -ErrorAction Stop
-                } catch {
-                    # just tryin', move along
+                if ($object.StartsWith("@{")) {
+                    $object = $object.Substring(2, $object.Length - 3) -split ';' | ConvertFrom-StringData | ConvertTo-PSCustomObject
+                    $fields = $object | Get-Member -Type NoteProperty
+                } else {
+                    try {
+                        $object = $object | ConvertFrom-Json -ErrorAction Stop
+                        $fields = $object | Get-Member -Type NoteProperty -ErrorAction Stop
+                    } catch {
+                        # nothing
+                    }
                 }
             }
 
