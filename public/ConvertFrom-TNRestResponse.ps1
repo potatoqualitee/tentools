@@ -23,7 +23,7 @@ function ConvertFrom-TNRestResponse {
         function Convert-Value {
             param (
                 [string]$Key,
-                [object[]]$Value
+                $Value
             )
             if ($Key -notmatch 'date' -and $Key -notmatch 'time') {
                 if ("$Value".StartsWith("{@{")) {
