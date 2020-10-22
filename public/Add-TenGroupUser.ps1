@@ -1,4 +1,4 @@
-function Add-TenGroupUser {
+function Add-TNGroupUser {
     <#
     .SYNOPSIS
         Adds a user to a group
@@ -18,7 +18,7 @@ function Add-TenGroupUser {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Add-TenGroupUser
+        PS> Add-TNGroupUser
 
     #>
     [CmdletBinding()]
@@ -31,7 +31,7 @@ function Add-TenGroupUser {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             if ($session.MultiUser) {
                 $params = @{
                     SessionObject   = $session
@@ -40,7 +40,7 @@ function Add-TenGroupUser {
                     Parameter       = @{'user_id' = $UserId }
                     EnableException = $EnableException
                 }
-                Invoke-TenRequest @params
+                Invoke-TNRequest @params
             } else {
                 Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
             }

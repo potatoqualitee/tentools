@@ -1,4 +1,4 @@
-function Get-TenPluginRule {
+function Get-TNPluginRule {
     <#
     .SYNOPSIS
         Gets a list of all Nessus plugin rules
@@ -15,11 +15,11 @@ function Get-TenPluginRule {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-TenPluginRule
+        PS> Get-TNPluginRule
         Gets all defined plugin rules
 
     .EXAMPLE
-        PS> Get-TenPluginRule -Detail
+        PS> Get-TNPluginRule -Detail
         Gets all defined plugin rules with details
 
     #>
@@ -44,12 +44,12 @@ function Get-TenPluginRule {
     }
 
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             if ($session.sc) {
                 Stop-PSFFunction -Message "tenable.sc not supported" -Continue
             }
 
-            $rules = Invoke-TenRequest -SessionObject $session -Path '/plugin-rules' -Method GET
+            $rules = Invoke-TNRequest -SessionObject $session -Path '/plugin-rules' -Method GET
 
             foreach ($rule in $rules.plugin_rules) {
                 if ($PSBoundParameters.PluginId -and ($rule.plugin_id -notin $PluginId)) {
@@ -64,7 +64,7 @@ function Get-TenPluginRule {
                 If ($Detail) {
                     # Significant increase in web requests!
                     # Provides the rule name in the returned object
-                    $plugin = (Get-TenPlugin -SessionId $session.SessionId -PluginId $rule.plugin_id).Name
+                    $plugin = (Get-TNPlugin -SessionId $session.SessionId -PluginId $rule.plugin_id).Name
                 } else {
                     $plugin = $null
                 }

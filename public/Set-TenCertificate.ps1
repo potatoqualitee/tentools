@@ -1,4 +1,4 @@
-function Set-TenCertificate {
+function Set-TNCertificate {
     <#
     .SYNOPSIS
         Creates a new admin the Nessus website then establishes a connection using those credentials
@@ -39,7 +39,7 @@ function Set-TenCertificate {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Set-TenCertificate -ComputerName acas -Credential admin
+        PS> Set-TNCertificate -ComputerName acas -Credential admin
     #>
     [CmdletBinding()]
     param

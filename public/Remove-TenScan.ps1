@@ -1,4 +1,4 @@
-function Remove-TenScan {
+function Remove-TNScan {
     <#
     .SYNOPSIS
         Short description
@@ -10,7 +10,7 @@ function Remove-TenScan {
         Parameter description
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
 
     .NOTES
     General notes
@@ -23,9 +23,9 @@ function Remove-TenScan {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             Write-PSFMessage -Level Verbose -Message "Removing scan with Id $ScanId"
-            Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId" -Method 'Delete' -Parameter $params
+            Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId" -Method 'Delete' -Parameter $params
             Write-PSFMessage -Level Verbose -Message 'Scan Removed'
         }
     }

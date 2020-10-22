@@ -1,4 +1,4 @@
-function Test-TenAccessibility {
+function Test-TNAccessibility {
     <#
 	.SYNOPSIS
 	    Tests the Credentialing and Accessibility of ACAS.
@@ -31,12 +31,12 @@ function Test-TenAccessibility {
         Useful if running as the ACAS service account is desired
 
 	.EXAMPLE
-        PS> Test-TenAccessibility -ComputerName WS101
+        PS> Test-TNAccessibility -ComputerName WS101
 
         Remotely connects to computer WS101 and performs tests. Assumes svc.acas.* is the service account
 
 	.EXAMPLE
-        PS> Test-TenAccessibility -ComputerName WS101 -Credential ad\acaschecker -ServiceAccount acas2
+        PS> Test-TNAccessibility -ComputerName WS101 -Credential ad\acaschecker -ServiceAccount acas2
 
         Remotely connects to computer WS101 as ad\acaschecker and performs tests. Checks to see if an account matching acas2 is a local admin.
 	#>

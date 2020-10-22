@@ -1,4 +1,4 @@
-function New-TenGroup {
+function New-TNGroup {
     <#
     .SYNOPSIS
         Short description
@@ -15,7 +15,7 @@ function New-TenGroup {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     [OutputType([int])]
@@ -26,9 +26,9 @@ function New-TenGroup {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             if ($session.MultiUser) {
-                $groups = Invoke-TenRequest -SessionObject $session -Path '/groups' -Method 'POST' -Parameter @{'name' = $Name }
+                $groups = Invoke-TNRequest -SessionObject $session -Path '/groups' -Method 'POST' -Parameter @{'name' = $Name }
                 [pscustomobject]@{
                     Name        = $groups.name
                     GroupId     = $groups.id

@@ -1,4 +1,4 @@
-function Get-TenScanTemplate {
+function Get-TNScanTemplate {
     <#
     .SYNOPSIS
         Short description
@@ -12,7 +12,7 @@ function Get-TenScanTemplate {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-TenScanTemplate
+        PS> Get-TNScanTemplate
     #>
     [CmdletBinding()]
     param
@@ -20,8 +20,8 @@ function Get-TenScanTemplate {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
-            $Templates = Invoke-TenRequest -SessionObject $session -Path '/editor/scan/templates' -Method GET
+        foreach ($session in (Get-TNSession)) {
+            $Templates = Invoke-TNRequest -SessionObject $session -Path '/editor/scan/templates' -Method GET
             foreach ($Template in $Templates.templates) {
                 [pscustomobject]@{
                     Name             = $Template.name

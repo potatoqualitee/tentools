@@ -1,4 +1,4 @@
-function Set-TenPolicyPortRange {
+function Set-TNPolicyPortRange {
     <#
     .SYNOPSIS
         Short description
@@ -18,7 +18,7 @@ function Set-TenPolicyPortRange {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
 
     #>
 
@@ -33,7 +33,7 @@ function Set-TenPolicyPortRange {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             foreach ($PolicyToChange in $PolicyId) {
                 $params = @{
                     SessionObject = $session
@@ -43,8 +43,8 @@ function Set-TenPolicyPortRange {
                     Parameter     = "{`"settings`": {`"portscan_range`": `"$($Port -join ",")`"}}"
                 }
 
-                $null = Invoke-TenRequest @params
-                Get-TenPolicyPortRange -SessionId $session.SessionId -PolicyId $PolicyToChange
+                $null = Invoke-TNRequest @params
+                Get-TNPolicyPortRange -SessionId $session.SessionId -PolicyId $PolicyToChange
             }
         }
     }

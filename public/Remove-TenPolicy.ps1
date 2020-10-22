@@ -1,4 +1,4 @@
-function Remove-TenPolicy {
+function Remove-TNPolicy {
     <#
     .SYNOPSIS
         Short description
@@ -15,7 +15,7 @@ function Remove-TenPolicy {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     param
@@ -25,9 +25,9 @@ function Remove-TenPolicy {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             Write-PSFMessage -Level Verbose -Message "Deleting policy with id $PolicyId"
-            Invoke-TenRequest -SessionObject $session -Path "/policies/$PolicyId" -Method 'DELETE'
+            Invoke-TNRequest -SessionObject $session -Path "/policies/$PolicyId" -Method 'DELETE'
             Write-PSFMessage -Level Verbose -Message 'Policy deleted.'
         }
     }

@@ -11,7 +11,7 @@ function Remove-NessusFolder {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     Param
@@ -21,8 +21,8 @@ function Remove-NessusFolder {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
-            Invoke-TenRequest -SessionObject $session -Path "/folders/$($FolderId)" -Method 'DELETE'
+        foreach ($session in (Get-TNSession)) {
+            Invoke-TNRequest -SessionObject $session -Path "/folders/$($FolderId)" -Method 'DELETE'
         }
     }
 }

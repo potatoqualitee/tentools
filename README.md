@@ -4,8 +4,8 @@ This toolset extends Posh-Nessus by adding more functionality, including the abi
 
 ## Key links for reference:
 
-- [ACAS overview](https://www.ask-Ten.info/overview/) for discussion around contributing to the project
-- [Tenable ACAS Blog](https://www.tenable.com/blog/tenable-selected-for-disa-s-Ten-vulnerability-management-solution) for general discussion on the module and asking questions
+- [ACAS overview](https://www.ask-ten.info/overview/) for discussion around contributing to the project
+- [Tenable ACAS Blog](https://www.tenable.com/blog/tenable-selected-for-disa-s-ten-vulnerability-management-solution) for general discussion on the module and asking questions
 
 ## Installer
 
@@ -37,7 +37,7 @@ Please rename the folders from `name-master` to `name` and store in your `$Env:P
 Bunch of examples
 
 ```powershell
-Connect-TenServer -ComputerName acas -Credential acasadmin
+Connect-TNServer -ComputerName acas -Credential acasadmin
 ```
 
 ## Support

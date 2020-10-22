@@ -1,4 +1,4 @@
-function Remove-TenScanHistory {
+function Remove-TNScanHistory {
     <#
     .SYNOPSIS
         Short description
@@ -18,7 +18,7 @@ function Remove-TenScanHistory {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     Param
@@ -30,9 +30,9 @@ function Remove-TenScanHistory {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             Write-PSFMessage -Level Verbose -Message "Removing history Id ($HistoryId) from scan Id $ScanId"
-            Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/history/$HistoryId" -Method 'Delete' -Parameter $params
+            Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId/history/$HistoryId" -Method 'Delete' -Parameter $params
             Write-PSFMessage -Level Verbose -Message 'History Removed'
         }
     }

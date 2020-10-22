@@ -1,4 +1,4 @@
-function Stop-TenScan {
+function Stop-TNScan {
     <#
     .SYNOPSIS
         Short description
@@ -15,7 +15,7 @@ function Stop-TenScan {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     param
@@ -29,8 +29,8 @@ function Stop-TenScan {
 
     }
     process {
-        foreach ($session in (Get-TenSession)) {
-            $Scans = Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/stop" -Method 'Post'
+        foreach ($session in (Get-TNSession)) {
+            $Scans = Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId/stop" -Method 'Post'
 
             if ($Scans -is [psobject]) {
                 $scan = $Scans.scan

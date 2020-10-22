@@ -1,4 +1,4 @@
-function Add-TenPluginRule {
+function Add-TNPluginRule {
     <#
     .SYNOPSIS
         Creates a new Nessus plugin rule
@@ -25,12 +25,12 @@ function Add-TenPluginRule {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Add-TenPluginRule -PluginId 15901 -ComputerName 'WebServer' -Type Critical
+        PS> Add-TNPluginRule -PluginId 15901 -ComputerName 'WebServer' -Type Critical
 
         Creates a rule that changes the default severity of 'Medium', to 'Critical' for the defined computer and plugin ID
 
     .EXAMPLE
-        PS> $WebServers | % {Add-TenPluginRule -PluginId 15901 -ComputerName $_ -Type Critical}
+        PS> $WebServers | % {Add-TNPluginRule -PluginId 15901 -ComputerName $_ -Type Critical}
 
         Creates a rule for a list computers, using the defined options
     #>
@@ -50,7 +50,7 @@ function Add-TenPluginRule {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
 
             $dtExpiration = $null
 
@@ -87,8 +87,8 @@ function Add-TenPluginRule {
                 EnableException = $EnableException
             }
 
-            $null = Invoke-TenRequest @params
-            Get-TenPluginRule | Select-Object -Last 1 # probably a bad idea :D
+            $null = Invoke-TNRequest @params
+            Get-TNPluginRule | Select-Object -Last 1 # probably a bad idea :D
         }
     }
 }

@@ -1,4 +1,4 @@
-function Copy-TenPolicy {
+function Copy-TNPolicy {
     <#
     .SYNOPSIS
         Short description
@@ -15,7 +15,7 @@ function Copy-TenPolicy {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     param
@@ -25,8 +25,8 @@ function Copy-TenPolicy {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
-            $CopiedPolicy = Invoke-TenRequest -SessionObject $session -Path "/policies/$PolicyId/copy" -Method 'Post'
+        foreach ($session in (Get-TNSession)) {
+            $CopiedPolicy = Invoke-TNRequest -SessionObject $session -Path "/policies/$PolicyId/copy" -Method 'Post'
             [PSCustomObject]@{
                 Name     = $CopiedPolicy.Name
                 PolicyId = $CopiedPolicy.Id

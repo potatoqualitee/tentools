@@ -1,4 +1,4 @@
-function Remove-TenPluginRule {
+function Remove-TNPluginRule {
     <#
     .SYNOPSIS
         Removes a Nessus plugin rule
@@ -15,19 +15,19 @@ function Remove-TenPluginRule {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        Remove-TenPluginRule -RuleId 500
+        Remove-TNPluginRule -RuleId 500
         Will delete a plugin rule with an RuleId of 500
 
     .EXAMPLE
-        Get-TenPluginRule | Remove-TenPluginRule
+        Get-TNPluginRule | Remove-TNPluginRule
         Will delete all rules
 
     .EXAMPLE
-        Get-TenPluginRule | ? {$_.Host -eq 'myComputer'} | Remove-TenPluginRule
+        Get-TNPluginRule | ? {$_.Host -eq 'myComputer'} | Remove-TNPluginRule
         Will find all plugin rules that match the computer name, and delete them
 
     .INPUTS
-        Can accept pipeline data from Get-TenPluginRule
+        Can accept pipeline data from Get-TNPluginRule
 
     .OUTPUTS
         Empty, unless an error is received from the server
@@ -40,8 +40,8 @@ function Remove-TenPluginRule {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
-            Invoke-TenRequest -SessionObject $session -Path ('/plugin-rules/{0}' -f $RuleId) -Method 'Delete'
+        foreach ($session in (Get-TNSession)) {
+            Invoke-TNRequest -SessionObject $session -Path ('/plugin-rules/{0}' -f $RuleId) -Method 'Delete'
         }
     }
 }

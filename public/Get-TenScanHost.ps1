@@ -1,4 +1,4 @@
-function Get-TenScanHost {
+function Get-TNScanHost {
     <#
     .SYNOPSIS
         Short description
@@ -10,7 +10,7 @@ function Get-TenScanHost {
         Parameter description
 
     .PARAMETER ScanId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TNServer.
 
     .PARAMETER HistoryId
         Parameter description
@@ -21,7 +21,7 @@ function Get-TenScanHost {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-TenScanHost
+        PS> Get-TNScanHost
     #>
     [CmdletBinding()]
     Param
@@ -40,8 +40,8 @@ function Get-TenScanHost {
         }
     }
     process {
-        foreach ($session in (Get-TenSession)) {
-            foreach ($Host in (Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId" -Method GET -Parameter $params).hosts) {
+        foreach ($session in (Get-TNSession)) {
+            foreach ($Host in (Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId" -Method GET -Parameter $params).hosts) {
                 [pscustomobject]@{
                     HostName  = $Host.hostname
                     HostId    = $Host.host_id

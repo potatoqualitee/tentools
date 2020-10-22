@@ -1,4 +1,4 @@
-function Get-TenGroupMember {
+function Get-TNGroupMember {
     <#
     .SYNOPSIS
         Short description
@@ -10,7 +10,7 @@ function Get-TenGroupMember {
         Parameter description
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
 
     .NOTES
     General notes
@@ -23,7 +23,7 @@ function Get-TenGroupMember {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             if ($session.MultiUser) {
                 $groupparams = @{
                     SessionObject = $session
@@ -31,7 +31,7 @@ function Get-TenGroupMember {
                     Method        = 'GET'
                 }
 
-                (Invoke-TenRequest @groupparams).users | ConvertFrom-TenRestResponse
+                (Invoke-TNRequest @groupparams).users | ConvertFrom-TNRestResponse
             } else {
                 Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
             }

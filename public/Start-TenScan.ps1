@@ -1,4 +1,4 @@
-function Start-TenScan {
+function Start-TNScan {
     <#
     .SYNOPSIS
         Short description
@@ -18,7 +18,7 @@ function Start-TenScan {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     param
@@ -39,8 +39,8 @@ function Start-TenScan {
         $paramJson = ConvertTo-Json -InputObject $params -Compress
     }
     process {
-        foreach ($session in (Get-TenSession)) {
-            foreach ($scans in (Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json')) {
+        foreach ($session in (Get-TNSession)) {
+            foreach ($scans in (Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json')) {
                 [pscustomobject]@{
                     ScanUUID  = $scans.scan_uuid
                     ScanId    = $ScanId

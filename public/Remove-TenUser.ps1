@@ -1,4 +1,4 @@
-function Remove-TenUser {
+function Remove-TNUser {
     <#
     .SYNOPSIS
         Short description
@@ -15,7 +15,7 @@ function Remove-TenUser {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     Param
@@ -25,10 +25,10 @@ function Remove-TenUser {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             foreach ($uid in $UserId) {
                 Write-PSFMessage -Level Verbose -Message "Deleting user with Id $uid"
-                Invoke-TenRequest -SessionObject $session -Path "/users/$uid" -Method 'Delete'
+                Invoke-TNRequest -SessionObject $session -Path "/users/$uid" -Method 'Delete'
             }
         }
     }

@@ -1,4 +1,4 @@
-function New-TenPolicy {
+function New-TNPolicy {
     <#
     .SYNOPSIS
         Short description
@@ -24,7 +24,7 @@ function New-TenPolicy {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     param
@@ -45,9 +45,9 @@ function New-TenPolicy {
             return
         }
 
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             if ($PSBoundParameters.TemplateName) {
-                $PolicyUUID = (Get-TenPolicyTemplate -Name $TemplateName).PolicyUUID
+                $PolicyUUID = (Get-TNPolicyTemplate -Name $TemplateName).PolicyUUID
             }
 
             foreach ($policyid in $PolicyUUID) {
@@ -67,8 +67,8 @@ function New-TenPolicy {
                     ContentType   = 'application/json'
                     Parameter     = $SettingsJson
                 }
-                $newpolicy = Invoke-TenRequest @params
-                Get-TenPolicy -PolicyID $newpolicy.policy_id
+                $newpolicy = Invoke-TNRequest @params
+                Get-TNPolicy -PolicyID $newpolicy.policy_id
             }
         }
     }

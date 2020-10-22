@@ -1,4 +1,4 @@
-function Get-TenPolicyLocalPortEnumeration {
+function Get-TNPolicyLocalPortEnumeration {
     <#
     .SYNOPSIS
         Short description
@@ -15,7 +15,7 @@ function Get-TenPolicyLocalPortEnumeration {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     [OutputType([int])]
@@ -27,10 +27,10 @@ function Get-TenPolicyLocalPortEnumeration {
     )
 
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             foreach ($policy in $PolicyId) {
                 try {
-                    $policydetail = Get-TenPolicyDetail -PolicyId $policy
+                    $policydetail = Get-TNPolicyDetail -PolicyId $policy
                     [pscustomobject]@{
                         PolicyId             = $policy
                         WMINetstat           = $policydetail.settings.wmi_netstat_scanner

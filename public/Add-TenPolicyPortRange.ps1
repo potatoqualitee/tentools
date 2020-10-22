@@ -1,4 +1,4 @@
-function Add-TenPolicyPortRange {
+function Add-TNPolicyPortRange {
     <#
     .SYNOPSIS
         Short description
@@ -18,7 +18,7 @@ function Add-TenPolicyPortRange {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
 
     [CmdletBinding()]
@@ -32,10 +32,10 @@ function Add-TenPolicyPortRange {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             foreach ($PolicyToChange in $PolicyId) {
                 try {
-                    $policy = Get-TenPolicyDetail -PolicyId $PolicyToChange
+                    $policy = Get-TNPolicyDetail -PolicyId $PolicyToChange
                     $ports = "$($Policy.settings.portscan_range),$($Port -join ",")"
                     $params = @{
                         SessionObject   = $session
@@ -46,8 +46,8 @@ function Add-TenPolicyPortRange {
                         EnableException = $EnableException
                     }
 
-                    $null = Invoke-TenRequest @params
-                    Get-TenPolicyPortRange -PolicyId $PolicyToChange
+                    $null = Invoke-TNRequest @params
+                    Get-TNPolicyPortRange -PolicyId $PolicyToChange
                 } catch {
                     Stop-PSFFunction -EnableException:$EnableException -Message "Failure" -ErrorRecord $_ -Continue
                 }

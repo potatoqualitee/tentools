@@ -1,4 +1,4 @@
-function ConvertFrom-TenRestResponse {
+function ConvertFrom-TNRestResponse {
     [CmdletBinding()]
     param
     (
@@ -52,7 +52,7 @@ function ConvertFrom-TenRestResponse {
 
             foreach ($row in $Object) {
                 if (-not $session) {
-                    $tempsession = Get-TenSession
+                    $tempsession = Get-TNSession
                     if ($tempsession.SessionId.Count -eq 1) {
                         $session = $tempsession
                     }

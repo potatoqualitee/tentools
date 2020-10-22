@@ -1,4 +1,4 @@
-function Export-TenScan {
+function Export-TNScan {
     <#
     .SYNOPSIS
         Short description
@@ -36,7 +36,7 @@ function Export-TenScan {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     param
@@ -91,7 +91,7 @@ function Export-TenScan {
         }
     }
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             if ($HistoryId) {
                 $urlpath = "/scans/$ScanId/export?history_id=$HistoryId"
             } else {
@@ -100,11 +100,11 @@ function Export-TenScan {
 
             Write-PSFMessage -Level Verbose -Message "Exporting scan with Id of $ScanId in $($Format) format"
 
-            foreach ($fileid in (Invoke-TenRequest -SessionObject $session -Path $urlpath -Method 'Post' -Parameter $ExportParams)) {
+            foreach ($fileid in (Invoke-TNRequest -SessionObject $session -Path $urlpath -Method 'Post' -Parameter $ExportParams)) {
                 $FileStatus = ''
                 while ($FileStatus.status -ne 'ready') {
                     try {
-                        $FileStatus = Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/export/$($fileid.file)/status" -Method GET
+                        $FileStatus = Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId/export/$($fileid.file)/status" -Method GET
                         Write-PSFMessage -Level Verbose -Message "Status of export is $($FileStatus.status)"
                     } catch {
                         break
@@ -113,11 +113,11 @@ function Export-TenScan {
                 }
                 if ($FileStatus.status -eq 'ready' -and $Format -eq 'CSV' -and $PSObject.IsPresent) {
                     Write-PSFMessage -Level Verbose -Message "Converting report to PSObject"
-                    Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/export/$($fileid.file)/download" -Method GET | ConvertFrom-Csv
+                    Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId/export/$($fileid.file)/download" -Method GET | ConvertFrom-Csv
                 } elseif ($FileStatus.status -eq 'ready') {
                     Write-PSFMessage -Level Verbose -Message "Downloading report to $($Path)"
                     $filepath = Resolve-PSFPath -Path "$path\$name-$scanid.$($Format.ToLower())" -NewChild
-                    Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/export/$($fileid.file)/download" -Method GET -OutFile $filepath
+                    Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId/export/$($fileid.file)/download" -Method GET -OutFile $filepath
                 }
                 Get-ChildItem -Path $Path
             }

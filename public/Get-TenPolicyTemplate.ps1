@@ -1,4 +1,4 @@
-function Get-TenPolicyTemplate {
+function Get-TNPolicyTemplate {
     <#
     .SYNOPSIS
         Short description
@@ -18,7 +18,7 @@ function Get-TenPolicyTemplate {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
 #>
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param
@@ -30,8 +30,8 @@ function Get-TenPolicyTemplate {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
-            $templates = Invoke-TenRequest -SessionObject $session -Path '/editor/policy/templates' -Method GET
+        foreach ($session in (Get-TNSession)) {
+            $templates = Invoke-TNRequest -SessionObject $session -Path '/editor/policy/templates' -Method GET
 
             switch ($PSCmdlet.ParameterSetName) {
                 'ByName' {

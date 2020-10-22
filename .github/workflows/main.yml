@@ -66,7 +66,7 @@ jobs:
             EnableException = $true
             LicensePath = "/tmp/nessus.license"
           }
-          Initialize-TenServer @splat
+          Initialize-TNServer @splat
       - name: Sleep to give Nessus time to initialize
         shell: pwsh
         run: Start-Sleep 20
@@ -140,7 +140,7 @@ jobs:
             EnableException = $true
             LicensePath = "/tmp/nessus.license"
           }
-          Initialize-TenServer @splat
+          Initialize-TNServer @splat
       - name: Run Pester tests
         shell: pwsh
         run: |

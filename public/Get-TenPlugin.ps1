@@ -1,4 +1,4 @@
-function Get-TenPlugin {
+function Get-TNPlugin {
     <#
     .SYNOPSIS
         Short description
@@ -10,7 +10,7 @@ function Get-TenPlugin {
         Parameter description
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
 
     #>
     [CmdletBinding()]
@@ -21,9 +21,9 @@ function Get-TenPlugin {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             if ($PluginId) {
-                foreach ($plugin in (Invoke-TenRequest -SessionObject $session -Path "/plugins/plugin/$PluginId" -Method GET)) {
+                foreach ($plugin in (Invoke-TNRequest -SessionObject $session -Path "/plugins/plugin/$PluginId" -Method GET)) {
                     $attributes = [ordered]@{ }
                     foreach ($attribute in $plugin.attributes) {
                         # Some attributes have multiple values, i.e. osvdb. This causes errors when adding duplicates

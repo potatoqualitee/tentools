@@ -1,4 +1,4 @@
-function Initialize-TenServer {
+function Initialize-TNServer {
     <#
     .SYNOPSIS
         Creates a new admin the Nessus website then establishes a connection using those credentials
@@ -27,7 +27,7 @@ function Initialize-TenServer {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Initialize-TenServer -ComputerName localhost -Path $home\Downloads\nessus.license -Credential admin
+        PS> Initialize-TNServer -ComputerName localhost -Path $home\Downloads\nessus.license -Credential admin
     #>
     [CmdletBinding()]
     param
@@ -98,7 +98,7 @@ function Initialize-TenServer {
         $license = (Get-Content -Path $LicensePath -Raw).Replace("`r`n", "")
 
         foreach ($computer in $ComputerName) {
-            $null = Wait-TenServerReady -ComputerName $computer -Port $Port -Register -WarningAction SilentlyContinue
+            $null = Wait-TNServerReady -ComputerName $computer -Port $Port -Register -WarningAction SilentlyContinue
             if ($Port -eq 443) {
                 $uri = "https://$($computer):$Port/rest"
                 $fulluri = "$uri/user"
@@ -170,8 +170,8 @@ function Initialize-TenServer {
             try {
                 $null = Invoke-RestMethod @adminuserparams -ErrorAction Stop
                 $null = $PSBoundParameters.Remove("LicensePath")
-                Connect-TenServer @PSBoundParameters
-                Restart-TenService
+                Connect-TNServer @PSBoundParameters
+                Restart-TNService
             } catch {
                 $msg = Get-ErrorMessage -Record $_
                 Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue

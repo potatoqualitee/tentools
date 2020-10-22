@@ -1,4 +1,4 @@
-function Get-TenServerInfo {
+function Get-TNServerInfo {
     <#
     .SYNOPSIS
         Short description
@@ -12,16 +12,16 @@ function Get-TenServerInfo {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-TenServerInfo
+        PS> Get-TNServerInfo
     #>
     [CmdletBinding()]
     param
     (
         [switch]$EnableException
     )
-    foreach ($session in (Get-TenSession)) {
+    foreach ($session in (Get-TNSession)) {
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-        $server = Invoke-TenRequest -SessionObject $session -Path '/server/properties' -Method GET
+        $server = Invoke-TNRequest -SessionObject $session -Path '/server/properties' -Method GET
         foreach ($serverinfo in $server) {
             [pscustomobject]@{
                 NessusType     = $serverinfo.nessus_type

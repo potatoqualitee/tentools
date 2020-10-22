@@ -1,4 +1,4 @@
-function New-TenFolder {
+function New-TNFolder {
     <#
     .SYNOPSIS
         Short description
@@ -15,7 +15,7 @@ function New-TenFolder {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     param
@@ -25,9 +25,9 @@ function New-TenFolder {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
-            $folder = Invoke-TenRequest -SessionObject $session -Path '/folders' -Method 'Post' -Parameter @{'name' = $Name }
-            Get-TenFolder | Where-Object FolderId -eq $folder.id
+        foreach ($session in (Get-TNSession)) {
+            $folder = Invoke-TNRequest -SessionObject $session -Path '/folders' -Method 'Post' -Parameter @{'name' = $Name }
+            Get-TNFolder | Where-Object FolderId -eq $folder.id
         }
     }
 }

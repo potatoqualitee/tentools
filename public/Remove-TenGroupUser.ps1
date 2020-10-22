@@ -1,4 +1,4 @@
-function Remove-TenGroupUser {
+function Remove-TNGroupUser {
     <#
     .SYNOPSIS
         Removes a Nessus group user
@@ -15,19 +15,19 @@ function Remove-TenGroupUser {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        Remove-TenGroupUser -Id 500
+        Remove-TNGroupUser -Id 500
         Will delete a group user with an ID of 500
 
     .EXAMPLE
-        Get-TenPluginRule | Remove-TenGroupUser
+        Get-TNPluginRule | Remove-TNGroupUser
         Will delete all rules
 
     .EXAMPLE
-        Get-TenPluginRule | ? {$_.Host -eq 'myComputer'} | Remove-TenGroupUser
+        Get-TNPluginRule | ? {$_.Host -eq 'myComputer'} | Remove-TNGroupUser
         Will find all group users that match the computer name, and delete them
 
     .INPUTS
-        Can accept pipeline data from Get-TenPluginRule
+        Can accept pipeline data from Get-TNPluginRule
 
     .OUTPUTS
         Empty, unless an error is received from the server
@@ -42,7 +42,7 @@ function Remove-TenGroupUser {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             if ($session.MultiUser) {
                 $groupparams = @{
                     SessionObject = $session
@@ -50,7 +50,7 @@ function Remove-TenGroupUser {
                     Method        = 'DELETE'
                 }
 
-                Invoke-TenRequest @groupparams
+                Invoke-TNRequest @groupparams
             } else {
                 Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
             }

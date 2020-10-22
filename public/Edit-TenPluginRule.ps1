@@ -1,4 +1,4 @@
-function Edit-TenPluginRule {
+function Edit-TNPluginRule {
     <#
     .SYNOPSIS
         Edits a Nessus plugin rule
@@ -27,17 +27,17 @@ function Edit-TenPluginRule {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Edit-TenPluginRule -Id 500 -ComputerName 'YourComputer' -Expiration (([datetime]::Now).AddDays(10)) -Type Low
+        PS> Edit-TNPluginRule -Id 500 -ComputerName 'YourComputer' -Expiration (([datetime]::Now).AddDays(10)) -Type Low
 
         Will edit a plugin rule with an ID of 500, to have a new computer name. Rule expires in 10 days
 
     .EXAMPLE
-        PS> Get-TenPluginRule | Edit-TenPluginRule -Type High
+        PS> Get-TNPluginRule | Edit-TNPluginRule -Type High
 
         Will alter all rules to now have a serverity of 'Info'
 
     .EXAMPLE
-        PS> Get-TenPluginRule | ? {$_.Host -eq 'myComputer'} | Edit-TenPluginRule -Type 'High'
+        PS> Get-TNPluginRule | ? {$_.Host -eq 'myComputer'} | Edit-TNPluginRule -Type 'High'
 
         Will find all plugin rules that match the computer name, and set their severity to high
     #>
@@ -59,7 +59,7 @@ function Edit-TenPluginRule {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
 
             $dtExpiration = $null
 
@@ -99,7 +99,7 @@ function Edit-TenPluginRule {
                 EnableException = $EnableException
             }
 
-            Invoke-TenRequest @params
+            Invoke-TNRequest @params
         }
     }
 }

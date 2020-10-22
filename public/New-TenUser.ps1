@@ -1,4 +1,4 @@
-function New-TenUser {
+function New-TNUser {
     <#
     .SYNOPSIS
         Short description
@@ -27,7 +27,7 @@ function New-TenUser {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     param
@@ -47,7 +47,7 @@ function New-TenUser {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             $params = @{ }
             $params.Add('type', $Type.ToLower())
             $params.Add('permissions', $permenum[$Permission])
@@ -62,7 +62,7 @@ function New-TenUser {
                 $params.Add('name', $Name)
             }
 
-            Invoke-TenRequest -SessionObject $session -Path '/users' -Method 'Post' -Parameter $params
+            Invoke-TNRequest -SessionObject $session -Path '/users' -Method 'Post' -Parameter $params
         }
     }
 }

@@ -1,4 +1,4 @@
-function Import-TenScan {
+function Import-TNScan {
     <#
     .SYNOPSIS
         Short description
@@ -24,7 +24,7 @@ function Import-TenScan {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     param
@@ -66,7 +66,7 @@ function Import-TenScan {
         }
     }
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
             $fileinfo = Get-ItemProperty -Path $File
             $FilePath = $fileinfo.FullName

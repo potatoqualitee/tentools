@@ -1,4 +1,4 @@
-function Get-TenSession {
+function Get-TNSession {
     <#
     .SYNOPSIS
         Short description
@@ -12,7 +12,7 @@ function Get-TenSession {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     param(
@@ -21,7 +21,7 @@ function Get-TenSession {
     begin {
         if (Test-PSFParameterBinding -Parameter SessionId) {
             if ($null -eq $SessionId) {
-                Write-PSFMessage -Level Warning -Message "No session specified. Have you connected using Connect-TenServer during this session?"
+                Write-PSFMessage -Level Warning -Message "No session specified. Have you connected using Connect-TNServer during this session?"
             }
         }
     }

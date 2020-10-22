@@ -1,4 +1,4 @@
-function Enable-TenPolicyLocalPortEnumeration {
+function Enable-TNPolicyLocalPortEnumeration {
     <#
     .SYNOPSIS
         Short description
@@ -24,7 +24,7 @@ function Enable-TenPolicyLocalPortEnumeration {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     [OutputType([int])]
@@ -65,7 +65,7 @@ function Enable-TenPolicyLocalPortEnumeration {
         $SettingsJson = ConvertTo-Json -InputObject $Settings -Compress
     }
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             foreach ($policy in $PolicyId) {
                 $params = @{
                     SessionObject   = $session
@@ -76,8 +76,8 @@ function Enable-TenPolicyLocalPortEnumeration {
                     EnableException = $EnableException
                 }
 
-                $null = Invoke-TenRequest @params
-                Get-TenPolicyLocalPortEnumeration -PolicyId $policy
+                $null = Invoke-TNRequest @params
+                Get-TNPolicyLocalPortEnumeration -PolicyId $policy
             }
         }
     }

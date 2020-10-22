@@ -1,4 +1,4 @@
-function Get-TenPluginFamilyDetails {
+function Get-TNPluginFamilyDetails {
     <#
     .SYNOPSIS
         Short description
@@ -15,7 +15,7 @@ function Get-TenPluginFamilyDetails {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     param
@@ -25,8 +25,8 @@ function Get-TenPluginFamilyDetails {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
-            foreach ($detail in (Invoke-TenRequest -SessionObject $session -Path "/plugins/families/$($FamilyId)" -Method GET)) {
+        foreach ($session in (Get-TNSession)) {
+            foreach ($detail in (Invoke-TNRequest -SessionObject $session -Path "/plugins/families/$($FamilyId)" -Method GET)) {
                 [pscustomobject]@{
                     Name     = $detail.name
                     FamilyId = $detail.id

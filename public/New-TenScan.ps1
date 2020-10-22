@@ -1,4 +1,4 @@
-function New-TenScan {
+function New-TNScan {
     <#
     .SYNOPSIS
         Short description
@@ -28,7 +28,7 @@ function New-TenScan {
         Parameter description
 
     .PARAMETER ScannerId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TenServer.
+        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TNServer.
 
     .PARAMETER Email
         Parameter description
@@ -42,7 +42,7 @@ function New-TenScan {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding(DefaultParameterSetName = 'Policy')]
     param
@@ -70,7 +70,7 @@ function New-TenScan {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
 
             # Join emails as a single comma separated string.
             $emails = $email -join ","
@@ -102,7 +102,7 @@ function New-TenScan {
 
                 'Policy' {
                     $polUUID = $null
-                    $Policies = Get-TenPolicy
+                    $Policies = Get-TNPolicy
                     foreach ($Policy in $Policies) {
                         if ($Policy.PolicyId -eq $PolicyId) {
                             Write-PSFMessage -Level Verbose -Message "Uising Poicy with UUID of $($Policy.PolicyUUID)"
@@ -131,7 +131,7 @@ function New-TenScan {
                 Parameter     = $ScanJson
             }
 
-            foreach ($scan in (Invoke-TenRequest @serverparams).scan) {
+            foreach ($scan in (Invoke-TNRequest @serverparams).scan) {
                 [pscustomobject]@{
                     Name             = $scan.name
                     ScanId           = $scan.id

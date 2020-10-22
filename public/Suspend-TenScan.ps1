@@ -1,4 +1,4 @@
-function Suspend-TenScan {
+function Suspend-TNScan {
     <#
     .SYNOPSIS
         Short description
@@ -10,7 +10,7 @@ function Suspend-TenScan {
         Parameter description
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     param
@@ -20,8 +20,8 @@ function Suspend-TenScan {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
-            foreach ($scan in (Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/pause" -Method 'Post').scan) {
+        foreach ($session in (Get-TNSession)) {
+            foreach ($scan in (Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId/pause" -Method 'Post').scan) {
                 [pscustomobject]@{
                     Name            = $scan.name
                     ScanId          = $ScanId

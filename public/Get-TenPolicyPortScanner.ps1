@@ -1,4 +1,4 @@
-function Get-TenPolicyPortScanner {
+function Get-TNPolicyPortScanner {
     <#
     .SYNOPSIS
         Short description
@@ -15,7 +15,7 @@ function Get-TenPolicyPortScanner {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     [OutputType([int])]
@@ -28,7 +28,7 @@ function Get-TenPolicyPortScanner {
     process {
         foreach ($policy in $PolicyId) {
             try {
-                $policydetail = Get-TenPolicyDetail -PolicyId $policy
+                $policydetail = Get-TNPolicyDetail -PolicyId $policy
                 [pscustomobject]@{
                     PolicyId   = $policy
                     SYNScanner = $policydetail.settings.syn_scanner

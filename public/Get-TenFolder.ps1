@@ -1,4 +1,4 @@
-function Get-TenFolder {
+function Get-TNFolder {
     <#
     .Synopsis
         Gets folders configured on a Nessus Server.
@@ -12,7 +12,7 @@ function Get-TenFolder {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        Get-TenFolder
+        Get-TNFolder
 
         Name    : My Scans
         Id      : 2
@@ -38,12 +38,12 @@ function Get-TenFolder {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             if ($session.sc) {
                 Stop-PSFFunction -Message "tenable.sc not supported" -Continue
             }
-            Invoke-TenRequest -SessionObject $session -Path '/folders' -Method GET |
-                ConvertFrom-TenRestResponse
+            Invoke-TNRequest -SessionObject $session -Path '/folders' -Method GET |
+                ConvertFrom-TNRestResponse
         }
     }
 }

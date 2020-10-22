@@ -1,4 +1,4 @@
-function Connect-TenServer {
+function Connect-TNServer {
     <#
     .SYNOPSIS
         Creates a connection to the Nessus website
@@ -27,7 +27,7 @@ function Connect-TenServer {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Connect-TenServer -ComputerName acas -Credential admin
+        PS> Connect-TNServer -ComputerName acas -Credential admin
     #>
     [CmdletBinding()]
     param
@@ -184,7 +184,7 @@ function Connect-TenServer {
                     $null = $script:NessusConn.Remove($oldsession)
                 }
                 $null = $script:NessusConn.Add($session)
-                $info = Get-TenServerInfo
+                $info = Get-TNServerInfo
                 $script:NessusConn[$($script:NessusConn.Count) - 1].MultiUser = ($info.capabilities.multi_user -eq 'full' -or $sc)
                 $script:NessusConn[$($script:NessusConn.Count) - 1].ServerVersion = $info.UIVersion
                 $script:NessusConn[$($script:NessusConn.Count) - 1].ServerVersionMajor = ([version]($info.UIVersion)).Major

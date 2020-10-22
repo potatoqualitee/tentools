@@ -1,4 +1,4 @@
-function Rename-TenFolder {
+function Rename-TNFolder {
     <#
     .SYNOPSIS
         Short description
@@ -13,7 +13,7 @@ function Rename-TenFolder {
         Parameter description
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     param
@@ -25,8 +25,8 @@ function Rename-TenFolder {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
-            Invoke-TenRequest -SessionObject $session -Path "/folders/$($FolderId)" -Method 'PUT' -Parameter @{'name' = $Name }
+        foreach ($session in (Get-TNSession)) {
+            Invoke-TNRequest -SessionObject $session -Path "/folders/$($FolderId)" -Method 'PUT' -Parameter @{'name' = $Name }
         }
     }
 }

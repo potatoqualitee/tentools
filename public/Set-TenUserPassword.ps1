@@ -1,4 +1,4 @@
-function Set-TenUserPassword {
+function Set-TNUserPassword {
     <#
     .SYNOPSIS
         Short description
@@ -18,7 +18,7 @@ function Set-TenUserPassword {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
 
     #>
     [CmdletBinding()]
@@ -31,12 +31,12 @@ function Set-TenUserPassword {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             foreach ($uid in $UserId) {
                 Write-PSFMessage -Level Verbose -Message "Updating user with Id $uid"
                 $params = @{'password' = $([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))) }
                 $paramJson = ConvertTo-Json -InputObject $params -Compress
-                Invoke-TenRequest -SessionObject $session -Path "/users/$uid/chpasswd" -Method 'PUT' -Parameter $paramJson -ContentType 'application/json'
+                Invoke-TNRequest -SessionObject $session -Path "/users/$uid/chpasswd" -Method 'PUT' -Parameter $paramJson -ContentType 'application/json'
             }
         }
     }

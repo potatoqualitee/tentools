@@ -1,4 +1,4 @@
-function Get-TenPolicyDetail {
+function Get-TNPolicyDetail {
     <#
     .SYNOPSIS
         Short description
@@ -18,7 +18,7 @@ function Get-TenPolicyDetail {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-TenPolicyDetail
+        PS> Get-TNPolicyDetail
     #>
     [CmdletBinding(DefaultParameterSetName = 'ByName')]
     param
@@ -31,9 +31,9 @@ function Get-TenPolicyDetail {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             if ($PSBoundParameters.Name) {
-                $policy = Get-TenPolicy -Name $Name
+                $policy = Get-TNPolicy -Name $Name
                 if ($policy) {
                     $PolicyId = $policy.PolicyId
                 } else {
@@ -41,12 +41,12 @@ function Get-TenPolicyDetail {
                 }
             }
             if (-not $PSBoundParameters.PolicyId -and -not $PSBoundParameters.Name) {
-                $PolicyId = (Get-TenPolicy).PolicyId
+                $PolicyId = (Get-TNPolicy).PolicyId
             }
             foreach ($id in $PolicyId) {
                 Write-PSFMessage -Level Verbose -Message "Getting details for policy with id $id"
-                Invoke-TenRequest -SessionObject $session -Path "/editor/policy/$id" -Method GET |
-                    ConvertFrom-TenRestResponse
+                Invoke-TNRequest -SessionObject $session -Path "/editor/policy/$id" -Method GET |
+                    ConvertFrom-TNRestResponse
             }
         }
     }

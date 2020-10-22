@@ -1,4 +1,4 @@
-function Get-TenServerStatus {
+function Get-TNServerStatus {
     <#
     .SYNOPSIS
         Short description
@@ -12,7 +12,7 @@ function Get-TenServerStatus {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     param
@@ -20,8 +20,8 @@ function Get-TenServerStatus {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
-            Invoke-TenRequest -SessionObject $session -Path '/server/status' -Method GET
+        foreach ($session in (Get-TNSession)) {
+            Invoke-TNRequest -SessionObject $session -Path '/server/status' -Method GET
         }
     }
 }

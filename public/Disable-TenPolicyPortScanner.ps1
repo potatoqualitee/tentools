@@ -1,4 +1,4 @@
-function Disable-TenPolicyPortScanner {
+function Disable-TNPolicyPortScanner {
     <#
     .SYNOPSIS
         Short description
@@ -18,7 +18,7 @@ function Disable-TenPolicyPortScanner {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Disable-TenPolicyPortScanner
+        PS> Disable-TNPolicyPortScanner
     #>
     [CmdletBinding()]
     [OutputType([int])]
@@ -49,7 +49,7 @@ function Disable-TenPolicyPortScanner {
         $settingsJson = ConvertTo-Json -InputObject $settings -Compress
     }
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             foreach ($policy in $PolicyId) {
                 $params = @{
                     SessionObject   = $session
@@ -60,8 +60,8 @@ function Disable-TenPolicyPortScanner {
                     EnableException = $EnableException
                 }
 
-                $null = Invoke-TenRequest @params
-                Get-TenPolicyPortScanner -PolicyId $policy
+                $null = Invoke-TNRequest @params
+                Get-TNPolicyPortScanner -PolicyId $policy
             }
         }
     }

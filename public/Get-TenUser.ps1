@@ -1,4 +1,4 @@
-function Get-TenUser {
+function Get-TNUser {
     <#
     .SYNOPSIS
         Short description
@@ -12,7 +12,7 @@ function Get-TenUser {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     param
@@ -20,7 +20,7 @@ function Get-TenUser {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
 
             if (-not $session.sc -and $session.ServerVersionMajor -ge 8) {
                 Stop-PSFFunction -Message "Nessus 8 and above not supported :("
@@ -29,7 +29,7 @@ function Get-TenUser {
 
             $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
 
-            $results = Invoke-TenRequest -SessionObject $session -Path '/users' -Method GET
+            $results = Invoke-TNRequest -SessionObject $session -Path '/users' -Method GET
             if ($session.sc) {
                 foreach ($user in $results) {
                     [pscustomobject]@{

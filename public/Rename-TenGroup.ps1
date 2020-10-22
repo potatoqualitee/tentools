@@ -1,4 +1,4 @@
-function Rename-TenGroup {
+function Rename-TNGroup {
     <#
     .SYNOPSIS
         Short description
@@ -18,7 +18,7 @@ function Rename-TenGroup {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     param
@@ -30,7 +30,7 @@ function Rename-TenGroup {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
+        foreach ($session in (Get-TNSession)) {
             if ($session.MultiUser) {
                 $groupparams = @{
                     SessionObject = $session
@@ -40,7 +40,7 @@ function Rename-TenGroup {
                     Parameter     = (ConvertTo-Json -InputObject @{'name' = $Name } -Compress)
                 }
 
-                Invoke-TenRequest @groupparams
+                Invoke-TNRequest @groupparams
             } else {
                 Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
             }

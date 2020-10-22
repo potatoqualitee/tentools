@@ -1,8 +1,8 @@
-function Invoke-TenRequest {
+function Invoke-TNRequest {
     [CmdletBinding()]
     Param
     (
-        [PSCustomObject[]]$SessionObject = (Get-TenSession),
+        [PSCustomObject[]]$SessionObject = (Get-TNSession),
         [String]$Parameter,
         [Parameter(Mandatory)]
         [String]$Path,
@@ -99,7 +99,7 @@ function Invoke-TenRequest {
                     try {
                         $null = $script:NessusConn.Remove($session)
                         $bound = $session.Bound
-                        $null = Connect-TenServer @bound
+                        $null = Connect-TNServer @bound
                         $results = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
                     } catch {
                         $msg = Get-ErrorMessage -Record $_

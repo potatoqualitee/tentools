@@ -1,4 +1,4 @@
-function Resume-TenScan {
+function Resume-TNScan {
     <#
     .SYNOPSIS
         Short description
@@ -15,7 +15,7 @@ function Resume-TenScan {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
     [CmdletBinding()]
     Param
@@ -25,8 +25,8 @@ function Resume-TenScan {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TenSession)) {
-            foreach ($scan in (Invoke-TenRequest -SessionObject $session -Path "/scans/$ScanId/resume" -Method 'Post').scan) {
+        foreach ($session in (Get-TNSession)) {
+            foreach ($scan in (Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId/resume" -Method 'Post').scan) {
                 [pscustomobject]@{
                     Name            = $scan.name
                     ScanId          = $ScanId

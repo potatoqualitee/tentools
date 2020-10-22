@@ -1,4 +1,4 @@
-function Get-TenScan {
+function Get-TNScan {
     <#
     .SYNOPSIS
         Short description
@@ -18,7 +18,7 @@ function Get-TenScan {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Get-Ten
+        PS> Get-TN
     #>
 
     [CmdletBinding()]
@@ -39,13 +39,13 @@ function Get-TenScan {
         }
     }
     process {
-        foreach ($session in (Get-TenSession)) {
-            $scans = Invoke-TenRequest -SessionObject $session -Path '/scans' -Method GET -Parameter $params
+        foreach ($session in (Get-TNSession)) {
+            $scans = Invoke-TNRequest -SessionObject $session -Path '/scans' -Method GET -Parameter $params
 
             if ($Status) {
-                $scans | ConvertFrom-TenRestResponse | Where-Object { $_.status -eq $Status.ToLower() }
+                $scans | ConvertFrom-TNRestResponse | Where-Object { $_.status -eq $Status.ToLower() }
             } else {
-                $scans | ConvertFrom-TenRestResponse
+                $scans | ConvertFrom-TNRestResponse
             }
         }
     }
