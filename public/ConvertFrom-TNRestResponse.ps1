@@ -23,10 +23,14 @@ function ConvertFrom-TNRestResponse {
         function Convert-Value {
             param (
                 [string]$Key,
-                [string]$Value
+                [object[]]$Value
             )
             if ($Key -notmatch 'date' -and $Key -notmatch 'time') {
-                return $Value
+                if ("$Value".StartsWith("{@{")) {
+                    return $Value | ConvertFrom-TNRestResponse
+                } else {
+                    return $Value
+                }
             } else {
                 if ($Value -cnotlike "*T*") {
                     $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
@@ -142,7 +146,10 @@ function ConvertFrom-TNRestResponse {
             # IF EVERY ONE HAS MULTIPLES INSIDE
             if ($fields.Count -eq 0) {
                 Write-Verbose "Found no inner objects"
-                if ($object.StartsWith("@{")) {
+                if ($object.StartsWith("{")) {
+                    $object = $object.Replace("\","\\") | ConvertFrom-Json
+                    $fields = $object | Get-Member -Type NoteProperty
+                } elseif ($object.StartsWith("@{")) {
                     $object = $object.Substring(2, $object.Length - 3) -split ';' | ConvertFrom-StringData | ConvertTo-PSCustomObject
                     $fields = $object | Get-Member -Type NoteProperty
                 } else {
