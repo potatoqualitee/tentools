@@ -51,6 +51,12 @@ function Get-TNScan {
                 } else {
                     $scans.scans | ConvertFrom-TNRestResponse
                 }
+            } elseif ($scans) {
+                if ($Status) {
+                    $scans | ConvertFrom-TNRestResponse | Where-Object Status -eq $Status
+                } else {
+                    $scans | ConvertFrom-TNRestResponse
+                }
             }
         }
     }

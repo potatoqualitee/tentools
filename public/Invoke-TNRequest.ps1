@@ -29,6 +29,16 @@ function Invoke-TNRequest {
                     $Path = $Path.Replace("/user", "?fields=users")
                 }
 
+                if ($Path -match '/scans') {
+                    if ($Path -notmatch '/scans/') {
+                        $Path = $Path.Replace("/scan", "/scan?filter=*&fields=canUse,canManage,owner,groups,ownerGroup,status,name,createdTime,schedule,policy,plugin,type")
+                    } else {
+                        $id = Split-path $Path -Leaf
+                        $Path = $Path.Replace("/$id","/")
+                        $Path = $Path.Replace("/scans/", "/scan/$($id)?fields=canUse,canManage,owner,groups,ownerGroup,status,name,createdTime,schedule,policy,plugin,type")
+                    }
+                }
+
                 if ($Path -match '/policies') {
                     if ($Path -notmatch '/policies/') {
                         $Path = $Path.Replace("/policies", "/policy?filter=*&fields=name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
@@ -43,7 +53,6 @@ function Invoke-TNRequest {
                     if ($Path -notmatch '/editor/policy/') {
                         $Path = $Path.Replace("/editor/policy", "/policy?filter=*&expand=policyTemplate&fields=preferences,families,auditFiles,name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
                     } else {
-                        write-warning $Path
                         $id = Split-path $Path -Leaf
                         $Path = $Path.Replace("/$id","/")
                         $Path = $Path.Replace("/editor/policy/", "/policy/$($id)?expand=policyTemplate&fields=preferences,families,auditFiles,name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
