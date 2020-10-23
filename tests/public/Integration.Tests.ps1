@@ -51,14 +51,16 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
                 EnableException      = $true
                 Port                 = 8834
             }
-            (Connect-TNServer @splat).ComputerName | Should -Be "localhost"
+            $results = Connect-TNServer @splat
+            $results.ComputerName | Should -Be "localhost"
+
             # Nessus has restricted some API access in higher versions
-            $script:version = (Get-TNSession).ServerVersionMajor
+            $global:version = $results.ServerVersionMajor
         }
     }
     Context "Get-TNUser" {
         It "Returns a user..or doesnt" {
-            if ($script:version -ge 8) {
+            if ($global:version -ge 8) {
                 Get-TNUser 3>$null | Select-Object -ExpandProperty name | Should -BeNullOrEmpty
             } else {
                 Get-TNUser | Select-Object -ExpandProperty name | Should -Contain "admin"
@@ -161,11 +163,14 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
         }
     }
 
+    write-warning $global:version
     # Can't get this to work on v8
     Context "Get-TNScan" {
-        It -Skip "Returns proper scan information" {
-            $results = Get-TNScan
-            $results.Name | Should -Contain 'Test Scan'
+        if ($global:version -ne 8) {
+            It -Skip "Returns proper scan information" {
+                $results = Get-TNScan
+                $results.Name | Should -Contain 'Test Scan'
+            }
         }
     }
 }
