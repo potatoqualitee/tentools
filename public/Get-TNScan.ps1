@@ -32,20 +32,23 @@ function Get-TNScan {
         [switch]$EnableException
     )
     begin {
-        $params = @{ }
-
         if ($FolderId) {
+            $params = @{ }
             $params.Add('folder_id', $FolderId)
         }
     }
     process {
         foreach ($session in (Get-TNSession)) {
-            $scans = Invoke-TNRequest -SessionObject $session -Path '/scans' -Method GET -Parameter $params
+            if ($FolderId) {
+                $scans = Invoke-TNRequest -SessionObject $session -Path '/scans' -Method GET -Parameter $params
+            } else {
+                $scans = Invoke-TNRequest -SessionObject $session -Path '/scans' -Method GET
+            }
 
             if ($Status) {
-                $scans | ConvertFrom-TNRestResponse | Where-Object { $_.status -eq $Status.ToLower() }
+                $scans.scans | ConvertFrom-TNRestResponse | Where-Object Status -eq $Status
             } else {
-                $scans | ConvertFrom-TNRestResponse
+                $scans.scans | ConvertFrom-TNRestResponse
             }
         }
     }
