@@ -98,7 +98,7 @@ function Initialize-TNServer {
         $license = (Get-Content -Path $LicensePath -Raw).Replace("`r`n", "")
 
         foreach ($computer in $ComputerName) {
-            $null = Wait-TNServerReady -ComputerName $computer -Port $Port -Register -WarningAction SilentlyContinue
+            $null = Wait-TNServerReady -ComputerName $computer -Port $Port -Register -WarningAction SilentlyContinue -AcceptSelfSignedCert:$AcceptSelfSignedCert
             if ($Port -eq 443) {
                 $uri = "https://$($computer):$Port/rest"
                 $fulluri = "$uri/user"

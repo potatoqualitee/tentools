@@ -99,6 +99,7 @@ function Connect-TNServer {
     }
     process {
         foreach ($computer in $ComputerName) {
+            $null = Wait-TNServerReady -ComputerName $computer -Port $Port -SilentUntil 5 -AcceptSelfSignedCert:$AcceptSelfSignedCert
             if ($Port -eq 443) {
                 $uri = "https://$($computer):$Port/rest"
                 $fulluri = "$uri/token"

@@ -31,29 +31,17 @@ function Get-TNPolicyTemplate {
     )
     process {
         foreach ($session in (Get-TNSession)) {
-            $templates = Invoke-TNRequest -SessionObject $session -Path '/editor/policy/templates' -Method GET
+            $templates = Invoke-TNRequest -SessionObject $session -Path '/editor/policy/templates' -Method GET | ConvertFrom-TNRestResponse
 
             switch ($PSCmdlet.ParameterSetName) {
                 'ByName' {
-                    $templates = $templates.templates | Where-Object { $_.name -eq $Name }
+                    $templates | Where-Object Name -eq $Name
                 }
                 'ByUUID' {
-                    $templates = $templates.templates | Where-Object { $_.uuid -eq $PolicyUUID }
+                    $templates | Where-Object Uuid -eq $PolicyUUID
                 }
                 'All' {
-                    $templates = $templates.templates
-                }
-            }
-
-            foreach ($template in $templates) {
-                [pscustomobject]@{
-                    Name             = $template.name
-                    Title            = $template.title
-                    Description      = $template.desc
-                    PolicyUUID       = $template.uuid
-                    CloudOnly        = $template.cloud_only
-                    SubscriptionOnly = $template.subscription_only
-                    SessionId        = $session.SessionId
+                    $templates
                 }
             }
         }

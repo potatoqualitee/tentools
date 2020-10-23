@@ -22,6 +22,7 @@ function Get-TNPolicyPortRange {
     param
     (
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Alias("Id")]
         [int32[]]$PolicyId,
         [switch]$EnableException
     )
