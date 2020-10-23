@@ -74,6 +74,11 @@ function ConvertFrom-TNRestResponse {
                 if ($Type) {
                     $hash["Type"] = $Type
                 }
+
+                if ($script:includeid) {
+                    $hash["Id"] = $script:includeid
+                }
+
                 foreach ($name in $fields.Name) {
                     # Proper case first letter, tenable takes care of the rest
                     $first = $name.Substring(0, 1).ToUpperInvariant()
