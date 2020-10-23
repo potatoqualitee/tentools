@@ -132,14 +132,24 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     }
 
     Context "Get-TNPolicyPortRange" {
-        It "Returns proper policy detail information for piped results" {
+        It "Returns proper policy range information for piped results" {
             $results = Get-TNPolicy | Select-Object Id | Get-TNPolicyDetail | Get-TNPolicyPortRange
             $results.PolicyId | Should -Contain 4
         }
-        It "Returns proper policy detail information from parameter" {
+        It "Returns proper policy range information from parameter" {
             $results = Get-TNPolicyPortRange -PolicyId 4
             $results.PolicyId | Should -Be 4
         }
     }
 
+    Context "Get-TNPolicyTemplate" {
+        It "Returns proper policy template information for piped results" {
+            $results = Get-TNPolicy | Select-Object Id | Get-TNPolicyDetail | Get-TNPolicyTemplate
+            $results.Name | Should -Contain 'discovery'
+        }
+        It "Returns proper policy template information from parameter" {
+            $results = Get-TNPolicyTemplate
+            $results.Title | Should -Contain 'Spectre and Meltdown'
+        }
+    }
 }

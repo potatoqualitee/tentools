@@ -125,13 +125,16 @@ function ConvertFrom-TNRestResponse {
                 if ($Type) {
                     $null = $order.Add("Type")
                 }
+                if ('Title' -in $keys) {
+                    $null = $order.Add("Title")
+                }
                 if ('Name' -in $keys) {
                     $null = $order.Add("Name")
                 }
                 if ('Description' -in $keys) {
                     $null = $order.Add("Description")
                 }
-                foreach ($column in ($keys | Sort-Object | Where-Object { $PSItem -notin "ServerUri", "Id", "Type", "Name", "Description" })) {
+                foreach ($column in ($keys | Sort-Object | Where-Object { $PSItem -notin "ServerUri", "Id", "Type", "Name", "Description", "Title" })) {
                     $null = $order.Add($column)
                 }
 
