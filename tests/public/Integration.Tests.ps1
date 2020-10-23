@@ -119,4 +119,11 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             $results | Select-Object -ExpandProperty Title | Should -Contain 'Host Discovery'
         }
     }
+
+    Context "Get-TNPolicyLocalPortEnumeration" {
+        It "Returns proper policy detail information" {
+            $results = Get-TNPolicy | Select-Object Id | Get-TNPolicyDetail | Get-TNPolicyLocalPortEnumeration
+            $results.PolicyId | Should -Contain 4
+        }
+    }
 }
