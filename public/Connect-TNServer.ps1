@@ -164,14 +164,14 @@ function Connect-TNServer {
                 if (-not $usertoken) {
                     $usertoken = $token.response.token
                 }
-                $id = $script:NessusConn.Count
+
                 $session = [PSCustomObject]@{
                     URI                = $uri
                     UserName           = $username
                     ComputerName       = $computer
                     Credential         = $Credential
                     Token              = $usertoken
-                    SessionId          = $id
+                    SessionId          = $script:NessusConn.Count
                     WebSession         = $websession
                     Sc                 = $sc
                     Bound              = $PSBoundParameters
@@ -186,9 +186,9 @@ function Connect-TNServer {
                 }
                 $null = $script:NessusConn.Add($session)
                 $info = Get-TNServerInfo -SessionId $id
-                $script:NessusConn[$id].MultiUser = ($info.capabilities.multi_user -eq 'full' -or $sc)
-                $script:NessusConn[$id].ServerVersion = $info.UIVersion
-                $script:NessusConn[$id].ServerVersionMajor = ([version]($info.UIVersion)).Major
+                $script:NessusConn[$($script:NessusConn.Count) - 1].MultiUser = ($info.capabilities.multi_user -eq 'full' -or $sc)
+                $script:NessusConn[$($script:NessusConn.Count) - 1].ServerVersion = $info.UIVersion
+                $script:NessusConn[$($script:NessusConn.Count) - 1].ServerVersionMajor = ([version]($info.UIVersion)).Major
                 $session | Select-DefaultView -Property SessionId, UserName, URI, ServerType
             }
         }
