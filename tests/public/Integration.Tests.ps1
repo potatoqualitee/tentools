@@ -130,4 +130,16 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             $results.PolicyId | Should -Be 4
         }
     }
+
+    Context "Get-TNPolicyPortRange" {
+        It "Returns proper policy detail information for piped results" {
+            $results = Get-TNPolicy | Select-Object Id | Get-TNPolicyDetail | Get-TNPolicyPortRange
+            $results.PolicyId | Should -Contain 4
+        }
+        It "Returns proper policy detail information from parameter" {
+            $results = Get-TNPolicyPortRange -PolicyId 4
+            $results.PolicyId | Should -Be 4
+        }
+    }
+
 }
