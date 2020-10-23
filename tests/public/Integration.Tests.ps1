@@ -162,8 +162,8 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     }
 
     # Gotta skip v8 on Actions
-    if ($script:version -lt 8) {
-        Context "Get-TNScan" {
+    Context "Get-TNScan" {
+        if ($script:version -ne 8) {
             It "Returns proper scan information" {
                 $results = Get-TNScan
                 $results.Name | Should -Contain 'Test Scan'
