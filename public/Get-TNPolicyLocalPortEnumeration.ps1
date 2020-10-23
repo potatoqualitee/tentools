@@ -18,16 +18,19 @@ function Get-TNPolicyLocalPortEnumeration {
         PS> Get-TN
     #>
     [CmdletBinding()]
-    [OutputType([int])]
     param
     (
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Alias("Id")]
         [int32[]]$PolicyId,
         [switch]$EnableException
     )
 
     process {
         foreach ($session in (Get-TNSession)) {
+            if ($session.sc) {
+                Stop-PSFFunction -Message "tenable.sc not supported" -Continue
+            }
             foreach ($policy in $PolicyId) {
                 try {
                     $policydetail = Get-TNPolicyDetail -PolicyId $policy
@@ -38,7 +41,7 @@ function Get-TNPolicyLocalPortEnumeration {
                         SNMPScanner          = $policydetail.settings.snmp_scanner
                         VerifyOpenPorts      = $policydetail.settings.verify_open_ports
                         ScanOnlyIfLocalFails = $policydetail.settings.only_portscan_if_enum_failed
-                    }
+                    } | ConvertFrom-TNRestResponse
                 } catch {
                     Stop-PSFFunction -EnableException:$EnableException -Message "Failure" -ErrorRecord $_ -Continue
                 }
