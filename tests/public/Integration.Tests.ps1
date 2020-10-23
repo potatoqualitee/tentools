@@ -66,6 +66,16 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
         }
     }
 
+
+    # Gotta skip v8 on Actions
+    Context "Get-TNScan" {
+        if ($script:version -ne 8) {
+            It "Returns proper scan information" {
+                $results = Get-TNScan
+                $results.Name | Should -Contain 'Test Scan'
+            }
+        }
+    }
     Context "Get-TNFolder" {
         It "Returns a folder" {
             Get-TNFolder | Select-Object -ExpandProperty name | Should -Contain "Trash"
@@ -158,16 +168,6 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
         It "Returns proper policy template information from parameter" {
             $results = Get-TNPolicyTemplate
             $results.Title | Should -Contain 'Spectre and Meltdown'
-        }
-    }
-
-    # Gotta skip v8 on Actions
-    Context "Get-TNScan" {
-        if ((Get-TNSession).ServerVersionMajor -ne 8) {
-            It "Returns proper scan information" {
-                $results = Get-TNScan
-                $results.Name | Should -Contain 'Test Scan'
-            }
         }
     }
 }
