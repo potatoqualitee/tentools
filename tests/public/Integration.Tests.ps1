@@ -162,7 +162,6 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     }
 
     # Gotta skip v8 on Actions
-    write-warning (Get-TNSession).ServerVersionMajor
     Context "Get-TNScan" {
         if ((Get-TNSession).ServerVersionMajor -ne 8) {
             It "Returns proper scan information" {
