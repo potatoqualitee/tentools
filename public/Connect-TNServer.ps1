@@ -185,10 +185,11 @@ function Connect-TNServer {
                     $null = $script:NessusConn.Remove($oldsession)
                 }
                 $null = $script:NessusConn.Add($session)
-                $info = Get-TNServerInfo
-                $script:NessusConn[$($script:NessusConn.Count) - 1].MultiUser = ($info.capabilities.multi_user -eq 'full' -or $sc)
-                $script:NessusConn[$($script:NessusConn.Count) - 1].ServerVersion = $info.UIVersion
-                $script:NessusConn[$($script:NessusConn.Count) - 1].ServerVersionMajor = ([version]($info.UIVersion)).Major
+                $info = Get-TNServerInfo -SessionId $script:NessusConn.Count
+                $id = $script:NessusConn.Count - 1
+                $script:NessusConn[$id].MultiUser = ($info.capabilities.multi_user -eq 'full' -or $sc)
+                $script:NessusConn[$id].ServerVersion = $info.UIVersion
+                $script:NessusConn[$id].ServerVersionMajor = ([version]($info.UIVersion)).Major
                 $session | Select-DefaultView -Property SessionId, UserName, URI, ServerType
             }
         }

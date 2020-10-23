@@ -45,10 +45,12 @@ function Get-TNScan {
                 $scans = Invoke-TNRequest -SessionObject $session -Path '/scans' -Method GET
             }
 
-            if ($Status) {
-                $scans.scans | ConvertFrom-TNRestResponse | Where-Object Status -eq $Status
-            } else {
-                $scans.scans | ConvertFrom-TNRestResponse
+            if ($scans.scans) {
+                if ($Status) {
+                    $scans.scans | ConvertFrom-TNRestResponse | Where-Object Status -eq $Status
+                } else {
+                    $scans.scans | ConvertFrom-TNRestResponse
+                }
             }
         }
     }
