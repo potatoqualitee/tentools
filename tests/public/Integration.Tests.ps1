@@ -20,7 +20,7 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             EnableException      = $true
             Port                 = 8834
         }
-        $connection = Connect-TNServer @splat
+        $null = Connect-TNServer @splat
         # add policy
         $params = @{
             Path        = "/policies"
@@ -162,7 +162,7 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     }
 
     # Gotta skip v8 on Actions
-    if ($connection.ServerVersionMajor -ne 8) {
+    if ($script:version -lt 8) {
         Context "Get-TNScan" {
             It "Returns proper scan information" {
                 $results = Get-TNScan
