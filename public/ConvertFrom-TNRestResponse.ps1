@@ -74,6 +74,11 @@ function ConvertFrom-TNRestResponse {
                 if ($Type) {
                     $hash["Type"] = $Type
                 }
+
+                if ($script:includeid) {
+                    $hash["Id"] = $script:includeid
+                }
+
                 foreach ($name in $fields.Name) {
                     # Proper case first letter, tenable takes care of the rest
                     $first = $name.Substring(0, 1).ToUpperInvariant()
@@ -83,7 +88,10 @@ function ConvertFrom-TNRestResponse {
                     # some columns need special attention
                     switch ($column) {
                         "Shared" {
-                            $hash["Shared"] = $(if ($row.shared -eq 1) { $true } else { $false })
+                            $hash["Shared"] = $(if ($row.shared -eq 1) { $true } elseif ($row.shared -eq 0) { $false } else { $row.shared })
+                        }
+                        "Status" {
+                            $hash["Status"] = $(if ($row.status -eq 1) { $true } elseif ($row.status -eq 0) { $false } else { $row.status })
                         }
                         "User_permissions" {
                             $hash["UserPermissions"] = $permidenum[$row.user_permissions]

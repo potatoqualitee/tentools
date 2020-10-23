@@ -25,7 +25,6 @@ function Invoke-TNRequest {
                 foreach ($key in $replace.keys) {
                     $Path = $Path.Replace($key, $replace[$key])
                 }
-
                 if ($Path -match '/group/' -and $Path -match '/user') {
                     $Path = $Path.Replace("/user", "?fields=users")
                 }
@@ -35,6 +34,7 @@ function Invoke-TNRequest {
                         $Path = $Path.Replace("/policies", "/policy?filter=*&fields=name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
                     } else {
                         $id = Split-path $Path -Leaf
+                        $Path = $Path.Replace("/$id","/")
                         $Path = $Path.Replace("/policies/", "/policy/$($id)?fields=name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
                     }
                 }
@@ -43,12 +43,13 @@ function Invoke-TNRequest {
                     if ($Path -notmatch '/editor/policy/') {
                         $Path = $Path.Replace("/editor/policy", "/policy?filter=*&expand=policyTemplate&fields=preferences,families,auditFiles,name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
                     } else {
+                        write-warning $Path
                         $id = Split-path $Path -Leaf
+                        $Path = $Path.Replace("/$id","/")
                         $Path = $Path.Replace("/editor/policy/", "/policy/$($id)?expand=policyTemplate&fields=preferences,families,auditFiles,name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
                     }
                 }
             }
-
             if ($session.sc -and $Path -eq "/server/properties") {
                 return $null
             }

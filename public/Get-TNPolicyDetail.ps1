@@ -41,13 +41,17 @@ function Get-TNPolicyDetail {
                 }
             }
             if (-not $PSBoundParameters.PolicyId -and -not $PSBoundParameters.Name) {
-                $PolicyId = (Get-TNPolicy).PolicyId
+                $PolicyId = (Get-TNPolicy).Id
             }
             foreach ($id in $PolicyId) {
+                $script:includeid = $id
                 Write-PSFMessage -Level Verbose -Message "Getting details for policy with id $id"
                 Invoke-TNRequest -SessionObject $session -Path "/editor/policy/$id" -Method GET |
                     ConvertFrom-TNRestResponse
             }
         }
+    }
+    end {
+        $script:includeid = $null
     }
 }
