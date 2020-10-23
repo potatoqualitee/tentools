@@ -23,6 +23,7 @@ function Wait-TNServerReady {
         [switch]$AcceptSelfSignedCert,
         [switch]$Register,
         [int]$Timeout = 60,
+        [int]$SilentUntil,
         [switch]$EnableException
     )
     process {
@@ -47,11 +48,17 @@ function Wait-TNServerReady {
                     Message    = $progressmessage
                     TotalSteps = $Timeout
                 }
-                Write-ProgressHelper @helper
-
-                $result = Invoke-NonAuthRequest @params -WarningAction SilentlyContinue
-                Start-Sleep 1
-
+                if ($SilentUntil) {
+                    if ($SilentUntil -gt $i) {
+                        $result = Invoke-NonAuthRequest @params -WarningAction SilentlyContinue
+                    } else {
+                        $SilentUntil = $null
+                    }
+                } else {
+                    Write-ProgressHelper @helper
+                    $result = Invoke-NonAuthRequest @params -WarningAction SilentlyContinue
+                    Start-Sleep 1
+                }
 
                 if ($Register) {
                     $registerstatus = $result.status -eq 'register'
