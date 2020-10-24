@@ -31,7 +31,7 @@ function ConvertFrom-TNRestResponse {
                 } else {
                     return $Value
                 }
-            } else {
+            } elseif ([double]::TryParse($value,[ref]$null)) {
                 if ($Value -cnotlike "*T*") {
                     $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
                     return $origin.AddSeconds($Value).ToLocalTime()
@@ -40,6 +40,8 @@ function ConvertFrom-TNRestResponse {
                         [System.Globalization.CultureInfo]::InvariantCulture,
                         [System.Globalization.DateTimeStyles]::None)
                 }
+            } else {
+                return $Value
             }
         }
 
