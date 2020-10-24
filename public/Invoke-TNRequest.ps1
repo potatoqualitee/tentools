@@ -35,7 +35,7 @@ function Invoke-TNRequest {
                     } else {
                         $id = Split-path $Path -Leaf
                         $Path = $Path.Replace("/$id","/")
-                        $Path = $Path.Replace("/scans/", "/scan/$($id)?fields=canUse,canManage,owner,groups,ownerGroup,status,name,createdTime,schedule,policy,plugin,type")
+                        $Path = $Path.Replace("/scans/", "/scan/$($id)?fields=modifiedTime,description,name,repository,schedule,dhcpTracking,emailOnLaunch,emailOnFinish,reports,canUse,canManage,status,canUse,canManage,owner,groups,ownerGroup,status,name,createdTime,schedule,policy,plugin,type,policy,zone,credentials,timeoutAction,rolloverType,scanningVirtualHosts,classifyMitigatedAge,assets,ipList,maxScanTime,plugin&expand=details,credentials")
                     }
                 }
 
