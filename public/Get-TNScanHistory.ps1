@@ -36,14 +36,22 @@ function Get-TNScanHistory {
     }
     process {
         foreach ($session in (Get-TNSession)) {
+            if ($session.sc) {
+                Stop-PSFFunction -Message "tenable.sc not supported" -Continue
+            }
+
             if ($HistoryId) {
                 $scan = Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId" -Method GET -Parameter $params
             } else {
                 $scan = Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId" -Method GET
             }
             if ($scan.history) {
+                $script:includeid = $ScanId
                 $scan.history | ConvertFrom-TNRestResponse
             }
         }
+    }
+    end {
+        $script:includeid = $null
     }
 }

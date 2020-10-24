@@ -67,6 +67,7 @@
         'Get-TNPolicyPortScanner',
         'Get-TNPolicyTemplate',
         'Get-TNScan',
+        'Get-TNScanResult',
         'Get-TNScanTemplate',
         'Get-TNServerInfo',
         'Get-TNServerStatus',

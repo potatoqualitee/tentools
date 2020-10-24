@@ -31,16 +31,6 @@ function Invoke-TNRequest {
                 # https://macmini:8834/#/scans/reports/5/hosts
                 # https://macmini:8834/#/scans/reports/5/vulnerabilities
                 # https://macmini:8834/#/scans/reports/5/history
-                
-                if ($Path -match '/scanResult') {
-                    if ($Path -notmatch '/scanResult/') {
-                        $Path = $Path.Replace("/scanResult", "/scanResult?filter=*&optimizeCompletedScans=true&fields=canUse,canManage,owner,groups,ownerGroup,status,name,details,diagnosticAvailable,importStatus,createdTime,startTime,finishTime,importStart,importFinish,running,totalIPs,scannedIPs,completedIPs,completedChecks,totalChecks,dataFormat,downloadAvailable,downloadFormat,repository,resultType,resultSource,scanDuration")
-                    } else {
-                        $id = Split-path $Path -Leaf
-                        $Path = $Path.Replace("/$id","/")
-                        $Path = $Path.Replace("/scanResult/", "/scanResult/$($id)?fields=name,description,diagnosticAvailable,owner,ownerGroup,importStatus,importStart,importFinish,importDuration,ioSyncStatus,ioSyncStart,ioSyncFinish,ioSyncDuration,totalIPs,scannedIPs,completedIPs,completedChecks,totalChecks,status,jobID,errorDetails,downloadAvailable,dataFormat,finishTime,downloadFormat,scanID,running,importErrorDetails,ioSyncErrorDetails,initiatorID,startTime,repository,details,timeoutAction,rolloverSchedule,progress,dataSourceID,resultType,resultSource,scanDuration,canManage,canUse&expand=details,credentials")
-                    }
-                }
 
                 if ($Path -match '/scans') {
                     if ($Path -notmatch '/scans/') {
