@@ -19,30 +19,30 @@ function Get-TNScanHistory {
 
     #>
     [CmdletBinding()]
-    Param
+    param
     (
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Alias("Id")]
         [int32]$ScanId,
+        [int32]$HistoryId,
         [switch]$EnableException
     )
     begin {
-        $params = @{ }
         if ($HistoryId) {
-            $params.Add('history_id', $HistoryId)
+            $params = @{
+                history_id = $HistoryId
+            }
         }
     }
     process {
         foreach ($session in (Get-TNSession)) {
-            foreach ($ScanDetails in (Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId" -Method GET -Parameter $params).history) {
-                [pscustomobject]@{
-                    HistoryId        = $History.history_id
-                    UUID             = $History.uuid
-                    Status           = $History.status
-                    Type             = $History.type
-                    CreationDate     = $origin.AddSeconds($History.creation_date).ToLocalTime()
-                    LastModifiedDate = $origin.AddSeconds($History.last_modification_date).ToLocalTime()
-                    SessionId        = $session.SessionId
-                }
+            if ($HistoryId) {
+                $scan = Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId" -Method GET -Parameter $params
+            } else {
+                $scan = Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId" -Method GET
+            }
+            if ($scan.history) {
+                $scan.history | ConvertFrom-TNRestResponse
             }
         }
     }

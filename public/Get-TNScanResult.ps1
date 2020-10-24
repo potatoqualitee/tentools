@@ -1,4 +1,4 @@
-function Get-TNScanDetail {
+function Get-TNScanResult {
     <#
     .SYNOPSIS
         Short description
@@ -30,12 +30,7 @@ function Get-TNScanDetail {
     )
     process {
         foreach ($session in (Get-TNSession)) {
-            $scan = Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId" -Method GET
-            if ($scan.info) {
-                $scan.info | ConvertFrom-TNRestResponse
-            } else {
-                $scan | ConvertFrom-TNRestResponse
-            }
+            Invoke-TNRequest -SessionObject $session -Path "/scanResult" -Method GET
         }
     }
 }
