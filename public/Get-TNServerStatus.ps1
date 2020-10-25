@@ -21,10 +21,13 @@ function Get-TNServerStatus {
     )
     process {
         foreach ($session in (Get-TNSession)) {
+            # only show if it's called from the command line
+            if ((Get-PSCallStack).Count -eq 2) {
+                if ($session.sc) {
+                    Stop-PSFFunction -Message "tenable.sc not supported" -Continue
+                }
+            }
             Invoke-TNRequest -SessionObject $session -Path '/server/status' -Method GET
         }
     }
 }
-# need bare invoker
-# {"code":503,"progress":100,"status":"loading"}
-# {"code":200,"progress":null,"status":"ready"}

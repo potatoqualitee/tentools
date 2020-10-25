@@ -21,18 +21,10 @@ function Get-TNScanTemplate {
     )
     process {
         foreach ($session in (Get-TNSession)) {
-            $Templates = Invoke-TNRequest -SessionObject $session -Path '/editor/scan/templates' -Method GET
-            foreach ($Template in $Templates.templates) {
-                [pscustomobject]@{
-                    Name             = $Template.name
-                    Title            = $Template.title
-                    Description      = $Template.desc
-                    UUID             = $Template.uuid
-                    CloudOnly        = $Template.cloud_only
-                    SubscriptionOnly = $Template.subscription_only
-                    SessionId        = $session.SessionId
-                }
+            if ($session.sc) {
+                Stop-PSFFunction -Message "tenable.sc not supported" -Continue
             }
+            Invoke-TNRequest -SessionObject $session -Path '/editor/scan/templates' -Method GET | ConvertFrom-TNRestResponse
         }
     }
 }
