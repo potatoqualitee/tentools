@@ -85,22 +85,8 @@ function Import-TNPolicy {
                     $body = ConvertTo-Json @{'file' = $fileinfo.name; } -Compress
                 }
 
-                # parse Content           : {"fileuploaded":"policy-7.nessus"}
-                $Policy = Invoke-TnRequest -Method Post -Path "/policies/import" -Parameter $body -ContentType 'application/json' -SessionObject $session
-                [pscustomobject]@{
-                    Name           = $Policy.Name
-                    PolicyId       = $Policy.id
-                    Description    = $Policy.description
-                    PolicyUUID     = $Policy.template_uuid
-                    Visibility     = $Policy.visibility
-                    Shared         = $(if ($Policy.shared -eq 1) { $True }else { $False })
-                    Owner          = $Policy.owner
-                    UserId         = $Policy.owner_id
-                    NoTarget       = $Policy.no_target
-                    UserPermission = $Policy.user_permissions
-                    Modified       = $origin.AddSeconds($Policy.last_modification_date).ToLocalTime()
-                    Created        = $origin.AddSeconds($Policy.creation_date).ToLocalTime()
-                }
+                Invoke-TnRequest -Method Post -Path "/policies/import" -Parameter $body -ContentType 'application/json' -SessionObject $session |
+                    ConvertFrom-TNRestResponse
             }
         }
     }
