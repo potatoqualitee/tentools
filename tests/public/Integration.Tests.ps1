@@ -177,7 +177,7 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     }
     Context "Import-TNPolicy" {
         $file = Resolve-Path .\tests\library\policy.nessus
-        It "Uploads policy!" {
+        It -Skip "Uploads policy!" {
             $results = Import-TNPolicy -FilePath $file
             $results.Name | Should -Match 'Upload This'
         }
