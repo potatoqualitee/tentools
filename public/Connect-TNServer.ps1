@@ -99,7 +99,7 @@ function Connect-TNServer {
     }
     process {
         foreach ($computer in $ComputerName) {
-            $null = Wait-TNServerReady -ComputerName $computer -Port $Port -SilentUntil 5 -AcceptSelfSignedCert:$AcceptSelfSignedCert
+            #$null = Wait-TNServerReady -ComputerName $computer -Port $Port -SilentUntil 5 -AcceptSelfSignedCert:$AcceptSelfSignedCert
             if ($Port -eq 443) {
                 $uri = "https://$($computer):$Port/rest"
                 $fulluri = "$uri/token"
@@ -165,12 +165,22 @@ function Connect-TNServer {
                     $usertoken = $token.response.token
                 }
 
+                if ($sc) {
+                    $headers = @{
+                        "X-SecurityCenter" = $usertoken
+                    }
+                } else {
+                    $headers = @{
+                        "X-Cookie" = "token=$usertoken"
+                    }
+                }
                 $session = [PSCustomObject]@{
                     URI                = $uri
                     UserName           = $username
                     ComputerName       = $computer
                     Credential         = $Credential
                     Token              = $usertoken
+                    Headers            = $headers
                     SessionId          = $script:NessusConn.Count
                     WebSession         = $websession
                     Sc                 = $sc
@@ -185,10 +195,10 @@ function Connect-TNServer {
                     $null = $script:NessusConn.Remove($oldsession)
                 }
                 $null = $script:NessusConn.Add($session)
-                $info = Get-TNServerInfo
+                $info = Get-TNServerInfo -SessionId $id
                 $script:NessusConn[$($script:NessusConn.Count) - 1].MultiUser = ($info.capabilities.multi_user -eq 'full' -or $sc)
                 $script:NessusConn[$($script:NessusConn.Count) - 1].ServerVersion = $info.UIVersion
-                $script:NessusConn[$($script:NessusConn.Count) - 1].ServerVersionMajor = ([version]($info.UIVersion)).Major
+                $script:NessusConn[$($script:NessusConn.Count) - 1].ServerVersionMajor = ([version]($info.UIVersion | Select-Object -First 1)).Major
                 $session | Select-DefaultView -Property SessionId, UserName, URI, ServerType
             }
         }

@@ -16,15 +16,9 @@ function Get-TNSession {
     #>
     [CmdletBinding()]
     param(
+        [int[]]$SessionId,
         [switch]$EnableException
     )
-    begin {
-        if (Test-PSFParameterBinding -Parameter SessionId) {
-            if ($null -eq $SessionId) {
-                Write-PSFMessage -Level Warning -Message "No session specified. Have you connected using Connect-TNServer during this session?"
-            }
-        }
-    }
     process {
         Write-PSFMessage -level Verbose -Message "Connected sessions: $($script:NessusConn.Count)"
         if ($PSBoundParameters.SessionId) {
