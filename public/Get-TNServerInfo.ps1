@@ -21,6 +21,10 @@ function Get-TNServerInfo {
         [switch]$EnableException
     )
     foreach ($session in (Get-TNSession -SessionId $SessionId)) {
+        # only show if it's called from the command line
+        if ((Get-PSCallStack).Count -eq 2 -and $session.sc) {
+            Stop-PSFFunction -Message "tenable.sc not supported" -Continue
+        }
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
         $server = Invoke-TNRequest -SessionObject $session -Path '/server/properties' -Method GET
         foreach ($serverinfo in $server) {

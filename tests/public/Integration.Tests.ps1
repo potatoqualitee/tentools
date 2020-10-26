@@ -169,4 +169,10 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             $results.Name | Should -Contain 'Test Scan'
         }
     }
+    Context "Get-TNServerInfo" {
+        It "Returns some server information" {
+            $results = Get-TNServerInfo
+            $results.NessusType | Should -Match 'Nessus'
+        }
+    }
 }
