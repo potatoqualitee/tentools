@@ -66,19 +66,10 @@ function Invoke-TNRequest {
                 return $null
             }
 
-            if ($session.sc) {
-                $headers = @{
-                    "X-SecurityCenter" = $session.Token
-                }
-            } else {
-                $headers = @{
-                    "X-Cookie" = "token=$($session.Token)"
-                }
-            }
             $RestMethodParams = @{
                 Method          = $Method
                 'URI'           = "$($session.URI)$($Path)"
-                'Headers'       = $headers
+                'Headers'       = $session.Headers
                 'ErrorVariable' = 'NessusUserError'
                 'WebSession'    = $session.WebSession
             }

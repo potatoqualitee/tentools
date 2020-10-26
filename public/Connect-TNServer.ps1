@@ -165,12 +165,22 @@ function Connect-TNServer {
                     $usertoken = $token.response.token
                 }
 
+                if ($sc) {
+                    $headers = @{
+                        "X-SecurityCenter" = $usertoken
+                    }
+                } else {
+                    $headers = @{
+                        "X-Cookie" = "token=$usertoken"
+                    }
+                }
                 $session = [PSCustomObject]@{
                     URI                = $uri
                     UserName           = $username
                     ComputerName       = $computer
                     Credential         = $Credential
                     Token              = $usertoken
+                    Headers            = $headers
                     SessionId          = $script:NessusConn.Count
                     WebSession         = $websession
                     Sc                 = $sc

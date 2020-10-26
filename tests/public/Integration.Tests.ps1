@@ -175,4 +175,11 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             $results.NessusType | Should -Match 'Nessus'
         }
     }
+    Context "Import-TNPolicy" {
+        $file = Resolve-Path .\tests\json\policy.json
+        It "Uploads policy!" {
+            $results = Import-TNPolicy -FilePatn $file
+            $results.Name | Should -Match 'Upload This'
+        }
+    }
 }
