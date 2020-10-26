@@ -176,7 +176,7 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
         }
     }
     Context "Import-TNPolicy" {
-        $file = Resolve-Path .\tests\json\policy.json
+        $file = Resolve-Path .\tests\library\policy.nessus
         It "Uploads policy!" {
             $results = Import-TNPolicy -FilePatn $file
             $results.Name | Should -Match 'Upload This'
