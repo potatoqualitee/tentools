@@ -198,7 +198,7 @@ function Connect-TNServer {
                 $info = Get-TNServerInfo -SessionId $id
                 $script:NessusConn[$($script:NessusConn.Count) - 1].MultiUser = ($info.capabilities.multi_user -eq 'full' -or $sc)
                 $script:NessusConn[$($script:NessusConn.Count) - 1].ServerVersion = $info.UIVersion
-                $script:NessusConn[$($script:NessusConn.Count) - 1].ServerVersionMajor = ([version]($info.UIVersion)).Major
+                $script:NessusConn[$($script:NessusConn.Count) - 1].ServerVersionMajor = ([version]($info.UIVersion | Select-Object -First 1)).Major
                 $session | Select-DefaultView -Property SessionId, UserName, URI, ServerType
             }
         }
