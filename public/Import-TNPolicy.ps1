@@ -25,29 +25,6 @@ function Import-TNPolicy {
         [string[]]$FilePath,
         [switch]$EnableException
     )
-
-    begin {
-        try {
-            $netAssembly = [Reflection.Assembly]::GetAssembly([System.Net.Configuration.SettingsSection])
-        } catch {
-            # probably Linux
-        }
-        if ($netAssembly) {
-            $bindingFlags = [Reflection.BindingFlags] "Static,GetProperty,NonPublic"
-            $settingsType = $netAssembly.GetType("System.Net.Configuration.SettingsSectionInternal")
-
-            $instance = $settingsType.InvokeMember("Section", $bindingFlags, $null, $null, @())
-
-            if ($instance) {
-                $bindingFlags = "NonPublic", "Instance"
-                $useUnsafeHeaderParsingField = $settingsType.GetField("useUnsafeHeaderParsing", $bindingFlags)
-
-                if ($useUnsafeHeaderParsingField) {
-                    $useUnsafeHeaderParsingField.SetValue($instance, $true)
-                }
-            }
-        }
-    }
     process {
         foreach ($session in (Get-TNSession)) {
             foreach ($file in $FilePath) {
@@ -72,12 +49,6 @@ function Import-TNPolicy {
                 }
                 $restparams = New-Object -TypeName System.Collections.Specialized.OrderedDictionary
                 $restparams.add('file', "$($fileinfo.name)")
-                if ($Encrypted -and ($Credential -or $Password)) {
-                    if (-not $Credential) {
-                        $Credential = New-Object System.Management.Automation.PSCredential -ArgumentList 'user', $Password
-                    }
-                    $restparams.Add('password', $Credential.GetNetworkCredential().Password)
-                }
                 if ($session.sc) {
                     $filename = ($result.Content | ConvertFrom-Json | Select-Object Response | ConvertFrom-TNRestResponse).Filename
                     $body = ConvertTo-Json @{'filename' = $filename; } -Compress
