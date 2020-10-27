@@ -78,6 +78,7 @@
         'Import-TNScan',
         'Initialize-TNServer',
         'Invoke-TNRequest',
+        'New-TNFolder',
         'New-TNGroup',
         'New-TNPolicy',
         'New-TNScan',

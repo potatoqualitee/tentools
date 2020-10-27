@@ -3,7 +3,7 @@ function Invoke-TNRequest {
     Param
     (
         [PSCustomObject[]]$SessionObject = (Get-TNSession),
-        [String]$Parameter,
+        $Parameter,
         [Parameter(Mandatory)]
         [String]$Path,
         [Parameter(Mandatory)]
@@ -75,6 +75,10 @@ function Invoke-TNRequest {
             }
 
             if ($Parameter) {
+                if ($Parameter -is [hashtable]) {
+                    $ContentType = "application/json"
+                    $Parameter = $Parameter | ConvertTo-Json
+                }
                 $RestMethodParams.Add('Body', $Parameter)
             }
 
