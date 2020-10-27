@@ -21,7 +21,7 @@ function Suspend-TNScan {
     )
     process {
         foreach ($session in (Get-TNSession)) {
-            foreach ($scan in (Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId/pause" -Method 'Post').scan) {
+            foreach ($scan in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/pause" -Method 'Post').scan) {
                 [pscustomobject]@{
                     Name            = $scan.name
                     ScanId          = $ScanId

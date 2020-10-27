@@ -23,7 +23,7 @@ function Get-TNPlugin {
     process {
         foreach ($session in (Get-TNSession)) {
             if ($PluginId) {
-                foreach ($plugin in (Invoke-TNRequest -SessionObject $session -Path "/plugins/plugin/$PluginId" -Method GET)) {
+                foreach ($plugin in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/plugins/plugin/$PluginId" -Method GET)) {
                     $attributes = [ordered]@{ }
                     foreach ($attribute in $plugin.attributes) {
                         # Some attributes have multiple values, i.e. osvdb. This causes errors when adding duplicates

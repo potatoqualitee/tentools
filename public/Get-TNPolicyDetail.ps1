@@ -46,7 +46,7 @@ function Get-TNPolicyDetail {
             foreach ($id in $PolicyId) {
                 $script:includeid = $id
                 Write-PSFMessage -Level Verbose -Message "Getting details for policy with id $id"
-                Invoke-TNRequest -SessionObject $session -Path "/editor/policy/$id" -Method GET |
+                Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/editor/policy/$id" -Method GET |
                     ConvertFrom-TNRestResponse
             }
         }

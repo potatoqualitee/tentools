@@ -26,7 +26,7 @@ function Copy-TNPolicy {
     )
     process {
         foreach ($session in (Get-TNSession)) {
-            $CopiedPolicy = Invoke-TNRequest -SessionObject $session -Path "/policies/$PolicyId/copy" -Method 'Post'
+            $CopiedPolicy = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/policies/$PolicyId/copy" -Method 'Post'
             [PSCustomObject]@{
                 Name     = $CopiedPolicy.Name
                 PolicyId = $CopiedPolicy.Id

@@ -21,6 +21,7 @@ function Invoke-TNRequest {
                 $replace = @{
                     "/plugins/families/" = "/pluginFamily/"
                     "/groups"            = "/group"
+                    "/users"             = "/user?fields=apiKeys,name,username,firstname,lastname,group,role,lastLogin,canManage,canUse,locked,status,title,email,id"
                 }
 
                 foreach ($key in $replace.keys) {

@@ -29,7 +29,7 @@ function New-TNGroup {
         foreach ($session in (Get-TNSession)) {
             if ($session.MultiUser) {
                 foreach ($group in $name) {
-                    Invoke-TNRequest -SessionObject $session -Path '/groups' -Method POST -Parameter @{ "name" = "$Name" } | ConvertFrom-TNRestResponse
+                    Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/groups' -Method POST -Parameter @{ "name" = "$Name" } | ConvertFrom-TNRestResponse
                 }
             } else {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users" -Continue

@@ -21,60 +21,7 @@ function Get-TNUser {
     )
     process {
         foreach ($session in (Get-TNSession)) {
-
-            if (-not $session.sc -and $session.ServerVersionMajor -ge 8) {
-                Stop-PSFFunction -Message "Nessus 8 and above not supported :("
-                return
-            }
-
-            $results = Invoke-TNRequest -SessionObject $session -Path '/users' -Method GET
-            if ($session.sc) {
-                foreach ($user in $results) {
-                    [pscustomobject]@{
-                        UserName           = $user.username
-                        FirstName          = $user.firstname
-                        LastName           = $user.lastname
-                        Title              = $user.title
-                        Email              = $user.email
-                        Address            = $user.address
-                        City               = $user.city
-                        State              = $user.state
-                        Country            = $user.country
-                        UserId             = $user.id
-                        Status             = $user.status
-                        Fax                = $user.fax
-                        Type               = $user.type
-                        LastLogin          = $script:origin.AddSeconds($user.lastlogin).ToLocalTime()
-                        LastLoginIp        = $user.lastLoginIP
-                        CreatedTime        = $script:origin.AddSeconds($user.createdTime).ToLocalTime()
-                        ModifiedTime       = $script:origin.AddSeconds($user.modifiedTime).ToLocalTime()
-                        MustChangePassword = $user.mustChangePassword
-                        Locked             = $user.locked
-                        AuthType           = $user.authType
-                        Fingerprint        = $user.fingerprint
-                        Password           = $user.password
-                        LdapUserName       = $user.ldapUsername
-                        CanUse             = $user.canUse
-                        CanManage          = $user.canManage
-                        ApiKeys            = $user.apiKeys
-                        Ldap               = $user.ldap
-                        Role               = $user.role
-                        Preferences        = $user.preferences
-                    }
-                }
-            } else {
-                foreach ($user in $results.users) {
-                    [pscustomobject]@{
-                        Name       = $user.name
-                        UserName   = $user.username
-                        Email      = $user.email
-                        UserId     = $user.id
-                        Type       = $user.type
-                        Permission = $permidenum[$user.permissions]
-                        LastLogin  = $script:origin.AddSeconds($user.lastlogin).ToLocalTime()
-                    }
-                }
-            }
+            Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/users' -Method GET | ConvertFrom-TNRestResponse
         }
     }
 }

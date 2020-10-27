@@ -27,7 +27,7 @@ function Remove-TNPolicy {
     process {
         foreach ($session in (Get-TNSession)) {
             Write-PSFMessage -Level Verbose -Message "Deleting policy with id $PolicyId"
-            Invoke-TNRequest -SessionObject $session -Path "/policies/$PolicyId" -Method 'DELETE'
+            Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/policies/$PolicyId" -Method 'DELETE'
             Write-PSFMessage -Level Verbose -Message 'Policy deleted.'
         }
     }

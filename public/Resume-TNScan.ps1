@@ -26,7 +26,7 @@ function Resume-TNScan {
     )
     process {
         foreach ($session in (Get-TNSession)) {
-            foreach ($scan in (Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId/resume" -Method 'Post').scan) {
+            foreach ($scan in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/resume" -Method 'Post').scan) {
                 [pscustomobject]@{
                     Name            = $scan.name
                     ScanId          = $ScanId

@@ -32,7 +32,7 @@ function Restart-TNService {
     }
     process {
         foreach ($session in (Get-TNSession)) {
-            Invoke-TNRequest -SessionObject $session -Path "/server/restart" -Method 'Post' -Parameter $paramJson -ContentType 'application/json'
+            Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/server/restart" -Method 'Post' -Parameter $paramJson -ContentType 'application/json'
         }
     }
 }

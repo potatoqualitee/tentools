@@ -30,7 +30,7 @@ function Get-TNScanDetail {
     )
     process {
         foreach ($session in (Get-TNSession)) {
-            $scan = Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId" -Method GET
+            $scan = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId" -Method GET
             if ($scan.info) {
                 $scan.info | ConvertFrom-TNRestResponse
             } else {

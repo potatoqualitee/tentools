@@ -36,7 +36,7 @@ function Set-TNUserPassword {
                 Write-PSFMessage -Level Verbose -Message "Updating user with Id $uid"
                 $params = @{'password' = $([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))) }
                 $paramJson = ConvertTo-Json -InputObject $params -Compress
-                Invoke-TNRequest -SessionObject $session -Path "/users/$uid/chpasswd" -Method 'PUT' -Parameter $paramJson -ContentType 'application/json'
+                Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/users/$uid/chpasswd" -Method 'PUT' -Parameter $paramJson -ContentType 'application/json'
             }
         }
     }

@@ -24,7 +24,7 @@ function Get-TNScanTemplate {
             if ($session.sc) {
                 Stop-PSFFunction -Message "tenable.sc not supported" -Continue
             }
-            Invoke-TNRequest -SessionObject $session -Path '/editor/scan/templates' -Method GET | ConvertFrom-TNRestResponse
+            Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/editor/scan/templates' -Method GET | ConvertFrom-TNRestResponse
         }
     }
 }
