@@ -191,8 +191,8 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
     }
     Context "New-TNFolder" {
         It "Creates a folder" {
-            $results = New-TNFolder -Name 'IntegrationTest'
-            $results.Name | Should -Be 'IntegrationTest'
+            $results = New-TNFolder -Name 'Integration Test Folder'
+            $results.Name | Should -Be 'Integration Test Folder'
         }
     }
 }
