@@ -20,6 +20,7 @@ function Invoke-TNRequest {
             if ($session.sc) {
                 $replace = @{
                     "/plugins/families/" = "/pluginFamily/"
+                    "/groups"            = "/group"
                 }
 
                 foreach ($key in $replace.keys) {
