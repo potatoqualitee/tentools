@@ -182,4 +182,11 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             $results.Name | Should -Match 'Upload This'
         }
     }
+    Context "Import-TNScan" {
+        $file = Resolve-Path .\tests\library\scan.nessus
+        It -Skip "Uploads scan!" {
+            $results = Import-TNScan -FilePath $file
+            $results.Name | Should -Match 'Imported Scan'
+        }
+    }
 }
