@@ -29,7 +29,7 @@ function New-TNGroup {
         foreach ($session in (Get-TNSession)) {
             if ($session.MultiUser) {
                 foreach ($group in $name) {
-                    $groups = Invoke-TNRequest -SessionObject $session -Path '/groups' -Method POST -Parameter @{'name' = $Name }
+                    $groups = Invoke-TNRequest -SessionObject $session -Path '/groups' -Method POST -Parameter @{"name" = "$Name" }
                     [pscustomobject]@{
                         Name        = $groups.name
                         GroupId     = $groups.id

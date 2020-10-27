@@ -30,7 +30,7 @@ function New-TNFolder {
                 Stop-PSFFunction -Message "tenable.sc not supported" -Continue
             }
             foreach ($folder in $Name) {
-                $result = Invoke-TNRequest -SessionObject $session -Path '/folders' -Method POST -Parameter @{'name' = $folder }
+                $result = Invoke-TNRequest -SessionObject $session -Path '/folders' -Method POST -Parameter @{ "name" = "$folder" }
                 if ($result) {
                     Invoke-TNRequest -SessionObject $session -Path "/folders" -Method GET | ConvertFrom-TNRestResponse | Where-Object Id -eq $result.id
                 }
