@@ -33,8 +33,7 @@ function ConvertFrom-TNRestResponse {
                 }
             } elseif ([double]::TryParse($value,[ref]$null)) {
                 if ($Value -cnotlike "*T*") {
-                    $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-                    return $origin.AddSeconds($Value).ToLocalTime()
+                    return $script:origin.AddSeconds($Value).ToLocalTime()
                 } else {
                     return [datetime]::ParseExact($Value, "yyyyMMddTHHmmss",
                         [System.Globalization.CultureInfo]::InvariantCulture,

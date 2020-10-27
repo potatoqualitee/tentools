@@ -27,8 +27,6 @@ function Get-TNUser {
                 return
             }
 
-            $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-
             $results = Invoke-TNRequest -SessionObject $session -Path '/users' -Method GET
             if ($session.sc) {
                 foreach ($user in $results) {
@@ -46,10 +44,10 @@ function Get-TNUser {
                         Status             = $user.status
                         Fax                = $user.fax
                         Type               = $user.type
-                        LastLogin          = $origin.AddSeconds($user.lastlogin).ToLocalTime()
+                        LastLogin          = $script:origin.AddSeconds($user.lastlogin).ToLocalTime()
                         LastLoginIp        = $user.lastLoginIP
-                        CreatedTime        = $origin.AddSeconds($user.createdTime).ToLocalTime()
-                        ModifiedTime       = $origin.AddSeconds($user.modifiedTime).ToLocalTime()
+                        CreatedTime        = $script:origin.AddSeconds($user.createdTime).ToLocalTime()
+                        ModifiedTime       = $script:origin.AddSeconds($user.modifiedTime).ToLocalTime()
                         MustChangePassword = $user.mustChangePassword
                         Locked             = $user.locked
                         AuthType           = $user.authType
@@ -73,7 +71,7 @@ function Get-TNUser {
                         UserId     = $user.id
                         Type       = $user.type
                         Permission = $permidenum[$user.permissions]
-                        LastLogin  = $origin.AddSeconds($user.lastlogin).ToLocalTime()
+                        LastLogin  = $script:origin.AddSeconds($user.lastlogin).ToLocalTime()
                     }
                 }
             }
