@@ -151,18 +151,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Login to ghcr
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GHCR_TOKEN }}
+      # setup and run docker container
+      - name: Download the container
+        run: docker pull sometheycallme/docker-nessus:latest
 
-      # Setup docker image
-      - name: Download the image
-        run: docker pull ghcr.io/potatoqualitee/nessus:latest
+      # separate download and run just to see the timing
       - name: Startup the container
-        run: docker run -p 8834:8834 --hostname nessus --name nessus -d ghcr.io/potatoqualitee/nessus7:latest
+        run: docker run -p 8834:8834 --hostname nessus --name nessus -d sometheycallme/docker-nessus:latest
 
       - name: Write nessus license from secrets to disk
         run: 'echo "$NLICENSE" > C:\temp\nessus.license'
