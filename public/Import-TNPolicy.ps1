@@ -6,7 +6,7 @@ function Import-TNPolicy {
     .DESCRIPTION
         Long description
 
-    .PARAMETER File
+    .PARAMETER FilePath
         Parameter description
 
     .PARAMETER EnableException
@@ -28,33 +28,7 @@ function Import-TNPolicy {
     process {
         foreach ($session in (Get-TNSession)) {
             foreach ($file in $FilePath) {
-                $fileinfo = Get-ItemProperty -Path $file
-                $fullname = $fileinfo.FullName
-                $restclient = New-Object RestSharp.RestClient
-                $restrequest = New-Object RestSharp.RestRequest
-                $restclient.UserAgent = 'tentools'
-                $restclient.BaseUrl = $session.uri
-                $restrequest.Method = [RestSharp.Method]::POST
-                $restrequest.Resource = 'file/upload'
-                $restclient.CookieContainer = $session.WebSession.Cookies
-                [void]$restrequest.AddFile('Filedata', $fullname, 'application/octet-stream')
-
-                foreach ($header in $session.Headers) {
-                    [void]$restrequest.AddHeader($header.Keys, $header.Values)
-                }
-                $result = $restclient.Execute($restrequest)
-
-                if ($result.ErrorMessage) {
-                    Stop-PSFFunction -Message $result.ErrorMessage -Continue
-                }
-                $restparams = New-Object -TypeName System.Collections.Specialized.OrderedDictionary
-                $restparams.add('file', "$($fileinfo.name)")
-                if ($session.sc) {
-                    $filename = ($result.Content | ConvertFrom-Json | Select-Object Response | ConvertFrom-TNRestResponse).Filename
-                    $body = ConvertTo-Json @{'filename' = $filename; } -Compress
-                } else {
-                    $body = ConvertTo-Json @{'file' = $fileinfo.name; } -Compress
-                }
+                $body = $file | Publish-File -Session $session -EnableException:$EnableException
 
                 Invoke-TnRequest -Method Post -Path "/policies/import" -Parameter $body -ContentType 'application/json' -SessionObject $session |
                     ConvertFrom-TNRestResponse

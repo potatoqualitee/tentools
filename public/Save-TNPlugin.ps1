@@ -5,7 +5,9 @@ function Save-TNPlugin {
 
 	.DESCRIPTION
     The SecurityCenter feed contains updates to templates used in SecurityCenter. Active plugins are used by the Nessus scanners and passive plugins are used by the Passive Vulnerability Scanner.
+
     These files are downloaded from https://patches.csd.disa.mil/CollectionInfo.aspx?id=552. This site is configured to accept only the Department of Defense (DoD) Common Access Card (CAC) or an External Certification Authority (ECA) PKI token. You will need to register on the site if you haven't yet.
+
     PoshRSJob is required for this function. Run "Install-Module -Name PoshRSJob -Scope CurrentUser" to install it.
 
 	.PARAMETER Path
@@ -23,22 +25,11 @@ function Save-TNPlugin {
 
     begin {
         $CertificateThumbprint = [System.Security.Cryptography.X509Certificates.X509Certificate2[]](Get-ChildItem Cert:\CurrentUser\My | Where-Object FriendlyName -like "*ID Certificate*") | Select-Object -ExpandProperty Thumbprint
-        try {
-            Import-Module PoshRSJob -ErrorAction Stop
-        } catch {
-            $message = "Failed to load module, PoshRSJob is required for this function.
-                        Install the module by running: 'Install-Module -Name PoshRSJob -Scope CurrentUser'"
-            Stop-PSFFunction -EnableException:$EnableException -Message "Failure" -ErrorRecord $_ -Continue
-        }
-
-        #Enabling TLS 1.2
-        if ([Net.ServicePointManager]::SecurityProtocol -notlike '*TLS12*') {
-            Write-PSFMessage -Level Verbose -Message "Setting Security Protocol to TLS 1.2"
-            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        }
     }
 
     process {
+        if (Test-PSFFunctionInterrupt) { return }
+
         [string]$FolderName = Get-Date -f MMddyyyy
         $OutPath = $path + $FolderName
 
@@ -63,7 +54,7 @@ function Save-TNPlugin {
         $ScriptBlock = {
             $ProgressPreference = 'SilentlyContinue'
             $CertificateThumbprint = [System.Security.Cryptography.X509Certificates.X509Certificate2[]](Get-ChildItem Cert:\CurrentUser\My | Where-Object FriendlyName -like "*ID Certificate*") | Select-Object -ExpandProperty Thumbprint
-            $null = Invoke-WebRequest -CertificateThumbprint $CertificateThumbprint -Uri "https://patches.csd.disa.mil/PkiLogin/Default.aspx"-SessionVariable DISALogin
+            $null = Invoke-WebRequest -CertificateThumbprint $CertificateThumbprint -Uri "https://patches.csd.disa.mil/PkiLogin/Default.aspx" -SessionVariable DISALogin
             $remote = $_.DownloadLink
             [string]$target = $Using:OutPath + "\" + $($_.FileName)
             Invoke-WebRequest -CertificateThumbprint $CertificateThumbprint -Uri $remote -OutFile $target -WebSession $DISALogin
