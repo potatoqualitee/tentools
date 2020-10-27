@@ -189,4 +189,10 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             $results.Name | Should -Match 'Imported Scan'
         }
     }
+    Context "New-TNFolder" {
+        It "Creates a folder" {
+            $results = New-TNFolder -Name 'IntegrationTest'
+            $results.Name | Should -Be 'IntegrationTest'
+        }
+    }
 }
