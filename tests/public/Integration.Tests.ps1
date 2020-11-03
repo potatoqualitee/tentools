@@ -169,6 +169,14 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
         }
     }
 
+    Context "Add-TNPolicyPortRange" {
+        It "Returns proper policy range information for piped results" {
+            $results = Add-TNPolicyPortRange -PolicyId 4 -Port 1433
+            $results.PolicyId | Should -Be 4
+            $results.PortRange | Should -Be 1433
+        }
+    }
+
     Context "Get-TNPolicyTemplate" {
         It "Returns proper policy template information for piped results" {
             $results = Get-TNPolicy | Select-Object Id | Get-TNPolicyDetail | Get-TNPolicyTemplate
