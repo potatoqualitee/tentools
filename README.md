@@ -42,5 +42,12 @@ Connect-TNServer -ComputerName acas -Credential acasadmin
 
 ## Support
 
+| Command | Nessus  | tenable.sc
+|---|---|---|
+|  Su-Tn | x  | x  |
+|   |   |   |
+|   |   |   |
+
+
 * PowerShell v3 and above
 * Windows, macOS and Linux
