@@ -21,14 +21,16 @@ function Invoke-TNRequest {
                 $replace = @{
                     "/plugins/families/" = "/pluginFamily/"
                     "/groups"            = "/group"
-                    "/users"             = "/user?fields=apiKeys,name,username,firstname,lastname,group,role,lastLogin,canManage,canUse,locked,status,title,email,id"
                 }
 
                 foreach ($key in $replace.keys) {
                     $Path = $Path.Replace($key, $replace[$key])
                 }
-                if ($Path -match '/group/' -and $Path -match '/user') {
+                if ($Path -match '/group/' -and $Path -match '/user' -and $Method -eq "Get") {
                     $Path = $Path.Replace("/user", "?fields=users")
+                }
+                if ($Path -match '/user' -and $Path -notmatch '/group/') {
+                    $Path = $Path.Replace("/users", "/user?fields=apiKeys,name,username,firstname,lastname,group,role,lastLogin,canManage,canUse,locked,status,title,email,id")
                 }
                 # https://macmini:8834/#/scans/reports/5/hosts
                 # https://macmini:8834/#/scans/reports/5/vulnerabilities
