@@ -33,14 +33,16 @@ function Get-TNPolicyPortRange {
                     $policydetail = Get-TNPolicyDetail -PolicyId $policy
                     if ($policydetail.settings) {
                         [pscustomobject]@{
+                            Name      = $policydetail.name
                             PolicyId  = $policy
                             PortRange = $policydetail.settings.portscan_range
-                        }
+                        } | ConvertFrom-TNRestResponse
                     } else {
                         [pscustomobject]@{
+                            Name      = $policydetail.name
                             PolicyId  = $policy
                             PortRange = $policydetail.preferences.portscan_range
-                        }
+                        } | ConvertFrom-TNRestResponse
                     }
                 } catch {
                     Stop-PSFFunction -EnableException:$EnableException -Message "Failure" -ErrorRecord $_ -Continue
