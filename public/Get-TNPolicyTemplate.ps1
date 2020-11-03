@@ -31,7 +31,7 @@ function Get-TNPolicyTemplate {
     )
     process {
         foreach ($session in (Get-TNSession)) {
-            $templates = Invoke-TNRequest -SessionObject $session -Path '/editor/policy/templates' -Method GET | ConvertFrom-TNRestResponse
+            $templates = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/editor/policy/templates' -Method GET | ConvertFrom-TNRestResponse
 
             switch ($PSCmdlet.ParameterSetName) {
                 'ByName' {

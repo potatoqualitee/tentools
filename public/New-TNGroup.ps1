@@ -22,21 +22,17 @@ function New-TNGroup {
     param
     (
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
-        [string]$Name,
+        [string[]]$Name,
         [switch]$EnableException
     )
     process {
         foreach ($session in (Get-TNSession)) {
             if ($session.MultiUser) {
-                $groups = Invoke-TNRequest -SessionObject $session -Path '/groups' -Method 'POST' -Parameter @{'name' = $Name }
-                [pscustomobject]@{
-                    Name        = $groups.name
-                    GroupId     = $groups.id
-                    Permissions = $groups.permissions
-                    SessionId   = $session.SessionId
+                foreach ($group in $name) {
+                    Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/groups' -Method POST -Parameter @{ "name" = "$Name" } | ConvertFrom-TNRestResponse
                 }
             } else {
-                Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
+                Stop-PSFFunction -EnableException:$EnableException -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users" -Continue
             }
         }
     }

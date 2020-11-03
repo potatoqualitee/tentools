@@ -32,7 +32,7 @@ function Export-TNPolicy {
     process {
         foreach ($session in (Get-TNSession)) {
             Write-PSFMessage -Level Verbose -Message "Exporting policy with id $PolicyId"
-            $policy = Invoke-TNRequest -SessionObject $session -Path "/policies/$PolicyId/export" -Method GET
+            $policy = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/policies/$PolicyId/export" -Method GET
             if ($PSBoundParameters.OutFile) {
                 Write-PSFMessage -Level Verbose -Message "Saving policy as $($OutFile)"
                 $policy.Save($ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutFile))

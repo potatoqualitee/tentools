@@ -33,6 +33,11 @@ function Add-TNPolicyPortRange {
     )
     process {
         foreach ($session in (Get-TNSession)) {
+            if ($session.sc) {
+                $method = "PATCH"
+            } else {
+                $method = "PUT"
+            }
             foreach ($PolicyToChange in $PolicyId) {
                 try {
                     $policy = Get-TNPolicyDetail -PolicyId $PolicyToChange
@@ -40,7 +45,7 @@ function Add-TNPolicyPortRange {
                     $params = @{
                         SessionObject   = $session
                         Path            = "/policies/$PolicyToChange"
-                        Method          = 'PUT'
+                        Method          = $method
                         ContentType     = 'application/json'
                         Parameter       = "{`"settings`": {`"portscan_range`": `"$($Ports)`"}}"
                         EnableException = $EnableException

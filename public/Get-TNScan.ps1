@@ -40,9 +40,9 @@ function Get-TNScan {
     process {
         foreach ($session in (Get-TNSession)) {
             if ($FolderId) {
-                $scans = Invoke-TNRequest -SessionObject $session -Path '/scans' -Method GET -Parameter $params
+                $scans = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/scans' -Method GET -Parameter $params
             } else {
-                $scans = Invoke-TNRequest -SessionObject $session -Path '/scans' -Method GET
+                $scans = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/scans' -Method GET
             }
 
             if ($scans.scans) {

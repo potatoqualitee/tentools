@@ -24,25 +24,55 @@ function Add-TNGroupUser {
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string]$Group,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$Username,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Int32]$GroupId,
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
-        [Int32]$UserId,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [Int32[]]$UserId,
         [switch]$EnableException
     )
+    begin {
+        if (-not $PSBoundParameters.Group -and -not $PSBoundParameters.GroupId) {
+            Stop-PSFFunction -Message "You must specify either Group or GroupId"
+            return
+        }
+        if (-not $PSBoundParameters.Username -and -not $PSBoundParameters.UserId) {
+            Stop-PSFFunction -Message "You must specify either Username or UserId"
+            return
+        }
+    }
     process {
+        if (Test-PSFFunctionInterrupt) { return }
+
         foreach ($session in (Get-TNSession)) {
+            if ($session.sc) {
+                Stop-PSFFunction -Message "tenable.sc not supported" -Continue
+            }
+            if ($Group) {
+                $GroupId = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/groups' -Method GET | ConvertFrom-TNRestResponse |
+                    Where-Object name -in $Group | Select-Object -ExpandProperty Id
+            }
+            if ($Username) {
+                $UserId += Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/users' -Method GET | ConvertFrom-TNRestResponse |
+                    Where-Object username -in $Username | Select-Object -ExpandProperty Id
+            }
             if ($session.MultiUser) {
-                $params = @{
-                    SessionObject   = $session
-                    Path            = "/groups/$GroupId/users"
-                    Method          = 'POST'
-                    Parameter       = @{'user_id' = $UserId }
-                    EnableException = $EnableException
+                foreach ($id in $UserId) {
+                    write-warning sup
+                    $params = @{
+                        SessionObject   = $session
+                        Path            = "/groups/$GroupId/users"
+                        Method          = 'POST'
+                        Parameter       = @{ 'user_id' = $id }
+                        EnableException = $EnableException
+                    }
+                    Invoke-TNRequest @params
                 }
-                Invoke-TNRequest @params
             } else {
-                Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
+                Stop-PSFFunction -EnableException:$EnableException -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users" -Continue
             }
         }
     }

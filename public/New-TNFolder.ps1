@@ -21,13 +21,20 @@ function New-TNFolder {
     param
     (
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
-        [string]$Name,
+        [string[]]$Name,
         [switch]$EnableException
     )
     process {
         foreach ($session in (Get-TNSession)) {
-            $folder = Invoke-TNRequest -SessionObject $session -Path '/folders' -Method 'Post' -Parameter @{'name' = $Name }
-            Get-TNFolder | Where-Object FolderId -eq $folder.id
+            if ($session.sc) {
+                Stop-PSFFunction -Message "tenable.sc not supported" -Continue
+            }
+            foreach ($folder in $Name) {
+                $result = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/folders' -Method POST -Parameter @{ "name" = "$folder" }
+                if ($result) {
+                    Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/folders" -Method GET | ConvertFrom-TNRestResponse | Where-Object Id -eq $result.id
+                }
+            }
         }
     }
 }

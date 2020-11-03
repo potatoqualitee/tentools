@@ -41,7 +41,7 @@ function Get-TNScanHost {
     }
     process {
         foreach ($session in (Get-TNSession)) {
-            foreach ($Host in (Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId" -Method GET -Parameter $params).hosts) {
+            foreach ($Host in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId" -Method GET -Parameter $params).hosts) {
                 [pscustomobject]@{
                     HostName  = $Host.hostname
                     HostId    = $Host.host_id

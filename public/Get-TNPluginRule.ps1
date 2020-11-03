@@ -49,7 +49,7 @@ function Get-TNPluginRule {
                 Stop-PSFFunction -Message "tenable.sc not supported" -Continue
             }
 
-            $rules = Invoke-TNRequest -SessionObject $session -Path '/plugin-rules' -Method GET
+            $rules = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/plugin-rules' -Method GET
 
             foreach ($rule in $rules.plugin_rules) {
                 if ($PSBoundParameters.PluginId -and ($rule.plugin_id -notin $PluginId)) {

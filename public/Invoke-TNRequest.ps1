@@ -3,7 +3,7 @@ function Invoke-TNRequest {
     Param
     (
         [PSCustomObject[]]$SessionObject = (Get-TNSession),
-        [String]$Parameter,
+        $Parameter,
         [Parameter(Mandatory)]
         [String]$Path,
         [Parameter(Mandatory)]
@@ -20,13 +20,17 @@ function Invoke-TNRequest {
             if ($session.sc) {
                 $replace = @{
                     "/plugins/families/" = "/pluginFamily/"
+                    "/groups"            = "/group"
                 }
 
                 foreach ($key in $replace.keys) {
                     $Path = $Path.Replace($key, $replace[$key])
                 }
-                if ($Path -match '/group/' -and $Path -match '/user') {
+                if ($Path -match '/group/' -and $Path -match '/user' -and $Method -eq "Get") {
                     $Path = $Path.Replace("/user", "?fields=users")
+                }
+                if ($Path -match '/user' -and $Path -notmatch '/group/') {
+                    $Path = $Path.Replace("/users", "/user?fields=apiKeys,name,username,firstname,lastname,group,role,lastLogin,canManage,canUse,locked,status,title,email,id")
                 }
                 # https://macmini:8834/#/scans/reports/5/hosts
                 # https://macmini:8834/#/scans/reports/5/vulnerabilities
@@ -75,6 +79,10 @@ function Invoke-TNRequest {
             }
 
             if ($Parameter) {
+                if ($Parameter -is [hashtable]) {
+                    $ContentType = "application/json"
+                    $Parameter = $Parameter | ConvertTo-Json
+                }
                 $RestMethodParams.Add('Body', $Parameter)
             }
 

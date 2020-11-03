@@ -43,7 +43,7 @@ function Get-TNScanHostDetail {
     }
     process {
         foreach ($session in (Get-TNSession)) {
-            foreach ($detail in (Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId/hosts/$($HostId)" -Method GET -Parameter $params)) {
+            foreach ($detail in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/hosts/$($HostId)" -Method GET -Parameter $params)) {
                 [pscustomobject]@{
                     Info            = $detail.info
                     Vulnerabilities = $detail.vulnerabilities

@@ -28,7 +28,7 @@ function Remove-TNUser {
         foreach ($session in (Get-TNSession)) {
             foreach ($uid in $UserId) {
                 Write-PSFMessage -Level Verbose -Message "Deleting user with Id $uid"
-                Invoke-TNRequest -SessionObject $session -Path "/users/$uid" -Method 'Delete'
+                Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/users/$uid" -Method 'Delete'
             }
         }
     }

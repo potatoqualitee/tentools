@@ -42,7 +42,7 @@ function Rename-TNGroup {
 
                 Invoke-TNRequest @groupparams
             } else {
-                Write-PSFMessage -Level Warning -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users"
+                Stop-PSFFunction -EnableException:$EnableException -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users" -Continue
             }
         }
     }

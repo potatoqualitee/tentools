@@ -31,9 +31,28 @@ function Get-TNPolicyPortRange {
             foreach ($policy in $PolicyId) {
                 try {
                     $policydetail = Get-TNPolicyDetail -PolicyId $policy
-                    [pscustomobject]@{
-                        PolicyId  = $policy
-                        PortRange = $policydetail.settings.portscan_range
+                    if ($policydetail.settings) {
+                        if ($policydetail.settings.portscan_range) {
+                            [pscustomobject]@{
+                                Name      = $policydetail.name
+                                PolicyId  = $policy
+                                PortRange = $policydetail.settings.portscan_range
+                            } | ConvertFrom-TNRestResponse
+                        } else {
+                            # i feel like i'm doing this wrong
+                            $port = (($policydetail.settings.discovery.groups | Where-Object name -eq network_discovery).sections.inputs | Where-Object id -eq portscan_range).default
+                            [pscustomobject]@{
+                                Name      = $policydetail.name
+                                PolicyId  = $policy
+                                PortRange = $port
+                            } | ConvertFrom-TNRestResponse
+                        }
+                    } else {
+                        [pscustomobject]@{
+                            Name      = $policydetail.name
+                            PolicyId  = $policy
+                            PortRange = $policydetail.preferences.portscan_range
+                        } | ConvertFrom-TNRestResponse
                     }
                 } catch {
                     Stop-PSFFunction -EnableException:$EnableException -Message "Failure" -ErrorRecord $_ -Continue

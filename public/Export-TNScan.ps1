@@ -100,11 +100,11 @@ function Export-TNScan {
 
             Write-PSFMessage -Level Verbose -Message "Exporting scan with Id of $ScanId in $($Format) format"
 
-            foreach ($fileid in (Invoke-TNRequest -SessionObject $session -Path $urlpath -Method 'Post' -Parameter $ExportParams)) {
+            foreach ($fileid in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path $urlpath -Method 'Post' -Parameter $ExportParams)) {
                 $FileStatus = ''
                 while ($FileStatus.status -ne 'ready') {
                     try {
-                        $FileStatus = Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId/export/$($fileid.file)/status" -Method GET
+                        $FileStatus = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/export/$($fileid.file)/status" -Method GET
                         Write-PSFMessage -Level Verbose -Message "Status of export is $($FileStatus.status)"
                     } catch {
                         break
@@ -113,11 +113,11 @@ function Export-TNScan {
                 }
                 if ($FileStatus.status -eq 'ready' -and $Format -eq 'CSV' -and $PSObject.IsPresent) {
                     Write-PSFMessage -Level Verbose -Message "Converting report to PSObject"
-                    Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId/export/$($fileid.file)/download" -Method GET | ConvertFrom-Csv
+                    Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/export/$($fileid.file)/download" -Method GET | ConvertFrom-Csv
                 } elseif ($FileStatus.status -eq 'ready') {
                     Write-PSFMessage -Level Verbose -Message "Downloading report to $($Path)"
                     $filepath = Resolve-PSFPath -Path "$path\$name-$scanid.$($Format.ToLower())" -NewChild
-                    Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId/export/$($fileid.file)/download" -Method GET -OutFile $filepath
+                    Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/export/$($fileid.file)/download" -Method GET -OutFile $filepath
                 }
                 Get-ChildItem -Path $Path
             }

@@ -32,7 +32,7 @@ function Get-TNPolicy {
     )
     process {
         foreach ($session in (Get-TNSession)) {
-            $policies = Invoke-TNRequest -SessionObject $session -Path '/policies' -Method GET |
+            $policies = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/policies' -Method GET |
                 ConvertFrom-TNRestResponse
 
             switch ($PSCmdlet.ParameterSetName) {

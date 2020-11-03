@@ -25,7 +25,7 @@ function Get-TNServerStatus {
             if ((Get-PSCallStack).Count -eq 2 -and $session.sc) {
                 Stop-PSFFunction -Message "tenable.sc not supported" -Continue
             }
-            Invoke-TNRequest -SessionObject $session -Path '/server/status' -Method GET
+            Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/server/status' -Method GET
         }
     }
 }

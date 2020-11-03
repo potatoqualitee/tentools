@@ -26,7 +26,7 @@ function Get-TNPluginFamilyDetails {
     )
     process {
         foreach ($session in (Get-TNSession)) {
-            foreach ($detail in (Invoke-TNRequest -SessionObject $session -Path "/plugins/families/$($FamilyId)" -Method GET)) {
+            foreach ($detail in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/plugins/families/$($FamilyId)" -Method GET)) {
                 [pscustomobject]@{
                     Name     = $detail.name
                     FamilyId = $detail.id

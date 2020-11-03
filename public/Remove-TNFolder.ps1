@@ -22,7 +22,7 @@ function Remove-NessusFolder {
     )
     process {
         foreach ($session in (Get-TNSession)) {
-            Invoke-TNRequest -SessionObject $session -Path "/folders/$($FolderId)" -Method 'DELETE'
+            Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/folders/$($FolderId)" -Method 'DELETE'
         }
     }
 }

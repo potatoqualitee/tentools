@@ -42,7 +42,7 @@ function Get-TNFolder {
             if ($session.sc) {
                 Stop-PSFFunction -Message "tenable.sc not supported" -Continue
             }
-            Invoke-TNRequest -SessionObject $session -Path '/folders' -Method GET |
+            Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/folders' -Method GET |
                 ConvertFrom-TNRestResponse
         }
     }

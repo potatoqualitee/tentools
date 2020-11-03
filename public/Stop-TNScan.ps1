@@ -30,7 +30,7 @@ function Stop-TNScan {
     }
     process {
         foreach ($session in (Get-TNSession)) {
-            $Scans = Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId/stop" -Method 'Post'
+            $Scans = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/stop" -Method 'Post'
 
             if ($Scans -is [psobject]) {
                 $scan = $Scans.scan

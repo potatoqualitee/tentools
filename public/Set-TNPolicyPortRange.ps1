@@ -27,6 +27,7 @@ function Set-TNPolicyPortRange {
     param
     (
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Alias("Id")]
         [int32[]]$PolicyId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string[]]$Port,
@@ -34,17 +35,17 @@ function Set-TNPolicyPortRange {
     )
     process {
         foreach ($session in (Get-TNSession)) {
-            foreach ($PolicyToChange in $PolicyId) {
+            foreach ($policy in $PolicyId) {
                 $params = @{
                     SessionObject = $session
-                    Path          = "/policies/$PolicyToChange"
+                    Path          = "/policies/$policy"
                     Method        = 'PUT'
                     ContentType   = 'application/json'
                     Parameter     = "{`"settings`": {`"portscan_range`": `"$($Port -join ",")`"}}"
                 }
 
                 $null = Invoke-TNRequest @params
-                Get-TNPolicyPortRange -SessionId $session.SessionId -PolicyId $PolicyToChange
+                Get-TNPolicyPortRange -SessionId $session.SessionId -PolicyId $policy
             }
         }
     }

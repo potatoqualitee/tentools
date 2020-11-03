@@ -51,11 +51,13 @@ function Add-TNPluginRule {
     )
     process {
         foreach ($session in (Get-TNSession)) {
-
+            if ($session.sc) {
+                Stop-PSFFunction -Message "tenable.sc not supported" -Continue
+            }
             $dtExpiration = $null
 
             If ($Expiration) {
-                $dtExpiration = (New-TimeSpan -Start $origin -end $Expiration).TotalSeconds.ToInt32($null)
+                $dtExpiration = (New-TimeSpan -Start $script:origin -end $Expiration).TotalSeconds.ToInt32($null)
             }
 
             $dicType = @{

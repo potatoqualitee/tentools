@@ -40,7 +40,7 @@ function Start-TNScan {
     }
     process {
         foreach ($session in (Get-TNSession)) {
-            foreach ($scans in (Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json')) {
+            foreach ($scans in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json')) {
                 [pscustomobject]@{
                     ScanUUID  = $scans.scan_uuid
                     ScanId    = $ScanId

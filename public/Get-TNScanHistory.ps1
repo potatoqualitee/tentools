@@ -41,9 +41,9 @@ function Get-TNScanHistory {
             }
 
             if ($HistoryId) {
-                $scan = Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId" -Method GET -Parameter $params
+                $scan = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId" -Method GET -Parameter $params
             } else {
-                $scan = Invoke-TNRequest -SessionObject $session -Path "/scans/$ScanId" -Method GET
+                $scan = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId" -Method GET
             }
             if ($scan.history) {
                 $script:includeid = $ScanId

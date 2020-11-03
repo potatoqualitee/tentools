@@ -62,7 +62,7 @@ function New-TNUser {
                 $params.Add('name', $Name)
             }
 
-            Invoke-TNRequest -SessionObject $session -Path '/users' -Method 'Post' -Parameter $params
+            Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/users' -Method 'Post' -Parameter $params
         }
     }
 }
