@@ -1,10 +1,10 @@
 function New-TNCredential {
     <#
     .SYNOPSIS
-        Adds an organization
+        Creates a credential
 
     .DESCRIPTION
-        Adds an organization
+        Creates a credential
 
     .PARAMETER Name
         Parameter description
@@ -23,6 +23,15 @@ function New-TNCredential {
               Type = "windows"
               AuthType = "password"
               Credential = "ad\nessus"
+        }
+        PS>  New-TNCredential @params -Verbose
+
+    .EXAMPLE
+        PS>  $params = @{
+              Name = "SSH Scanner Account"
+              Type = "ssh"
+              AuthType = "password"
+              Credential = "root"
         }
         PS>  New-TNCredential @params -Verbose
 
