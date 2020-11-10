@@ -29,6 +29,8 @@ function Start-TNDeploy {
         [switch]$AcceptSelfSignedCert,
         [ValidateSet("tenable.sc", "Nessus")]
         [string]$Type,
+        [Parameter(Mandatory)]
+        [Management.Automation.PSCredential]$SecurityManagerCredential,
         [switch]$EnableException
     )
     begin {
