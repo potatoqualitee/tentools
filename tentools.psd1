@@ -80,6 +80,7 @@
         'Invoke-TNRequest',
         'New-TNFolder',
         'New-TNGroup',
+        'New-TNLdapServer',
         'New-TNPolicy',
         'New-TNOrganization',
         'New-TNScan',
