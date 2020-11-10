@@ -59,10 +59,9 @@ function New-TNLdapServer {
                 description  = $Description
                 host         = $ComputerName
                 port         = $Port
-                encryption   = $Encryption
+                encryption   = $Encryption.ToLower()
                 dn           = $BaseDN
                 dnsField     = "dNSHostName"
-                #lowercase    = $LowerCase
                 timeLimit    = $TimeLimit
                 searchString = $SearchString
             }

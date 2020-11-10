@@ -43,6 +43,8 @@ function New-TNCredential {
         [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
         [pscredential]$Credential,
         [hashtable]$CredentialHash,
+        [ValidateSet("none", "su", "sudo", "su+sudo", "dzdo", "pbrun", "cisco", ".k5login")]
+        [string]$PrivilegeEscalation = "none",
         [switch]$EnableException
     )
     begin {
@@ -67,8 +69,8 @@ function New-TNCredential {
                 $body = @{
                     name        = $Name
                     description = $Description
-                    type        = $Type
-                    authType    = $AuthType
+                    type        = $Type.ToLower()
+                    authType    = $AuthType.ToLower()
                 }
             } else {
                 $body = $PSBoundParameters.CredentailHash
@@ -86,6 +88,9 @@ function New-TNCredential {
                     $username = $Credential.UserName
                 }
 
+                if ($Type -eq "ssh") {
+                    $body.Add("privilegeEscalation", $PrivilegeEscalation.ToLower())
+                }
                 $body.Add("username", $username)
                 $body.Add("password", ($Credential.GetNetworkCredential().Password))
             }
