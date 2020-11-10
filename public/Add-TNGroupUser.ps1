@@ -61,7 +61,6 @@ function Add-TNGroupUser {
             }
             if ($session.MultiUser) {
                 foreach ($id in $UserId) {
-                    write-warning sup
                     $params = @{
                         SessionObject   = $session
                         Path            = "/groups/$GroupId/users"
