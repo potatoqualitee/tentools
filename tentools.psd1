@@ -74,6 +74,7 @@
         'Get-TNSession',
         'Get-TNSessionInfo',
         'Get-TNUser',
+        'Get-TNLdapServer',
         'Import-TNPolicy',
         'Import-TNScan',
         'Initialize-TNServer',
