@@ -7,7 +7,7 @@ function New-TNUser {
         Long description
 
     .PARAMETER Credential
-    Credential for connecting to the Nessus Server
+        Credential for connecting to the Nessus Server
 
     .PARAMETER Permission
         Parameter description
