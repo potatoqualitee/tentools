@@ -40,6 +40,7 @@ function New-TNOrganization {
                 $body = @{
                     name          = $org
                     zoneSelection = $ZoneSelection
+                    ipInfoLinks   = (@{name = "SANS"; link = "https://isc.sans.edu/ipinfo.html?ip=%IP%" }, @{name = "ARIN"; link = "http://whois.arin.net/rest/ip/%IP%" })
                 }
 
                 $params = @{
