@@ -126,6 +126,9 @@ function ConvertFrom-TNRestResponse {
                 if ($Type) {
                     $null = $order.Add("Type")
                 }
+                if ('Username' -in $keys) {
+                    $null = $order.Add("Username")
+                }
                 if ('Title' -in $keys) {
                     $null = $order.Add("Title")
                 }
@@ -135,7 +138,7 @@ function ConvertFrom-TNRestResponse {
                 if ('Description' -in $keys) {
                     $null = $order.Add("Description")
                 }
-                foreach ($column in ($keys | Sort-Object | Where-Object { $PSItem -notin "ServerUri", "Id", "Type", "Name", "Description", "Title" })) {
+                foreach ($column in ($keys | Sort-Object | Where-Object { $PSItem -notin "ServerUri", "Id", "Type", "Name", "Description", "Title", "Username" })) {
                     $null = $order.Add($column)
                 }
 
