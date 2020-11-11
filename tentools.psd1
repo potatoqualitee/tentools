@@ -59,6 +59,7 @@
         'Get-TNCredential',
         'Get-TNFolder',
         'Get-TNGroup',
+        'Get-TNOrganization',
         'Get-TNPluginFamily',
         'Get-TNPluginRule',
         'Get-TNPolicy',
