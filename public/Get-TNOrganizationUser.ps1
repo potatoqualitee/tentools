@@ -49,14 +49,17 @@ function Get-TNOrganizationUser {
             }
 
             foreach ($org in $orgs) {
-                $results = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/organization/$($org.Id)/securityManager" -Method GET
-                $null = $results | Add-Member -MemberType NoteProperty -Name OrganizationId -Value $org.Id
-                $null = $results | Add-Member -MemberType NoteProperty -Name Organization -Value $org.Name
+                $users = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/organization/$($org.Id)/user" -Method GET
+                foreach ($user in $users) {
+                    $results = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/organization/$($org.Id)/user/$($user.id)?fields=id,firstname,lastname,status,role,username,title,email,address,city,state,country,phone,fax,createdTime,modifiedTime,lastLogin,lastLoginIP,mustChangePassword,locked,failedLogins,authType,fingerprint,password,description,responsibleAsset,group,managedUsersGroups,managedObjectsGroups,orgName,canUse,canManage,preferences,ldap,ldapUsername,parent" -Method GET
+                    $null = $results | Add-Member -MemberType NoteProperty -Name OrganizationId -Value $org.Id
+                    $null = $results | Add-Member -MemberType NoteProperty -Name Organization -Value $org.Name
 
-                if ($PSBoundParameters.Name) {
-                    $results | ConvertFrom-TNRestResponse | Where-Object Name -in $Name
-                } else {
-                    $results | ConvertFrom-TNRestResponse | Where-Object ErrorCode -ne 0
+                    if ($PSBoundParameters.Name) {
+                        $results | ConvertFrom-TNRestResponse | Where-Object Name -in $Name
+                    } else {
+                        $results | ConvertFrom-TNRestResponse | Where-Object ErrorCode -ne 0
+                    }
                 }
             }
         }
