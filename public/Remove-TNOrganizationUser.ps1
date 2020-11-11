@@ -53,7 +53,13 @@ function Remove-TNOrganizationUser {
             }
 
             foreach ($user in $InputObject) {
-                Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/organization/$($user.OrganizationId)/securityManager/$($user.Id)" -Method DELETE | ConvertFrom-TNRestResponse
+                $params = @{
+                    SessionObject   = $session
+                    EnableException = $EnableException
+                    Method          = "DELETE"
+                    Path            = "/organization/$($user.OrganizationId)/securityManager/$($user.Id)"
+                }
+                Invoke-TNRequest @params | ConvertFrom-TNRestResponse
             }
         }
     }
