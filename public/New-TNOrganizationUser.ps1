@@ -1,4 +1,4 @@
-function New-TNUser {
+function New-TNOrganizationUser {
     <#
     .SYNOPSIS
         Short description
@@ -7,7 +7,7 @@ function New-TNUser {
         Long description
 
     .PARAMETER Credential
-        Credential for connecting to the Nessus Server
+    Credential for connecting to the Nessus Server
 
     .PARAMETER Permission
         Parameter description
@@ -35,34 +35,31 @@ function New-TNUser {
         [Parameter(Mandatory)]
         [Management.Automation.PSCredential]$Credential,
         [Parameter(Mandatory)]
-        [ValidateSet('Read-Only', 'Regular', 'Administrator', 'Sysadmin')]
-        [string]$Permission,
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [ValidateSet('Local', 'LDAP')]
-        [string]$Type = 'Local',
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [string]$Email,
-        [Parameter(ValueFromPipelineByPropertyName)]
+        [string]$Organization,
         [string]$Name,
+        [string]$Email,
         [switch]$EnableException
     )
     process {
         foreach ($session in (Get-TNSession)) {
-            $params = @{ }
-            $params.Add('type', $Type.ToLower())
-            $params.Add('permissions', $permenum[$Permission])
-            $params.Add('username', $Credential.GetNetworkCredential().UserName)
-            $params.Add('password', $Credential.GetNetworkCredential().Password)
+            if (-not $session.sc) {
+                Stop-PSFFunction -Message "Only tenable.sc supported" -Continue
+            }
+            $org = Get-TNOrganization -Name $Organization
 
-            if ($Email.Length -gt 0) {
-                $params.Add('email', $Email)
+            if (-not $org) {
+                Stop-PSFFunction -Message "Organization '$Organization' does not exist at $($session.URI)" -Continue
             }
 
-            if ($Name.Length -gt 0) {
-                $params.Add('name', $Name)
+            $params = @{
+                name     = $Name
+                email    = $Email
+                authType = "tns"
+                username = $Credential.GetNetworkCredential().UserName
+                password = $Credential.GetNetworkCredential().Password
             }
 
-            Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/users' -Method 'Post' -Parameter $params
+            Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/organization/$($org.Id)/securityManager" -Method POST -Parameter $params | ConvertFrom-TNRestResponse
         }
     }
 }

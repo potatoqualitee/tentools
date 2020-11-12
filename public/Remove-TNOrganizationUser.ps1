@@ -1,15 +1,24 @@
-function New-TNOrganization {
+function Remove-TNOrganizationUser {
     <#
     .SYNOPSIS
-        Adds an organization
+        Short description
 
     .DESCRIPTION
-        Adds an organization
+        Long description
 
-    .PARAMETER Name
+    .PARAMETER Credential
+    Credential for connecting to the Nessus Server
+
+    .PARAMETER Permission
         Parameter description
 
-    .PARAMETER ZoneSelection
+    .PARAMETER Type
+        Parameter description
+
+    .PARAMETER Email
+        Parameter description
+
+    .PARAMETER Name
         Parameter description
 
     .PARAMETER EnableException
@@ -18,16 +27,16 @@ function New-TNOrganization {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS>  New-TNOrganization -Name "Acme Corp"
-
+        PS> Get-TN
     #>
     [CmdletBinding()]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
-        [string[]]$Name,
-        [ValidateSet("auto_only", "locked", "selectable", "selectable+auto", "selectable+auto_restricted")]
-        [string]$ZoneSelection = "auto_only",
+        [string[]]$Organization,
+        [Alias("Username")]
+        [string]$Name,
+        [parameter(ValueFromPipeline)]
+        [object[]]$InputObject,
         [switch]$EnableException
     )
     process {
@@ -36,18 +45,19 @@ function New-TNOrganization {
                 Stop-PSFFunction -Message "Only tenable.sc supported" -Continue
             }
 
-            foreach ($org in $Name) {
-                $body = @{
-                    name          = $org
-                    zoneSelection = $ZoneSelection
-                    ipInfoLinks   = (@{name = "SANS"; link = "https://isc.sans.edu/ipinfo.html?ip=%IP%" }, @{name = "ARIN"; link = "http://whois.arin.net/rest/ip/%IP%" })
+            if (-not $InputObject) {
+                $InputObject = Get-TNOrganizationUser -Organization $Organization -Name $Name
+                if (-not $InputObject) {
+                    Stop-PSFFunction -Message "User $Name does not in exist at $($session.URI)" -Continue
                 }
+            }
 
+            foreach ($user in $InputObject) {
                 $params = @{
-                    Path            = "/organization"
-                    Method          = "POST"
-                    Parameter       = $body
+                    SessionObject   = $session
                     EnableException = $EnableException
+                    Method          = "DELETE"
+                    Path            = "/organization/$($user.OrganizationId)/securityManager/$($user.Id)"
                 }
                 Invoke-TNRequest @params | ConvertFrom-TNRestResponse
             }
