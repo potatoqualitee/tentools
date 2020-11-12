@@ -1,10 +1,10 @@
-function New-TNOrganization {
+function Add-TNScanner {
     <#
     .SYNOPSIS
-        Adds an organization
+        Adds a scanner
 
     .DESCRIPTION
-        Adds an organization
+        Adds a scanner
 
     .PARAMETER Name
         Parameter description
@@ -18,16 +18,24 @@ function New-TNOrganization {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS>  New-TNOrganization -Name "Acme Corp"
+        PS>  $params = @{
+              Name = "Local Net"
+              IPRange = "172.20.0.1/22, 192.168.0.1/28"
+        }
+        PS>  New-TNRepository @params
 
     #>
     [CmdletBinding()]
     param
     (
         [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
-        [string[]]$Name,
-        [ValidateSet("auto_only", "locked", "selectable", "selectable+auto", "selectable+auto_restricted")]
-        [string]$ZoneSelection = "auto_only",
+        [string]$Name,
+        [string]$Description,
+        [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
+        [string[]]$ComputerName,
+        [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
+        [pscredential]$Credential,
+        [int]$Port = 8834,
         [switch]$EnableException
     )
     process {
@@ -36,16 +44,21 @@ function New-TNOrganization {
                 Stop-PSFFunction -Message "Only tenable.sc supported" -Continue
             }
 
-            foreach ($org in $Name) {
+            foreach ($computer in $ComputerName) {
                 $body = @{
-                    name          = $org
-                    zoneSelection = $ZoneSelection
-                    ipInfoLinks   = (@{name = "SANS"; link = "https://isc.sans.edu/ipinfo.html?ip=%IP%" }, @{name = "ARIN"; link = "http://whois.arin.net/rest/ip/%IP%" })
+                    name        = $Name
+                    description = $Description
+                    authType    = "password"
+                    username    = $Credential.UserName
+                    password    = $Credential.GetNetworkCredential().Password
+                    ip          = $computer
+                    port        = $Port
+                    enabled     = "true"
                 }
 
                 $params = @{
                     SessionObject   = $session
-                    Path            = "/organization"
+                    Path            = "/scanner"
                     Method          = "POST"
                     Parameter       = $body
                     EnableException = $EnableException

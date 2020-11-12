@@ -1,10 +1,10 @@
-function New-TNOrganization {
+function Get-TNScanner {
     <#
     .SYNOPSIS
-        Adds an organization
+        Gets a scanner
 
     .DESCRIPTION
-        Adds an organization
+        Gets a scanner
 
     .PARAMETER Name
         Parameter description
@@ -24,10 +24,8 @@ function New-TNOrganization {
     [CmdletBinding()]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [string[]]$Name,
-        [ValidateSet("auto_only", "locked", "selectable", "selectable+auto", "selectable+auto_restricted")]
-        [string]$ZoneSelection = "auto_only",
         [switch]$EnableException
     )
     process {
@@ -36,20 +34,15 @@ function New-TNOrganization {
                 Stop-PSFFunction -Message "Only tenable.sc supported" -Continue
             }
 
-            foreach ($org in $Name) {
-                $body = @{
-                    name          = $org
-                    zoneSelection = $ZoneSelection
-                    ipInfoLinks   = (@{name = "SANS"; link = "https://isc.sans.edu/ipinfo.html?ip=%IP%" }, @{name = "ARIN"; link = "http://whois.arin.net/rest/ip/%IP%" })
-                }
+            $params = @{
+                Path            = "/scanner?fields=authType,admin,state,useProxy,verifyHost,enabled,cert,certInfo,username,password,description,createdTime,loadedPluginSet,pluginSet,webVersion,version,zones,agentCapable,accessKey,secretKey,nessusManagerOrgs,msp,loadAvg,numHosts,numScans,numSessions,numTCPSessions,serverUUID,name,ip,port,version,type,status,uptime,modifiedTime,msp,admin,agentCapable,SCI,pluginSet"
+                Method          = "GET"
+                EnableException = $EnableException
+            }
 
-                $params = @{
-                    SessionObject   = $session
-                    Path            = "/organization"
-                    Method          = "POST"
-                    Parameter       = $body
-                    EnableException = $EnableException
-                }
+            if ($PSBoundParameters.Name) {
+                Invoke-TNRequest @params | ConvertFrom-TNRestResponse | Where-Object Name -in $Name
+            } else {
                 Invoke-TNRequest @params | ConvertFrom-TNRestResponse
             }
         }

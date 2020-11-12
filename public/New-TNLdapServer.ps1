@@ -72,6 +72,7 @@ function New-TNLdapServer {
             }
 
             $params = @{
+                SessionObject   = $session
                 Path            = "/ldap"
                 Method          = "POST"
                 Parameter       = $body

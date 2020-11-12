@@ -59,6 +59,7 @@ function New-TNRepository {
             }
 
             $params = @{
+                SessionObject   = $session
                 Path            = "/repository"
                 Method          = "POST"
                 Parameter       = $body

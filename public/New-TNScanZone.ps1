@@ -1,4 +1,4 @@
-function New-TNOrganization {
+function New-TNScanZone {
     <#
     .SYNOPSIS
         Adds an organization
@@ -18,7 +18,7 @@ function New-TNOrganization {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS>  New-TNOrganization -Name "Acme Corp"
+        PS>  New-TNScanZone -Name "Acme Corp"
 
     #>
     [CmdletBinding()]
@@ -26,8 +26,10 @@ function New-TNOrganization {
     (
         [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
         [string[]]$Name,
-        [ValidateSet("auto_only", "locked", "selectable", "selectable+auto", "selectable+auto_restricted")]
-        [string]$ZoneSelection = "auto_only",
+        [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
+        [string[]]$IPRange,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string]$Description,
         [switch]$EnableException
     )
     process {
@@ -38,14 +40,14 @@ function New-TNOrganization {
 
             foreach ($org in $Name) {
                 $body = @{
-                    name          = $org
-                    zoneSelection = $ZoneSelection
-                    ipInfoLinks   = (@{name = "SANS"; link = "https://isc.sans.edu/ipinfo.html?ip=%IP%" }, @{name = "ARIN"; link = "http://whois.arin.net/rest/ip/%IP%" })
+                    name        = $org
+                    ipList      = $IPRange -join ", "
+                    description = $Description
                 }
 
                 $params = @{
                     SessionObject   = $session
-                    Path            = "/organization"
+                    Path            = "/zone"
                     Method          = "POST"
                     Parameter       = $body
                     EnableException = $EnableException

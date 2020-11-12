@@ -105,11 +105,13 @@ function New-TNCredential {
             }
 
             $params = @{
+                SessionObject   = $session
                 Path            = "/credential"
                 Method          = "POST"
                 Parameter       = $body
                 EnableException = $EnableException
             }
+
             Invoke-TNRequest @params | ConvertFrom-TNRestResponse
         }
     }
