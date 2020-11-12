@@ -68,6 +68,7 @@
         'Get-TNPolicyPortRange',
         'Get-TNPolicyPortScanner',
         'Get-TNPolicyTemplate',
+        'Get-TNRole',
         'Get-TNScan',
         'Get-TNScanner',
         'Get-TNScanResult',
