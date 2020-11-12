@@ -22,14 +22,21 @@ function Get-TNGroup {
     process {
         foreach ($session in (Get-TNSession)) {
             if ($session.MultiUser) {
-                $groupparams = @{
-                    SessionObject = $session
-                    Path          = '/groups'
-                    Method        = 'GET'
+                if ($session.sc) {
+                    $params = @{
+                        SessionObject = $session
+                        Path          = "/group?expand=details"
+                        Method        = "GET"
+                    }
+                } else {
+                    $params = @{
+                        SessionObject = $session
+                        Path          = "/groups"
+                        Method        = "GET"
+                    }
                 }
 
-                Invoke-TNRequest @groupparams |
-                    ConvertFrom-TNRestResponse
+                Invoke-TNRequest @params | ConvertFrom-TNRestResponse
 
             } else {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users" -Continue
