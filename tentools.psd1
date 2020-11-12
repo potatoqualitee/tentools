@@ -71,6 +71,7 @@
         'Get-TNScan',
         'Get-TNScanResult',
         'Get-TNScanTemplate',
+        'Get-TNScanZone',
         'Get-TNServerInfo',
         'Get-TNServerStatus',
         'Get-TNSession',
