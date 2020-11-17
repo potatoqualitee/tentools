@@ -1,10 +1,10 @@
-function Get-TNRepository {
+function Get-TNAsset {
     <#
     .SYNOPSIS
-        Adds an organization
+        Gets an organization
 
     .DESCRIPTION
-        Adds an organization
+        Gets an organization
 
     .PARAMETER Name
         Parameter description
@@ -18,24 +18,24 @@ function Get-TNRepository {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS>  Get-TNRepository
+        PS>  New-TNOrganization -Name "Acme Corp"
 
     #>
     [CmdletBinding()]
     param
     (
-        [object[]]$SessionObject = (Get-TNSession),
+        [Parameter(ValueFromPipelineByPropertyName)]
         [string[]]$Name,
         [switch]$EnableException
     )
     process {
-        foreach ($session in $SessionObject) {
+        foreach ($session in (Get-TNSession)) {
             if (-not $session.sc) {
                 Stop-PSFFunction -Message "Only tenable.sc supported" -Continue
             }
 
             $params = @{
-                Path            = "/repository?fields=name,description,type,dataFormat,vulnCount,remoteID,remoteIP,running,enableTrending,downloadFormat,lastSyncTime,lastVulnUpdate,createdTime,modifiedTime,organizations,correlation,nessusSchedule,ipRange,ipCount,runningNessus,lastGenerateNessusTime,running,transfer,deviceCount,typeFields"
+                Path            = "/asset?filter=excludeAllDefined,usable,usable&fields=canUse,canManage,owner,groups,ownerGroup,status,name,type,template,description,createdTime,modifiedTime,ipCount,repositories,targetGroup,tags,creator"
                 Method          = "GET"
                 EnableException = $EnableException
             }
