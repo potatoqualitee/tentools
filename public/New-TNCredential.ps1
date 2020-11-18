@@ -71,7 +71,7 @@ function New-TNCredential {
 
         foreach ($session in (Get-TNSession)) {
             if (-not $session.sc) {
-                Stop-PSFFunction -Message "Only tenable.sc supported" -Continue
+                Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
 
             if (-not $PSBoundParameters.CredentailHash) {

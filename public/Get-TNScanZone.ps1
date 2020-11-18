@@ -23,7 +23,7 @@ function Get-TNScanZone {
     process {
         foreach ($session in (Get-TNSession)) {
             if (-not $session.sc) {
-                Stop-PSFFunction -Message "Only tenable.sc supported" -Continue
+                Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
 
             $params = @{

@@ -31,7 +31,7 @@ function Get-TNReportAttribute {
     process {
         foreach ($session in $SessionObject) {
             if (-not $session.sc) {
-                Stop-PSFFunction -Message "Only tenable.sc supported" -Continue
+                Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
 
             $params = @{
