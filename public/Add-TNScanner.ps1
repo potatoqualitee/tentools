@@ -1,10 +1,10 @@
-function New-TNRepository {
+function Add-TNScanner {
     <#
     .SYNOPSIS
-        Adds a repository
+        Adds a scanner
 
     .DESCRIPTION
-        Adds a repository
+        Adds a scanner
 
     .PARAMETER Name
         Parameter description
@@ -31,15 +31,11 @@ function New-TNRepository {
         [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
         [string]$Name,
         [string]$Description,
-        [ValidateSet("auto_only", "locked", "selectable", "selectable+auto", "selectable+auto_restricted")]
-        [string]$ZoneSelection = "auto_only",
-        [ValidateSet("IPv4")]
-        [string]$DataFormat = "IPv4",
-        [ValidateSet("Local")]
-        [string]$Type = "Local",
-        [int]$TrendingDays = "30",
         [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
-        [string]$IPRange,
+        [string[]]$ComputerName,
+        [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
+        [pscredential]$Credential,
+        [int]$Port = 8834,
         [switch]$EnableException
     )
     process {
@@ -48,24 +44,27 @@ function New-TNRepository {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
 
-            $body = @{
-                name         = $Name
-                description  = $Description
-                dataFormat   = $DataFormat
-                type         = $Type
-                ipRange      = $IpRange
-                trendingDays = $TrendingDays
-                trendWithRaw = "true"
-            }
+            foreach ($computer in $ComputerName) {
+                $body = @{
+                    name        = $Name
+                    description = $Description
+                    authType    = "password"
+                    username    = $Credential.UserName
+                    password    = $Credential.GetNetworkCredential().Password
+                    ip          = $computer
+                    port        = $Port
+                    enabled     = "true"
+                }
 
-            $params = @{
-                SessionObject   = $session
-                Path            = "/repository"
-                Method          = "POST"
-                Parameter       = $body
-                EnableException = $EnableException
+                $params = @{
+                    SessionObject   = $session
+                    Path            = "/scanner"
+                    Method          = "POST"
+                    Parameter       = $body
+                    EnableException = $EnableException
+                }
+                Invoke-TNRequest @params | ConvertFrom-TNRestResponse
             }
-            Invoke-TNRequest @params | ConvertFrom-TNRestResponse
         }
     }
 }

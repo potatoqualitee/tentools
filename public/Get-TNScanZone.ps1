@@ -1,16 +1,10 @@
-function Get-TNCredential {
+function Get-TNScanZone {
     <#
     .SYNOPSIS
-        Gets a credential
+        Gets a scan zone
 
     .DESCRIPTION
-        Gets a credential
-
-    .PARAMETER Name
-        Parameter description
-
-    .PARAMETER ZoneSelection
-        Parameter description
+        Gets a scan zone
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
@@ -18,7 +12,7 @@ function Get-TNCredential {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS>  Get-TNCredential
+        PS>  Get-TNScanZone
 
     #>
     [CmdletBinding()]
@@ -33,7 +27,7 @@ function Get-TNCredential {
             }
 
             $params = @{
-                Path            = "/credential?filter=usable&fields=name,tags,description,typeFields,createdTime,groups,name,type,owner,ownerGroup,groups,modifiedTime,canManage,canUse,tags"
+                Path            = "/zone?fields=name,description,ipList,createdTime,ranges,scanners,name,activeScanners,totalScanners,modifiedTime,canUse,canManage,SCI"
                 Method          = "GET"
                 EnableException = $EnableException
             }

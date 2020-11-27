@@ -51,7 +51,7 @@ function New-TNLdapServer {
     process {
         foreach ($session in (Get-TNSession)) {
             if (-not $session.sc) {
-                Stop-PSFFunction -Message "Only tenable.sc supported" -Continue
+                Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
 
             $body = @{
@@ -72,6 +72,7 @@ function New-TNLdapServer {
             }
 
             $params = @{
+                SessionObject   = $session
                 Path            = "/ldap"
                 Method          = "POST"
                 Parameter       = $body

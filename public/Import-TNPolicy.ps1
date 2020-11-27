@@ -27,11 +27,22 @@ function Import-TNPolicy {
     )
     process {
         foreach ($session in (Get-TNSession)) {
+            if (-not $session.sc) {
+                Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
+            }
+
             foreach ($file in $FilePath) {
                 $body = $file | Publish-File -Session $session -EnableException:$EnableException
 
-                Invoke-TnRequest -Method Post -Path "/policies/import" -Parameter $body -ContentType 'application/json' -SessionObject $session |
-                    ConvertFrom-TNRestResponse
+                $params = @{
+                    SessionObject = $session
+                    Method        = "POST"
+                    Path          = "/policies/import"
+                    Parameter     = $body
+                    ContentType   = "application/json"
+                }
+
+                Invoke-TnRequest @params | ConvertFrom-TNRestResponse
             }
         }
     }

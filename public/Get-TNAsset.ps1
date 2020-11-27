@@ -1,10 +1,10 @@
-function Get-TNCredential {
+function Get-TNAsset {
     <#
     .SYNOPSIS
-        Gets a credential
+        Gets an organization
 
     .DESCRIPTION
-        Gets a credential
+        Gets an organization
 
     .PARAMETER Name
         Parameter description
@@ -18,12 +18,14 @@ function Get-TNCredential {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS>  Get-TNCredential
+        PS>  New-TNOrganization -Name "Acme Corp"
 
     #>
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$Name,
         [switch]$EnableException
     )
     process {
@@ -33,11 +35,16 @@ function Get-TNCredential {
             }
 
             $params = @{
-                Path            = "/credential?filter=usable&fields=name,tags,description,typeFields,createdTime,groups,name,type,owner,ownerGroup,groups,modifiedTime,canManage,canUse,tags"
+                Path            = "/asset?filter=excludeAllDefined,usable,usable&fields=canUse,canManage,owner,groups,ownerGroup,status,name,type,template,description,createdTime,modifiedTime,ipCount,repositories,targetGroup,tags,creator"
                 Method          = "GET"
                 EnableException = $EnableException
             }
-            Invoke-TNRequest @params | ConvertFrom-TNRestResponse
+
+            if ($PSBoundParameters.Name) {
+                Invoke-TNRequest @params | ConvertFrom-TNRestResponse | Where-Object Name -in $Name
+            } else {
+                Invoke-TNRequest @params | ConvertFrom-TNRestResponse
+            }
         }
     }
 }

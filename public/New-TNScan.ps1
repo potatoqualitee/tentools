@@ -44,111 +44,147 @@ function New-TNScan {
     .EXAMPLE
         PS> Get-TN
     #>
-    [CmdletBinding(DefaultParameterSetName = 'Policy')]
+    [CmdletBinding(DefaultParameterSetName = "Policy")]
     param
     (
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = "Template", ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = "Policy", ValueFromPipelineByPropertyName)]
         [string]$Name,
-        [Parameter(Mandatory, ParameterSetName = 'Template', ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = "Template", ValueFromPipelineByPropertyName)]
         [string]$PolicyUUID,
-        [Parameter(Mandatory, ParameterSetName = 'Policy', ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = "Policy", ValueFromPipelineByPropertyName)]
         [int]$PolicyId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string[]]$Target,
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
-        [bool]$Enabled,
-        [Parameter(Mandatory = $False, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [switch]$Disabled,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [string]$Description,
-        [Parameter(Mandatory = $False, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Int]$FolderId,
         [Parameter(ValueFromPipelineByPropertyName)]
-        [Int]$scannerId,
+        [Int]$ScannerId,
         [Parameter(ValueFromPipelineByPropertyName)]
         [string[]]$Email,
         [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$CreateDashboard,
+        [Parameter(Mandatory, ParameterSetName = "Auto", ValueFromPipelineByPropertyName)]
+        [switch]$Auto,
         [switch]$EnableException
     )
+    begin {
+        $enabled = $Disabled -eq $false
+    }
     process {
         foreach ($session in (Get-TNSession)) {
 
-            # Join emails as a single comma separated string.
-            $emails = $email -join ","
+            if ($session.sc) {
+                $targets = $Target -join ","
+                $repository = @{ id = (Get-TNRepository | Select-Object -First 1).Id }
 
-            # Join targets as a single comma separated string.
-            $targets = $target -join ","
+                switch ($PSCmdlet.ParameterSetName) {
+                    "Auto" {
+                        $policies = Get-TNPolicy
+                        foreach ($policy in $policies) {
+                            $body = @{
+                                name        = $policy.Name
+                                description = $Description
+                                type        = "policy"
+                                policy      = @{ id = $policy.Id }
+                                ipList      = $targets
+                                repository  = $repository
+                            }
 
-            # Build Scan JSON
-            $settings = @{
-                name         = $Name
-                text_targets = $targets
-            }
+                            $params = @{
+                                SessionObject = $session
+                                Path          = "/scan"
+                                Method        = "POST"
+                                ContentType   = "application/json"
+                                Parameter     = $body
+                            }
 
-            if ($FolderId) { $settings.Add('folder_id', $FolderId) }
-            if ($scannerId) { $settings.Add('scanner_id', $scannerId) }
-            if ($Email.Length -gt 0) { $settings.Add('emails', $emails) }
-            if ($Description.Length -gt 0) { $settings.Add('description', $Description) }
-            if ($CreateDashboard) { $settings.Add('use_dashboard', $true) }
-            if ($PolicyId) { $settings.Add('policy_id', $PolicyId) }
-
-            switch ($PSCmdlet.ParameterSetName) {
-                'Template' {
-                    Write-PSFMessage -Level Verbose -Message "Using Template with UUID of $($PolicyUUID)"
-                    $scanhash = [pscustomobject]@{
-                        uuid     = $PolicyUUID
-                        settings = $settings
-                    }
-                }
-
-                'Policy' {
-                    $polUUID = $null
-                    $Policies = Get-TNPolicy
-                    foreach ($Policy in $Policies) {
-                        if ($Policy.PolicyId -eq $PolicyId) {
-                            Write-PSFMessage -Level Verbose -Message "Uising Poicy with UUID of $($Policy.PolicyUUID)"
-                            $polUUID = $Policy.PolicyUUID
+                            Invoke-TNRequest @params | ConvertFrom-TNRestResponse
                         }
                     }
+                }
+            } else {
+                # Join emails as a single comma separated string.
+                $emails = $Email -join ","
 
-                    if ($null -eq $polUUID) {
-                        Stop-PSFFunction -EnableException:$EnableException -Message 'Policy specified does not exist in session.' -Continue
-                    } else {
+                # Join targets as a single comma separated string.
+                $targets = $Target -join ","
+
+                # Build Scan JSON
+                $settings = @{
+                    name         = $Name
+                    text_targets = $targets
+                    enabled      = $enabled
+                }
+
+                if ($PSBoundParameters.FolderId) { $settings.Add("folder_id", $FolderId) }
+                if ($PSBoundParameters.ScannerId) { $settings.Add("scanner_id", $ScannerId) }
+                if ($PSBoundParameters.Email) { $settings.Add("emails", $emails) }
+                if ($PSBoundParameters.Description) { $settings.Add("description", $Description) }
+                if ($CreateDashboard) { $settings.Add("use_dashboard", $true) }
+                if ($PSBoundParameters.PolicyId) { $settings.Add("policy_id", $PolicyId) }
+
+                switch ($PSCmdlet.ParameterSetName) {
+                    "Template" {
+                        Write-PSFMessage -Level Verbose -Message "Using Template with UUID of $($PolicyUUID)"
                         $scanhash = [pscustomobject]@{
-                            uuid     = $polUUID
+                            uuid     = $PolicyUUID
                             settings = $settings
                         }
+
+                        $json = ConvertTo-Json -InputObject $scanhash -Compress
+
+                        $params = @{
+                            SessionObject = $session
+                            Path          = "/scans"
+                            Method        = "POST"
+                            ContentType   = "application/json"
+                            Parameter     = $json
+                        }
+
+                        (Invoke-TNRequest @params).scan | ConvertFrom-TNRestResponse
                     }
-                }
-            }
 
-            $ScanJson = ConvertTo-Json -InputObject $scanhash -Compress
+                    "Policy" {
+                        $polUUID = $null
+                        $policies = Get-TNPolicy
+                        foreach ($policy in $policies) {
+                            if ($policy.PolicyId -eq $PolicyId) {
+                                Write-PSFMessage -Level Verbose -Message "Using Policy with UUID of $($policy.PolicyUUID)"
+                                $polUUID = $policy.PolicyUUID
+                            }
+                        }
 
-            $serverparams = @{
-                SessionObject = $session
-                Path          = '/scans'
-                Method        = 'POST'
-                ContentType   = 'application/json'
-                Parameter     = $ScanJson
-            }
+                        if ($null -eq $polUUID) {
+                            Stop-PSFFunction -EnableException:$EnableException -Message "Policy specified does not exist in session." -Continue
+                        } else {
+                            $scanhash = [pscustomobject]@{
+                                uuid     = $polUUID
+                                settings = $settings
+                            }
+                        }
 
-            foreach ($scan in (Invoke-TNRequest @serverparams).scan) {
-                [pscustomobject]@{
-                    Name             = $scan.name
-                    ScanId           = $scan.id
-                    Status           = $scan.status
-                    Enabled          = $scan.enabled
-                    FolderId         = $scan.folder_id
-                    Owner            = $scan.owner
-                    UserPermission   = $permidenum[$scan.user_permissions]
-                    Rules            = $scan.rrules
-                    Shared           = $scan.shared
-                    TimeZone         = $scan.timezone
-                    CreationDate     = $origin.AddSeconds($scan.creation_date).ToLocalTime()
-                    LastModified     = $origin.AddSeconds($scan.last_modification_date).ToLocalTime()
-                    StartTime        = $origin.AddSeconds($scan.starttime).ToLocalTime()
-                    Scheduled        = $scan.control
-                    DashboardEnabled = $scan.use_dashboard
-                    SessionId        = $session.SessionId
+
+                        $json = ConvertTo-Json -InputObject $scanhash -Compress
+
+                        $params = @{
+                            SessionObject = $session
+                            Path          = "/scans"
+                            Method        = "POST"
+                            ContentType   = "application/json"
+                            Parameter     = $json
+                        }
+
+                        (Invoke-TNRequest @params).scan | ConvertFrom-TNRestResponse
+                    }
+
+                    "Auto" {
+                        Stop-PSFFunction -EnableException:$EnableException -Message "You cannot use Auto with Nessus" -Continue
+                    }
                 }
             }
         }

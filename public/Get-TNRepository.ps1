@@ -24,12 +24,14 @@ function Get-TNRepository {
     [CmdletBinding()]
     param
     (
+        [object[]]$SessionObject = (Get-TNSession),
+        [string[]]$Name,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if (-not $session.sc) {
-                Stop-PSFFunction -Message "Only tenable.sc supported" -Continue
+                Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
 
             $params = @{
@@ -37,7 +39,12 @@ function Get-TNRepository {
                 Method          = "GET"
                 EnableException = $EnableException
             }
-            Invoke-TNRequest @params | ConvertFrom-TNRestResponse
+
+            if ($PSBoundParameters.Name) {
+                Invoke-TNRequest @params | ConvertFrom-TNRestResponse | Where-Object Name -in $Name
+            } else {
+                Invoke-TNRequest @params | ConvertFrom-TNRestResponse
+            }
         }
     }
 }

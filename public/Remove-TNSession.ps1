@@ -41,16 +41,17 @@ function Remove-TNSession {
             }
 
             foreach ($session in $toremove) {
-                Write-PSFMessage -Level Verbose -Message 'Disposing of connection'
-                $RestMethodParams = @{
-                    Method          = 'Delete'
-                    'URI'           = "$($session.URI)/session"
-                    'Headers'       = @{'X-Cookie' = "token=$($session.Token)" }
-                    'ErrorVariable' = 'DisconnectError'
-                    'ErrorAction'   = 'SilentlyContinue'
+                Write-PSFMessage -Level Verbose -Message "Disposing of connection"
+                $params = @{
+                    SessionObject = $session
+                    Method        = "DELETE"
+                    URI           = "$($session.URI)/session"
+                    Headers       = @{"X-Cookie" = "token=$($session.Token)" }
+                    ErrorVariable = "DisconnectError"
+                    ErrorAction   = "SilentlyContinue"
                 }
                 try {
-                    Invoke-RestMethod @RestMethodParams
+                    Invoke-RestMethod @params
                 } catch {
                     Stop-PSFFunction -EnableException:$EnableException -Message "Session with Id $($session.SessionId) seems to have expired" -Continue
                 }

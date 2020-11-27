@@ -1,10 +1,10 @@
-function New-TNRepository {
+function New-TNAsset {
     <#
     .SYNOPSIS
-        Adds a repository
+        Adds an asset
 
     .DESCRIPTION
-        Adds a repository
+        Adds an asset
 
     .PARAMETER Name
         Parameter description
@@ -31,36 +31,48 @@ function New-TNRepository {
         [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
         [string]$Name,
         [string]$Description,
-        [ValidateSet("auto_only", "locked", "selectable", "selectable+auto", "selectable+auto_restricted")]
-        [string]$ZoneSelection = "auto_only",
-        [ValidateSet("IPv4")]
-        [string]$DataFormat = "IPv4",
-        [ValidateSet("Local")]
-        [string]$Type = "Local",
-        [int]$TrendingDays = "30",
-        [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
+        [ValidateSet("static")]
+        [string]$Type = "static",
+        [Parameter(ValueFromPipelineByPropertyName)]
         [string]$IPRange,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string]$Repository,
         [switch]$EnableException
     )
+    begin {
+        if (-not $PSBoundParameters.IPRange -and -not $PSBoundParameters.Repository -and $Type -eq "static") {
+            Stop-PSFFunction -EnableException:$EnableException -Message "You must specify either Repository or IPRange"
+            return
+        }
+    }
     process {
+        if (Test-PSFFunctionInterrupt) { return }
+
         foreach ($session in (Get-TNSession)) {
             if (-not $session.sc) {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
 
+            if ($PSBoundParameters.Repository) {
+                $repo = Get-TNRepository -SessionObject $session -Name $Repository
+                if (-not $repo.TypeFields.IpRange) {
+                    Stop-PSFFunction -EnableException:$EnableException -Message "Could not obtain repository for $($session.URI)" -Continue
+                } else {
+                    $IPRange = $repo.TypeFields.IpRange
+                }
+            }
+
             $body = @{
-                name         = $Name
-                description  = $Description
-                dataFormat   = $DataFormat
-                type         = $Type
-                ipRange      = $IpRange
-                trendingDays = $TrendingDays
-                trendWithRaw = "true"
+                name        = $Name
+                description = $Description
+                type        = $Type
+                definedIPs  = $IpRange
+                groups      = $null
             }
 
             $params = @{
                 SessionObject   = $session
-                Path            = "/repository"
+                Path            = "/asset"
                 Method          = "POST"
                 Parameter       = $body
                 EnableException = $EnableException

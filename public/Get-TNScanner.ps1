@@ -1,10 +1,10 @@
-function Get-TNCredential {
+function Get-TNScanner {
     <#
     .SYNOPSIS
-        Gets a credential
+        Gets a scanner
 
     .DESCRIPTION
-        Gets a credential
+        Gets a scanner
 
     .PARAMETER Name
         Parameter description
@@ -18,12 +18,14 @@ function Get-TNCredential {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS>  Get-TNCredential
+        PS>  New-TNOrganization -Name "Acme Corp"
 
     #>
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$Name,
         [switch]$EnableException
     )
     process {
@@ -33,11 +35,16 @@ function Get-TNCredential {
             }
 
             $params = @{
-                Path            = "/credential?filter=usable&fields=name,tags,description,typeFields,createdTime,groups,name,type,owner,ownerGroup,groups,modifiedTime,canManage,canUse,tags"
+                Path            = "/scanner?fields=authType,admin,state,useProxy,verifyHost,enabled,cert,certInfo,username,password,description,createdTime,loadedPluginSet,pluginSet,webVersion,version,zones,agentCapable,accessKey,secretKey,nessusManagerOrgs,msp,loadAvg,numHosts,numScans,numSessions,numTCPSessions,serverUUID,name,ip,port,version,type,status,uptime,modifiedTime,msp,admin,agentCapable,SCI,pluginSet"
                 Method          = "GET"
                 EnableException = $EnableException
             }
-            Invoke-TNRequest @params | ConvertFrom-TNRestResponse
+
+            if ($PSBoundParameters.Name) {
+                Invoke-TNRequest @params | ConvertFrom-TNRestResponse | Where-Object Name -in $Name
+            } else {
+                Invoke-TNRequest @params | ConvertFrom-TNRestResponse
+            }
         }
     }
 }

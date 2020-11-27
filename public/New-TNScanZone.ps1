@@ -1,10 +1,10 @@
-function Get-TNOrganization {
+function New-TNScanZone {
     <#
     .SYNOPSIS
-        Gets an organization
+        Adds an organization
 
     .DESCRIPTION
-        Gets an organization
+        Adds an organization
 
     .PARAMETER Name
         Parameter description
@@ -18,14 +18,18 @@ function Get-TNOrganization {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS>  New-TNOrganization -Name "Acme Corp"
+        PS>  New-TNScanZone -Name "Acme Corp"
 
     #>
     [CmdletBinding()]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
         [string[]]$Name,
+        [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
+        [string[]]$IPRange,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string]$Description,
         [switch]$EnableException
     )
     process {
@@ -34,15 +38,20 @@ function Get-TNOrganization {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
 
-            $params = @{
-                Path            = "/organization"
-                Method          = "GET"
-                EnableException = $EnableException
-            }
+            foreach ($org in $Name) {
+                $body = @{
+                    name        = $org
+                    ipList      = $IPRange -join ", "
+                    description = $Description
+                }
 
-            if ($PSBoundParameters.Name) {
-                Invoke-TNRequest @params | ConvertFrom-TNRestResponse | Where-Object Name -in $Name
-            } else {
+                $params = @{
+                    SessionObject   = $session
+                    Path            = "/zone"
+                    Method          = "POST"
+                    Parameter       = $body
+                    EnableException = $EnableException
+                }
                 Invoke-TNRequest @params | ConvertFrom-TNRestResponse
             }
         }

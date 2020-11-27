@@ -1,10 +1,10 @@
-function Get-TNCredential {
+function Get-TNReportAttribute {
     <#
     .SYNOPSIS
-        Gets a credential
+        Adds an organization
 
     .DESCRIPTION
-        Gets a credential
+        Adds an organization
 
     .PARAMETER Name
         Parameter description
@@ -18,26 +18,33 @@ function Get-TNCredential {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS>  Get-TNCredential
+        PS>  Get-TNRepository
 
     #>
     [CmdletBinding()]
     param
     (
+        [object[]]$SessionObject = (Get-TNSession),
+        [string[]]$Name,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if (-not $session.sc) {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
 
             $params = @{
-                Path            = "/credential?filter=usable&fields=name,tags,description,typeFields,createdTime,groups,name,type,owner,ownerGroup,groups,modifiedTime,canManage,canUse,tags"
+                Path            = "/attributeSet?fields=attributes,createdTime,creator,description,modifiedTime,name,type"
                 Method          = "GET"
                 EnableException = $EnableException
             }
-            Invoke-TNRequest @params | ConvertFrom-TNRestResponse
+
+            if ($PSBoundParameters.Name) {
+                Invoke-TNRequest @params | ConvertFrom-TNRestResponse | Where-Object Name -in $Name
+            } else {
+                Invoke-TNRequest @params | ConvertFrom-TNRestResponse
+            }
         }
     }
 }
