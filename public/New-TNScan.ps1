@@ -56,8 +56,8 @@ function New-TNScan {
         [int]$PolicyId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string[]]$Target,
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
-        [bool]$Enabled,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [switch]$Disabled,
         [Parameter(ValueFromPipelineByPropertyName)]
         [string]$Description,
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -68,93 +68,95 @@ function New-TNScan {
         [string[]]$Email,
         [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$CreateDashboard,
-        [Parameter(Mandatory, ParameterSetName = "All", ValueFromPipelineByPropertyName)]
-        [switch]$AllPolicies,
+        [Parameter(Mandatory, ParameterSetName = "Auto", ValueFromPipelineByPropertyName)]
+        [switch]$Auto,
         [switch]$EnableException
     )
+    begin {
+        $enabled = $Disabled -eq $false
+    }
     process {
         foreach ($session in (Get-TNSession)) {
 
-            # Join emails as a single comma separated string.
-            $emails = $email -join ","
+            if ($session.sc) {
+                $targets = $Target -join ","
+                $repository = @{ id = (Get-TNRepository | Select-Object -First 1).Id }
 
-            # Join targets as a single comma separated string.
-            $targets = $target -join ","
+                switch ($PSCmdlet.ParameterSetName) {
+                    "Auto" {
+                        $policies = Get-TNPolicy
+                        foreach ($policy in $policies) {
+                            $body = @{
+                                name        = $policy.Name
+                                description = $Description
+                                type        = "policy"
+                                policy      = @{ id = $policy.Id }
+                                ipList      = $targets
+                                repository  = $repository
+                            }
 
-            # Build Scan JSON
-            $settings = @{
-                name         = $Name
-                text_targets = $targets
-            }
+                            $params = @{
+                                SessionObject = $session
+                                Path          = "/scan"
+                                Method        = "POST"
+                                ContentType   = "application/json"
+                                Parameter     = $body
+                            }
 
-            if ($FolderId) { $settings.Add("folder_id", $FolderId) }
-            if ($ScannerId) { $settings.Add("scanner_id", $ScannerId) }
-            if ($Email.Length -gt 0) { $settings.Add("emails", $emails) }
-            if ($Description.Length -gt 0) { $settings.Add("description", $Description) }
-            if ($CreateDashboard) { $settings.Add("use_dashboard", $true) }
-            if ($PolicyId) { $settings.Add("policy_id", $PolicyId) }
-
-            switch ($PSCmdlet.ParameterSetName) {
-                "Template" {
-                    Write-PSFMessage -Level Verbose -Message "Using Template with UUID of $($PolicyUUID)"
-                    $scanhash = [pscustomobject]@{
-                        uuid     = $PolicyUUID
-                        settings = $settings
-                    }
-
-                    $json = ConvertTo-Json -InputObject $scanhash -Compress
-
-                    $serverparams = @{
-                        SessionObject = $session
-                        Path          = "/scans"
-                        Method        = "POST"
-                        ContentType   = "application/json"
-                        Parameter     = $json
-                    }
-
-                    (Invoke-TNRequest @serverparams).scan | ConvertFrom-TNRestResponse
-                }
-
-                "Policy" {
-                    $polUUID = $null
-                    $policies = Get-TNPolicy
-                    foreach ($policy in $policies) {
-                        if ($policy.PolicyId -eq $PolicyId) {
-                            Write-PSFMessage -Level Verbose -Message "Using Poicy with UUID of $($policy.PolicyUUID)"
-                            $polUUID = $policy.PolicyUUID
+                            Invoke-TNRequest @params | ConvertFrom-TNRestResponse
                         }
                     }
+                }
+            } else {
+                # Join emails as a single comma separated string.
+                $emails = $Email -join ","
 
-                    if ($null -eq $polUUID) {
-                        Stop-PSFFunction -EnableException:$EnableException -Message "Policy specified does not exist in session." -Continue
-                    } else {
+                # Join targets as a single comma separated string.
+                $targets = $Target -join ","
+
+                # Build Scan JSON
+                $settings = @{
+                    name         = $Name
+                    text_targets = $targets
+                    enabled      = $enabled
+                }
+
+                if ($PSBoundParameters.FolderId) { $settings.Add("folder_id", $FolderId) }
+                if ($PSBoundParameters.ScannerId) { $settings.Add("scanner_id", $ScannerId) }
+                if ($PSBoundParameters.Email) { $settings.Add("emails", $emails) }
+                if ($PSBoundParameters.Description) { $settings.Add("description", $Description) }
+                if ($CreateDashboard) { $settings.Add("use_dashboard", $true) }
+                if ($PSBoundParameters.PolicyId) { $settings.Add("policy_id", $PolicyId) }
+
+                switch ($PSCmdlet.ParameterSetName) {
+                    "Template" {
+                        Write-PSFMessage -Level Verbose -Message "Using Template with UUID of $($PolicyUUID)"
                         $scanhash = [pscustomobject]@{
-                            uuid     = $polUUID
+                            uuid     = $PolicyUUID
                             settings = $settings
                         }
+
+                        $json = ConvertTo-Json -InputObject $scanhash -Compress
+
+                        $params = @{
+                            SessionObject = $session
+                            Path          = "/scans"
+                            Method        = "POST"
+                            ContentType   = "application/json"
+                            Parameter     = $json
+                        }
+
+                        (Invoke-TNRequest @params).scan | ConvertFrom-TNRestResponse
                     }
 
-
-                    $json = ConvertTo-Json -InputObject $scanhash -Compress
-
-                    $serverparams = @{
-                        SessionObject = $session
-                        Path          = "/scans"
-                        Method        = "POST"
-                        ContentType   = "application/json"
-                        Parameter     = $json
-                    }
-
-                    (Invoke-TNRequest @serverparams).scan | ConvertFrom-TNRestResponse
-                }
-
-                "All" {
-                    $polUUID = $null
-                    $policies = Get-TNPolicy
-                    foreach ($policy in $policies) {
-                        if ($policy.PolicyId -eq $PolicyId) {
-                            Write-PSFMessage -Level Verbose -Message "Using Poicy with UUID of $($policy.PolicyUUID)"
-                            $polUUID = $policy.PolicyUUID
+                    "Policy" {
+                        $polUUID = $null
+                        $policies = Get-TNPolicy
+                        foreach ($policy in $policies) {
+                            if ($policy.PolicyId -eq $PolicyId) {
+                                Write-PSFMessage -Level Verbose -Message "Using Policy with UUID of $($policy.PolicyUUID)"
+                                $polUUID = $policy.PolicyUUID
+                            }
                         }
 
                         if ($null -eq $polUUID) {
@@ -164,21 +166,27 @@ function New-TNScan {
                                 uuid     = $polUUID
                                 settings = $settings
                             }
-
-                            $json = ConvertTo-Json -InputObject $scanhash -Compress
-
-                            $serverparams = @{
-                                SessionObject = $session
-                                Path          = "/scans"
-                                Method        = "POST"
-                                ContentType   = "application/json"
-                                Parameter     = $json
-                            }
-
-                            (Invoke-TNRequest @serverparams).scan | ConvertFrom-TNRestResponse
                         }
+
+
+                        $json = ConvertTo-Json -InputObject $scanhash -Compress
+
+                        $params = @{
+                            SessionObject = $session
+                            Path          = "/scans"
+                            Method        = "POST"
+                            ContentType   = "application/json"
+                            Parameter     = $json
+                        }
+
+                        (Invoke-TNRequest @params).scan | ConvertFrom-TNRestResponse
+                    }
+
+                    "Auto" {
+                        Stop-PSFFunction -EnableException:$EnableException -Message "You cannot use Auto with Nessus" -Continue
                     }
                 }
             }
         }
     }
+}

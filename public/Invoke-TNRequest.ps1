@@ -48,7 +48,7 @@ function Invoke-TNRequest {
 
                 if ($Path -match '/policies') {
                     if ($Path -notmatch '/policies/') {
-                        $Path = $Path.Replace("/policies", "/policy?filter=*&fields=name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
+                        $Path = $Path.Replace("/policies", "/policy?filter=usable&fields=name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
                     } else {
                         $id = Split-path $Path -Leaf
                         $Path = $Path.Replace("/$id","/")
