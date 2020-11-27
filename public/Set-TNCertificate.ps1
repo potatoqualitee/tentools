@@ -44,6 +44,8 @@ function Set-TNCertificate {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory)]
         [string[]]$ComputerName,
         [Management.Automation.PSCredential]$Credential,

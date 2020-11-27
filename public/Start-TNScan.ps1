@@ -23,6 +23,8 @@ function Start-TNScan {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         # Nessus session Id
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
@@ -39,7 +41,7 @@ function Start-TNScan {
         $paramJson = ConvertTo-Json -InputObject $params -Compress
     }
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             foreach ($scans in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/launch" -Method 'Post' -Parameter $paramJson -ContentType 'application/json')) {
                 [pscustomobject]@{
                     ScanUUID  = $scans.scan_uuid

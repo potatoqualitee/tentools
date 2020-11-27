@@ -24,6 +24,8 @@ function Enable-TNPolicyPortScanner {
     [OutputType([int])]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32[]]$PolicyId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
@@ -49,7 +51,7 @@ function Enable-TNPolicyPortScanner {
     }
     process {
 
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             foreach ($policy in $PolicyId) {
                 $params = @{
                     SessionObject   = $session

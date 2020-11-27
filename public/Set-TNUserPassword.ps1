@@ -24,6 +24,8 @@ function Set-TNUserPassword {
     [CmdletBinding()]
     Param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32[]]$UserId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
@@ -31,7 +33,7 @@ function Set-TNUserPassword {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             foreach ($uid in $UserId) {
                 Write-PSFMessage -Level Verbose -Message "Updating user with Id $uid"
                 $params = @{'password' = $([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))) }

@@ -24,6 +24,8 @@ function New-TNOrganization {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
         [string[]]$Name,
         [ValidateSet("auto_only", "locked", "selectable", "selectable+auto", "selectable+auto_restricted")]
@@ -31,7 +33,7 @@ function New-TNOrganization {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if (-not $session.sc) {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }

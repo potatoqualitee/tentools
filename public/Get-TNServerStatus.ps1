@@ -17,10 +17,12 @@ function Get-TNServerStatus {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             # only show if it's called from the command line
             if ((Get-PSCallStack).Count -eq 2 -and $session.sc) {
                 Stop-PSFFunction -Message "tenable.sc not supported" -Continue

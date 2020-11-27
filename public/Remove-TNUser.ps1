@@ -20,12 +20,14 @@ function Remove-TNUser {
     [CmdletBinding()]
     Param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32[]]$UserId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             foreach ($uid in $UserId) {
                 Write-PSFMessage -Level Verbose -Message "Deleting user with Id $uid"
                 Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/users/$uid" -Method 'Delete'

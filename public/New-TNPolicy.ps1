@@ -29,6 +29,8 @@ function New-TNPolicy {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string]$Name,
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -45,7 +47,7 @@ function New-TNPolicy {
             return
         }
 
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if ($PSBoundParameters.TemplateName) {
                 $PolicyUUID = (Get-TNPolicyTemplate -Name $TemplateName).PolicyUUID
             }

@@ -27,6 +27,8 @@ function Get-TNPluginRule {
     param
     (
         [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
+        [Parameter(ValueFromPipelineByPropertyName)]
         [int32[]]$PluginId,
         [Switch]$Detail,
         [switch]$EnableException
@@ -44,7 +46,7 @@ function Get-TNPluginRule {
     }
 
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if ($session.sc) {
                 Stop-PSFFunction -Message "tenable.sc not supported" -Continue
             }

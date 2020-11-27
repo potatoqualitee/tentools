@@ -21,13 +21,15 @@ function Get-TNPolicyPortRange {
     [OutputType([int])]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [Alias("Id")]
         [int32[]]$PolicyId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             foreach ($policy in $PolicyId) {
                 try {
                     $policydetail = Get-TNPolicyDetail -PolicyId $policy

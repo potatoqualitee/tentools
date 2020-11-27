@@ -35,12 +35,14 @@ function Remove-TNPluginRule {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$RuleId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path ('/plugin-rules/{0}' -f $RuleId) -Method 'Delete'
         }
     }

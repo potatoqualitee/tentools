@@ -23,6 +23,8 @@ function Export-TNPolicy {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$PolicyId,
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -30,7 +32,7 @@ function Export-TNPolicy {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             Write-PSFMessage -Level Verbose -Message "Exporting policy with id $PolicyId"
             $policy = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/policies/$PolicyId/export" -Method GET
             if ($PSBoundParameters.OutFile) {

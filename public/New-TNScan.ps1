@@ -47,6 +47,8 @@ function New-TNScan {
     [CmdletBinding(DefaultParameterSetName = "Policy")]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ParameterSetName = "Template", ValueFromPipelineByPropertyName)]
         [Parameter(Mandatory, ParameterSetName = "Policy", ValueFromPipelineByPropertyName)]
         [string]$Name,
@@ -76,7 +78,7 @@ function New-TNScan {
         $enabled = $Disabled -eq $false
     }
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
 
             if ($session.sc) {
                 $targets = $Target -join ","

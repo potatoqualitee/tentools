@@ -24,6 +24,7 @@ function Get-TNPolicy {
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param
     (
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
         [string]$Name,
         [Parameter(ValueFromPipelineByPropertyName, ParameterSetName = 'ByID')]
@@ -31,7 +32,7 @@ function Get-TNPolicy {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             $policies = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/policies' -Method GET |
                 ConvertFrom-TNRestResponse
 

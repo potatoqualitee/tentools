@@ -17,12 +17,14 @@ function Get-TNPluginFamily {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory)]
         [int32[]]$FamilyId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             foreach ($id in $FamilyId) {
                 $family = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/plugins/families/$FamilyId" -Method GET
                 [pscustomobject]@{

@@ -23,9 +23,10 @@ function Set-TNPolicyPortRange {
     #>
 
     [CmdletBinding()]
-    [OutputType([int])]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [Alias("Id")]
         [int32[]]$PolicyId,
@@ -34,7 +35,7 @@ function Set-TNPolicyPortRange {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             foreach ($policy in $PolicyId) {
                 $params = @{
                     SessionObject = $session

@@ -35,6 +35,8 @@ function Remove-TNGroupUser {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [Int32]$GroupId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
@@ -42,7 +44,7 @@ function Remove-TNGroupUser {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if ($session.MultiUser) {
                 $groupparams = @{
                     SessionObject = $session
