@@ -17,10 +17,12 @@ function Get-TNGroup {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if ($session.MultiUser) {
                 if ($session.sc) {
                     $params = @{

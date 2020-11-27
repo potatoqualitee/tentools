@@ -18,6 +18,8 @@ function Rename-TNFolder {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [Int]$FolderId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
@@ -25,7 +27,7 @@ function Rename-TNFolder {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/folders/$($FolderId)" -Method 'PUT' -Parameter @{'name' = $Name }
         }
     }

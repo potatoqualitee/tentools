@@ -18,15 +18,16 @@ function New-TNGroup {
         PS> Get-TN
     #>
     [CmdletBinding()]
-    [OutputType([int])]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string[]]$Name,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if ($session.MultiUser) {
                 foreach ($group in $name) {
                     Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/groups' -Method POST -Parameter @{ "name" = "$Name" } | ConvertFrom-TNRestResponse

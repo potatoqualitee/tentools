@@ -20,6 +20,8 @@ function Get-TNPolicyLocalPortEnumeration {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [Alias("Id")]
         [int32[]]$PolicyId,
@@ -27,7 +29,7 @@ function Get-TNPolicyLocalPortEnumeration {
     )
 
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if ($session.sc) {
                 Stop-PSFFunction -Message "tenable.sc not supported" -Continue
             }

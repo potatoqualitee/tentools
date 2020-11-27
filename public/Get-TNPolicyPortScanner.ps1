@@ -21,6 +21,8 @@ function Get-TNPolicyPortScanner {
     [OutputType([int])]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32[]]$PolicyId,
         [switch]$EnableException

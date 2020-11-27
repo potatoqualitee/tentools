@@ -41,6 +41,8 @@ function Export-TNScan {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [Parameter(Position = 2)]
@@ -91,7 +93,7 @@ function Export-TNScan {
         }
     }
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if ($HistoryId) {
                 $urlpath = "/scans/$ScanId/export?history_id=$HistoryId"
             } else {

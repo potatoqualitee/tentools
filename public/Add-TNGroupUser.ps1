@@ -25,6 +25,8 @@ function Add-TNGroupUser {
     param
     (
         [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
+        [Parameter(ValueFromPipelineByPropertyName)]
         [string]$Group,
         [Parameter(ValueFromPipelineByPropertyName)]
         [string[]]$Username,
@@ -47,7 +49,7 @@ function Add-TNGroupUser {
     process {
         if (Test-PSFFunctionInterrupt) { return }
 
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if ($session.sc) {
                 Stop-PSFFunction -Message "tenable.sc not supported" -Continue
             }

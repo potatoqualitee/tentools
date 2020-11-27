@@ -18,12 +18,14 @@ function Get-TNGroupMember {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$GroupId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if ($session.MultiUser) {
                 $groupparams = @{
                     SessionObject = $session

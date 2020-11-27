@@ -20,12 +20,14 @@ function Copy-TNPolicy {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$PolicyId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             $CopiedPolicy = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/policies/$PolicyId/copy" -Method 'Post'
             [PSCustomObject]@{
                 Name     = $CopiedPolicy.Name

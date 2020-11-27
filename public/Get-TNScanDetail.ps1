@@ -23,13 +23,15 @@ function Get-TNScanDetail {
     [CmdletBinding()]
     Param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [Alias("Id")]
         [int32]$ScanId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             $scan = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId" -Method GET
             if ($scan.info) {
                 $scan.info | ConvertFrom-TNRestResponse

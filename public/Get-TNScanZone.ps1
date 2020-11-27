@@ -18,10 +18,12 @@ function Get-TNScanZone {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if (-not $session.sc) {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }

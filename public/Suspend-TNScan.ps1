@@ -16,11 +16,13 @@ function Suspend-TNScan {
     param
     (
         [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
+        [Parameter(ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             foreach ($scan in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/pause" -Method 'Post').scan) {
                 [pscustomobject]@{
                     Name            = $scan.name

@@ -23,13 +23,15 @@ function Get-TNScanResult {
     [CmdletBinding()]
     Param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [Alias("Id")]
         [int32]$ScanId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if (-not $session.sc) {
                 Stop-PSFFunction -Message "Nessus not supported" -Continue
             }

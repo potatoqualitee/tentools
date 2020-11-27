@@ -44,6 +44,8 @@ function Edit-TNPluginRule {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$Id,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
@@ -59,7 +61,7 @@ function Edit-TNPluginRule {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
 
             $dtExpiration = $null
 

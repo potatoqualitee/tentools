@@ -23,6 +23,8 @@ function Restart-TNService {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         # Nessus session Id
         [switch]$EnableException
     )
@@ -31,7 +33,7 @@ function Restart-TNService {
         $paramJson = ConvertTo-Json -InputObject $params -Compress
     }
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/server/restart" -Method 'Post' -Parameter $paramJson -ContentType 'application/json'
         }
     }

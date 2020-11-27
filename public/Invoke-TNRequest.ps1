@@ -2,7 +2,8 @@ function Invoke-TNRequest {
     [CmdletBinding()]
     Param
     (
-        [PSCustomObject[]]$SessionObject = (Get-TNSession),
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         $Parameter,
         [Parameter(Mandatory)]
         [String]$Path,

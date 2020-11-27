@@ -28,6 +28,8 @@ function New-TNRepository {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
         [string]$Name,
         [string]$Description,
@@ -43,7 +45,7 @@ function New-TNRepository {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if (-not $session.sc) {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }

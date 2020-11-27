@@ -16,12 +16,14 @@ function Get-TNPlugin {
     [CmdletBinding()]
     Param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
         [int32]$PluginId,
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if ($PluginId) {
                 foreach ($plugin in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/plugins/plugin/$PluginId" -Method GET)) {
                     $attributes = [ordered]@{ }

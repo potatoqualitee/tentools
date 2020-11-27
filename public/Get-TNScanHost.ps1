@@ -26,6 +26,8 @@ function Get-TNScanHost {
     [CmdletBinding()]
     Param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -40,7 +42,7 @@ function Get-TNScanHost {
         }
     }
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             foreach ($Host in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId" -Method GET -Parameter $params).hosts) {
                 [pscustomobject]@{
                     HostName  = $Host.hostname

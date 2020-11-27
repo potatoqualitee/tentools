@@ -20,6 +20,8 @@ function Stop-TNScan {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32]$ScanId,
         [switch]$EnableException
@@ -29,7 +31,7 @@ function Stop-TNScan {
 
     }
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             $Scans = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/stop" -Method 'Post'
 
             if ($Scans -is [psobject]) {

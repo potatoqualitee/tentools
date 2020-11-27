@@ -32,6 +32,8 @@ function New-TNUser {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory)]
         [Management.Automation.PSCredential]$Credential,
         [Parameter(Mandatory)]
@@ -47,7 +49,7 @@ function New-TNUser {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             $params = @{ }
             $params.Add('type', $Type.ToLower())
             $params.Add('permissions', $permenum[$Permission])

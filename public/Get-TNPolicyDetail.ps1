@@ -24,6 +24,8 @@ function Get-TNPolicyDetail {
     param
     (
         [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias('Id')]
         [int32[]]$PolicyId,
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -31,7 +33,7 @@ function Get-TNPolicyDetail {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if ($PSBoundParameters.Name) {
                 $policy = Get-TNPolicy -Name $Name
                 if ($policy) {

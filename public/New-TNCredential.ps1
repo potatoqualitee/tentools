@@ -39,6 +39,8 @@ function New-TNCredential {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
         [string]$Name,
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -69,7 +71,7 @@ function New-TNCredential {
     process {
         if (Test-PSFFunctionInterrupt) { return }
 
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if (-not $session.sc) {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }

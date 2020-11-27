@@ -17,10 +17,12 @@ function Get-TNSessionInfo {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             Write-PSFMessage -Level Verbose -Message "Removing server session $id"
 
             $RestMethodParams = @{

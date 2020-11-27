@@ -25,6 +25,8 @@ function Get-TNScan {
     param
     (
         [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
+        [Parameter(ValueFromPipelineByPropertyName)]
         [int32]$FolderId,
         [Parameter(ValueFromPipelineByPropertyName)]
         [ValidateSet('Completed', 'Imported', 'Running', 'Paused', 'Canceled')]
@@ -38,7 +40,7 @@ function Get-TNScan {
         }
     }
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if ($FolderId) {
                 $scans = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/scans' -Method GET -Parameter $params
             } else {

@@ -25,6 +25,8 @@ function Add-TNPolicyPortRange {
     [OutputType([int])]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int32[]]$PolicyId,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
@@ -32,7 +34,7 @@ function Add-TNPolicyPortRange {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             if ($session.sc) {
                 $method = "PATCH"
             } else {

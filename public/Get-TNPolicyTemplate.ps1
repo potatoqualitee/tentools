@@ -23,6 +23,8 @@ function Get-TNPolicyTemplate {
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [Parameter(ValueFromPipelineByPropertyName, ParameterSetName = 'ByName')]
         [string]$Name,
         [Parameter(ValueFromPipelineByPropertyName, ParameterSetName = 'ByUUID')]
@@ -30,7 +32,7 @@ function Get-TNPolicyTemplate {
         [switch]$EnableException
     )
     process {
-        foreach ($session in (Get-TNSession)) {
+        foreach ($session in $SessionObject) {
             $templates = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/editor/policy/templates' -Method GET | ConvertFrom-TNRestResponse
 
             switch ($PSCmdlet.ParameterSetName) {

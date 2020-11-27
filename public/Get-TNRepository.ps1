@@ -24,6 +24,7 @@ function Get-TNRepository {
     [CmdletBinding()]
     param
     (
+        [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
         [string[]]$Name,
         [switch]$EnableException
