@@ -65,6 +65,7 @@ jobs:
             Credential = $cred
             EnableException = $true
             LicensePath = "/tmp/nessus.license"
+            AcceptSelfSignedCert = $true
           }
           Initialize-TNServer @splat
       - name: Sleep to give Nessus time to initialize
