@@ -1,4 +1,4 @@
-function Remove-NessusFolder {
+function Remove-TNFolder {
     <#
     .SYNOPSIS
 
