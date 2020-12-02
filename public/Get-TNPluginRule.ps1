@@ -1,28 +1,31 @@
-function Get-TNPluginRule {
-    <#
+﻿function Get-TNPluginRule {
+<#
     .SYNOPSIS
-        Gets a list of all Nessus plugin rules
+        Gets a list of plugin rules
 
     .DESCRIPTION
-        Gets a list of all Nessus plugin rules
-
+        Gets a list of plugin rules
+        
+    .PARAMETER SessionObject
+        Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
+        
+    .PARAMETER PluginId
+        The ID of the target plugin
+        
     .PARAMETER Detail
-        Does an additional lookup on each rule, to return the plugin name. Helpfule when reporting
-
+        Description for Detail
+        
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
-
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
+        
     .EXAMPLE
-        PS> Get-TNPluginRule
-        Gets all defined plugin rules
+        PS C:\> Get-TNPluginRule
 
-    .EXAMPLE
-        PS> Get-TNPluginRule -Detail
-        Gets all defined plugin rules with details
-
-    #>
+        Gets a list of plugin rules
+        
+#>
     [CmdletBinding()]
     param
     (
