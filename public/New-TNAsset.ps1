@@ -1,30 +1,40 @@
-function New-TNAsset {
-    <#
+﻿function New-TNAsset {
+<#
     .SYNOPSIS
-        Adds an asset
+        Creates new assets
 
     .DESCRIPTION
-        Adds an asset
-
+        Creates new assets
+        
+    .PARAMETER SessionObject
+        Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
+        
     .PARAMETER Name
-        Parameter description
-
-    .PARAMETER ZoneSelection
-        Parameter description
-
+        The name of the target asset
+        
+    .PARAMETER Description
+        Description for Description
+        
+    .PARAMETER Type
+        The type of asset
+        
+    .PARAMETER IPRange
+        Description for IPRange
+        
+    .PARAMETER Repository
+        Description for Repository
+        
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
-
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
+        
     .EXAMPLE
-        PS>  $params = @{
-              Name = "Local Net"
-              IPRange = "172.20.0.1/22, 192.168.0.1/28"
-        }
-        PS>  New-TNRepository @params
+        PS C:\> New-TNAsset
 
-    #>
+        Creates new assets
+        
+#>
     [CmdletBinding()]
     param
     (
