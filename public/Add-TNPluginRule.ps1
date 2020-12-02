@@ -1,14 +1,19 @@
-function Add-TNPluginRule {
+﻿function Add-TNPluginRule {
     <#
     .SYNOPSIS
-        Creates a new Nessus plugin rule
+        Adds a list of plugin rules
 
     .DESCRIPTION
+        Adds a list of plugin rules.
+
         Can be used to alter report output for various reasons. i.e. vulnerability acceptance, verified
         false-positive on non-credentialed scans, alternate mitigation in place, etc...
 
+    .PARAMETER SessionObject
+        Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
+
     .PARAMETER PluginId
-        ID number of the plugin which would you like altered
+        The ID of the target plugin
 
     .PARAMETER ComputerName
         Name, IP address, or Wildcard (*), which defines the the host(s) affected by the rule
@@ -21,19 +26,20 @@ function Add-TNPluginRule {
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Add-TNPluginRule -PluginId 15901 -ComputerName 'WebServer' -Type Critical
+        PS C:\> Add-TNPluginRule -PluginId 15901 -ComputerName 'WebServer' -Type Critical
 
         Creates a rule that changes the default severity of 'Medium', to 'Critical' for the defined computer and plugin ID
 
     .EXAMPLE
-        PS> $WebServers | % {Add-TNPluginRule -PluginId 15901 -ComputerName $_ -Type Critical}
+        PS C:\> $WebServers | % {Add-TNPluginRule -PluginId 15901 -ComputerName $_ -Type Critical}
 
         Creates a rule for a list computers, using the defined options
-    #>
+
+#>
     [CmdletBinding()]
     param
     (
