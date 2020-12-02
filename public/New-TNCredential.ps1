@@ -1,41 +1,52 @@
-function New-TNCredential {
+﻿function New-TNCredential {
     <#
     .SYNOPSIS
-        Creates a credential
+        Creates new credentials
 
     .DESCRIPTION
-        Creates a credential
+        Creates new credentials
+
+    .PARAMETER SessionObject
+        Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
 
     .PARAMETER Name
-        Parameter description
+        The name of the target credential
 
-    .PARAMETER ZoneSelection
-        Parameter description
+    .PARAMETER Description
+        Description for Description
+
+    .PARAMETER Type
+        The type of credential
+
+    .PARAMETER AuthType
+        Description for AuthType
+
+    .PARAMETER Credential
+        The credential object (from Get-Credential) used to log into the target server. Specifies a user account that has permission to send the request.
+
+    .PARAMETER CredentialHash
+        Description for CredentialHash
+
+    .PARAMETER PrivilegeEscalation
+        Description for PrivilegeEscalation
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS>  $params = @{
+        PS C:\> $params = @{
               Name = "Windows Scanner Account"
               Type = "windows"
               AuthType = "password"
               Credential = "ad\nessus"
         }
-        PS>  New-TNCredential @params -Verbose
+        PS C:\> New-TNCredential @params -Verbose
 
-    .EXAMPLE
-        PS>  $params = @{
-              Name = "SSH Scanner Account"
-              Type = "ssh"
-              AuthType = "password"
-              Credential = "root"
-        }
-        PS>  New-TNCredential @params -Verbose
+        Creates a new credential for ad\nessus
 
-    #>
+#>
     [CmdletBinding()]
     param
     (
