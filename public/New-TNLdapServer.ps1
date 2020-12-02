@@ -1,32 +1,58 @@
-function New-TNLdapServer {
+﻿function New-TNLdapServer {
     <#
     .SYNOPSIS
-        Adds an organization
+        Creates new ldap servers
 
     .DESCRIPTION
-        Adds an organization
+        Creates new ldap servers
+
+    .PARAMETER SessionObject
+        Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
 
     .PARAMETER Name
-        Parameter description
+        The name of the target ldap server
 
-    .PARAMETER ZoneSelection
-        Parameter description
+    .PARAMETER ComputerName
+        The network name or IP address of the Nessus or tenable.sc server
+
+    .PARAMETER Credential
+        The credential object (from Get-Credential) used to log into the target server. Specifies a user account that has permission to send the request.
+
+    .PARAMETER Port
+        The port of the Nessus or tenable.sc server. Defaults to 8834 which is the default port for Nessus.
+
+    .PARAMETER BaseDN
+        Description for BaseDN
+
+    .PARAMETER Encryption
+        Description for Encryption
+
+    .PARAMETER UserObjectFilter
+        Description for UserObjectFilter
+
+    .PARAMETER SeachString
+        Description for SeachString
+
+    .PARAMETER TimeLimit
+        Description for TimeLimit
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS>  $params = @{
+        PS C:\> $params = @{
               Name = "DC"
               ComputerName = "dc"
               Credential = $adcred
               BaseDN = "DC=ad,DC=local"
         }
-        PS>  New-TNLdapServer @params -Verbose
+        PS C:\> New-TNLdapServer @params -Verbose
 
-    #>
+        Creates a new ldap server for the ad.loacl domain, which connects to the domain controller named "DC"
+
+#>
     [CmdletBinding()]
     param
     (
