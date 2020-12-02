@@ -1,34 +1,40 @@
-function Initialize-TNServer {
+﻿function Initialize-TNServer {
     <#
     .SYNOPSIS
-        Creates a new admin the Nessus website then establishes a connection using those credentials
+        Initializes a list of servers
 
     .DESCRIPTION
-    Creates a new admin the Nessus website
+        Initializes a list of servers
 
     .PARAMETER ComputerName
-        Target Nessus Server IP Address or FQDN
+        The network name or IP address of the Nessus or tenable.sc server
 
     .PARAMETER Port
-        Port number of the Nessus web service. Defaults to 8834.
+        The port of the Nessus or tenable.sc server. Defaults to 8834 which is the default port for Nessus.
 
     .PARAMETER Credential
-        Credential for connecting to the Nessus Server
+        The credential object (from Get-Credential) used to log into the target server. Specifies a user account that has permission to send the request.
 
-    .PARAMETER UseDefaultCredential
-        Use current credential for connecting to the Nessus Server
+    .PARAMETER LicensePath
+        Description for LicensePath
 
     .PARAMETER AcceptSelfSignedCert
-        Accept self signed cert
+        Accept self-signed certs
+
+    .PARAMETER Type
+        The type of server - nessus or tenable.sc
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Initialize-TNServer -ComputerName localhost -Path $home\Downloads\nessus.license -Credential admin
-    #>
+        PS C:\> Initialize-TNServer -ComputerName localhost -Path $home\Downloads\nessus.license -Credential admin
+
+        Initializes the Nessus server on localhost using the specified license and admin as the username
+
+#>
     [CmdletBinding()]
     param
     (
