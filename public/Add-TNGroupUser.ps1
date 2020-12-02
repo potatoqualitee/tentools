@@ -1,26 +1,37 @@
-function Add-TNGroupUser {
-    <#
+﻿function Add-TNGroupUser {
+<#
     .SYNOPSIS
-        Adds a user to a group
+        Adds a list of group users
 
     .DESCRIPTION
-        Adds a user to a group
-
+        Adds a list of group users
+        
+    .PARAMETER SessionObject
+        Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
+        
+    .PARAMETER Group
+        Description for Group
+        
+    .PARAMETER Username
+        Description for Username
+        
     .PARAMETER GroupId
-        Parameter description
-
+        The ID of the target group
+        
     .PARAMETER UserId
-        Parameter description
-
+        The ID of the target user
+        
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
-
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
+        
     .EXAMPLE
-        PS> Add-TNGroupUser
+        PS C:\> Add-TNGroupUser
 
-    #>
+        Adds a list of group users
+        
+#>
     [CmdletBinding()]
     param
     (

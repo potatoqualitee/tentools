@@ -1,19 +1,25 @@
-function Get-TNServerInfo {
-    <#
+﻿function Get-TNServerInfo {
+<#
     .SYNOPSIS
-        Short description
+        Gets a list of server infos
 
     .DESCRIPTION
-        Long description
-
+        Gets a list of server infos
+        
+    .PARAMETER SessionId
+        Description for SessionId
+        
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
-
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
+        
     .EXAMPLE
-        PS> Get-TNServerInfo
-    #>
+        PS C:\> Get-TNServerInfo
+
+        Gets a list of server infos
+        
+#>
     [CmdletBinding()]
     param
     (

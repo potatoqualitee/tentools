@@ -1,19 +1,40 @@
-function Wait-TNServerReady {
-    <#
+﻿function Wait-TNServerReady {
+<#
     .SYNOPSIS
-        Short description
+        Waits for a Nessus server to be ready
 
     .DESCRIPTION
-        Long description
-
+        Waits for a Nessus server to be ready
+        
+    .PARAMETER ComputerName
+        The network name or IP address of the Nessus or tenable.sc server
+        
+    .PARAMETER Port
+        The port of the Nessus or tenable.sc server. Defaults to 8834 which is the default port for Nessus.
+        
+    .PARAMETER AcceptSelfSignedCert
+        Accept self-signed certs
+        
+    .PARAMETER Register
+        Description for Register
+        
+    .PARAMETER Timeout
+        Description for Timeout
+        
+    .PARAMETER SilentUntil
+        Description for SilentUntil
+        
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
-
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
+        
     .EXAMPLE
-        PS> Get-TN
-    #>
+        PS C:\> Wait-TNServerReady
+
+        Waits for a Nessus server to be ready
+        
+#>
     [CmdletBinding()]
     param
     (

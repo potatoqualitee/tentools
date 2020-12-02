@@ -1,43 +1,52 @@
-function Export-TNScan {
-    <#
+﻿function Export-TNScan {
+<#
     .SYNOPSIS
-        Short description
+        Exports a list of scans
 
     .DESCRIPTION
-        Long description
-
-    .PARAMETER SessionId
-        Parameter description
-
+        Exports a list of scans
+        
+    .PARAMETER SessionObject
+        Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
+        
     .PARAMETER ScanId
-        Parameter description
-
+        The ID of the target scan
+        
     .PARAMETER Format
-        Parameter description
-
+        Description for Format
+        
     .PARAMETER Path
-        Parameter description
-
+        Description for Path
+        
     .PARAMETER PSObject
-        Parameter description
-
+        Description for PSObject
+        
     .PARAMETER Chapters
-        Parameter description
-
+        Description for Chapters
+        
     .PARAMETER HistoryID
-        Parameter description
-
+        Description for HistoryID
+        
     .PARAMETER Password
-        Parameter description
-
+        The required password. This is a securestring type. The easiest way to get this is by using (Get-Credential).Password which extracts the password in a secure manner (and does not care about the username.)
+        
+    .PARAMETER Name
+        The name of the target scan
+        
+    .PARAMETER Credential
+        The credential object (from Get-Credential) used to log into the target server. Specifies a user account that has permission to send the request. 
+        
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
-
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
+        
     .EXAMPLE
-        PS> Get-TN
-    #>
+        PS C:\> Export-TNScan
+
+        Exports a list of scans
+        
+#>
     [CmdletBinding()]
     param
     (

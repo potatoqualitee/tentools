@@ -1,34 +1,40 @@
-function New-TNUser {
-    <#
+﻿function New-TNUser {
+<#
     .SYNOPSIS
-        Short description
+        Creates new users
 
     .DESCRIPTION
-        Long description
-
+        Creates new users
+        
+    .PARAMETER SessionObject
+        Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
+        
     .PARAMETER Credential
-        Credential for connecting to the Nessus Server
-
+        The credential object (from Get-Credential) used to log into the target server. Specifies a user account that has permission to send the request. 
+        
     .PARAMETER Permission
-        Parameter description
-
+        Description for Permission
+        
     .PARAMETER Type
-        Parameter description
-
+        The type of user
+        
     .PARAMETER Email
-        Parameter description
-
+        The email address of the target user
+        
     .PARAMETER Name
-        Parameter description
-
+        The name of the target user
+        
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
-
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
+        
     .EXAMPLE
-        PS> Get-TN
-    #>
+        PS C:\> New-TNUser
+
+        Creates new users
+        
+#>
     [CmdletBinding()]
     param
     (

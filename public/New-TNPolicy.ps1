@@ -1,31 +1,37 @@
-function New-TNPolicy {
-    <#
+﻿function New-TNPolicy {
+<#
     .SYNOPSIS
-        Short description
+        Creates new policys
 
     .DESCRIPTION
-        Long description
-
+        Creates new policys
+        
+    .PARAMETER SessionObject
+        Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
+        
     .PARAMETER Name
-        Name for new policy
-
+        The name of the target policy
+        
     .PARAMETER PolicyUUID
-        Policy Template UUID to base new policy from.
-
+        The UUID of the target policy
+        
     .PARAMETER TemplateName
-        Policy Template name to base new policy from.
-
+        Description for TemplateName
+        
     .PARAMETER Description
-        Description for new policy.
-
+        Description for Description
+        
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
-
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
+        
     .EXAMPLE
-        PS> Get-TN
-    #>
+        PS C:\> New-TNPolicy
+
+        Creates new policys
+        
+#>
     [CmdletBinding()]
     param
     (
