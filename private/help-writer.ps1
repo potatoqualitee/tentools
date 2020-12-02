@@ -8,13 +8,40 @@ Function Write-Help {
         $name = $file.basename
         $command = Get-Command $name
         $verb = $command.Verb
+        $noun = $command.Noun.TrimStart("TN")
+        $noun = ($noun -csplit "([A-Z][a-z]+)" | Where-Object { $_ }) -join " "
+        $noun = $noun.ToLower()
 
         switch ($verb) {
-            "Get"
+            "Add" {
+                $synopsis = "$($verb)s a $($noun)s"
+            }
+            "Connect" {
+                $synopsis = "$($verb)s to a Nessus or tenable.sc server"
+            }
+            "ConvertFrom" {
+                $synopsis = "Converts Nessus and tenable.sc responses to a readable format"
+            }
+            "Copy" {
+                $synopsis = "Copies a list of $($noun)s"
+            }
+            "Initalize" {
+                $synopsis = "Initalizes a new Nessus or tenable.sc server with username/password and license"
+            }
+            "New" {
+                $synopsis = "Creates new $($noun)s"
+            }
+            "Wait" {
+                $synopsis = "Waits for a Nessus server to be ready"
+            }
+            default {
+                # Get, Disable, Edits, Enables, Exports
+                $synopsis = "$($verb)s a list of $($noun)s"
+            }
         }
-        "    .SYNOPSIS"
-        "        The synopsis for $name"
 
+        "    .SYNOPSIS"
+        "        $synopsis"
 
     }
 
