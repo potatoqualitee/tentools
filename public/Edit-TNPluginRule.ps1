@@ -1,46 +1,51 @@
-function Edit-TNPluginRule {
+﻿function Edit-TNPluginRule {
     <#
     .SYNOPSIS
-        Edits a Nessus plugin rule
+        Edits a list of plugin rules
 
     .DESCRIPTION
+        Edits a list of plugin rules
+
         Can be used to change a previously defined, scan report altering rule
 
+    .PARAMETER SessionObject
+        Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
+
     .PARAMETER Id
-        ID number of the rule which would you like removed/deleted
+        Description for Id
 
     .PARAMETER PluginId
-        ID number of the plugin which would you like altered
+        The ID of the target plugin
 
     .PARAMETER ComputerName
         Name, IP address, or Wildcard (*), which defines the the host(s) affected by the rule
 
     .PARAMETER Type
-        Severity level you would like future scan reports to display for the defined host(s)
+        The type of plugin rule
 
     .PARAMETER Expiration
-        Date/Time object, which defines the time you would like the rule to expire. Not required
+        Description for Expiration
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Edit-TNPluginRule -Id 500 -ComputerName 'YourComputer' -Expiration (([datetime]::Now).AddDays(10)) -Type Low
+        PS C:\> Edit-TNPluginRule -Id 500 -ComputerName 'YourComputer' -Expiration (([datetime]::Now).AddDays(10)) -Type Low
 
         Will edit a plugin rule with an ID of 500, to have a new computer name. Rule expires in 10 days
 
     .EXAMPLE
-        PS> Get-TNPluginRule | Edit-TNPluginRule -Type High
+        PS C:\> Get-TNPluginRule | Edit-TNPluginRule -Type High
 
         Will alter all rules to now have a serverity of 'Info'
 
     .EXAMPLE
-        PS> Get-TNPluginRule | ? {$_.Host -eq 'myComputer'} | Edit-TNPluginRule -Type 'High'
+        PS C:\> Get-TNPluginRule | ? {$_.Host -eq 'myComputer'} | Edit-TNPluginRule -Type 'High'
 
         Will find all plugin rules that match the computer name, and set their severity to high
-    #>
+#>
     [CmdletBinding()]
     param
     (

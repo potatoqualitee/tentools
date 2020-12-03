@@ -1,30 +1,50 @@
-function New-TNRepository {
+﻿function New-TNRepository {
     <#
     .SYNOPSIS
-        Adds a repository
+        Creates new repositories
 
     .DESCRIPTION
-        Adds a repository
+        Creates new repositories
+
+    .PARAMETER SessionObject
+        Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
 
     .PARAMETER Name
-        Parameter description
+        The name of the target repository
+
+    .PARAMETER Description
+        Description for Description
 
     .PARAMETER ZoneSelection
-        Parameter description
+        Description for ZoneSelection
+
+    .PARAMETER DataFormat
+        Description for DataFormat
+
+    .PARAMETER Type
+        The type of repository
+
+    .PARAMETER TrendingDays
+        Description for TrendingDays
+
+    .PARAMETER IPRange
+        Description for IPRange
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS>  $params = @{
+        PS C:\> $params = @{
               Name = "Local Net"
               IPRange = "172.20.0.1/22, 192.168.0.1/28"
         }
-        PS>  New-TNRepository @params
+        PS C:\> New-TNRepository @params
 
-    #>
+        Creates a new repository named Local Net with two IP ranges
+
+#>
     [CmdletBinding()]
     param
     (

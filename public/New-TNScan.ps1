@@ -1,49 +1,58 @@
-function New-TNScan {
-    <#
+﻿function New-TNScan {
+<#
     .SYNOPSIS
-        Short description
+        Creates new scans
 
     .DESCRIPTION
-        Long description
-
+        Creates new scans
+        
+    .PARAMETER SessionObject
+        Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
+        
     .PARAMETER Name
-        Parameter description
-
+        The name of the target scan
+        
     .PARAMETER PolicyUUID
-        Parameter description
-
+        The UUID of the target policy
+        
     .PARAMETER PolicyId
-        Parameter description
-
+        The ID of the target policy
+        
     .PARAMETER Target
-        Parameter description
-
-    .PARAMETER Enabled
-        Parameter description
-
+        Description for Target
+        
+    .PARAMETER Disabled
+        Description for Disabled
+        
     .PARAMETER Description
-        Parameter description
-
+        Description for Description
+        
     .PARAMETER FolderId
-        Parameter description
-
+        Description for FolderId
+        
     .PARAMETER ScannerId
-        ID of a valid Nessus session. This is auto-populated after a connection is made using Connect-TNServer.
-
+        Description for ScannerId
+        
     .PARAMETER Email
-        Parameter description
-
+        The email address of the target user
+        
     .PARAMETER CreateDashboard
-        Parameter description
-
+        Description for CreateDashboard
+        
+    .PARAMETER Auto
+        Description for Auto
+        
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
-
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
+        
     .EXAMPLE
-        PS> Get-TN
-    #>
+        PS C:\> New-TNScan
+
+        Creates new scans
+        
+#>
     [CmdletBinding(DefaultParameterSetName = "Policy")]
     param
     (

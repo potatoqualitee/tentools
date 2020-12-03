@@ -1,25 +1,31 @@
-function Enable-TNPolicyPortScanner {
-    <#
+﻿function Enable-TNPolicyPortScanner {
+<#
     .SYNOPSIS
-        Short description
+        Enables a list of policy port scanners
 
     .DESCRIPTION
-        Long description
-
+        Enables a list of policy port scanners
+        
+    .PARAMETER SessionObject
+        Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
+        
     .PARAMETER PolicyId
-        Parameter description
-
+        The ID of the target policy
+        
     .PARAMETER ScanMethods
-        Parameter description
-
+        Description for ScanMethods
+        
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
-
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
+        
     .EXAMPLE
-        PS> Get-TN
-    #>
+        PS C:\> Enable-TNPolicyPortScanner
+
+        Enables a list of policy port scanners
+        
+#>
     [CmdletBinding()]
     [OutputType([int])]
     param

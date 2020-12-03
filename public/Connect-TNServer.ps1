@@ -1,34 +1,40 @@
-function Connect-TNServer {
-    <#
+﻿function Connect-TNServer {
+<#
     .SYNOPSIS
-        Creates a connection to the Nessus website
+        Connects to a Nessus or tenable.sc server
 
     .DESCRIPTION
-        Creates a connection to the Nessus website which persists through all commands.
-
+        Connects to a Nessus or tenable.sc server
+        
     .PARAMETER ComputerName
-        Target Nessus Server IP Address or FQDN
-
+        The network name or IP address of the Nessus or tenable.sc server
+        
     .PARAMETER Port
-        Port number of the Nessus web service. Defaults to 8834.
-
+        The port of the Nessus or tenable.sc server. Defaults to 8834 which is the default port for Nessus.
+        
     .PARAMETER Credential
-        Credential for connecting to the Nessus Server
-
+        The credential object (from Get-Credential) used to log into the target server. Specifies a user account that has permission to send the request. 
+        
     .PARAMETER UseDefaultCredential
-        Use current credential for connecting to the Nessus Server
-
+        Indicates that the command uses the credentials of the current user to send the web request. This can't be used with Authentication or Credential and may not be supported on all platforms.
+        
     .PARAMETER AcceptSelfSignedCert
-        Accept self signed cert
-
+        Accept self-signed certs
+        
+    .PARAMETER Type
+        The type of server
+        
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
-
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
+        
     .EXAMPLE
-        PS> Connect-TNServer -ComputerName acas -Credential admin
-    #>
+        PS C:\> Connect-TNServer
+
+        Connects to a Nessus or tenable.sc server
+        
+#>
     [CmdletBinding()]
     param
     (

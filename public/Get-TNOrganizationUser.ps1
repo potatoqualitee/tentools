@@ -1,34 +1,34 @@
-function Get-TNOrganizationUser {
-    <#
+﻿function Get-TNOrganizationUser {
+<#
     .SYNOPSIS
-        Short description
+        Gets a list of organization users
 
     .DESCRIPTION
-        Long description
-
-    .PARAMETER Credential
-    Credential for connecting to the Nessus Server
-
-    .PARAMETER Permission
-        Parameter description
-
-    .PARAMETER Type
-        Parameter description
-
-    .PARAMETER Email
-        Parameter description
-
+        Gets a list of organization users
+        
+    .PARAMETER SessionObject
+        Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
+        
+    .PARAMETER Organization
+        The name of the target organization
+        
     .PARAMETER Name
-        Parameter description
-
+        The name of the target organization user
+        
+    .PARAMETER Email
+        The email address of the target user
+        
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
-
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
+        
     .EXAMPLE
-        PS> Get-TN
-    #>
+        PS C:\> Get-TNOrganizationUser
+
+        Gets a list of organization users
+        
+#>
     [CmdletBinding()]
     param
     (

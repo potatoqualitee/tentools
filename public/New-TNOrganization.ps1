@@ -1,26 +1,31 @@
-function New-TNOrganization {
+﻿function New-TNOrganization {
     <#
     .SYNOPSIS
-        Adds an organization
+        Creates new organizations
 
     .DESCRIPTION
-        Adds an organization
+        Creates new organizations
+
+    .PARAMETER SessionObject
+        Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
 
     .PARAMETER Name
-        Parameter description
+        The name of the target organization
 
     .PARAMETER ZoneSelection
-        Parameter description
+        Description for ZoneSelection
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS>  New-TNOrganization -Name "Acme Corp"
+        PS C:\> New-TNOrganization -Name "Acme Corp"
 
-    #>
+        Creates a new organization named Acme Corp
+
+#>
     [CmdletBinding()]
     param
     (

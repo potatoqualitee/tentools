@@ -1,4 +1,20 @@
-function ConvertFrom-TNRestResponse {
+﻿function ConvertFrom-TNRestResponse {
+<#
+    .SYNOPSIS
+        Converts Nessus and tenable.sc responses to a readable format
+
+    .DESCRIPTION
+        Converts Nessus and tenable.sc responses to a readable format
+        
+    .PARAMETER InputObject
+        Description for InputObject
+        
+    .EXAMPLE
+        PS C:\> ConvertFrom-TNRestResponse
+
+        Converts Nessus and tenable.sc responses to a readable format
+        
+#>
     [CmdletBinding()]
     param
     (

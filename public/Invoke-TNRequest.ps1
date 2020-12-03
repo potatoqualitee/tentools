@@ -1,4 +1,43 @@
-function Invoke-TNRequest {
+﻿function Invoke-TNRequest {
+<#
+    .SYNOPSIS
+        Invokes a list of requests
+
+    .DESCRIPTION
+        Invokes a list of requests
+        
+    .PARAMETER SessionObject
+        Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
+        
+    .PARAMETER Parameter
+        Description for Parameter
+        
+    .PARAMETER Path
+        Description for Path
+        
+    .PARAMETER Method
+        Description for Method
+        
+    .PARAMETER OutFile
+        Description for OutFile
+        
+    .PARAMETER ContentType
+        Description for ContentType
+        
+    .PARAMETER InFile
+        Description for InFile
+        
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
+        
+    .EXAMPLE
+        PS C:\> Invoke-TNRequest
+
+        Invokes a list of requests
+        
+#>
     [CmdletBinding()]
     Param
     (

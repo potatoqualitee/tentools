@@ -131,6 +131,9 @@
         'Suspend-TNScan',
         'Test-TNAccessibility',
         'Wait-TNServerReady'
+        'Add-TNScanner',
+        'Remove-TNFolder',
+        'Rename-TNFolder'
     )
 
     # Cmdlets to export from this module

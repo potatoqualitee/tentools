@@ -1,37 +1,33 @@
-function Remove-TNGroupUser {
+﻿function Remove-TNGroupUser {
     <#
     .SYNOPSIS
-        Removes a Nessus group user
+        Removes a list of group users
 
     .DESCRIPTION
+        Removes a list of group users
+
         Can be used to clear a previously defined, scan report altering rule
 
-    .PARAMETER Id
-        ID number of the rule which would you like removed/deleted
+    .PARAMETER SessionObject
+        Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
+
+    .PARAMETER GroupId
+        The ID of the target group
+
+    .PARAMETER UserId
+        The ID of the target user
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
-        This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
-        Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        Remove-TNGroupUser -Id 500
-        Will delete a group user with an ID of 500
+        PS C:\> Remove-TNGroupUser -Id 500
 
-    .EXAMPLE
-        Get-TNPluginRule | Remove-TNGroupUser
-        Will delete all rules
+        Deletes the group user with an ID of 500
 
-    .EXAMPLE
-        Get-TNPluginRule | ? {$_.Host -eq 'myComputer'} | Remove-TNGroupUser
-        Will find all group users that match the computer name, and delete them
-
-    .INPUTS
-        Can accept pipeline data from Get-TNPluginRule
-
-    .OUTPUTS
-        Empty, unless an error is received from the server
-    #>
+#>
     [CmdletBinding()]
     param
     (
