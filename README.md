@@ -28,16 +28,34 @@ Please rename the folders from `name-master` to `name` and store in your `$Env:P
 
 ## Usage scenarios
 
-- Do this
-- Do that
-- Do this
+- Deploy standardized implementations
+- Manage Nessus and tenable.sc at scale
+- Manage some objects that are not available in the web interface
 
 ## Usage examples
 
-Bunch of examples
+Initalize a newly setup Nessus server with a license and username
 
 ```powershell
-Connect-TNServer -ComputerName acas -Credential acasadmin
+Initialize-TNServer -ComputerName securitycenter01 -Path $home\Downloads\nessus.license -Credential admin
+```
+
+Get a list of Organizations and Repositories using an Administrator account then create an Organization
+
+```powershell
+$admin = Get-Credential acasadmin
+Connect-TNServer -ComputerName acas -Credential $admin
+Get-TNOrganization
+Get-TNRepository
+New-TNOrganization -Name "Acme Corp"
+```
+
+Get a list of Scans using an Security Manager account
+
+```powershell
+$cred = Get-Credential secman
+Connect-TNServer -ComputerName acas -Credential $cred
+Get-TNScan
 ```
 
 ## Support
