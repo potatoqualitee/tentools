@@ -67,7 +67,7 @@ Get-TNScan
 
 Some commands are not supported on all platforms. Here is is legend to help.
 
-| Get-Command | Nessus | tenable.sc
+| Command | Nessus | tenable.sc
 | --- | --- | --- |
 | Add-TNGroupUser | x | |
 | Add-TNPluginRule | x | |
