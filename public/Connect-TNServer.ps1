@@ -1,39 +1,58 @@
 ﻿function Connect-TNServer {
-<#
+    <#
     .SYNOPSIS
         Connects to a Nessus or tenable.sc server
 
     .DESCRIPTION
         Connects to a Nessus or tenable.sc server
-        
+
     .PARAMETER ComputerName
         The network name or IP address of the Nessus or tenable.sc server
-        
+
     .PARAMETER Port
         The port of the Nessus or tenable.sc server. Defaults to 8834 which is the default port for Nessus.
-        
+
     .PARAMETER Credential
-        The credential object (from Get-Credential) used to log into the target server. Specifies a user account that has permission to send the request. 
-        
+        The credential object (from Get-Credential) used to log into the target server. Specifies a user account that has permission to send the request.
+
     .PARAMETER UseDefaultCredential
         Indicates that the command uses the credentials of the current user to send the web request. This can't be used with Authentication or Credential and may not be supported on all platforms.
-        
+
     .PARAMETER AcceptSelfSignedCert
         Accept self-signed certs
-        
+
     .PARAMETER Type
         The type of server
-        
+
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
         This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
-        
-    .EXAMPLE
-        PS C:\> Connect-TNServer
 
-        Connects to a Nessus or tenable.sc server
-        
+    .EXAMPLE
+        PS C:\> $secman = Get-Credential secman
+        PS C:\> Connect-TNServer -ComputerName securitycenter -Type tenable.sc -Credential $secman
+
+        Connects to a tenble.sc host with the hostname "securitycenter" using the secman username.
+
+        This is similar to going to https://securitycenter
+
+
+    .EXAMPLE
+        PS C:\> Connect-TNServer -ComputerName nessus -Credential admin
+
+        Connects to a Nessus host with the hostname "nessus" using the admin username.
+
+        This is similar to going to https://nessus:8834
+
+
+    .EXAMPLE
+        PS C:\> Connect-TNServer -ComputerName nessus -Port 8080 -Credential admin
+
+        Connects to a Nessus host with the hostname "nessus" and the port 8080 using the admin username.
+
+        This is similar to going to https://nessus:8080
+
 #>
     [CmdletBinding()]
     param

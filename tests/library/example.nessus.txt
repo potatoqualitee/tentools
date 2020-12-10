@@ -101,7 +101,7 @@ http://www.nessus.org/u?0cb17c10</see_also><risk_factor>Medium</risk_factor><scr
   Installed version : 27.0.0.187
   Fixed version     : 28.0.0.126
 </plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows" pluginName="Adobe Flash Player &lt;= 30.0.0.113 (APSB18-24)" pluginID="110979" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/07/10</patch_publication_date><plugin_modification_date>2018/08/16</plugin_modification_date><plugin_publication_date>2018/07/10</plugin_publication_date><plugin_type>local</plugin_type><solution>Upgrade to Adobe Flash Player version 30.0.0.134 or later.</solution><vuln_publication_date>2018/07/10</vuln_publication_date><cvss3_vector>AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H</cvss3_vector><cvss_vector>AV:N/AC:M/Au:N/C:C/I:C/A:C</cvss_vector><description>The version of Adobe Flash Player installed on the remote Windows
-host is equal or prior to version 30.0.0.113. It is therefore 
+host is equal or prior to version 30.0.0.113. It is therefore
 affected by multiple vulnerabilities.</description><synopsis>The remote Windows host has a browser plugin installed that is
 affected by multiple vulnerabilities.</synopsis><cve>CVE-2018-5007</cve><cve>CVE-2018-5008</cve><bid>104698</bid><see_also>https://helpx.adobe.com/security/products/flash-player/apsb18-24.html
 http://www.nessus.org/u?0cb17c10</see_also><risk_factor>High</risk_factor><script_version>1.4</script_version><plugin_output>
@@ -923,9 +923,9 @@ The following services must be started manually :
     Log on as : NT AUTHORITY\NetworkService
     Executable path : C:\Windows\system32\locator.exe
 
-  SCPolicySvc startup parameters :
+  SCpoliciesvc startup parameters :
     Display name : Smart Card Removal Policy
-    Service name : SCPolicySvc
+    Service name : SCpoliciesvc
     Log on as : LocalSystem
     Executable path : C:\Windows\system32\svchost.exe -k netsvcs
     Dependencies : RpcSs/
@@ -1620,7 +1620,7 @@ The following users have never changed their passwords :
 Note that, in addition to the Administrator, Guest, and Kerberos
 accounts, Nessus has enumerated only those domain users with UIDs
 between 1000 and 1200. To use a different range, edit the scan policy
-and change the 'Start UID' and/or 'End UID' preferences for 
+and change the 'Start UID' and/or 'End UID' preferences for
 'SMB use domain SID to enumerate users' setting, and then re-run the scan.
 </plugin_output></ReportItem><ReportItem severity="4" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="KB4093110: Security update for Adobe Flash Player (April 2018)" pluginID="108962" protocol="tcp" svc_name="cifs"><cvss_base_score>10.0</cvss_base_score><cvss3_base_score>9.8</cvss3_base_score><exploit_available>true</exploit_available><exploited_by_malware>true</exploited_by_malware><patch_publication_date>2018/04/10</patch_publication_date><plugin_modification_date>2018/05/10</plugin_modification_date><plugin_publication_date>2018/04/10</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released KB4093110 to address this issue.</solution><vuln_publication_date>2018/04/10</vuln_publication_date><cvss3_vector>AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</cvss3_vector><cvss_vector>AV:N/AC:L/Au:N/C:C/I:C/A:C</cvss_vector><description>The remote Windows host is missing security update KB4093110. It is,
 therefore, affected by multiple remote code execution vulnerabilities
@@ -1758,7 +1758,7 @@ vulnerabilities.</synopsis><cve>CVE-2016-7230</cve><cve>CVE-2016-7228</cve><cve>
     Fixed version     : 16.0.4456.1003
 
 </plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows" pluginName="Adobe Flash Player &lt;= 30.0.0.134 (APSB18-25)" pluginID="111683" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.0</cvss3_base_score><patch_publication_date>2018/08/14</patch_publication_date><plugin_modification_date>2018/08/16</plugin_modification_date><plugin_publication_date>2018/08/14</plugin_publication_date><plugin_type>local</plugin_type><solution>Upgrade to Adobe Flash Player version 30.0.0.154 or later.</solution><vuln_publication_date>2018/08/14</vuln_publication_date><cvss3_vector>AV:N/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:H</cvss3_vector><cvss_vector>AV:N/AC:M/Au:N/C:C/I:C/A:C</cvss_vector><description>The version of Adobe Flash Player installed on the remote Windows
-host is equal or prior to version 30.0.0.134. It is therefore 
+host is equal or prior to version 30.0.0.134. It is therefore
 affected by multiple vulnerabilities.</description><synopsis>The remote Windows host has a browser plugin installed that is
 affected by multiple vulnerabilities.</synopsis><cve>CVE-2018-12824</cve><cve>CVE-2018-12825</cve><cve>CVE-2018-12826</cve><cve>CVE-2018-12827</cve><cve>CVE-2018-12828</cve><bid>105066</bid><bid>105071</bid><bid>105070</bid><xref>IAVA:2018-A-0249</xref><see_also>https://helpx.adobe.com/security/products/flash-player/apsb18-25.html
 http://www.nessus.org/u?0cb17c10</see_also><risk_factor>High</risk_factor><script_version>1.3</script_version><plugin_output>
@@ -1772,7 +1772,7 @@ programs that have run with the prefetch and superfetch mechanisms
 enabled.</description><synopsis>Nessus was able to retrieve the Windows prefetch folder file list.</synopsis><see_also>http://www.nessus.org/u?0ab4c9af
 http://www.nessus.org/u?d6b15983
 http://www.forensicswiki.org/wiki/Prefetch</see_also><risk_factor>None</risk_factor><script_version>$Revision: 1.1 $</script_version><plugin_output>+ HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters
-rootdirpath : 
+rootdirpath :
 enableprefetcher : 3
 
 + Prefetch file list :
@@ -2125,7 +2125,7 @@ http://www.nessus.org/u?0cb17c10</see_also><risk_factor>High</risk_factor><scrip
   Installed version : 27.0.0.187
   Fixed version     : 28.0.0.161
 </plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows" pluginName="Adobe Flash Player &lt;= 28.0.0.161 (APSB18-05)" pluginID="108281" protocol="tcp" svc_name="cifs"><cvss_base_score>7.6</cvss_base_score><cvss3_base_score>7.5</cvss3_base_score><patch_publication_date>2018/03/13</patch_publication_date><plugin_modification_date>2018/05/16</plugin_modification_date><plugin_publication_date>2018/03/13</plugin_publication_date><plugin_type>local</plugin_type><solution>Upgrade to Adobe Flash Player version 29.0.0.113 or later.</solution><vuln_publication_date>2018/03/13</vuln_publication_date><cvss3_vector>AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:H</cvss3_vector><cvss_vector>AV:N/AC:H/Au:N/C:C/I:C/A:C</cvss_vector><description>The version of Adobe Flash Player installed on the remote Windows
-host is equal or prior to version 28.0.0.161. It is therefore 
+host is equal or prior to version 28.0.0.161. It is therefore
 affected by multiple vulnerabilities.</description><synopsis>The remote Windows host has a browser plugin installed that is
 affected by multiple vulnerabilities.</synopsis><cve>CVE-2018-4919</cve><cve>CVE-2018-4920</cve><see_also>https://helpx.adobe.com/security/products/flash-player/apsb18-05.html
 http://www.nessus.org/u?0cb17c10</see_also><risk_factor>High</risk_factor><script_version>1.4</script_version><plugin_output>
@@ -2145,7 +2145,7 @@ NameServer: 192.168.16.1
 the remote host.</description><synopsis>Nessus was able to enumerate recently opened files on the remote host.</synopsis><see_also>http://www.4n6k.com/2014/02/forensics-quickie-pinpointing-recent.html</see_also><risk_factor>None</risk_factor><script_version>1.6</script_version><plugin_output>C:\\Users\defaultuser0\AppData\Roaming\Microsoft\Windows\Recent\AutomaticDestinations\f01b4d95cf55d32a.automaticDestinations-ms
 
 Recent files found in registry and appdata attached.
-</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Excel Products (April 2018)" pluginID="108969" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/04/10</patch_publication_date><plugin_modification_date>2018/05/18</plugin_modification_date><plugin_publication_date>2018/04/10</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Excel Products (April 2018)" pluginID="108969" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/04/10</patch_publication_date><plugin_modification_date>2018/05/18</plugin_modification_date><plugin_publication_date>2018/04/10</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4018353
   -KB4018350
   -KB4018337
@@ -2172,7 +2172,7 @@ http://www.nessus.org/u?4de9b158</see_also><risk_factor>High</risk_factor><scrip
     Remote version    : 16.0.4266.1001
     Fixed version     : 16.0.4678.1000
 
-</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Office Products (May 2018)" pluginID="109614" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/05/08</patch_publication_date><plugin_modification_date>2018/05/10</plugin_modification_date><plugin_publication_date>2018/05/08</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Office Products (May 2018)" pluginID="109614" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/05/08</patch_publication_date><plugin_modification_date>2018/05/10</plugin_modification_date><plugin_publication_date>2018/05/08</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4022137
   -KB2899590
   -KB3172436
@@ -2258,7 +2258,7 @@ http://www.nessus.org/u?314d33a5</see_also><risk_factor>High</risk_factor><scrip
     Remote version    : 16.0.4266.1001
     Fixed version     : 16.0.4627.1000
 
-</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Word Products (September 2018)" pluginID="117426" protocol="tcp" svc_name="unknown"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/09/11</patch_publication_date><plugin_modification_date>2018/09/11</plugin_modification_date><plugin_publication_date>2018/09/11</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Word Products (September 2018)" pluginID="117426" protocol="tcp" svc_name="unknown"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/09/11</patch_publication_date><plugin_modification_date>2018/09/11</plugin_modification_date><plugin_publication_date>2018/09/11</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4032246
   -KB4092447</solution><vuln_publication_date>2018/09/11</vuln_publication_date><cvss3_vector>AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H</cvss3_vector><cvss_vector>AV:N/AC:M/Au:N/C:C/I:C/A:C</cvss_vector><description>The Microsoft Word Products are missing a security update.
 It is, therefore, affected by the following vulnerability :
@@ -2323,7 +2323,7 @@ multiple vulnerabilities :
 
   - A remote code execution vulnerability exists in the way
     that Microsoft Outlook parses specially crafted email
-    messages. An attacker who successfully exploited the 
+    messages. An attacker who successfully exploited the
     vulnerability could take control of an affected system.
     (CVE-2017-8663)</description><synopsis>The version of Outlook installed on the remote host is affected by multiple vulnerabilities.</synopsis><cve>CVE-2017-0106</cve><cve>CVE-2017-8663</cve><cve>CVE-2017-8508</cve><cve>CVE-2017-8507</cve><cve>CVE-2017-8506</cve><cve>CVE-2017-0204</cve><cve>CVE-2017-8572</cve><cve>CVE-2017-8571</cve><bid>97458</bid><bid>97413</bid><bid>100004</bid><bid>98811</bid><bid>98827</bid><bid>99453</bid><bid>98828</bid><bid>99452</bid><xref>MSKB:4011110</xref><xref>MSFT:MS17-4011110</xref><xref>MSFT:MS17-4011089</xref><xref>MSKB:4011091</xref><xref>MSFT:MS17-4011091</xref><xref>MSKB:4011090</xref><xref>MSFT:MS17-4011090</xref><xref>MSKB:4011089</xref><see_also>http://www.nessus.org/u?8ac9b313
 http://www.nessus.org/u?8f4ab525
@@ -2596,7 +2596,7 @@ therefore, affected by multiple vulnerabilities :
     (CVE-2017-8576)
 
    * note that a registry value must be added to enable the
-     fix for CVE-2017-8529. if the patch is installed but 
+     fix for CVE-2017-8529. if the patch is installed but
      not enabled, the registry key needed will be detailed
      in the output below.</description><synopsis>The remote Windows host is affected by multiple vulnerabilities.</synopsis><cve>CVE-2017-0219</cve><cve>CVE-2017-0299</cve><cve>CVE-2017-0215</cve><cve>CVE-2017-0216</cve><cve>CVE-2017-0218</cve><cve>CVE-2017-0291</cve><cve>CVE-2017-8533</cve><cve>CVE-2017-0292</cve><cve>CVE-2017-8532</cve><cve>CVE-2017-8576</cve><cve>CVE-2017-8498</cve><cve>CVE-2017-8531</cve><cve>CVE-2017-8575</cve><cve>CVE-2017-0294</cve><cve>CVE-2017-8497</cve><cve>CVE-2017-8530</cve><cve>CVE-2017-0295</cve><cve>CVE-2017-0296</cve><cve>CVE-2017-0297</cve><cve>CVE-2017-8579</cve><cve>CVE-2017-0298</cve><cve>CVE-2017-8492</cve><cve>CVE-2017-8491</cve><cve>CVE-2017-8490</cve><cve>CVE-2017-0173</cve><cve>CVE-2017-8496</cve><cve>CVE-2017-8494</cve><cve>CVE-2017-8493</cve><cve>CVE-2017-0300</cve><cve>CVE-2017-8549</cve><cve>CVE-2017-8544</cve><cve>CVE-2017-8466</cve><cve>CVE-2017-8543</cve><cve>CVE-2017-8465</cve><cve>CVE-2017-8464</cve><cve>CVE-2017-8504</cve><cve>CVE-2017-8548</cve><cve>CVE-2017-8547</cve><cve>CVE-2017-8468</cve><cve>CVE-2017-8462</cve><cve>CVE-2017-8460</cve><cve>CVE-2017-8518</cve><cve>CVE-2017-8517</cve><cve>CVE-2017-8478</cve><cve>CVE-2017-8477</cve><cve>CVE-2017-8554</cve><cve>CVE-2017-8476</cve><cve>CVE-2017-8553</cve><cve>CVE-2017-8475</cve><cve>CVE-2017-8515</cve><cve>CVE-2017-8479</cve><cve>CVE-2017-8470</cve><cve>CVE-2017-8474</cve><cve>CVE-2017-8473</cve><cve>CVE-2017-0193</cve><cve>CVE-2017-8471</cve><cve>CVE-2017-0288</cve><cve>CVE-2017-0289</cve><cve>CVE-2017-8529</cve><cve>CVE-2017-8527</cve><cve>CVE-2017-8489</cve><cve>CVE-2017-8522</cve><cve>CVE-2017-0282</cve><cve>CVE-2017-0283</cve><cve>CVE-2017-0284</cve><cve>CVE-2017-0285</cve><cve>CVE-2017-8524</cve><cve>CVE-2017-0287</cve><cve>CVE-2017-8523</cve><cve>CVE-2017-8481</cve><cve>CVE-2017-8480</cve><cve>CVE-2017-8485</cve><cve>CVE-2017-8484</cve><cve>CVE-2017-8483</cve><cve>CVE-2017-8482</cve><bid>98819</bid><bid>98818</bid><bid>98821</bid><bid>98820</bid><bid>98953</bid><bid>98824</bid><bid>98955</bid><bid>98826</bid><bid>98954</bid><bid>99210</bid><bid>99212</bid><bid>99215</bid><bid>98833</bid><bid>98835</bid><bid>98837</bid><bid>98836</bid><bid>98839</bid><bid>98840</bid><bid>98843</bid><bid>98845</bid><bid>98844</bid><bid>98847</bid><bid>98846</bid><bid>98849</bid><bid>98848</bid><bid>98850</bid><bid>98853</bid><bid>98852</bid><bid>98855</bid><bid>98854</bid><bid>98857</bid><bid>98856</bid><bid>98859</bid><bid>98858</bid><bid>98860</bid><bid>98863</bid><bid>98862</bid><bid>98865</bid><bid>98867</bid><bid>98869</bid><bid>98870</bid><bid>98873</bid><bid>98879</bid><bid>98878</bid><bid>98880</bid><bid>98882</bid><bid>98885</bid><bid>98884</bid><bid>98887</bid><bid>98886</bid><bid>98892</bid><bid>98895</bid><bid>98897</bid><bid>98896</bid><bid>98898</bid><bid>98901</bid><bid>98900</bid><bid>98903</bid><bid>98902</bid><bid>98904</bid><bid>98914</bid><bid>98918</bid><bid>98920</bid><bid>98923</bid><bid>98922</bid><bid>98926</bid><bid>98929</bid><bid>98928</bid><bid>98930</bid><bid>98933</bid><bid>98932</bid><bid>98940</bid><bid>98942</bid><xref>MSKB:4022715</xref><xref>MSFT:MS17-4022715</xref><see_also>http://www.nessus.org/u?4ac6572f
 http://www.nessus.org/u?1f6a3c24</see_also><risk_factor>Critical</risk_factor><script_version>1.21</script_version><plugin_output>
@@ -2691,7 +2691,7 @@ into Microsoft wireless mouse devices through the use of USB dongles.</descripti
 filtering.</synopsis><xref>MSKB:3152550</xref><see_also>https://technet.microsoft.com/en-us/library/security/3152550</see_also><risk_factor>None</risk_factor><script_version>$Revision: 1.2 $</script_version><plugin_output>Nessus has determined that the remote Windows host is missing files
 that are created upon installation of the update corresponding to
 Microsoft Security Advisory 3152550.</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows" pluginName="Adobe Flash Player &lt;= 29.0.0.140 (APSB18-16)" pluginID="109601" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/05/08</patch_publication_date><plugin_modification_date>2018/08/10</plugin_modification_date><plugin_publication_date>2018/05/08</plugin_publication_date><plugin_type>local</plugin_type><solution>Upgrade to Adobe Flash Player version 29.0.0.171 or later.</solution><vuln_publication_date>2018/05/08</vuln_publication_date><cvss3_vector>AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H</cvss3_vector><cvss_vector>AV:N/AC:M/Au:N/C:C/I:C/A:C</cvss_vector><description>The version of Adobe Flash Player installed on the remote Windows
-host is equal or prior to version 29.0.0.140. It is therefore 
+host is equal or prior to version 29.0.0.140. It is therefore
 affected by multiple vulnerabilities.</description><synopsis>The remote Windows host has a browser plugin installed that is
 affected by multiple vulnerabilities.</synopsis><cve>CVE-2018-4944</cve><bid>104101</bid><see_also>https://helpx.adobe.com/security/products/flash-player/apsb18-16.html
 http://www.nessus.org/u?0cb17c10</see_also><risk_factor>High</risk_factor><script_version>1.5</script_version><plugin_output>
@@ -3031,7 +3031,7 @@ c:\windows\system32,@elscore.dll,-1 : Microsoft Language Detection
 @%systemroot%\system32\icsvcext.dll,-602 : Provides a platform for communication between the virtual machine and the operating system running on the physical computer.
 @%windir%\system32\systemeventsbrokerserver.dll,-1002 : Coordinates execution of background work for WinRT application. If this service is stopped or disabled, then background work might not be triggered.
 @%systemroot%\system32\shsvcs.dll,-12289 : Provides notifications for AutoPlay hardware events.
-@c:\progra~1\common~1\micros~1\office16\oregres.dll,-438 : Telemetry Log for Office 2016 
+@c:\progra~1\common~1\micros~1\office16\oregres.dll,-438 : Telemetry Log for Office 2016
 @%systemroot%\system32\dhcpcore.dll,-101 : Registers and updates IP addresses and DNS records for this computer. If this service is stopped, this computer will not receive dynamic IP addresses and DNS updates. If this service is disabled, any services that explicitly depend on it will fail to start.
 @%systemroot%\system32\powrprof.dll,-14 : Automatically balances performance with energy consumption on capable hardware.
 @%systemroot%\system32\xblgamesave.dll,-100 : Xbox Live Game Save
@@ -3135,7 +3135,7 @@ The following user accounts have been disabled :
 Note that, in addition to the Administrator, Guest, and Kerberos
 accounts, Nessus has enumerated only those domain users with UIDs
 between 1000 and 1200. To use a different range, edit the scan policy
-and change the 'Start UID' and/or 'End UID' preferences for 
+and change the 'Start UID' and/or 'End UID' preferences for
 'SMB use domain SID to enumerate users' setting, and then re-run the scan.
 </plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="KB4074595: Security update for Adobe Flash Player (February 2018)" pluginID="106655" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss_temporal_score>8.1</cvss_temporal_score><cvss3_base_score>8.8</cvss3_base_score><cvss3_temporal_score>8.4</cvss3_temporal_score><exploit_available>true</exploit_available><exploited_by_malware>true</exploited_by_malware><patch_publication_date>2018/02/06</patch_publication_date><plugin_modification_date>2018/07/30</plugin_modification_date><plugin_publication_date>2018/02/07</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released KB4074595 to address this issue.</solution><vuln_publication_date>2018/02/01</vuln_publication_date><cvss3_temporal_vector>E:H/RL:O/RC:C</cvss3_temporal_vector><cvss3_vector>AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H</cvss3_vector><cvss_temporal_vector>E:H/RL:OF/RC:C</cvss_temporal_vector><cvss_vector>AV:N/AC:M/Au:N/C:C/I:C/A:C</cvss_vector><description>The remote Windows host is missing security update KB4074595. It is,
 therefore, affected by multiple remote code execution vulnerabilities
@@ -3329,7 +3329,7 @@ It is, therefore, affected by multiple vulnerabilities :
     addresses the vulnerability by ensuring that .NET
     Framework components correctly validate certificates.
     (CVE-2018-8356)</description><synopsis>The remote Windows host is affected by multiple vulnerabilities.</synopsis><cve>CVE-2018-8308</cve><cve>CVE-2018-8309</cve><cve>CVE-2018-8290</cve><cve>CVE-2018-8280</cve><cve>CVE-2018-8291</cve><cve>CVE-2018-8260</cve><cve>CVE-2018-8282</cve><cve>CVE-2018-8284</cve><cve>CVE-2018-8296</cve><cve>CVE-2018-8242</cve><cve>CVE-2018-8275</cve><cve>CVE-2018-8287</cve><cve>CVE-2018-0949</cve><cve>CVE-2018-8222</cve><cve>CVE-2018-8288</cve><cve>CVE-2018-8125</cve><cve>CVE-2018-8202</cve><cve>CVE-2018-8356</cve><cve>CVE-2018-8313</cve><cve>CVE-2018-8304</cve><cve>CVE-2018-8206</cve><cve>CVE-2018-8307</cve><bid>104642</bid><bid>104644</bid><bid>104617</bid><bid>104648</bid><bid>104620</bid><bid>104623</bid><bid>104622</bid><bid>104629</bid><bid>104631</bid><bid>104665</bid><bid>104632</bid><bid>104664</bid><bid>104635</bid><bid>104667</bid><bid>104634</bid><bid>104666</bid><bid>104637</bid><bid>104669</bid><bid>104636</bid><bid>104668</bid><bid>104638</bid><bid>104670</bid><xref>MSFT:MS18-4338814</xref><xref>MSKB:4338814</xref><see_also>http://www.nessus.org/u?6a189799</see_also><risk_factor>High</risk_factor><script_version>1.3</script_version><plugin_output>
-The remote host is missing one of the following rollup KBs : 
+The remote host is missing one of the following rollup KBs :
   - 4338814
 
 C:\Windows\system32\ntoskrnl.exe has not been patched.
@@ -3349,7 +3349,7 @@ VaultSvc (@%SystemRoot%\system32\vaultsvc.dll,-1003)
 
 </plugin_output></ReportItem><ReportItem severity="0" port="0" pluginFamily="Windows" pluginName="WMI Anti-spyware Enumeration" pluginID="45050" protocol="tcp" svc_name="general"><plugin_modification_date>2018/08/22</plugin_modification_date><plugin_publication_date>2010/03/12</plugin_publication_date><plugin_type>local</plugin_type><solution>n/a</solution><description>By connecting to the remote Windows host with the supplied
 credentials, this plugin uses WMI to enumerate anti-spyware software
-installed on it. 
+installed on it.
 
 Note that this plugin extracts this information from the
 'root\securitycenter' and 'root\securitycenter2' WMI namespaces, which
@@ -3357,7 +3357,7 @@ are only available in Windows desktop operating systems such as XP,
 Vista and Windows 7.</description><synopsis>It is possible to obtain the list of anti-spyware software installed
 on the remote Windows host.</synopsis><risk_factor>None</risk_factor><script_version>$Revision: 1.84 $</script_version><plugin_output>
 Here is the list of anti-spyware software registered under the
-'root\SecurityCenter2' WMI namespace : 
+'root\SecurityCenter2' WMI namespace :
 
 + Windows Defender
 
@@ -3373,7 +3373,7 @@ Here is a list of encryptable volumes available on the remote system :
 + DriveLetter C:
 
   - DeviceID : \\?\Volume{8c2e2a22-0000-0000-0000-501f00000000}\
-  - PersistentVolumeID : 
+  - PersistentVolumeID :
   - ProtectionStatus : OFF
 </plugin_output></ReportItem><ReportItem severity="0" port="445" pluginFamily="Windows" pluginName="Microsoft Windows Startup Software Enumeration" pluginID="58452" protocol="tcp" svc_name="cifs"><plugin_modification_date>2015/01/12</plugin_modification_date><plugin_publication_date>2012/03/23</plugin_publication_date><plugin_type>local</plugin_type><solution>Review the list of applications and remove any that are not compliant
 with your organization's acceptable use and security policies.</solution><description>This plugin lists software that is configured to run on system startup
@@ -3438,7 +3438,7 @@ http://www.nessus.org/u?625cb458
 http://www.nessus.org/u?77405e03
 http://www.nessus.org/u?dd34e6e6</see_also><risk_factor>Medium</risk_factor><script_version>1.1</script_version><plugin_output>
 Microsoft .NET Framework 4.7
-The remote host is missing one of the following rollup KBs : 
+The remote host is missing one of the following rollup KBs :
 
 Cumulative
   - 4457131
@@ -3701,7 +3701,7 @@ https://docs.docker.com/docker-for-windows/edge-release-notes/</see_also><risk_f
   Installed version : 17.06.1-ce-win24
   Fixed version     : 18.06.0-ce-win70
 </plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows" pluginName="Adobe Flash Player &lt;= 29.0.0.171 (APSB18-19)" pluginID="110397" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><exploit_available>true</exploit_available><exploited_by_malware>true</exploited_by_malware><patch_publication_date>2018/06/07</patch_publication_date><plugin_modification_date>2018/07/13</plugin_modification_date><plugin_publication_date>2018/06/07</plugin_publication_date><plugin_type>local</plugin_type><solution>Upgrade to Adobe Flash Player version 30.0.0.113 or later.</solution><vuln_publication_date>2018/06/07</vuln_publication_date><cvss3_vector>AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H</cvss3_vector><cvss_vector>AV:N/AC:M/Au:N/C:C/I:C/A:C</cvss_vector><description>The version of Adobe Flash Player installed on the remote Windows
-host is equal or prior to version 29.0.0.171. It is therefore 
+host is equal or prior to version 29.0.0.171. It is therefore
 affected by multiple vulnerabilities.</description><synopsis>The remote Windows host has a browser plugin installed that is
 affected by multiple vulnerabilities.</synopsis><cve>CVE-2018-5002</cve><cve>CVE-2018-5001</cve><cve>CVE-2018-5000</cve><cve>CVE-2018-4945</cve><see_also>https://helpx.adobe.com/security/products/flash-player/apsb18-19.html
 http://www.nessus.org/u?0cb17c10</see_also><risk_factor>High</risk_factor><script_version>1.4</script_version><plugin_output>
@@ -3720,232 +3720,232 @@ An attacker may use this feature to gain better knowledge of the
 remote host.</description><synopsis>It is possible to enumerate remote services.</synopsis><risk_factor>None</risk_factor><script_version>$Revision: 1.42 $</script_version><plugin_output>
 Active Services :
 
-Application Information [ Appinfo ] 
-AppX Deployment Service (AppXSVC) [ AppXSvc ] 
-Windows Audio Endpoint Builder [ AudioEndpointBuilder ] 
-Windows Audio [ Audiosrv ] 
-Base Filtering Engine [ BFE ] 
-Background Tasks Infrastructure Service [ BrokerInfrastructure ] 
-Computer Browser [ Browser ] 
-Connected Devices Platform Service [ CDPSvc ] 
-Docker for Windows Service [ com.docker.service ] 
-COM+ System Application [ COMSysApp ] 
-CoreMessaging [ CoreMessagingRegistrar ] 
-Cryptographic Services [ CryptSvc ] 
-DCOM Server Process Launcher [ DcomLaunch ] 
-DHCP Client [ Dhcp ] 
-Connected User Experiences and Telemetry [ DiagTrack ] 
-DNS Client [ Dnscache ] 
-Diagnostic Policy Service [ DPS ] 
-Data Sharing Service [ DsSvc ] 
-Windows Event Log [ EventLog ] 
-COM+ Event System [ EventSystem ] 
-Windows Font Cache Service [ FontCache ] 
-IP Helper [ iphlpsvc ] 
-CNG Key Isolation [ KeyIso ] 
-Server [ LanmanServer ] 
-Workstation [ LanmanWorkstation ] 
-Geolocation Service [ lfsvc ] 
-Windows License Manager Service [ LicenseManager ] 
-TCP/IP NetBIOS Helper [ lmhosts ] 
-Local Session Manager [ LSM ] 
-Windows Firewall [ MpsSvc ] 
-Distributed Transaction Coordinator [ MSDTC ] 
-Network Connection Broker [ NcbService ] 
-Netlogon [ Netlogon ] 
-Network Connections [ Netman ] 
-Network List Service [ netprofm ] 
-Network Location Awareness [ NlaSvc ] 
-Network Store Interface Service [ nsi ] 
-Program Compatibility Assistant Service [ PcaSvc ] 
-Plug and Play [ PlugPlay ] 
-IPsec Policy Agent [ PolicyAgent ] 
-Power [ Power ] 
-User Profile Service [ ProfSvc ] 
-RPC Endpoint Mapper [ RpcEptMapper ] 
-Remote Procedure Call (RPC) [ RpcSs ] 
-Security Accounts Manager [ SamSs ] 
-Task Scheduler [ Schedule ] 
-Secondary Logon [ seclogon ] 
-System Event Notification Service [ SENS ] 
-Shell Hardware Detection [ ShellHWDetection ] 
-Print Spooler [ Spooler ] 
-SSDP Discovery [ SSDPSRV ] 
-State Repository Service [ StateRepository ] 
-Storage Service [ StorSvc ] 
-Superfetch [ SysMain ] 
-System Events Broker [ SystemEventsBroker ] 
-Tenable Nessus Agent [ Tenable Nessus Agent ] 
-Themes [ Themes ] 
-Tile Data model server [ tiledatamodelsvc ] 
-Time Broker [ TimeBrokerSvc ] 
-Distributed Link Tracking Client [ TrkWks ] 
-Windows Modules Installer [ TrustedInstaller ] 
-User Manager [ UserManager ] 
-Credential Manager [ VaultSvc ] 
-VMware Alias Manager and Ticket Service [ VGAuthService ] 
-Hyper-V Host Compute Service [ vmcompute ] 
-Hyper-V Virtual Machine Management [ vmms ] 
-VMware Tools [ VMTools ] 
-Windows Time [ W32Time ] 
-Windows Connection Manager [ Wcmsvc ] 
-Diagnostic Service Host [ WdiServiceHost ] 
-Diagnostic System Host [ WdiSystemHost ] 
-Windows Defender Network Inspection Service [ WdNisSvc ] 
-Windows Defender Service [ WinDefend ] 
-WinHTTP Web Proxy Auto-Discovery Service [ WinHttpAutoProxySvc ] 
-Windows Management Instrumentation [ Winmgmt ] 
-Windows Push Notifications System Service [ WpnService ] 
-Security Center [ wscsvc ] 
-Windows Search [ WSearch ] 
-Windows Update [ wuauserv ] 
-Windows Driver Foundation - User-mode Driver Framework [ wudfsvc ] 
-CDPUserSvc_abc4feed [ CDPUserSvc_abc4feed ] 
-Sync Host_abc4feed [ OneSyncSvc_abc4feed ] 
-Contact Data_abc4feed [ PimIndexMaintenanceSvc_abc4feed ] 
-User Data Storage_abc4feed [ UnistoreSvc_abc4feed ] 
-User Data Access_abc4feed [ UserDataSvc_abc4feed ] 
+Application Information [ Appinfo ]
+AppX Deployment Service (AppXSVC) [ AppXSvc ]
+Windows Audio Endpoint Builder [ AudioEndpointBuilder ]
+Windows Audio [ Audiosrv ]
+Base Filtering Engine [ BFE ]
+Background Tasks Infrastructure Service [ BrokerInfrastructure ]
+Computer Browser [ Browser ]
+Connected Devices Platform Service [ CDPSvc ]
+Docker for Windows Service [ com.docker.service ]
+COM+ System Application [ COMSysApp ]
+CoreMessaging [ CoreMessagingRegistrar ]
+Cryptographic Services [ CryptSvc ]
+DCOM Server Process Launcher [ DcomLaunch ]
+DHCP Client [ Dhcp ]
+Connected User Experiences and Telemetry [ DiagTrack ]
+DNS Client [ Dnscache ]
+Diagnostic Policy Service [ DPS ]
+Data Sharing Service [ DsSvc ]
+Windows Event Log [ EventLog ]
+COM+ Event System [ EventSystem ]
+Windows Font Cache Service [ FontCache ]
+IP Helper [ iphlpsvc ]
+CNG Key Isolation [ KeyIso ]
+Server [ LanmanServer ]
+Workstation [ LanmanWorkstation ]
+Geolocation Service [ lfsvc ]
+Windows License Manager Service [ LicenseManager ]
+TCP/IP NetBIOS Helper [ lmhosts ]
+Local Session Manager [ LSM ]
+Windows Firewall [ MpsSvc ]
+Distributed Transaction Coordinator [ MSDTC ]
+Network Connection Broker [ NcbService ]
+Netlogon [ Netlogon ]
+Network Connections [ Netman ]
+Network List Service [ netprofm ]
+Network Location Awareness [ NlaSvc ]
+Network Store Interface Service [ nsi ]
+Program Compatibility Assistant Service [ PcaSvc ]
+Plug and Play [ PlugPlay ]
+IPsec Policy Agent [ PolicyAgent ]
+Power [ Power ]
+User Profile Service [ ProfSvc ]
+RPC Endpoint Mapper [ RpcEptMapper ]
+Remote Procedure Call (RPC) [ RpcSs ]
+Security Accounts Manager [ SamSs ]
+Task Scheduler [ Schedule ]
+Secondary Logon [ seclogon ]
+System Event Notification Service [ SENS ]
+Shell Hardware Detection [ ShellHWDetection ]
+Print Spooler [ Spooler ]
+SSDP Discovery [ SSDPSRV ]
+State Repository Service [ StateRepository ]
+Storage Service [ StorSvc ]
+Superfetch [ SysMain ]
+System Events Broker [ SystemEventsBroker ]
+Tenable Nessus Agent [ Tenable Nessus Agent ]
+Themes [ Themes ]
+Tile Data model server [ tiledatamodelsvc ]
+Time Broker [ TimeBrokerSvc ]
+Distributed Link Tracking Client [ TrkWks ]
+Windows Modules Installer [ TrustedInstaller ]
+User Manager [ UserManager ]
+Credential Manager [ VaultSvc ]
+VMware Alias Manager and Ticket Service [ VGAuthService ]
+Hyper-V Host Compute Service [ vmcompute ]
+Hyper-V Virtual Machine Management [ vmms ]
+VMware Tools [ VMTools ]
+Windows Time [ W32Time ]
+Windows Connection Manager [ Wcmsvc ]
+Diagnostic Service Host [ WdiServiceHost ]
+Diagnostic System Host [ WdiSystemHost ]
+Windows Defender Network Inspection Service [ WdNisSvc ]
+Windows Defender Service [ WinDefend ]
+WinHTTP Web Proxy Auto-Discovery Service [ WinHttpAutoProxySvc ]
+Windows Management Instrumentation [ Winmgmt ]
+Windows Push Notifications System Service [ WpnService ]
+Security Center [ wscsvc ]
+Windows Search [ WSearch ]
+Windows Update [ wuauserv ]
+Windows Driver Foundation - User-mode Driver Framework [ wudfsvc ]
+CDPUserSvc_abc4feed [ CDPUserSvc_abc4feed ]
+Sync Host_abc4feed [ OneSyncSvc_abc4feed ]
+Contact Data_abc4feed [ PimIndexMaintenanceSvc_abc4feed ]
+User Data Storage_abc4feed [ UnistoreSvc_abc4feed ]
+User Data Access_abc4feed [ UserDataSvc_abc4feed ]
 
 Inactive Services :
 
-AllJoyn Router Service [ AJRouter ] 
-Application Layer Gateway Service [ ALG ] 
-Application Identity [ AppIDSvc ] 
-Application Management [ AppMgmt ] 
-App Readiness [ AppReadiness ] 
-Microsoft App-V Client [ AppVClient ] 
-ActiveX Installer (AxInstSV) [ AxInstSV ] 
-BitLocker Drive Encryption Service [ BDESVC ] 
-Background Intelligent Transfer Service [ BITS ] 
-Bluetooth Handsfree Service [ BthHFSrv ] 
-Bluetooth Support Service [ bthserv ] 
-Certificate Propagation [ CertPropSvc ] 
-Client License Service (ClipSVC) [ ClipSVC ] 
-Offline Files [ CscService ] 
-DataCollectionPublishingService [ DcpSvc ] 
-Optimize drives [ defragsvc ] 
-Device Association Service [ DeviceAssociationService ] 
-Device Install Service [ DeviceInstall ] 
-DevQuery Background Discovery Broker [ DevQueryBroker ] 
-Microsoft (R) Diagnostics Hub Standard Collector Service [ diagnosticshub.standardcollector.service ] 
-Device Management Enrollment Service [ DmEnrollmentSvc ] 
-dmwappushsvc [ dmwappushservice ] 
-Delivery Optimization [ DoSvc ] 
-Wired AutoConfig [ dot3svc ] 
-Device Setup Manager [ DsmSvc ] 
-Extensible Authentication Protocol [ EapHost ] 
-Encrypting File System (EFS) [ EFS ] 
-Embedded Mode [ embeddedmode ] 
-Enterprise App Management Service [ EntAppSvc ] 
-Fax [ Fax ] 
-Function Discovery Provider Host [ fdPHost ] 
-Function Discovery Resource Publication [ FDResPub ] 
-File History Service [ fhsvc ] 
-Windows Camera Frame Server [ FrameServer ] 
-Group Policy Client [ gpsvc ] 
-Human Interface Device Service [ hidserv ] 
-Host Network Service [ hns ] 
-HomeGroup Listener [ HomeGroupListener ] 
-HomeGroup Provider [ HomeGroupProvider ] 
-HV Host Service [ HvHost ] 
-Windows Mobile Hotspot Service [ icssvc ] 
-IKE and AuthIP IPsec Keying Modules [ IKEEXT ] 
-Infrared monitor service [ irmon ] 
-KtmRm for Distributed Transaction Coordinator [ KtmRm ] 
-Link-Layer Topology Discovery Mapper [ lltdsvc ] 
-Downloaded Maps Manager [ MapsBroker ] 
-Microsoft iSCSI Initiator Service [ MSiSCSI ] 
-Windows Installer [ msiserver ] 
-Network Connectivity Assistant [ NcaSvc ] 
-Network Connected Devices Auto-Setup [ NcdAutoSetup ] 
-Network Setup Service [ NetSetupSvc ] 
-Net.Tcp Port Sharing Service [ NetTcpPortSharing ] 
-Microsoft Passport Container [ NgcCtnrSvc ] 
-Microsoft Passport [ NgcSvc ] 
-Office 64 Source Engine [ ose64 ] 
-Peer Networking Identity Manager [ p2pimsvc ] 
-Peer Networking Grouping [ p2psvc ] 
-BranchCache [ PeerDistSvc ] 
-Performance Counter DLL Host [ PerfHost ] 
-Phone Service [ PhoneSvc ] 
-Performance Logs &amp; Alerts [ pla ] 
-PNRP Machine Name Publication Service [ PNRPAutoReg ] 
-Peer Name Resolution Protocol [ PNRPsvc ] 
-Printer Extensions and Notifications [ PrintNotify ] 
-Quality Windows Audio Video Experience [ QWAVE ] 
-Remote Access Auto Connection Manager [ RasAuto ] 
-Remote Access Connection Manager [ RasMan ] 
-Routing and Remote Access [ RemoteAccess ] 
-Remote Registry [ RemoteRegistry ] 
-Retail Demo Service [ RetailDemo ] 
-Radio Management Service [ RmSvc ] 
-Remote Procedure Call (RPC) Locator [ RpcLocator ] 
-Smart Card [ SCardSvr ] 
-Smart Card Device Enumeration Service [ ScDeviceEnum ] 
-Smart Card Removal Policy [ SCPolicySvc ] 
-Windows Backup [ SDRSVC ] 
-Windows Defender Advanced Threat Protection Service [ Sense ] 
-Sensor Data Service [ SensorDataService ] 
-Sensor Service [ SensorService ] 
-Sensor Monitoring Service [ SensrSvc ] 
-Remote Desktop Configuration [ SessionEnv ] 
-Internet Connection Sharing (ICS) [ SharedAccess ] 
-Shared PC Account Manager [ shpamsvc ] 
-Microsoft Storage Spaces SMP [ smphost ] 
-Microsoft Windows SMS Router Service. [ SmsRouter ] 
-SNMP Trap [ SNMPTRAP ] 
-Software Protection [ sppsvc ] 
-Secure Socket Tunneling Protocol Service [ SstpSvc ] 
-Windows Image Acquisition (WIA) [ stisvc ] 
-Spot Verifier [ svsvc ] 
-Microsoft Software Shadow Copy Provider [ swprv ] 
-Touch Keyboard and Handwriting Panel Service [ TabletInputService ] 
-Telephony [ TapiSrv ] 
-Remote Desktop Services [ TermService ] 
-Storage Tiers Management [ TieringEngineService ] 
-Auto Time Zone Updater [ tzautoupdate ] 
-User Experience Virtualization Service [ UevAgentService ] 
-Interactive Services Detection [ UI0Detect ] 
-Remote Desktop Services UserMode Port Redirector [ UmRdpService ] 
-UPnP Device Host [ upnphost ] 
-Update Orchestrator Service for Windows Update [ UsoSvc ] 
-Virtual Disk [ vds ] 
-Hyper-V Guest Service Interface [ vmicguestinterface ] 
-Hyper-V Heartbeat Service [ vmicheartbeat ] 
-Hyper-V Data Exchange Service [ vmickvpexchange ] 
-Hyper-V Remote Desktop Virtualization Service [ vmicrdv ] 
-Hyper-V Guest Shutdown Service [ vmicshutdown ] 
-Hyper-V Time Synchronization Service [ vmictimesync ] 
-Hyper-V PowerShell Direct Service [ vmicvmsession ] 
-Hyper-V Volume Shadow Copy Requestor [ vmicvss ] 
-VMware Snapshot Provider [ vmvss ] 
-VMware CAF AMQP Communication Service [ VMwareCAFCommAmqpListener ] 
-VMware CAF Management Agent Service [ VMwareCAFManagementAgentHost ] 
-Volume Shadow Copy [ VSS ] 
-WalletService [ WalletService ] 
-Block Level Backup Engine Service [ wbengine ] 
-Windows Biometric Service [ WbioSrvc ] 
-Windows Connect Now - Config Registrar [ wcncsvc ] 
-WebClient [ WebClient ] 
-Windows Event Collector [ Wecsvc ] 
-Windows Encryption Provider Host Service [ WEPHOSTSVC ] 
-Problem Reports and Solutions Control Panel Support [ wercplsupport ] 
-Windows Error Reporting Service [ WerSvc ] 
-Still Image Acquisition Events [ WiaRpc ] 
-Windows Remote Management (WS-Management) [ WinRM ] 
-Windows Insider Service [ wisvc ] 
-WLAN AutoConfig [ WlanSvc ] 
-Microsoft Account Sign-in Assistant [ wlidsvc ] 
-WMI Performance Adapter [ wmiApSrv ] 
-Windows Media Player Network Sharing Service [ WMPNetworkSvc ] 
-Work Folders [ workfolderssvc ] 
-Portable Device Enumerator Service [ WPDBusEnum ] 
-WWAN AutoConfig [ WwanSvc ] 
-Xbox Live Auth Manager [ XblAuthManager ] 
-Xbox Live Game Save [ XblGameSave ] 
-Xbox Live Networking Service [ XboxNetApiSvc ] 
-MessagingService_abc4feed [ MessagingService_abc4feed ] 
-Windows Push Notifications User Service_abc4feed [ WpnUserService_abc4feed ] 
+AllJoyn Router Service [ AJRouter ]
+Application Layer Gateway Service [ ALG ]
+Application Identity [ AppIDSvc ]
+Application Management [ AppMgmt ]
+App Readiness [ AppReadiness ]
+Microsoft App-V Client [ AppVClient ]
+ActiveX Installer (AxInstSV) [ AxInstSV ]
+BitLocker Drive Encryption Service [ BDESVC ]
+Background Intelligent Transfer Service [ BITS ]
+Bluetooth Handsfree Service [ BthHFSrv ]
+Bluetooth Support Service [ bthserv ]
+Certificate Propagation [ CertPropSvc ]
+Client License Service (ClipSVC) [ ClipSVC ]
+Offline Files [ CscService ]
+DataCollectionPublishingService [ DcpSvc ]
+Optimize drives [ defragsvc ]
+Device Association Service [ DeviceAssociationService ]
+Device Install Service [ DeviceInstall ]
+DevQuery Background Discovery Broker [ DevQueryBroker ]
+Microsoft (R) Diagnostics Hub Standard Collector Service [ diagnosticshub.standardcollector.service ]
+Device Management Enrollment Service [ DmEnrollmentSvc ]
+dmwappushsvc [ dmwappushservice ]
+Delivery Optimization [ DoSvc ]
+Wired AutoConfig [ dot3svc ]
+Device Setup Manager [ DsmSvc ]
+Extensible Authentication Protocol [ EapHost ]
+Encrypting File System (EFS) [ EFS ]
+Embedded Mode [ embeddedmode ]
+Enterprise App Management Service [ EntAppSvc ]
+Fax [ Fax ]
+Function Discovery Provider Host [ fdPHost ]
+Function Discovery Resource Publication [ FDResPub ]
+File History Service [ fhsvc ]
+Windows Camera Frame Server [ FrameServer ]
+Group Policy Client [ gpsvc ]
+Human Interface Device Service [ hidserv ]
+Host Network Service [ hns ]
+HomeGroup Listener [ HomeGroupListener ]
+HomeGroup Provider [ HomeGroupProvider ]
+HV Host Service [ HvHost ]
+Windows Mobile Hotspot Service [ icssvc ]
+IKE and AuthIP IPsec Keying Modules [ IKEEXT ]
+Infrared monitor service [ irmon ]
+KtmRm for Distributed Transaction Coordinator [ KtmRm ]
+Link-Layer Topology Discovery Mapper [ lltdsvc ]
+Downloaded Maps Manager [ MapsBroker ]
+Microsoft iSCSI Initiator Service [ MSiSCSI ]
+Windows Installer [ msiserver ]
+Network Connectivity Assistant [ NcaSvc ]
+Network Connected Devices Auto-Setup [ NcdAutoSetup ]
+Network Setup Service [ NetSetupSvc ]
+Net.Tcp Port Sharing Service [ NetTcpPortSharing ]
+Microsoft Passport Container [ NgcCtnrSvc ]
+Microsoft Passport [ NgcSvc ]
+Office 64 Source Engine [ ose64 ]
+Peer Networking Identity Manager [ p2pimsvc ]
+Peer Networking Grouping [ p2psvc ]
+BranchCache [ PeerDistSvc ]
+Performance Counter DLL Host [ PerfHost ]
+Phone Service [ PhoneSvc ]
+Performance Logs &amp; Alerts [ pla ]
+PNRP Machine Name Publication Service [ PNRPAutoReg ]
+Peer Name Resolution Protocol [ PNRPsvc ]
+Printer Extensions and Notifications [ PrintNotify ]
+Quality Windows Audio Video Experience [ QWAVE ]
+Remote Access Auto Connection Manager [ RasAuto ]
+Remote Access Connection Manager [ RasMan ]
+Routing and Remote Access [ RemoteAccess ]
+Remote Registry [ RemoteRegistry ]
+Retail Demo Service [ RetailDemo ]
+Radio Management Service [ RmSvc ]
+Remote Procedure Call (RPC) Locator [ RpcLocator ]
+Smart Card [ SCardSvr ]
+Smart Card Device Enumeration Service [ ScDeviceEnum ]
+Smart Card Removal Policy [ SCpoliciesvc ]
+Windows Backup [ SDRSVC ]
+Windows Defender Advanced Threat Protection Service [ Sense ]
+Sensor Data Service [ SensorDataService ]
+Sensor Service [ SensorService ]
+Sensor Monitoring Service [ SensrSvc ]
+Remote Desktop Configuration [ SessionEnv ]
+Internet Connection Sharing (ICS) [ SharedAccess ]
+Shared PC Account Manager [ shpamsvc ]
+Microsoft Storage Spaces SMP [ smphost ]
+Microsoft Windows SMS Router Service. [ SmsRouter ]
+SNMP Trap [ SNMPTRAP ]
+Software Protection [ sppsvc ]
+Secure Socket Tunneling Protocol Service [ SstpSvc ]
+Windows Image Acquisition (WIA) [ stisvc ]
+Spot Verifier [ svsvc ]
+Microsoft Software Shadow Copy Provider [ swprv ]
+Touch Keyboard and Handwriting Panel Service [ TabletInputService ]
+Telephony [ TapiSrv ]
+Remote Desktop Services [ TermService ]
+Storage Tiers Management [ TieringEngineService ]
+Auto Time Zone Updater [ tzautoupdate ]
+User Experience Virtualization Service [ UevAgentService ]
+Interactive Services Detection [ UI0Detect ]
+Remote Desktop Services UserMode Port Redirector [ UmRdpService ]
+UPnP Device Host [ upnphost ]
+Update Orchestrator Service for Windows Update [ UsoSvc ]
+Virtual Disk [ vds ]
+Hyper-V Guest Service Interface [ vmicguestinterface ]
+Hyper-V Heartbeat Service [ vmicheartbeat ]
+Hyper-V Data Exchange Service [ vmickvpexchange ]
+Hyper-V Remote Desktop Virtualization Service [ vmicrdv ]
+Hyper-V Guest Shutdown Service [ vmicshutdown ]
+Hyper-V Time Synchronization Service [ vmictimesync ]
+Hyper-V PowerShell Direct Service [ vmicvmsession ]
+Hyper-V Volume Shadow Copy Requestor [ vmicvss ]
+VMware Snapshot Provider [ vmvss ]
+VMware CAF AMQP Communication Service [ VMwareCAFCommAmqpListener ]
+VMware CAF Management Agent Service [ VMwareCAFManagementAgentHost ]
+Volume Shadow Copy [ VSS ]
+WalletService [ WalletService ]
+Block Level Backup Engine Service [ wbengine ]
+Windows Biometric Service [ WbioSrvc ]
+Windows Connect Now - Config Registrar [ wcncsvc ]
+WebClient [ WebClient ]
+Windows Event Collector [ Wecsvc ]
+Windows Encryption Provider Host Service [ WEPHOSTSVC ]
+Problem Reports and Solutions Control Panel Support [ wercplsupport ]
+Windows Error Reporting Service [ WerSvc ]
+Still Image Acquisition Events [ WiaRpc ]
+Windows Remote Management (WS-Management) [ WinRM ]
+Windows Insider Service [ wisvc ]
+WLAN AutoConfig [ WlanSvc ]
+Microsoft Account Sign-in Assistant [ wlidsvc ]
+WMI Performance Adapter [ wmiApSrv ]
+Windows Media Player Network Sharing Service [ WMPNetworkSvc ]
+Work Folders [ workfolderssvc ]
+Portable Device Enumerator Service [ WPDBusEnum ]
+WWAN AutoConfig [ WwanSvc ]
+Xbox Live Auth Manager [ XblAuthManager ]
+Xbox Live Game Save [ XblGameSave ]
+Xbox Live Networking Service [ XboxNetApiSvc ]
+MessagingService_abc4feed [ MessagingService_abc4feed ]
+Windows Push Notifications User Service_abc4feed [ WpnUserService_abc4feed ]
 </plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Office Products (September 2017)" pluginID="103133" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss_temporal_score>7.3</cvss_temporal_score><cvss3_base_score>7.8</cvss3_base_score><cvss3_temporal_score>7.0</cvss3_temporal_score><exploit_available>true</exploit_available><patch_publication_date>2017/09/12</patch_publication_date><plugin_modification_date>2018/08/03</plugin_modification_date><plugin_publication_date>2017/09/12</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released security updates for Microsoft Office Products.</solution><vuln_publication_date>2017/09/12</vuln_publication_date><cvss3_temporal_vector>E:P/RL:O/RC:C</cvss3_temporal_vector><cvss3_vector>AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H</cvss3_vector><cvss_temporal_vector>E:POC/RL:OF/RC:C</cvss_temporal_vector><cvss_vector>AV:N/AC:M/Au:N/C:C/I:C/A:C</cvss_vector><description>The Microsoft Office Products are missing security updates.
 It is, therefore, affected by multiple vulnerabilities :
 
@@ -4238,7 +4238,7 @@ Remote operating system : Microsoft Windows 10 Pro
 Confidence level : 100
 Method : SMB
 
- 
+
 The remote host is running Microsoft Windows 10 Pro</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="KB4343887: Windows 10 Version 1607 and Windows Server 2016 August 2018 Security Update (Foreshadow)" pluginID="111685" protocol="tcp" svc_name="cifs"><cvss_base_score>7.2</cvss_base_score><cvss3_base_score>7.8</cvss3_base_score><exploit_available>true</exploit_available><exploited_by_malware>true</exploited_by_malware><in_the_news>true</in_the_news><patch_publication_date>2018/08/14</patch_publication_date><plugin_modification_date>2018/08/30</plugin_modification_date><plugin_publication_date>2018/08/14</plugin_publication_date><plugin_type>local</plugin_type><solution>Apply Cumulative Update KB4343887.</solution><vuln_publication_date>2018/08/14</vuln_publication_date><cvss3_vector>AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H</cvss3_vector><cvss_vector>AV:L/AC:L/Au:N/C:C/I:C/A:C</cvss_vector><description>The remote Windows host is missing security update 4343887.
 It is, therefore, affected by multiple vulnerabilities :
 
@@ -4459,7 +4459,7 @@ It is, therefore, affected by multiple vulnerabilities :
     either spoof content or serve as a pivot to chain an
     attack with other vulnerabilities in web services.
     (CVE-2018-8388)</description><synopsis>The remote Windows host is affected by multiple vulnerabilities.</synopsis><cve>CVE-2018-8381</cve><cve>CVE-2018-8360</cve><cve>CVE-2018-8340</cve><cve>CVE-2018-8341</cve><cve>CVE-2018-8385</cve><cve>CVE-2018-8200</cve><cve>CVE-2018-8266</cve><cve>CVE-2018-8343</cve><cve>CVE-2018-8344</cve><cve>CVE-2018-8388</cve><cve>CVE-2018-8345</cve><cve>CVE-2018-8389</cve><cve>CVE-2018-3615</cve><cve>CVE-2018-8401</cve><cve>CVE-2018-8204</cve><cve>CVE-2018-8347</cve><cve>CVE-2018-8348</cve><cve>CVE-2018-8403</cve><cve>CVE-2018-8349</cve><cve>CVE-2018-8404</cve><cve>CVE-2018-8405</cve><cve>CVE-2018-8406</cve><cve>CVE-2018-3620</cve><cve>CVE-2018-8370</cve><cve>CVE-2018-8371</cve><cve>CVE-2018-8372</cve><cve>CVE-2018-8394</cve><cve>CVE-2018-8351</cve><cve>CVE-2018-8373</cve><cve>CVE-2018-8253</cve><cve>CVE-2018-8353</cve><cve>CVE-2018-8398</cve><cve>CVE-2018-8355</cve><cve>CVE-2018-8357</cve><cve>CVE-2018-8358</cve><cve>CVE-2018-3646</cve><cve>CVE-2018-8316</cve><cve>CVE-2018-8339</cve><cve>CVE-2018-0952</cve><bid>104992</bid><bid>104995</bid><bid>105027</bid><bid>105029</bid><bid>104999</bid><bid>105030</bid><bid>105001</bid><bid>105007</bid><bid>105006</bid><bid>104977</bid><bid>105009</bid><bid>105008</bid><bid>105011</bid><bid>104978</bid><bid>104980</bid><bid>105012</bid><bid>104983</bid><bid>104982</bid><bid>105017</bid><bid>104984</bid><bid>105048</bid><bid>104987</bid><bid>104986</bid><bid>104988</bid><xref>IAVA:2018-A-0267</xref><xref>MSFT:MS18-4343887</xref><xref>IAVA:2018-A-0261</xref><xref>IAVA:2018-A-0260</xref><xref>IAVA:2018-A-0266</xref><xref>MSKB:4343887</xref><see_also>http://www.nessus.org/u?93e63484</see_also><risk_factor>High</risk_factor><script_version>1.5</script_version><plugin_output>
-The remote host is missing one of the following rollup KBs : 
+The remote host is missing one of the following rollup KBs :
   - 4343887
 
 C:\Windows\system32\ntoskrnl.exe has not been patched.
@@ -4580,7 +4580,7 @@ http://www.nessus.org/u?c66f32ec</see_also><risk_factor>Critical</risk_factor><s
     Remote version    : 16.0.4266.1001
     Fixed version     : 16.0.4615.1000
 
-</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Powerpoint Products (September 2017)" pluginID="103136" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss_temporal_score>6.9</cvss_temporal_score><cvss3_base_score>9.8</cvss3_base_score><cvss3_temporal_score>8.5</cvss3_temporal_score><exploit_available>false</exploit_available><patch_publication_date>2017/09/12</patch_publication_date><plugin_modification_date>2018/09/10</plugin_modification_date><plugin_publication_date>2017/09/12</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Powerpoint Products (September 2017)" pluginID="103136" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss_temporal_score>6.9</cvss_temporal_score><cvss3_base_score>9.8</cvss3_base_score><cvss3_temporal_score>8.5</cvss3_temporal_score><exploit_available>false</exploit_available><patch_publication_date>2017/09/12</patch_publication_date><plugin_modification_date>2018/09/10</plugin_modification_date><plugin_publication_date>2017/09/12</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4011041
   -KB3128027
   -KB4011069</solution><vuln_publication_date>2017/09/12</vuln_publication_date><cvss3_temporal_vector>E:U/RL:O/RC:C</cvss3_temporal_vector><cvss3_vector>AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</cvss3_vector><cvss_temporal_vector>E:U/RL:OF/RC:C</cvss_temporal_vector><cvss_vector>AV:N/AC:M/Au:N/C:C/I:C/A:C</cvss_vector><description>The Microsoft Powerpoint Products are missing security
@@ -4673,7 +4673,7 @@ vulnerabilities.</synopsis><cve>CVE-2015-2470</cve><cve>CVE-2015-2469</cve><cve>
     Remote version    : 16.0.4266.1001
     Fixed version     : 16.0.4288.1000
 
-</plugin_output></ReportItem><ReportItem severity="1" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Outlook (August 2018)" pluginID="111756" protocol="tcp" svc_name="cifs"><patch_publication_date>2018/08/14</patch_publication_date><plugin_modification_date>2018/08/15</plugin_modification_date><plugin_publication_date>2018/08/15</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+</plugin_output></ReportItem><ReportItem severity="1" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Outlook (August 2018)" pluginID="111756" protocol="tcp" svc_name="cifs"><patch_publication_date>2018/08/14</patch_publication_date><plugin_modification_date>2018/08/15</plugin_modification_date><plugin_publication_date>2018/08/15</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4032222
   -KB4032235
   -KB4032240</solution><vuln_publication_date>2018/08/14</vuln_publication_date><description>The Microsoft Outlook application installed on the remote
@@ -4687,7 +4687,7 @@ http://www.nessus.org/u?739c8d00</see_also><risk_factor>Low</risk_factor><script
     Remote version    : 16.0.4266.1001
     Fixed version     : 16.0.4732.1000
 
-</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="KB4074590: Windows 10 Version 1607 and Windows Server 2016 February 2018 Security Update (Meltdown)(Spectre)" pluginID="106796" protocol="tcp" svc_name="cifs"><canvas_package>CANVAS</canvas_package><cvss_base_score>7.6</cvss_base_score><cvss3_base_score>8.1</cvss3_base_score><exploit_available>true</exploit_available><exploit_framework_canvas>true</exploit_framework_canvas><exploited_by_malware>true</exploited_by_malware><patch_publication_date>2018/02/13</patch_publication_date><plugin_modification_date>2018/06/29</plugin_modification_date><plugin_publication_date>2018/02/13</plugin_publication_date><plugin_type>local</plugin_type><solution>Apply Cumulative Update KB4074590.</solution><vuln_publication_date>2018/02/13</vuln_publication_date><cvss3_vector>AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H</cvss3_vector><cvss_vector>AV:N/AC:H/Au:N/C:C/I:C/A:C</cvss_vector><description>The remote Windows host is missing security update 4074590. 
+</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="KB4074590: Windows 10 Version 1607 and Windows Server 2016 February 2018 Security Update (Meltdown)(Spectre)" pluginID="106796" protocol="tcp" svc_name="cifs"><canvas_package>CANVAS</canvas_package><cvss_base_score>7.6</cvss_base_score><cvss3_base_score>8.1</cvss3_base_score><exploit_available>true</exploit_available><exploit_framework_canvas>true</exploit_framework_canvas><exploited_by_malware>true</exploited_by_malware><patch_publication_date>2018/02/13</patch_publication_date><plugin_modification_date>2018/06/29</plugin_modification_date><plugin_publication_date>2018/02/13</plugin_publication_date><plugin_type>local</plugin_type><solution>Apply Cumulative Update KB4074590.</solution><vuln_publication_date>2018/02/13</vuln_publication_date><cvss3_vector>AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H</cvss3_vector><cvss_vector>AV:N/AC:H/Au:N/C:C/I:C/A:C</cvss_vector><description>The remote Windows host is missing security update 4074590.
 It is, therefore, affected by multiple vulnerabilities :
 
   - An vulnerability exists within microprocessors utilizing
@@ -4807,7 +4807,7 @@ It is, therefore, affected by multiple vulnerabilities :
     (CVE-2018-0742, CVE-2018-0756, CVE-2018-0820,
     CVE-2018-0831)</description><synopsis>The remote Windows host is affected by multiple vulnerabilities.</synopsis><cve>CVE-2018-0860</cve><cve>CVE-2018-0829</cve><cve>CVE-2018-0825</cve><cve>CVE-2018-0847</cve><cve>CVE-2018-0826</cve><cve>CVE-2018-0828</cve><cve>CVE-2018-0821</cve><cve>CVE-2018-0822</cve><cve>CVE-2018-0844</cve><cve>CVE-2018-0866</cve><cve>CVE-2018-0846</cve><cve>CVE-2018-0861</cve><cve>CVE-2018-0840</cve><cve>CVE-2018-0742</cve><cve>CVE-2018-0820</cve><cve>CVE-2018-0842</cve><cve>CVE-2018-0771</cve><cve>CVE-2017-5715</cve><cve>CVE-2017-5753</cve><cve>CVE-2018-0837</cve><cve>CVE-2018-0859</cve><cve>CVE-2017-5754</cve><cve>CVE-2018-0838</cve><cve>CVE-2018-0832</cve><cve>CVE-2018-0756</cve><cve>CVE-2018-0757</cve><cve>CVE-2018-0834</cve><cve>CVE-2018-0835</cve><cve>CVE-2018-0857</cve><cve>CVE-2018-0830</cve><cve>CVE-2018-0831</cve><xref>IAVA:2018-A-0019</xref><xref>IAVA:2018-A-0020</xref><xref>MSKB:4074590</xref><xref>MSFT:MS18-4074590</xref><see_also>http://www.nessus.org/u?e2535711
 http://www.nessus.org/u?573cb1ef</see_also><risk_factor>High</risk_factor><script_version>1.9</script_version><plugin_output>
-The remote host is missing one of the following rollup KBs : 
+The remote host is missing one of the following rollup KBs :
   - 4074590
 
 C:\Windows\system32\ntoskrnl.exe has not been patched.
@@ -4847,14 +4847,14 @@ The following users are members of the 'Administrators' group :
   - AD\Domain Admins (Group)
 </plugin_output></ReportItem><ReportItem severity="0" port="0" pluginFamily="General" pluginName="Common Platform Enumeration (CPE)" pluginID="45590" protocol="tcp" svc_name="general"><plugin_modification_date>2017/06/06</plugin_modification_date><plugin_publication_date>2010/04/21</plugin_publication_date><plugin_type>combined</plugin_type><solution>n/a</solution><description>By using information obtained from a Nessus scan, this plugin reports
 CPE (Common Platform Enumeration) matches for various hardware and
-software products found on a host. 
+software products found on a host.
 
 Note that if an official CPE is not available for the product, this
 plugin computes the best possible CPE based on the information
 available from the scan.</description><synopsis>It was possible to enumerate CPE names that matched on the remote
 system.</synopsis><see_also>http://cpe.mitre.org/
 https://nvd.nist.gov/products/cpe</see_also><risk_factor>None</risk_factor><script_version>$Revision: 1.78$</script_version><plugin_output>
-The remote operating system matched the following CPE : 
+The remote operating system matched the following CPE :
 
   cpe:/o:microsoft:windows_10
 
@@ -4876,7 +4876,7 @@ VaultSvc (@%SystemRoot%\system32\vaultsvc.dll,-1003)
 
 </plugin_output></ReportItem><ReportItem severity="0" port="0" pluginFamily="Windows" pluginName="WMI Antivirus Enumeration" pluginID="45051" protocol="tcp" svc_name="general"><plugin_modification_date>2018/08/22</plugin_modification_date><plugin_publication_date>2010/03/12</plugin_publication_date><plugin_type>local</plugin_type><solution>n/a</solution><description>By connecting to the remote Windows host with the supplied
 credentials, this plugin uses WMI to enumerate antivirus software
-installed on it. 
+installed on it.
 
 Note that this plugin extracts this information from the
 'root\securitycenter' and 'root\securitycenter2' WMI namespaces, which
@@ -4884,7 +4884,7 @@ are only available in Windows desktop operating systems such as XP,
 Vista and Windows 7.</description><synopsis>It is possible to obtain the list of antivirus software installed on
 the remote Windows host.</synopsis><risk_factor>None</risk_factor><script_version>$Revision: 1.83 $</script_version><plugin_output>
 Here is the list of anti-virus software registered under the
-'root\SecurityCenter2' WMI namespace : 
+'root\SecurityCenter2' WMI namespace :
 
 + Windows Defender
 
@@ -4957,7 +4957,7 @@ http://www.nessus.org/u?0a682ddf</see_also><risk_factor>High</risk_factor><scrip
     Remote version    : 16.0.4266.1001
     Fixed version     : 16.0.4573.1001
 
-</plugin_output></ReportItem><ReportItem severity="4" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Update for Microsoft Office Excel Products (September 2017)" pluginID="103138" protocol="tcp" svc_name="cifs"><cvss_base_score>10.0</cvss_base_score><cvss_temporal_score>7.4</cvss_temporal_score><cvss3_base_score>8.8</cvss3_base_score><cvss3_temporal_score>7.7</cvss3_temporal_score><exploit_available>false</exploit_available><patch_publication_date>2017/09/12</patch_publication_date><plugin_modification_date>2018/09/10</plugin_modification_date><plugin_publication_date>2017/09/12</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+</plugin_output></ReportItem><ReportItem severity="4" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Update for Microsoft Office Excel Products (September 2017)" pluginID="103138" protocol="tcp" svc_name="cifs"><cvss_base_score>10.0</cvss_base_score><cvss_temporal_score>7.4</cvss_temporal_score><cvss3_base_score>8.8</cvss3_base_score><cvss3_temporal_score>7.7</cvss3_temporal_score><exploit_available>false</exploit_available><patch_publication_date>2017/09/12</patch_publication_date><plugin_modification_date>2018/09/10</plugin_modification_date><plugin_publication_date>2017/09/12</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4011108
   -KB4011050
   -KB4011061
@@ -5018,22 +5018,22 @@ http://www.nessus.org/u?66c1727d</see_also><risk_factor>High</risk_factor><scrip
 
 </plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="KB4056890: Windows 10 Version 1607 and Windows Server 2016 January 2018 Security Update (Meltdown)(Spectre)" pluginID="105548" protocol="tcp" svc_name="cifs"><canvas_package>CANVAS</canvas_package><cvss_base_score>7.6</cvss_base_score><cvss_temporal_score>6.6</cvss_temporal_score><cvss3_base_score>7.5</cvss3_base_score><cvss3_temporal_score>7.2</cvss3_temporal_score><exploit_available>true</exploit_available><exploit_framework_canvas>true</exploit_framework_canvas><exploited_by_malware>true</exploited_by_malware><in_the_news>true</in_the_news><patch_publication_date>2018/01/04</patch_publication_date><plugin_modification_date>2018/08/20</plugin_modification_date><plugin_publication_date>2018/01/04</plugin_publication_date><plugin_type>local</plugin_type><solution>Apply Cumulative Update KB4056890 or KB4057142.
 
-Notes: 
+Notes:
 
   - Due to a compatibility issue with some antivirus
-    software products, it may not be possible to apply 
+    software products, it may not be possible to apply
     the required updates.
     See Microsoft KB article 4072699 for more information.
 
-  - KB4057142 Addresses an issue with KB4056890 where some 
-    customers on a small subset of older AMD processors get 
+  - KB4057142 Addresses an issue with KB4056890 where some
+    customers on a small subset of older AMD processors get
     into an unbootable state.</solution><vuln_publication_date>2018/01/04</vuln_publication_date><cvss3_temporal_vector>E:H/RL:O/RC:C</cvss3_temporal_vector><cvss3_vector>AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:H</cvss3_vector><cvss_temporal_vector>E:H/RL:OF/RC:C</cvss_temporal_vector><cvss_vector>AV:N/AC:H/Au:N/C:C/I:C/A:C</cvss_vector><description>The remote Windows host is missing security update 4056890
-or 4057142. It is, therefore, affected by multiple 
+or 4057142. It is, therefore, affected by multiple
 vulnerabilities :
 
-  - An vulnerability exists within microprocessors utilizing 
-    speculative execution and indirect branch prediction, 
-    which may allow an attacker with local user access to 
+  - An vulnerability exists within microprocessors utilizing
+    speculative execution and indirect branch prediction,
+    which may allow an attacker with local user access to
     disclose information via a side-channel analysis.
     (CVE-2017-5715, CVE-2017-5753, CVE-2017-5754)
 
@@ -5129,7 +5129,7 @@ vulnerabilities :
     handles objects in memory. (CVE-2018-0753)</description><synopsis>The remote Windows host is affected by multiple vulnerabilities.</synopsis><cve>CVE-2018-0780</cve><cve>CVE-2018-0770</cve><cve>CVE-2018-0781</cve><cve>CVE-2018-0772</cve><cve>CVE-2017-5715</cve><cve>CVE-2017-5753</cve><cve>CVE-2018-0748</cve><cve>CVE-2018-0803</cve><cve>CVE-2017-5754</cve><cve>CVE-2018-0749</cve><cve>CVE-2018-0744</cve><cve>CVE-2018-0766</cve><cve>CVE-2018-0777</cve><cve>CVE-2018-0767</cve><cve>CVE-2018-0746</cve><cve>CVE-2018-0747</cve><cve>CVE-2018-0758</cve><cve>CVE-2018-0769</cve><cve>CVE-2018-0751</cve><cve>CVE-2018-0762</cve><cve>CVE-2018-0752</cve><cve>CVE-2018-0753</cve><cve>CVE-2018-0754</cve><cve>CVE-2018-0776</cve><bid>102378</bid><xref>MSFT:MS18-4056890</xref><xref>IAVA:2018-A-0019</xref><xref>MSKB:4057142</xref><xref>MSKB:4056890</xref><xref>IAVA:2018-A-0020</xref><xref>MSFT:MS18-4057142</xref><see_also>http://www.nessus.org/u?6dea4646
 http://www.nessus.org/u?15261efc
 https://support.microsoft.com/en-us/help/4072699</see_also><risk_factor>High</risk_factor><script_version>1.13</script_version><plugin_output>
-The remote host is missing one of the following rollup KBs : 
+The remote host is missing one of the following rollup KBs :
   - 4056890
   - 4057142
 
@@ -5151,7 +5151,7 @@ affected by an out-of-bounds read vulnerability.</synopsis><cve>CVE-2018-4871</c
   Installed version : 27.0.0.187
   Fixed version     : 28.0.0.137
 </plugin_output></ReportItem><ReportItem severity="2" port="445" pluginFamily="Windows" pluginName="Adobe Flash Player &lt;= 30.0.0.154 (APSB18-31)" pluginID="117410" protocol="tcp" svc_name="unknown"><cvss_base_score>5.0</cvss_base_score><cvss3_base_score>5.3</cvss3_base_score><patch_publication_date>2018/09/11</patch_publication_date><plugin_modification_date>2018/09/12</plugin_modification_date><plugin_publication_date>2018/09/11</plugin_publication_date><plugin_type>local</plugin_type><solution>Upgrade to Adobe Flash Player version 31.0.0.108 or later.</solution><vuln_publication_date>2018/09/11</vuln_publication_date><cvss3_vector>AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N</cvss3_vector><cvss_vector>AV:N/AC:L/Au:N/C:P/I:N/A:N</cvss_vector><description>The version of Adobe Flash Player installed on the remote Windows
-host is equal or prior to version 30.0.0.154. It is therefore 
+host is equal or prior to version 30.0.0.154. It is therefore
 affected by an information disclosure vulnerability.</description><synopsis>The remote Windows host has a browser plugin installed that is
 affected by an information disclosure vulnerability.</synopsis><cve>CVE-2018-15967</cve><bid>105315</bid><see_also>https://helpx.adobe.com/security/products/flash-player/apsb18-31.html
 http://www.nessus.org/u?0cb17c10</see_also><risk_factor>Medium</risk_factor><script_version>1.2</script_version><plugin_output>
@@ -5171,9 +5171,9 @@ The following users have never logged in :
 Note that, in addition to the Administrator, Guest, and Kerberos
 accounts, Nessus has enumerated only those domain users with UIDs
 between 1000 and 1200. To use a different range, edit the scan policy
-and change the 'Start UID' and/or 'End UID' preferences for 
+and change the 'Start UID' and/or 'End UID' preferences for
 'SMB use domain SID to enumerate users' setting, and then re-run the scan.
-</plugin_output></ReportItem><ReportItem severity="4" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Word Products (November 2017)" pluginID="104562" protocol="tcp" svc_name="cifs"><cvss_base_score>10.0</cvss_base_score><cvss_temporal_score>7.4</cvss_temporal_score><cvss3_base_score>9.8</cvss3_base_score><cvss3_temporal_score>8.5</cvss3_temporal_score><exploit_available>false</exploit_available><patch_publication_date>2017/11/14</patch_publication_date><plugin_modification_date>2018/09/10</plugin_modification_date><plugin_publication_date>2017/11/14</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+</plugin_output></ReportItem><ReportItem severity="4" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Word Products (November 2017)" pluginID="104562" protocol="tcp" svc_name="cifs"><cvss_base_score>10.0</cvss_base_score><cvss_temporal_score>7.4</cvss_temporal_score><cvss3_base_score>9.8</cvss3_base_score><cvss3_temporal_score>8.5</cvss3_temporal_score><exploit_available>false</exploit_available><patch_publication_date>2017/11/14</patch_publication_date><plugin_modification_date>2018/09/10</plugin_modification_date><plugin_publication_date>2017/11/14</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4011250
   -KB4011242
   -KB4011270
@@ -5722,9 +5722,9 @@ The following local user accounts have been disabled :
 Note that, in addition to the Administrator and Guest accounts, Nessus
 has only checked for local users with UIDs between 1000 and 1200.
 To use a different range, edit the scan policy and change the 'Start
-UID' and/or 'End UID' preferences for 'SMB use host SID to enumerate 
+UID' and/or 'End UID' preferences for 'SMB use host SID to enumerate
 local users' setting, and then re-run the scan.
-</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Outlook (June 2018)" pluginID="110499" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/06/12</patch_publication_date><plugin_modification_date>2018/06/14</plugin_modification_date><plugin_publication_date>2018/06/12</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Outlook (June 2018)" pluginID="110499" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/06/12</patch_publication_date><plugin_modification_date>2018/06/14</plugin_modification_date><plugin_publication_date>2018/06/12</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4022205
   -KB4022169
   -KB4022160</solution><vuln_publication_date>2018/06/12</vuln_publication_date><cvss3_vector>AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H</cvss3_vector><cvss_vector>AV:N/AC:M/Au:N/C:C/I:C/A:C</cvss_vector><description>The Microsoft Outlook application installed on the remote
@@ -5748,7 +5748,7 @@ http://www.nessus.org/u?11615a33</see_also><risk_factor>High</risk_factor><scrip
     Remote version    : 16.0.4266.1001
     Fixed version     : 16.0.4705.1000
 
-</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Office Products (February 2018)" pluginID="106805" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss_temporal_score>6.9</cvss_temporal_score><cvss3_base_score>9.8</cvss3_base_score><cvss3_temporal_score>8.5</cvss3_temporal_score><exploit_available>false</exploit_available><patch_publication_date>2018/02/13</patch_publication_date><plugin_modification_date>2018/07/30</plugin_modification_date><plugin_publication_date>2018/02/13</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Office Products (February 2018)" pluginID="106805" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss_temporal_score>6.9</cvss_temporal_score><cvss3_base_score>9.8</cvss3_base_score><cvss3_temporal_score>8.5</cvss3_temporal_score><exploit_available>false</exploit_available><patch_publication_date>2018/02/13</patch_publication_date><plugin_modification_date>2018/07/30</plugin_modification_date><plugin_publication_date>2018/02/13</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4011715
   -KB4011707
   -KB3114874
@@ -5918,7 +5918,7 @@ scan itself :
   - The date of the scan.
   - The duration of the scan.
   - The number of hosts scanned in parallel.
-  - The number of checks done in parallel.</description><synopsis>This plugin displays information about the Nessus scan.</synopsis><risk_factor>None</risk_factor><script_version>$Revision: 1.90 $</script_version><plugin_output>Information about this scan : 
+  - The number of checks done in parallel.</description><synopsis>This plugin displays information about the Nessus scan.</synopsis><risk_factor>None</risk_factor><script_version>$Revision: 1.90 $</script_version><plugin_output>Information about this scan :
 
 Nessus version : 7.1.1
 Plugin feed version : 201809122350
@@ -5967,7 +5967,7 @@ WpnService (@%SystemRoot%\system32\wpnservice.dll,-1)
 wuauserv (@%systemroot%\system32\wuaueng.dll,-105)
 
 </plugin_output></ReportItem><ReportItem severity="4" port="445" pluginFamily="Windows" pluginName="Adobe Flash Player &lt;= 29.0.0.113 (APSB18-08)" pluginID="108958" protocol="tcp" svc_name="cifs"><cvss_base_score>10.0</cvss_base_score><cvss3_base_score>9.8</cvss3_base_score><exploit_available>true</exploit_available><exploited_by_malware>true</exploited_by_malware><patch_publication_date>2018/04/10</patch_publication_date><plugin_modification_date>2018/05/10</plugin_modification_date><plugin_publication_date>2018/04/10</plugin_publication_date><plugin_type>local</plugin_type><solution>Upgrade to Adobe Flash Player version 29.0.0.140 or later.</solution><vuln_publication_date>2018/04/10</vuln_publication_date><cvss3_vector>AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</cvss3_vector><cvss_vector>AV:N/AC:L/Au:N/C:C/I:C/A:C</cvss_vector><description>The version of Adobe Flash Player installed on the remote Windows
-host is equal or prior to version 29.0.0.113. It is therefore 
+host is equal or prior to version 29.0.0.113. It is therefore
 affected by multiple vulnerabilities.</description><synopsis>The remote Windows host has a browser plugin installed that is
 affected by multiple vulnerabilities.</synopsis><cve>CVE-2018-4937</cve><cve>CVE-2018-4935</cve><cve>CVE-2018-4936</cve><cve>CVE-2018-4933</cve><cve>CVE-2018-4934</cve><cve>CVE-2018-4932</cve><see_also>https://helpx.adobe.com/security/products/flash-player/apsb18-08.html
 http://www.nessus.org/u?0cb17c10</see_also><risk_factor>Critical</risk_factor><script_version>1.5</script_version><plugin_output>
@@ -5990,7 +5990,7 @@ The following local user can not change his/her password :
 Note that, in addition to the Administrator and Guest accounts, Nessus
 has only checked for local users with UIDs between 1000 and 1200.
 To use a different range, edit the scan policy and change the 'Start
-UID' and/or 'End UID' preferences for 'SMB use host SID to enumerate 
+UID' and/or 'End UID' preferences for 'SMB use host SID to enumerate
 local users' setting, and then re-run the scan.
 </plugin_output></ReportItem><ReportItem severity="0" port="445" pluginFamily="Windows : User management" pluginName="Microsoft Windows SMB : Obtains the Password Policy" pluginID="17651" protocol="tcp" svc_name="cifs"><plugin_modification_date>2015/01/12</plugin_modification_date><plugin_publication_date>2005/03/30</plugin_publication_date><plugin_type>local</plugin_type><solution>n/a</solution><description>Using the supplied credentials it was possible to extract the password
 policy for the remote Windows host. The password policy must conform
@@ -6091,7 +6091,7 @@ The following Firewall profiles are enabled on the remote Windows host:
 Domain
 Standard
 
-By running "netsh", Nessus was able to get the 
+By running "netsh", Nessus was able to get the
 following list of firewall rules :
 
 &#xd;
@@ -16632,7 +16632,7 @@ It is, therefore, affected by multiple vulnerabilities :
     mode. An attacker could then install programs; view,
     change, or delete data; or create new accounts with full
     user rights.  (CVE-2018-8208, CVE-2018-8214)</description><synopsis>The remote Windows host is affected by multiple vulnerabilities.</synopsis><cve>CVE-2018-8209</cve><cve>CVE-2018-1036</cve><cve>CVE-2018-8221</cve><cve>CVE-2018-8201</cve><cve>CVE-2018-8267</cve><cve>CVE-2018-8169</cve><cve>CVE-2018-8225</cve><cve>CVE-2018-8226</cve><cve>CVE-2018-0982</cve><cve>CVE-2018-8205</cve><cve>CVE-2018-8207</cve><cve>CVE-2018-8229</cve><cve>CVE-2018-8208</cve><cve>CVE-2018-1040</cve><cve>CVE-2018-8251</cve><cve>CVE-2018-8231</cve><cve>CVE-2018-8210</cve><cve>CVE-2018-8212</cve><cve>CVE-2018-8234</cve><cve>CVE-2018-8213</cve><cve>CVE-2018-8235</cve><cve>CVE-2018-8214</cve><cve>CVE-2018-8236</cve><cve>CVE-2018-0978</cve><cve>CVE-2018-8215</cve><cve>CVE-2018-8216</cve><cve>CVE-2018-8217</cve><cve>CVE-2018-8239</cve><cve>CVE-2018-8219</cve><bid>104389</bid><bid>104391</bid><bid>104393</bid><bid>104328</bid><bid>104392</bid><bid>104331</bid><bid>104395</bid><bid>104394</bid><bid>104333</bid><bid>104334</bid><bid>104398</bid><bid>104337</bid><bid>104401</bid><bid>104336</bid><bid>104338</bid><bid>104340</bid><bid>104404</bid><bid>104343</bid><bid>104407</bid><bid>104406</bid><bid>104353</bid><bid>104356</bid><bid>104361</bid><bid>104360</bid><bid>104364</bid><bid>104369</bid><bid>104373</bid><bid>104379</bid><bid>104382</bid><xref>MSFT:MS18-4284880</xref><xref>MSKB:4284880</xref><see_also>http://www.nessus.org/u?3dae2364</see_also><risk_factor>High</risk_factor><script_version>1.3</script_version><plugin_output>
-The remote host is missing one of the following rollup KBs : 
+The remote host is missing one of the following rollup KBs :
   - 4284880
 
 C:\Windows\system32\ntoskrnl.exe has not been patched.
@@ -16749,7 +16749,7 @@ The following local users have never logged in :
 Note that, in addition to the Administrator and Guest accounts, Nessus
 has only checked for local users with UIDs between 1000 and 1200.
 To use a different range, edit the scan policy and change the 'Start
-UID' and/or 'End UID' preferences for 'SMB use host SID to enumerate 
+UID' and/or 'End UID' preferences for 'SMB use host SID to enumerate
 local users' setting, and then re-run the scan.
 </plugin_output></ReportItem><ReportItem severity="0" port="0" pluginFamily="Windows" pluginName="Recycle Bin Files" pluginID="92429" protocol="tcp" svc_name="general"><plugin_modification_date>2018/05/23</plugin_modification_date><plugin_publication_date>2016/07/19</plugin_publication_date><plugin_type>local</plugin_type><solution>n/a</solution><description>Nessus was able to generate a list of all files found in $Recycle.Bin
 subdirectories.</description><synopsis>Nessus was able to enumerate files in the recycle bin on the remote
@@ -17046,7 +17046,7 @@ It is, therefore, affected by multiple vulnerabilities :
     user. An attacker who successfully exploited the
     vulnerability could gain the same user rights as the
     current user.  (CVE-2018-0943, CVE-2018-8133)</description><synopsis>The remote Windows host is affected by multiple vulnerabilities.</synopsis><cve>CVE-2018-8164</cve><cve>CVE-2018-8165</cve><cve>CVE-2018-8122</cve><cve>CVE-2018-8166</cve><cve>CVE-2018-8145</cve><cve>CVE-2018-8167</cve><cve>CVE-2018-8124</cve><cve>CVE-2018-0943</cve><cve>CVE-2018-8126</cve><cve>CVE-2018-0824</cve><cve>CVE-2018-8127</cve><cve>CVE-2018-0961</cve><cve>CVE-2018-8129</cve><cve>CVE-2018-0765</cve><cve>CVE-2018-1039</cve><cve>CVE-2018-1022</cve><cve>CVE-2018-1025</cve><cve>CVE-2018-8174</cve><cve>CVE-2018-0958</cve><cve>CVE-2018-8132</cve><cve>CVE-2018-0959</cve><cve>CVE-2018-8133</cve><cve>CVE-2018-8112</cve><cve>CVE-2018-8134</cve><cve>CVE-2018-8178</cve><cve>CVE-2018-0854</cve><cve>CVE-2018-0953</cve><cve>CVE-2018-8179</cve><cve>CVE-2018-0954</cve><cve>CVE-2018-8114</cve><cve>CVE-2018-8136</cve><cve>CVE-2018-0955</cve><cve>CVE-2018-8137</cve><cve>CVE-2018-8897</cve><cve>CVE-2018-0951</cve><xref>MSKB:4103723</xref><xref>MSFT:MS18-4103723</xref><see_also>http://www.nessus.org/u?aca51532</see_also><risk_factor>High</risk_factor><script_version>1.8</script_version><plugin_output>
-The remote host is missing one of the following rollup KBs : 
+The remote host is missing one of the following rollup KBs :
   - 4103723
 
 C:\Windows\system32\ntoskrnl.exe has not been patched.
@@ -17083,7 +17083,7 @@ Microsoft security updates.
 
 Note that this plugin is purely informational.</description><synopsis>Nessus is able to check for Microsoft patch bulletins.</synopsis><risk_factor>None</risk_factor><script_version>$Revision: 1.10 $</script_version><plugin_output>
 
-Nessus is able to test for missing patches using : 
+Nessus is able to test for missing patches using :
   Nessus
 </plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="KB4343902: Security update for Adobe Flash Player (August 2018)" pluginID="111691" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.0</cvss3_base_score><patch_publication_date>2018/08/14</patch_publication_date><plugin_modification_date>2018/08/16</plugin_modification_date><plugin_publication_date>2018/08/14</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released KB4343902 to address this issue.</solution><vuln_publication_date>2018/08/14</vuln_publication_date><cvss3_vector>AV:N/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:H</cvss3_vector><cvss_vector>AV:N/AC:M/Au:N/C:C/I:C/A:C</cvss_vector><description>The remote Windows host is missing security update KB4343902. It is,
 therefore, affected by multiple remote code execution vulnerabilities
@@ -17096,7 +17096,7 @@ http://www.nessus.org/u?86627294</see_also><risk_factor>High</risk_factor><scrip
 
 Moreover, its kill bit is not set so it is accessible via Internet
 Explorer.
-</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Office Products (April 2018)" pluginID="108972" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/04/10</patch_publication_date><plugin_modification_date>2018/05/18</plugin_modification_date><plugin_publication_date>2018/04/10</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Office Products (April 2018)" pluginID="108972" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/04/10</patch_publication_date><plugin_modification_date>2018/05/18</plugin_modification_date><plugin_publication_date>2018/04/10</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4018357
   -KB4011628
   -KB4018330
@@ -17260,7 +17260,7 @@ http://www.nessus.org/u?5e7317f0</see_also><risk_factor>High</risk_factor><scrip
     Remote version    : 16.0.4266.1001
     Fixed version     : 16.0.4600.1002
 
-</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Office Products (June 2018)" pluginID="110495" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/06/12</patch_publication_date><plugin_modification_date>2018/06/25</plugin_modification_date><plugin_publication_date>2018/06/12</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Office Products (June 2018)" pluginID="110495" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/06/12</patch_publication_date><plugin_modification_date>2018/06/25</plugin_modification_date><plugin_publication_date>2018/06/12</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4022182
   -KB3115197
   -KB3115248
@@ -17344,7 +17344,7 @@ shares :
     - \windows\system32\msdrm\msoirmprotector.xls
     - \windows\syswow64\msdrm\msoirmprotector.xls
 
-</plugin_output></ReportItem><ReportItem severity="0" port="0" pluginFamily="Misc." pluginName="Ethernet Card Manufacturer Detection" pluginID="35716" protocol="tcp" svc_name="general"><plugin_modification_date>2017/11/17</plugin_modification_date><plugin_publication_date>2009/02/19</plugin_publication_date><plugin_type>combined</plugin_type><solution>n/a</solution><description>Each ethernet MAC address starts with a 24-bit Organizationally 
+</plugin_output></ReportItem><ReportItem severity="0" port="0" pluginFamily="Misc." pluginName="Ethernet Card Manufacturer Detection" pluginID="35716" protocol="tcp" svc_name="general"><plugin_modification_date>2017/11/17</plugin_modification_date><plugin_publication_date>2009/02/19</plugin_publication_date><plugin_type>combined</plugin_type><solution>n/a</solution><description>Each ethernet MAC address starts with a 24-bit Organizationally
 Unique Identifier (OUI). These OUIs are registered by IEEE.</description><synopsis>The manufacturer can be identified from the Ethernet OUI.</synopsis><see_also>http://standards.ieee.org/faqs/regauth.html
 http://www.nessus.org/u?794673b4</see_also><risk_factor>None</risk_factor><script_version>$Revision: 1.12 $</script_version><plugin_output>
 The following card manufacturers were identified :
@@ -17395,7 +17395,7 @@ multiple vulnerabilities.</synopsis><cve>CVE-2016-3316</cve><cve>CVE-2016-3317</
     Fixed version     : 16.0.4417.1000
 
 </plugin_output></ReportItem><ReportItem severity="0" port="49667" pluginFamily="Port scanners" pluginName="Netstat Portscanner (WMI)" pluginID="34220" protocol="tcp" svc_name="dce-rpc"><plugin_modification_date>2018/08/22</plugin_modification_date><plugin_publication_date>2008/09/16</plugin_publication_date><plugin_type>local</plugin_type><solution>n/a</solution><description>Using the WMI interface, Nessus was able to run 'netstat' on the
-remote host to enumerate the open ports.</description><synopsis>Remote open ports can be enumerated via WMI.</synopsis><see_also>https://en.wikipedia.org/wiki/Netstat</see_also><risk_factor>None</risk_factor><script_version>$Revision: 1.122 $</script_version><plugin_output>Port 49667/tcp was found to be open</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Excel Products (May 2018)" pluginID="109612" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/05/08</patch_publication_date><plugin_modification_date>2018/05/10</plugin_modification_date><plugin_publication_date>2018/05/08</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+remote host to enumerate the open ports.</description><synopsis>Remote open ports can be enumerated via WMI.</synopsis><see_also>https://en.wikipedia.org/wiki/Netstat</see_also><risk_factor>None</risk_factor><script_version>$Revision: 1.122 $</script_version><plugin_output>Port 49667/tcp was found to be open</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Excel Products (May 2018)" pluginID="109612" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/05/08</patch_publication_date><plugin_modification_date>2018/05/10</plugin_modification_date><plugin_publication_date>2018/05/08</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4022146
   -KB4018399
   -KB4018382</solution><vuln_publication_date>2018/05/08</vuln_publication_date><cvss3_vector>AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H</cvss3_vector><cvss_vector>AV:N/AC:M/Au:N/C:C/I:C/A:C</cvss_vector><description>The Microsoft Excel Products are missing security updates.
@@ -17423,7 +17423,7 @@ http://www.nessus.org/u?6498e5ca</see_also><risk_factor>High</risk_factor><scrip
     Fixed version     : 16.0.4690.1000
 
 </plugin_output></ReportItem><ReportItem severity="0" port="5353" pluginFamily="Port scanners" pluginName="Netstat Portscanner (WMI)" pluginID="34220" protocol="udp" svc_name="unknown"><plugin_modification_date>2018/08/22</plugin_modification_date><plugin_publication_date>2008/09/16</plugin_publication_date><plugin_type>local</plugin_type><solution>n/a</solution><description>Using the WMI interface, Nessus was able to run 'netstat' on the
-remote host to enumerate the open ports.</description><synopsis>Remote open ports can be enumerated via WMI.</synopsis><see_also>https://en.wikipedia.org/wiki/Netstat</see_also><risk_factor>None</risk_factor><script_version>$Revision: 1.122 $</script_version><plugin_output>Port 5353/udp was found to be open</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Excel Products (September 2018)" pluginID="117421" protocol="tcp" svc_name="unknown"><cvss_base_score>7.1</cvss_base_score><cvss3_base_score>6.5</cvss3_base_score><patch_publication_date>2018/09/11</patch_publication_date><plugin_modification_date>2018/09/11</plugin_modification_date><plugin_publication_date>2018/09/11</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+remote host to enumerate the open ports.</description><synopsis>Remote open ports can be enumerated via WMI.</synopsis><see_also>https://en.wikipedia.org/wiki/Netstat</see_also><risk_factor>None</risk_factor><script_version>$Revision: 1.122 $</script_version><plugin_output>Port 5353/udp was found to be open</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Excel Products (September 2018)" pluginID="117421" protocol="tcp" svc_name="unknown"><cvss_base_score>7.1</cvss_base_score><cvss3_base_score>6.5</cvss3_base_score><patch_publication_date>2018/09/11</patch_publication_date><plugin_modification_date>2018/09/11</plugin_modification_date><plugin_publication_date>2018/09/11</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4092460
   -KB4227175
   -KB4092479</solution><vuln_publication_date>2018/09/11</vuln_publication_date><cvss3_vector>AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:N</cvss3_vector><cvss_vector>AV:N/AC:M/Au:N/C:C/I:N/A:N</cvss_vector><description>The Microsoft Excel Products are missing a security update.
@@ -17574,7 +17574,7 @@ http://www.nessus.org/u?17554e6e
 http://www.nessus.org/u?8618865f
 http://www.nessus.org/u?dd8bc23c</see_also><risk_factor>Low</risk_factor><script_version>1.2</script_version><plugin_output>
 Microsoft .NET Framework 4.7
-The remote host is missing one of the following rollup KBs : 
+The remote host is missing one of the following rollup KBs :
 
 Cumulative
   - 4343887
@@ -17869,7 +17869,7 @@ http://www.nessus.org/u?454614d0
 http://www.nessus.org/u?3c803961
 http://www.nessus.org/u?6a189799</see_also><risk_factor>Critical</risk_factor><script_version>1.3</script_version><plugin_output>
 Microsoft .NET Framework 4.7
-The remote host is missing one of the following rollup KBs : 
+The remote host is missing one of the following rollup KBs :
 
 Cumulative
   - 4338814
@@ -17960,7 +17960,7 @@ It is, therefore, affected by multiple vulnerabilities :
     of a provided URL. This could potentially result in the
     disclosure of sensitive information to a malicious site.
     (CVE-2017-11927)</description><synopsis>The remote Windows host is affected by multiple vulnerabilities.</synopsis><cve>CVE-2017-11909</cve><cve>CVE-2017-11906</cve><cve>CVE-2017-11905</cve><cve>CVE-2017-11927</cve><cve>CVE-2017-11907</cve><cve>CVE-2017-11885</cve><cve>CVE-2017-11901</cve><cve>CVE-2017-11903</cve><cve>CVE-2017-11887</cve><cve>CVE-2017-11886</cve><cve>CVE-2017-11889</cve><cve>CVE-2017-11888</cve><cve>CVE-2017-11919</cve><cve>CVE-2017-11918</cve><cve>CVE-2017-11894</cve><cve>CVE-2017-11893</cve><cve>CVE-2017-11895</cve><cve>CVE-2017-11890</cve><cve>CVE-2017-11913</cve><cve>CVE-2017-11912</cve><cve>CVE-2017-11914</cve><cve>CVE-2017-11930</cve><cve>CVE-2017-11911</cve><cve>CVE-2017-11899</cve><cve>CVE-2017-11910</cve><bid>102081</bid><bid>102080</bid><bid>102082</bid><bid>102085</bid><bid>102087</bid><bid>102086</bid><bid>102089</bid><bid>102088</bid><bid>102091</bid><bid>102093</bid><bid>102092</bid><bid>102095</bid><bid>102045</bid><bid>102047</bid><bid>102046</bid><bid>102050</bid><bid>102053</bid><bid>102055</bid><bid>102054</bid><bid>102058</bid><bid>102063</bid><bid>102062</bid><bid>102065</bid><bid>102077</bid><bid>102078</bid><xref>MSFT:MS17-4053579</xref><xref>MSKB:4053579</xref><see_also>http://www.nessus.org/u?d6fee547</see_also><risk_factor>High</risk_factor><script_version>1.8</script_version><plugin_output>
-The remote host is missing one of the following rollup KBs : 
+The remote host is missing one of the following rollup KBs :
   - 4053579
 
 C:\Windows\system32\ntoskrnl.exe has not been patched.
@@ -18000,7 +18000,7 @@ http://www.nessus.org/u?fcfcd1f7</see_also><risk_factor>High</risk_factor><scrip
     Remote version    : 16.0.4266.1001
     Fixed version     : 16.0.4600.1000
 
-</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Excel Products (August 2018)" pluginID="111694" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/08/14</patch_publication_date><plugin_modification_date>2018/08/16</plugin_modification_date><plugin_publication_date>2018/08/14</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Excel Products (August 2018)" pluginID="111694" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/08/14</patch_publication_date><plugin_modification_date>2018/08/16</plugin_modification_date><plugin_publication_date>2018/08/14</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4032223
   -KB4032229
   -KB4032241</solution><vuln_publication_date>2018/08/14</vuln_publication_date><cvss3_vector>AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H</cvss3_vector><cvss_vector>AV:N/AC:M/Au:N/C:C/I:C/A:C</cvss_vector><description>The Microsoft Excel Products are missing security updates.
@@ -18156,7 +18156,7 @@ locally caches the passwords of the users when they login, in order to
 continue to allow the users to login in the case of the failure of the
 primary domain controller (PDC).
 
-Cached logon credentials could be accessed by an attacker and subjected  
+Cached logon credentials could be accessed by an attacker and subjected
 to brute force attacks.</description><synopsis>User credentials are stored in memory.</synopsis><see_also>http://www.nessus.org/u?184d3eab
 http://www.nessus.org/u?fe16cea8
 https://technet.microsoft.com/en-us/library/cc957390.aspx</see_also><risk_factor>None</risk_factor><script_version>1.17</script_version><plugin_output>
@@ -18177,7 +18177,7 @@ The following local users have never changed their passwords :
 Note that, in addition to the Administrator and Guest accounts, Nessus
 has only checked for local users with UIDs between 1000 and 1200.
 To use a different range, edit the scan policy and change the 'Start
-UID' and/or 'End UID' preferences for 'SMB use host SID to enumerate 
+UID' and/or 'End UID' preferences for 'SMB use host SID to enumerate
 local users' setting, and then re-run the scan.
 </plugin_output></ReportItem><ReportItem severity="0" port="0" pluginFamily="Windows" pluginName="User Shell Folders Settings" pluginID="92431" protocol="tcp" svc_name="general"><plugin_modification_date>2018/05/16</plugin_modification_date><plugin_publication_date>2016/07/19</plugin_publication_date><plugin_type>local</plugin_type><solution>n/a</solution><description>Nessus was able to gather a list of settings from the target system
 that store common user folder locations. A few of the more common
@@ -18277,11 +18277,11 @@ when it was closed on the remote host.</synopsis><see_also>https://support.micro
   - Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate
 
 </plugin_output></ReportItem><ReportItem severity="0" port="445" pluginFamily="Windows" pluginName="Microsoft Windows SMB Share Hosting Possibly Copyrighted Material" pluginID="11777" protocol="tcp" svc_name="cifs"><plugin_modification_date>2012/11/29</plugin_modification_date><plugin_publication_date>2003/06/26</plugin_publication_date><plugin_type>local</plugin_type><solution>Delete the files infringing copyright.</solution><description>This plugin displays a list of media files (such as .mp3, .ogg, .mpg,
-.avi) which have been found on the remote SMB shares. 
+.avi) which have been found on the remote SMB shares.
 
 Some of these files may contain copyrighted materials, such as
 commercial movies or music files, that are being shared without the
-owner's permission. 
+owner's permission.
 
 If any of these files actually contain copyrighted material, and if they
 are freely swapped around, your organization might be held liable for
@@ -18328,7 +18328,7 @@ movies or music files.
 \program files\windowsapps\microsoft.zunevideo_10.18052.10711.0_x64__8wekyb3d8bbwe\assets\immersivecontrol_slider_click_sound.wma
 
 
-</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Word Products (March 2018)" pluginID="108301" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/03/13</patch_publication_date><plugin_modification_date>2018/08/13</plugin_modification_date><plugin_publication_date>2018/03/13</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Word Products (March 2018)" pluginID="108301" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/03/13</patch_publication_date><plugin_modification_date>2018/08/13</plugin_modification_date><plugin_publication_date>2018/03/13</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4011721
   -KB4011674
   -KB4011730
@@ -18365,7 +18365,7 @@ http://www.nessus.org/u?797b3826</see_also><risk_factor>High</risk_factor><scrip
     Remote version    : 16.0.4266.1001
     Fixed version     : 16.0.4666.1000
 
-</plugin_output></ReportItem><ReportItem severity="2" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Excel Products (June 2018)" pluginID="110492" protocol="tcp" svc_name="cifs"><cvss_base_score>4.3</cvss_base_score><cvss3_base_score>4.3</cvss3_base_score><patch_publication_date>2018/06/12</patch_publication_date><plugin_modification_date>2018/08/16</plugin_modification_date><plugin_publication_date>2018/06/12</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+</plugin_output></ReportItem><ReportItem severity="2" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Excel Products (June 2018)" pluginID="110492" protocol="tcp" svc_name="cifs"><cvss_base_score>4.3</cvss_base_score><cvss3_base_score>4.3</cvss3_base_score><patch_publication_date>2018/06/12</patch_publication_date><plugin_modification_date>2018/08/16</plugin_modification_date><plugin_publication_date>2018/06/12</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4022191
   -KB4022209
   -KB4022174</solution><vuln_publication_date>2018/06/12</vuln_publication_date><cvss3_vector>AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N</cvss3_vector><cvss_vector>AV:N/AC:M/Au:N/C:P/I:N/A:N</cvss_vector><description>The Microsoft Excel Products are missing a security update.
@@ -18409,67 +18409,67 @@ wscsvc (@%SystemRoot%\System32\wscsvc.dll,-200)
 
 This plugin is informative only and could be used for forensic
 investigation, malware detection, and to confirm that your system
-processes conform to your system policies.</description><synopsis>Use WMI to obtain running process information.</synopsis><risk_factor>None</risk_factor><script_version>$Revision: 1.91 $</script_version><plugin_output>Process Overview : 
+processes conform to your system policies.</description><synopsis>Use WMI to obtain running process information.</synopsis><risk_factor>None</risk_factor><script_version>$Revision: 1.91 $</script_version><plugin_output>Process Overview :
 SID: Process (PID)
- 0 : System Idle Process (0) 
- 0 : |- System (4) 
- 0 :    |- Memory Compression (1952) 
- 0 :    |- smss.exe (276) 
- 5 : OneDrive.exe (11204) 
- 0 : csrss.exe (368) 
- 0 : wininit.exe (444) 
- 0 : |- services.exe (532) 
- 0 :    |- svchost.exe (1000) 
- 0 :    |- svchost.exe (1128) 
- 0 :    |- svchost.exe (1252) 
- 0 :    |- TrustedInstaller.exe (12544) 
- 0 :    |- svchost.exe (14544) 
- 0 :    |- spoolsv.exe (1488) 
- 0 :    |- com.docker.service (1688) 
- 0 :    |- svchost.exe (1708) 
- 0 :    |- svchost.exe (1732) 
- 0 :    |- VGAuthService.exe (1768) 
- 0 :    |- nessus-service.exe (1780) 
- 0 :       |- nessusd.exe (2804) 
- 0 :    |- svchost.exe (1788) 
- 0 :    |- vmtoolsd.exe (1796) 
- 0 :    |- vmms.exe (1816) 
- 0 :    |- vmcompute.exe (2464) 
- 0 :    |- dllhost.exe (2516) 
- 0 :    |- svchost.exe (2760) 
- 0 :    |- msdtc.exe (2872) 
- 0 :    |- SearchIndexer.exe (384) 
- 0 :    |- NisSrv.exe (4144) 
- 0 :    |- svchost.exe (628) 
- 5 :       |- ApplicationFrameHost.exe (10156) 
- 5 :       |- SearchUI.exe (10876) 
- 5 :       |- ShellExperienceHost.exe (1176) 
- 5 :       |- SkypeHost.exe (15200) 
- 0 :       |- WmiPrvSE.exe (2320) 
- 5 :       |- dllhost.exe (2736) 
- 5 :       |- LockApp.exe (4056) 
- 5 :       |- RuntimeBroker.exe (692) 
- 5 :       |- LockAppHost.exe (8136) 
- 0 :       |- TiWorker.exe (9540) 
- 0 :    |- svchost.exe (644) 
- 5 :       |- sihost.exe (11012) 
- 5 :       |- taskhostw.exe (9620) 
- 0 :    |- MsMpEng.exe (6564) 
- 0 :    |- svchost.exe (668) 
- 0 :    |- svchost.exe (856) 
- 0 :    |- svchost.exe (884) 
- 5 :    |- svchost.exe (8912) 
- 0 :    |- svchost.exe (904) 
- 0 :    |- svchost.exe (928) 
- 0 : |- lsass.exe (540) 
- 5 : winlogon.exe (4592) 
- 5 : |- fontdrvhost.exe (11144) 
- 5 : |- LogonUI.exe (4764) 
- 5 : |- dwm.exe (8088) 
- 5 : csrss.exe (5344) 
- 5 : explorer.exe (5948) 
- 5 : |- MSASCuiL.exe (104) 
- 5 : |- vmtoolsd.exe (9780) 
+ 0 : System Idle Process (0)
+ 0 : |- System (4)
+ 0 :    |- Memory Compression (1952)
+ 0 :    |- smss.exe (276)
+ 5 : OneDrive.exe (11204)
+ 0 : csrss.exe (368)
+ 0 : wininit.exe (444)
+ 0 : |- services.exe (532)
+ 0 :    |- svchost.exe (1000)
+ 0 :    |- svchost.exe (1128)
+ 0 :    |- svchost.exe (1252)
+ 0 :    |- TrustedInstaller.exe (12544)
+ 0 :    |- svchost.exe (14544)
+ 0 :    |- spoolsv.exe (1488)
+ 0 :    |- com.docker.service (1688)
+ 0 :    |- svchost.exe (1708)
+ 0 :    |- svchost.exe (1732)
+ 0 :    |- VGAuthService.exe (1768)
+ 0 :    |- nessus-service.exe (1780)
+ 0 :       |- nessusd.exe (2804)
+ 0 :    |- svchost.exe (1788)
+ 0 :    |- vmtoolsd.exe (1796)
+ 0 :    |- vmms.exe (1816)
+ 0 :    |- vmcompute.exe (2464)
+ 0 :    |- dllhost.exe (2516)
+ 0 :    |- svchost.exe (2760)
+ 0 :    |- msdtc.exe (2872)
+ 0 :    |- SearchIndexer.exe (384)
+ 0 :    |- NisSrv.exe (4144)
+ 0 :    |- svchost.exe (628)
+ 5 :       |- ApplicationFrameHost.exe (10156)
+ 5 :       |- SearchUI.exe (10876)
+ 5 :       |- ShellExperienceHost.exe (1176)
+ 5 :       |- SkypeHost.exe (15200)
+ 0 :       |- WmiPrvSE.exe (2320)
+ 5 :       |- dllhost.exe (2736)
+ 5 :       |- LockApp.exe (4056)
+ 5 :       |- RuntimeBroker.exe (692)
+ 5 :       |- LockAppHost.exe (8136)
+ 0 :       |- TiWorker.exe (9540)
+ 0 :    |- svchost.exe (644)
+ 5 :       |- sihost.exe (11012)
+ 5 :       |- taskhostw.exe (9620)
+ 0 :    |- MsMpEng.exe (6564)
+ 0 :    |- svchost.exe (668)
+ 0 :    |- svchost.exe (856)
+ 0 :    |- svchost.exe (884)
+ 5 :    |- svchost.exe (8912)
+ 0 :    |- svchost.exe (904)
+ 0 :    |- svchost.exe (928)
+ 0 : |- lsass.exe (540)
+ 5 : winlogon.exe (4592)
+ 5 : |- fontdrvhost.exe (11144)
+ 5 : |- LogonUI.exe (4764)
+ 5 : |- dwm.exe (8088)
+ 5 : csrss.exe (5344)
+ 5 : explorer.exe (5948)
+ 5 : |- MSASCuiL.exe (104)
+ 5 : |- vmtoolsd.exe (9780)
 </plugin_output></ReportItem><ReportItem severity="0" port="0" pluginFamily="Windows" pluginName="BIOS Version (WMI)" pluginID="34096" protocol="tcp" svc_name="general"><plugin_modification_date>2018/08/22</plugin_modification_date><plugin_publication_date>2008/09/05</plugin_publication_date><plugin_type>local</plugin_type><solution>n/a</solution><description>It is possible to get information about the BIOS vendor and its
 version via the host's WMI interface.</description><synopsis>The BIOS version could be read.</synopsis><risk_factor>None</risk_factor><script_version>$Revision: 1.88 $</script_version><plugin_output>
   Vendor       : Phoenix Technologies LTD
@@ -18527,7 +18527,7 @@ The following user can not change his/her password :
 Note that, in addition to the Administrator, Guest, and Kerberos
 accounts, Nessus has enumerated only those domain users with UIDs
 between 1000 and 1200. To use a different range, edit the scan policy
-and change the 'Start UID' and/or 'End UID' preferences for 
+and change the 'Start UID' and/or 'End UID' preferences for
 'SMB use domain SID to enumerate users' setting, and then re-run the scan.
 </plugin_output></ReportItem><ReportItem severity="2" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="KB4053577: Security update for Adobe Flash Player (December 2017)" pluginID="105178" protocol="tcp" svc_name="cifs"><cvss_base_score>5.0</cvss_base_score><cvss_temporal_score>3.7</cvss_temporal_score><cvss3_base_score>5.3</cvss3_base_score><cvss3_temporal_score>4.6</cvss3_temporal_score><exploit_available>false</exploit_available><patch_publication_date>2017/12/12</patch_publication_date><plugin_modification_date>2018/09/10</plugin_modification_date><plugin_publication_date>2017/12/12</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released KB4053577 to address this issue.</solution><vuln_publication_date>2017/12/12</vuln_publication_date><cvss3_temporal_vector>E:U/RL:O/RC:C</cvss3_temporal_vector><cvss3_vector>AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N</cvss3_vector><cvss_temporal_vector>E:U/RL:OF/RC:C</cvss_temporal_vector><cvss_vector>AV:N/AC:L/Au:N/C:N/I:P/A:N</cvss_vector><description>The remote Windows host is missing security update KB4053577. It is,
 therefore, affected by a vulnerability which may allow an attacker
@@ -18585,7 +18585,7 @@ http://www.nessus.org/u?9d0d5cd2
 http://www.nessus.org/u?aca51532
 http://www.nessus.org/u?41c43cb2</see_also><risk_factor>High</risk_factor><script_version>1.3</script_version><plugin_output>
 Microsoft .NET Framework 4.7
-The remote host is missing one of the following rollup KBs : 
+The remote host is missing one of the following rollup KBs :
 
 Cumulative
   - 4103723
@@ -18653,7 +18653,7 @@ http://www.nessus.org/u?c624d784</see_also><risk_factor>High</risk_factor><scrip
     Remote version    : 16.0.4266.1001
     Fixed version     : 16.0.4639.1000
 
-</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Word Products (May 2018)" pluginID="109617" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/05/08</patch_publication_date><plugin_modification_date>2018/05/10</plugin_modification_date><plugin_publication_date>2018/05/08</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Word Products (May 2018)" pluginID="109617" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/05/08</patch_publication_date><plugin_modification_date>2018/05/10</plugin_modification_date><plugin_publication_date>2018/05/08</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4018396
   -KB4018383
   -KB4022141</solution><vuln_publication_date>2018/05/08</vuln_publication_date><cvss3_vector>AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H</cvss3_vector><cvss_vector>AV:N/AC:M/Au:N/C:C/I:C/A:C</cvss_vector><description>The Microsoft Word Products are missing a security update.
@@ -18975,7 +18975,7 @@ It is, therefore, affected by multiple vulnerabilities :
     current user.  (CVE-2018-0872, CVE-2018-0873,
     CVE-2018-0874, CVE-2018-0931, CVE-2018-0933,
     CVE-2018-0934)</description><synopsis>The remote Windows host is affected by multiple vulnerabilities.</synopsis><cve>CVE-2018-0880</cve><cve>CVE-2018-0881</cve><cve>CVE-2018-0882</cve><cve>CVE-2018-0929</cve><cve>CVE-2018-0902</cve><cve>CVE-2018-0904</cve><cve>CVE-2018-0926</cve><cve>CVE-2018-0927</cve><cve>CVE-2018-0942</cve><cve>CVE-2018-0888</cve><cve>CVE-2018-0889</cve><cve>CVE-2018-0900</cve><cve>CVE-2018-0868</cve><cve>CVE-2018-0901</cve><cve>CVE-2018-0883</cve><cve>CVE-2018-0884</cve><cve>CVE-2018-0983</cve><cve>CVE-2018-0885</cve><cve>CVE-2018-0886</cve><cve>CVE-2018-0891</cve><cve>CVE-2018-0893</cve><cve>CVE-2018-0814</cve><cve>CVE-2018-0935</cve><cve>CVE-2018-0816</cve><cve>CVE-2018-0817</cve><cve>CVE-2018-0876</cve><cve>CVE-2018-0898</cve><cve>CVE-2018-0931</cve><cve>CVE-2018-0811</cve><cve>CVE-2018-0877</cve><cve>CVE-2018-0899</cve><cve>CVE-2018-0932</cve><cve>CVE-2018-0878</cve><cve>CVE-2018-0933</cve><cve>CVE-2018-0977</cve><cve>CVE-2018-0813</cve><cve>CVE-2018-0934</cve><cve>CVE-2018-0872</cve><cve>CVE-2018-0894</cve><cve>CVE-2018-0873</cve><cve>CVE-2018-0895</cve><cve>CVE-2018-0874</cve><cve>CVE-2018-0896</cve><cve>CVE-2018-0897</cve><bid>103232</bid><bid>103299</bid><bid>103298</bid><bid>103236</bid><bid>103239</bid><bid>103238</bid><bid>103241</bid><bid>103240</bid><bid>103243</bid><bid>103307</bid><bid>103242</bid><bid>103245</bid><bid>103309</bid><bid>103244</bid><bid>103247</bid><bid>103246</bid><bid>103310</bid><bid>103249</bid><bid>103248</bid><bid>103312</bid><bid>103251</bid><bid>103250</bid><bid>103381</bid><bid>103380</bid><bid>103257</bid><bid>103256</bid><bid>103259</bid><bid>103261</bid><bid>103260</bid><bid>103262</bid><bid>103265</bid><bid>103267</bid><bid>103266</bid><bid>103269</bid><bid>103268</bid><bid>103273</bid><bid>103275</bid><bid>103274</bid><bid>103289</bid><bid>103288</bid><bid>103227</bid><bid>103231</bid><bid>103295</bid><bid>103230</bid><xref>MSKB:4088787</xref><xref>MSFT:MS18-4088787</xref><see_also>http://www.nessus.org/u?a4c76068</see_also><risk_factor>High</risk_factor><script_version>1.10</script_version><plugin_output>
-The remote host is missing one of the following rollup KBs : 
+The remote host is missing one of the following rollup KBs :
   - 4088787
 
 C:\Windows\system32\win32kfull.sys has not been patched.
@@ -19505,14 +19505,14 @@ It is, therefore, affected by multiple vulnerabilities :
     address. An attacker who successfully exploited this
     vulnerability could obtain information to further
     compromise the users system.  (CVE-2018-0887)</description><synopsis>The remote Windows host is affected by multiple vulnerabilities.</synopsis><cve>CVE-2018-0980</cve><cve>CVE-2018-0981</cve><cve>CVE-2018-8142</cve><cve>CVE-2018-0987</cve><cve>CVE-2018-0988</cve><cve>CVE-2018-0989</cve><cve>CVE-2018-1001</cve><cve>CVE-2018-0990</cve><cve>CVE-2018-1000</cve><cve>CVE-2018-0870</cve><cve>CVE-2018-0991</cve><cve>CVE-2018-1003</cve><cve>CVE-2018-0957</cve><cve>CVE-2018-0997</cve><cve>CVE-2018-1009</cve><cve>CVE-2018-0998</cve><cve>CVE-2018-1008</cve><cve>CVE-2018-0956</cve><cve>CVE-2018-8116</cve><cve>CVE-2018-0993</cve><cve>CVE-2018-0994</cve><cve>CVE-2018-1004</cve><cve>CVE-2018-0995</cve><cve>CVE-2018-0996</cve><cve>CVE-2018-1012</cve><cve>CVE-2018-1013</cve><cve>CVE-2018-1010</cve><cve>CVE-2018-0968</cve><cve>CVE-2018-0969</cve><cve>CVE-2018-0887</cve><cve>CVE-2018-0966</cve><cve>CVE-2018-0967</cve><cve>CVE-2018-0960</cve><cve>CVE-2018-1016</cve><cve>CVE-2018-1015</cve><cve>CVE-2018-1018</cve><cve>CVE-2018-0963</cve><cve>CVE-2018-0890</cve><cve>CVE-2018-1023</cve><cve>CVE-2018-0892</cve><cve>CVE-2018-0970</cve><cve>CVE-2018-1020</cve><cve>CVE-2018-0979</cve><cve>CVE-2018-0975</cve><cve>CVE-2018-0976</cve><cve>CVE-2018-0971</cve><cve>CVE-2018-0972</cve><cve>CVE-2018-0973</cve><cve>CVE-2018-0974</cve><xref>MSFT:MS18-4093119</xref><xref>MSKB:4093119</xref><see_also>http://www.nessus.org/u?2553c1b5</see_also><risk_factor>High</risk_factor><script_version>1.6</script_version><plugin_output>
-The remote host is missing one of the following rollup KBs : 
+The remote host is missing one of the following rollup KBs :
   - 4093119
 
 C:\Windows\system32\ntoskrnl.exe has not been patched.
     Remote version : 10.0.14393.1794
     Should be      : 10.0.14393.2189
 
-</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Word Products (July 2018)" pluginID="110994" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/07/10</patch_publication_date><plugin_modification_date>2018/07/13</plugin_modification_date><plugin_publication_date>2018/07/10</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Word Products (July 2018)" pluginID="110994" protocol="tcp" svc_name="cifs"><cvss_base_score>9.3</cvss_base_score><cvss3_base_score>8.8</cvss3_base_score><patch_publication_date>2018/07/10</patch_publication_date><plugin_modification_date>2018/07/13</plugin_modification_date><plugin_publication_date>2018/07/10</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4022218
   -KB4022224
   -KB4022202</solution><vuln_publication_date>2018/07/10</vuln_publication_date><cvss3_vector>AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H</cvss3_vector><cvss_vector>AV:N/AC:M/Au:N/C:C/I:C/A:C</cvss_vector><description>The Microsoft Word Products are missing a security update.
@@ -19538,7 +19538,7 @@ http://www.nessus.org/u?c3c4a554</see_also><risk_factor>High</risk_factor><scrip
     Remote version    : 16.0.4266.1001
     Fixed version     : 16.0.4717.1000
 
-</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Office Products (August 2018)" pluginID="111696" protocol="tcp" svc_name="cifs"><cvss_base_score>7.1</cvss_base_score><cvss3_base_score>6.5</cvss3_base_score><patch_publication_date>2018/08/14</patch_publication_date><plugin_modification_date>2018/08/16</plugin_modification_date><plugin_publication_date>2018/08/14</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:  
+</plugin_output></ReportItem><ReportItem severity="3" port="445" pluginFamily="Windows : Microsoft Bulletins" pluginName="Security Updates for Microsoft Office Products (August 2018)" pluginID="111696" protocol="tcp" svc_name="cifs"><cvss_base_score>7.1</cvss_base_score><cvss3_base_score>6.5</cvss3_base_score><patch_publication_date>2018/08/14</patch_publication_date><plugin_modification_date>2018/08/16</plugin_modification_date><plugin_publication_date>2018/08/14</plugin_publication_date><plugin_type>local</plugin_type><solution>Microsoft has released the following security updates to address this issue:
   -KB4022198
   -KB3213636
   -KB4032239
@@ -19857,7 +19857,7 @@ It is, therefore, affected by multiple vulnerabilities :
     either spoof content or serve as a pivot to chain an
     attack with other vulnerabilities in web services.
     (CVE-2018-8425)</description><synopsis>The remote Windows host is affected by multiple vulnerabilities.</synopsis><cve>CVE-2018-8440</cve><cve>CVE-2018-8462</cve><cve>CVE-2018-8420</cve><cve>CVE-2018-8442</cve><cve>CVE-2018-8464</cve><cve>CVE-2018-8421</cve><cve>CVE-2018-8443</cve><cve>CVE-2018-8465</cve><cve>CVE-2018-0965</cve><cve>CVE-2018-8367</cve><cve>CVE-2018-8466</cve><cve>CVE-2018-8467</cve><cve>CVE-2018-8424</cve><cve>CVE-2018-8446</cve><cve>CVE-2018-8468</cve><cve>CVE-2018-8425</cve><cve>CVE-2018-8447</cve><cve>CVE-2018-8469</cve><cve>CVE-2018-8449</cve><cve>CVE-2018-8419</cve><cve>CVE-2018-8271</cve><cve>CVE-2018-8392</cve><cve>CVE-2018-8393</cve><cve>CVE-2018-8470</cve><cve>CVE-2018-8452</cve><cve>CVE-2018-8332</cve><cve>CVE-2018-8354</cve><cve>CVE-2018-8475</cve><cve>CVE-2018-8410</cve><cve>CVE-2018-8433</cve><cve>CVE-2018-8455</cve><cve>CVE-2018-8335</cve><cve>CVE-2018-8434</cve><cve>CVE-2018-8435</cve><cve>CVE-2018-8457</cve><cve>CVE-2018-8315</cve><cve>CVE-2018-8438</cve><cve>CVE-2018-8439</cve><xref>MSKB:4457131</xref><xref>MSFT:MS18-4457131</xref><see_also>http://www.nessus.org/u?db9cdb46</see_also><risk_factor>High</risk_factor><script_version>1.1</script_version><plugin_output>
-The remote host is missing one of the following rollup KBs : 
+The remote host is missing one of the following rollup KBs :
   - 4457131
 
 C:\Windows\system32\ntoskrnl.exe has not been patched.
@@ -19865,7 +19865,7 @@ C:\Windows\system32\ntoskrnl.exe has not been patched.
     Should be      : 10.0.14393.2485
 
 </plugin_output></ReportItem><ReportItem severity="0" port="0" pluginFamily="Windows" pluginName="Windows Management Instrumentation (WMI) Available" pluginID="24269" protocol="tcp" svc_name="general"><plugin_modification_date>2018/08/22</plugin_modification_date><plugin_publication_date>2007/02/03</plugin_publication_date><plugin_type>local</plugin_type><solution>n/a</solution><description>The supplied credentials can be used to make WMI (Windows Management
-Instrumentation) requests against the remote host over DCOM. 
+Instrumentation) requests against the remote host over DCOM.
 
 These requests can be used to gather information about the remote
 host, such as its current state, network interface configuration, etc.</description><synopsis>WMI queries can be made against the remote host.</synopsis><see_also>http://msdn.microsoft.com/en-us/library/aa394582(v=vs.85).aspx</see_also><risk_factor>None</risk_factor><script_version>$Revision: 1.95 $</script_version></ReportItem><ReportItem severity="0" port="445" pluginFamily="Port scanners" pluginName="Netstat Portscanner (WMI)" pluginID="34220" protocol="tcp" svc_name="cifs"><plugin_modification_date>2018/08/22</plugin_modification_date><plugin_publication_date>2008/09/16</plugin_publication_date><plugin_type>local</plugin_type><solution>n/a</solution><description>Using the WMI interface, Nessus was able to run 'netstat' on the
@@ -19882,7 +19882,7 @@ vmms (@%systemroot%\system32\vmms.exe,-10)
 
 </plugin_output></ReportItem><ReportItem severity="0" port="0" pluginFamily="Windows" pluginName="WMI Windows Feature Enumeration" pluginID="44871" protocol="tcp" svc_name="general"><plugin_modification_date>2018/08/22</plugin_modification_date><plugin_publication_date>2010/02/24</plugin_publication_date><plugin_type>local</plugin_type><solution>n/a</solution><description>Nessus was able to enumerate the server features of the remote host by
 querying the 'Win32_ServerFeature' class of the '\Root\cimv2' WMI
-namespace for Windows Server versions or the 'Win32_OptionalFeature' 
+namespace for Windows Server versions or the 'Win32_OptionalFeature'
 class of the '\Root\cimv2' WMI namespace for Windows Desktop versions.
 
 Note that Features can only be enumerated for Windows 7 and later for
@@ -19960,7 +19960,7 @@ an unquoted service path.</synopsis><cve>CVE-2013-1609</cve><cve>CVE-2014-0759</
 http://cwe.mitre.org/data/definitions/428.html
 https://www.commonexploits.com/unquoted-service-paths/
 http://www.nessus.org/u?4aa6acbc</see_also><risk_factor>Medium</risk_factor><script_version>1.21</script_version><plugin_output>
-Nessus found the following service with an untrusted path : 
+Nessus found the following service with an untrusted path :
   com.docker.service : C:\Program Files\Docker\Docker\com.docker.service
 
 </plugin_output></ReportItem><ReportItem severity="0" port="0" pluginFamily="Windows" pluginName="Windows Explorer Typed Paths" pluginID="92418" protocol="tcp" svc_name="general"><plugin_modification_date>2018/05/23</plugin_modification_date><plugin_publication_date>2016/07/19</plugin_publication_date><plugin_type>local</plugin_type><solution>n/a</solution><description>Nessus was able to enumerate the directory paths that users visited by

@@ -1,51 +1,57 @@
 ﻿function Export-TNScan {
-<#
+    <#
     .SYNOPSIS
         Exports a list of scans
 
     .DESCRIPTION
         Exports a list of scans
-        
+
     .PARAMETER SessionObject
         Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
-        
+
     .PARAMETER ScanId
         The ID of the target scan
-        
+
     .PARAMETER Format
-        Description for Format
-        
+        The format of the output. Defaults to PDF. Options include: Nessus, HTML, PDF, CSV, DB
+
     .PARAMETER Path
-        Description for Path
-        
+        The destination file
+
     .PARAMETER PSObject
-        Description for PSObject
-        
-    .PARAMETER Chapters
-        Description for Chapters
-        
+        Export as PSObject
+
+    .PARAMETER Chapter
+        The desired chapter. Options include:
+        Vuln_Hosts_Summary, Vuln_By_Host, Compliance_Exec, Remediations, Vuln_By_Plugin, Compliance, All
+
     .PARAMETER HistoryID
-        Description for HistoryID
-        
+        The ID of the target history
+
     .PARAMETER Password
         The required password. This is a securestring type. The easiest way to get this is by using (Get-Credential).Password which extracts the password in a secure manner (and does not care about the username.)
-        
+
     .PARAMETER Name
         The name of the target scan
-        
+
     .PARAMETER Credential
-        The credential object (from Get-Credential) used to log into the target server. Specifies a user account that has permission to send the request. 
-        
+        The credential object (from Get-Credential) used to log into the target server. Specifies a user account that has permission to send the request.
+
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
         This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
-        
-    .EXAMPLE
-        PS C:\> Export-TNScan
 
-        Exports a list of scans
-        
+    .EXAMPLE
+        PS C:\> Export-TNScan -ScanId 10 -Path C:\temp\scan.pdf
+
+        Exports scan ID 10 to C:\temp\scan.pdf
+
+    .EXAMPLE
+        PS C:\> Export-TNScan -ScanId 10 -Type CSV -Path C:\temp\scan.csv -Chapter Compliance
+
+        Exports scan ID 10 to C:\temp\scan.pdf with only the Compliance subset
+
 #>
     [CmdletBinding()]
     param
@@ -65,7 +71,7 @@
         [ValidateSet('Vuln_Hosts_Summary', 'Vuln_By_Host',
             'Compliance_Exec', 'Remediations',
             'Vuln_By_Plugin', 'Compliance', 'All')]
-        [string[]]$Chapters,
+        [string[]]$Chapter,
         [Parameter(ValueFromPipelineByPropertyName)]
         [Int32]$HistoryID,
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -89,11 +95,11 @@
             $ExportParams.Add('format', $Format.ToLower())
         }
 
-        if ($Chapters) {
-            if ($Chapters -contains 'All') {
+        if ($Chapter) {
+            if ($Chapter -contains 'All') {
                 $ExportParams.Add('chapters', 'vuln_hosts_summary;vuln_by_host;compliance_exec;remediations;vuln_by_plugin;compliance')
             } else {
-                $ExportParams.Add('chapters', $Chapters.ToLower())
+                $ExportParams.Add('chapters', $Chapter.ToLower())
             }
         }
 
