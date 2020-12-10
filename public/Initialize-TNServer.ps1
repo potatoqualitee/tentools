@@ -34,6 +34,14 @@
 
         Initializes the Nessus server on localhost using the specified license and admin as the username
 
+    .EXAMPLE
+        PS C:\> $cred = Get-Credential admin
+        PS C:\> Initialize-TNServer -ComputerName nessus -Path $home\Downloads\nessus.license -Credential $cred -AcceptSelfSignedCert
+
+        Initializes the Nessus server on localhost using the specified license and admin as the username.
+
+        The certificate is not recognized, so AcceptSelfSignedCert is used to bypass the restriction
+
 #>
     [CmdletBinding()]
     param

@@ -1,42 +1,49 @@
 ﻿function Invoke-TNRequest {
-<#
+    <#
     .SYNOPSIS
         Invokes a list of requests
 
     .DESCRIPTION
         Invokes a list of requests
-        
+
     .PARAMETER SessionObject
         Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
-        
+
     .PARAMETER Parameter
-        Description for Parameter
-        
+        The body of the request
+
     .PARAMETER Path
-        Description for Path
-        
+        The path, such as /folders
+
     .PARAMETER Method
-        Description for Method
-        
+        The HTTP method such as GET, PUT, POST
+
     .PARAMETER OutFile
-        Description for OutFile
-        
+        The output as a file
+
     .PARAMETER ContentType
-        Description for ContentType
-        
+        The content type such as application/json
+
     .PARAMETER InFile
-        Description for InFile
-        
+        The file to upload, I guess
+
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
         This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
-        
-    .EXAMPLE
-        PS C:\> Invoke-TNRequest
 
-        Invokes a list of requests
-        
+    .EXAMPLE
+        PS C:\> $session = Connect-TNServer -ComputerName nessus -Credential admin
+        PS C:\> $params = @{
+                    SessionObject   = $session
+                    Path            = "/folders"
+                    Method          = "GET"
+                    EnableException = $EnableException
+                }
+        PS C:\> Invoke-TNRequest @params
+
+        Returns the output of Nessus' REST results for /folders. A connection is neede only once.
+
 #>
     [CmdletBinding()]
     Param

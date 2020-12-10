@@ -1,30 +1,30 @@
 ﻿function Remove-TNScanHistory {
-<#
+    <#
     .SYNOPSIS
-        Removes a list of scan historys
+        Removes a list of scan histories
 
     .DESCRIPTION
-        Removes a list of scan historys
-        
+        Removes a list of scan histories
+
     .PARAMETER SessionObject
         Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
-        
+
     .PARAMETER ScanId
         The ID of the target scan
-        
+
     .PARAMETER HistoryId
-        Description for HistoryId
-        
+        The ID for the target history
+
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
         This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
-        
+
     .EXAMPLE
         PS C:\> Remove-TNScanHistory
 
-        Removes a list of scan historys
-        
+        Removes a list of scan histories
+
 #>
     [CmdletBinding()]
     Param

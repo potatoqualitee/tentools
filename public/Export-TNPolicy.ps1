@@ -1,10 +1,10 @@
 ﻿function Export-TNPolicy {
     <#
     .SYNOPSIS
-        Exports a list of policys
+        Exports a list of policies
 
     .DESCRIPTION
-        Exports a list of policys
+        Exports a list of policies
 
     .PARAMETER SessionObject
         Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
