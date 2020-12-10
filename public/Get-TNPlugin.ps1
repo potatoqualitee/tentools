@@ -1,27 +1,27 @@
 ﻿function Get-TNPlugin {
-<#
+    <#
     .SYNOPSIS
         Gets a list of plugins
 
     .DESCRIPTION
         Gets a list of plugins
-        
+
     .PARAMETER SessionObject
         Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
-        
+
     .PARAMETER PluginId
         The ID of the target plugin
-        
+
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
         This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
-        
-    .EXAMPLE
-        PS C:\> Get-TNPlugin
 
-        Gets a list of plugins
-        
+    .EXAMPLE
+        PS C:\> Get-TNPlugin -PluginId 10
+
+        Gets the plugin with the id of 10
+
 #>
     [CmdletBinding()]
     Param

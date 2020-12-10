@@ -1,36 +1,37 @@
 ﻿function Enable-TNPolicyLocalPortEnumeration {
-<#
+    <#
     .SYNOPSIS
         Enables a list of policy local port enumerations
 
     .DESCRIPTION
         Enables a list of policy local port enumerations
-        
+
     .PARAMETER SessionObject
         Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
-        
+
     .PARAMETER PolicyId
         The ID of the target policy
-        
-    .PARAMETER ScanMethods
-        Description for ScanMethods
-        
+
+    .PARAMETER ScanMethod
+        Scan methods. Options include: WMINetstat, SSHNetstat, SNMPScanner
+
     .PARAMETER VerifyOpenPorts
-        Description for VerifyOpenPorts
-        
+        Verifies open ports
+
     .PARAMETER ScanOnlyIfLocalFails
-        Description for ScanOnlyIfLocalFails
-        
+        Scan only if local fails
+
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
         This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
-        
-    .EXAMPLE
-        PS C:\> Enable-TNPolicyLocalPortEnumeration
 
-        Enables a list of policy local port enumerations
-        
+    .EXAMPLE
+        PS C:\> Connect-TNServer -ComputerName nessus -Credential admin
+        PS C:\> Enable-TNPolicyLocalPortEnumeration -PolicyId 10 -ScanMethod SSHNetstat -VerifyOpenPorts
+
+        Enables a list of policy local port enumerations for Policy with ID 10 using SSHNetstat scan method and verifies open ports
+
 #>
     [CmdletBinding()]
     param

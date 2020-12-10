@@ -37,7 +37,7 @@
         Will edit a plugin rule with an ID of 500, to have a new computer name. Rule expires in 10 days
 
     .EXAMPLE
-        PS C:\> Get-TNPluginRule | Edit-TNPluginRule -Type High
+        PS C:\> Get-TNPluginRule | Edit-TNPluginRule -Type Info
 
         Will alter all rules to now have a serverity of 'Info'
 

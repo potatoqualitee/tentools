@@ -1,19 +1,26 @@
 ﻿function ConvertFrom-TNRestResponse {
-<#
+    <#
     .SYNOPSIS
-        Converts Nessus and tenable.sc responses to a readable format
+        Converts Nessus and tenable.sc responses to a readable, PowerShell-styled format
 
     .DESCRIPTION
-        Converts Nessus and tenable.sc responses to a readable format
-        
-    .PARAMETER InputObject
-        Description for InputObject
-        
-    .EXAMPLE
-        PS C:\> ConvertFrom-TNRestResponse
+        Converts Nessus and tenable.sc responses to a readable, PowerShell-styled format
 
-        Converts Nessus and tenable.sc responses to a readable format
-        
+    .PARAMETER InputObject
+        The rest response to parse from pipeline
+
+    .EXAMPLE
+        PS C:\> $session = Connect-TNServer -ComputerName nessus -Credential admin
+        PS C:\> $params = @{
+                    SessionObject   = $session
+                    Path            = "/folders"
+                    Method          = "GET"
+                    EnableException = $EnableException
+                }
+        PS C:\> Invoke-TNRequest @params | ConvertFrom-TNRestResponse
+
+        Connects to https://nessus:8834 using the admin credential, gets the results in JSON format then converts to PowerShell styled output
+
 #>
     [CmdletBinding()]
     param
