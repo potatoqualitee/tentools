@@ -46,7 +46,7 @@
         [ValidateSet("static")]
         [string]$Type = "static",
         [Parameter(ValueFromPipelineByPropertyName)]
-        [string]$IPRange,
+        [string[]]$IpRange,
         [Parameter(ValueFromPipelineByPropertyName)]
         [string]$Repository,
         [switch]$EnableException
@@ -70,15 +70,17 @@
                 if (-not $repo.TypeFields.IpRange) {
                     Stop-PSFFunction -EnableException:$EnableException -Message "Could not obtain repository for $($session.URI)" -Continue
                 } else {
-                    $IPRange = $repo.TypeFields.IpRange
+                    $allips = $repo.TypeFields.IpRange
                 }
+            } else {
+                $allips = $IpRange -join ", "
             }
 
             $body = @{
                 name        = $Name
                 description = $Description
                 type        = $Type
-                definedIPs  = $IpRange
+                definedIPs  = $allips
                 groups      = $null
             }
 

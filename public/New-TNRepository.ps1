@@ -61,7 +61,7 @@
         [string]$Type = "Local",
         [int]$TrendingDays = "30",
         [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
-        [string]$IPRange,
+        [string[]]$IpRange,
         [switch]$EnableException
     )
     process {
@@ -70,12 +70,13 @@
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
 
+            $allips = $IpRange -join ", "
             $body = @{
                 name         = $Name
                 description  = $Description
                 dataFormat   = $DataFormat
                 type         = $Type
-                ipRange      = $IpRange
+                ipRange      = $allips
                 trendingDays = $TrendingDays
                 trendWithRaw = "true"
             }
