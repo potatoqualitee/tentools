@@ -40,7 +40,7 @@
     process {
         foreach ($session in $SessionObject) {
             Write-PSFMessage -Level Verbose -Message "Removing history Id ($HistoryId) from scan Id $ScanId"
-            Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/history/$HistoryId" -Method 'Delete' -Parameter $params
+            Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/history/$HistoryId" -Method Delete -Parameter $params | ConvertFrom-TNRestResponse
             Write-PSFMessage -Level Verbose -Message 'History Removed'
         }
     }

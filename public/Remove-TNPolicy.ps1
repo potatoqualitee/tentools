@@ -29,13 +29,14 @@
         [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Alias("Id")]
         [int32]$PolicyId,
         [switch]$EnableException
     )
     process {
         foreach ($session in $SessionObject) {
             Write-PSFMessage -Level Verbose -Message "Deleting policy with id $PolicyId"
-            Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/policies/$PolicyId" -Method 'DELETE'
+            Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/policies/$PolicyId" -Method Delete | ConvertFrom-TNRestResponse
             Write-PSFMessage -Level Verbose -Message 'Policy deleted.'
         }
     }

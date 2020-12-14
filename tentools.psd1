@@ -107,6 +107,7 @@
         'Remove-TNPluginRule',
         'Remove-TNPolicy',
         'Remove-TNScan',
+        'Remove-TNScanZone',
         'Remove-TNScanHistory',
         'Remove-TNSession',
         'Remove-TNUser',
