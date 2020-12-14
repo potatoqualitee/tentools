@@ -118,6 +118,7 @@
         'Save-TNPlugin',
         'Set-TNPolicyPortRange',
         'Set-TNUserPassword',
+        'Start-TNDeploy',
         'Get-TNGroupMember',
         'Get-TNPlugin',
         'Get-TNPluginFamilyDetails',

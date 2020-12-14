@@ -33,9 +33,41 @@
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
+        PS C:\> $splat = @{
+            ComputerName = "securitycenter"
+            AdministratorCredential = (Get-Credential admin)
+            LicensePath = ""
+            AcceptSelfSignedCert = ""
+            ServerType = ""
+            SecurityManagerCredential = ""
+            Organization = ""
+            Repository = ""
+            ScanZone = "All Computers"
+            ScanCredentialHash = ""
+            IpRange = ""
+            PolicyFilePath = ""
+            ScanFilePath = ""
+            EnableException = ""
+        }
+
         PS C:\> Start-TNDeploy
 
         Starts a list of deploys
+
+        $admincred = Get-Credential admin2
+        $secmancred = Get-Credential secmancred2
+        $splat = @{
+        ComputerName = "securitycenter"
+        AdministratorCredential = $admincred
+        ServerType = "tenable.sc"
+        SecurityManagerCredential = $secmancred
+        Organization = "Acme"
+        Repository = "All Computers"
+        ScanZone = "All Computers"
+        IpRange = "192.168.0.0/24"
+        PolicyFilePath = "C:\nessus\library\policy.nessus"
+    }
+    Start-TNDeploy -Verbose
 
 #>
     [CmdletBinding()]
@@ -85,17 +117,18 @@
                     }
                     Initialize-TNServer @splat
                 } catch {
-                    Stop-PSFunction -EnableException:$EnableException -Message "Initialization failed for $computer" -Continue
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Initialization failed for $computer" -Continue
                 }
             }
 
-            # Connect
+            # Connect as admin
             try {
                 Write-PSFMessage -Level Verbose -Message "Connecting to $computer"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $computer"
-                $null = Connect-TNServer -ComputerName $computer -Credential $AdministratorCredential -Type $ServerType
+                #$null = Connect-TNServer -ComputerName $computer -Credential $AdministratorCredential -Type $ServerType
+                $null = Connect-TNServer -Type tenable.sc -Credential $AdministratorCredential -ComputerName securitycenter
             } catch {
-                Stop-PSFunction -EnableException:$EnableException -Message "Connect failed for $computer" -Continue
+                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Connect failed for $computer" -Continue
             }
 
             # Org
@@ -104,7 +137,7 @@
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating an organization on $computer"
                 $null = New-TNOrganization -Name $Organization
             } catch {
-                Stop-PSFunction -EnableException:$EnableException -Message "Creation of organization failed for $computer" -Continue
+                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Creation of organization failed for $computer" -Continue
             }
 
             # Repository
@@ -113,7 +146,7 @@
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating a repository on $computer"
                 $null = New-TNRepository -Name $Repository -IpRange $IpRange
             } catch {
-                Stop-PSFunction -EnableException:$EnableException -Message "Creation of repository failed for $computer" -Continue
+                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Creation of repository failed for $computer" -Continue
             }
 
             # Organization User
@@ -122,7 +155,7 @@
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating an organization user on $computer"
                 $null = New-TNOrganizationUser -Organization $Organization -Credential $SecurityManagerCredential
             } catch {
-                Stop-PSFunction -EnableException:$EnableException -Message "Creation of organization user $($SecurityManagerCredential.Username) failed for $computer" -Continue
+                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Creation of organization user $($SecurityManagerCredential.Username) failed for $computer" -Continue
             }
 
             # Scanner Credentials
@@ -132,7 +165,7 @@
                 try {
                     $null = New-TNCredential -Name "Windows Domain User" -Description "The user that has access to run scans on Windows computers" -AuthType password -Type windows -Credential windowsuser
                 } catch {
-                    Stop-PSFunction -EnableException:$EnableException -Message "Credential creation failed for $computer" -Continue
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Credential creation failed for $computer" -Continue
                 }
             }
 
@@ -142,16 +175,7 @@
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating scan zones on $computer"
                 $null = New-TNScanZone -Name $ScanZone -IPRange $IpRange -Description "All organization computers"
             } catch {
-                Stop-PSFunction -EnableException:$EnableException -Message "Creation of scan zone failed for $computer" -Continue
-            }
-
-            # Report Attribute
-            try {
-                Write-PSFMessage -Level Verbose -Message "Creating DISA report attribute on $computer"
-                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating DISA report attribute on $computer"
-                $null = New-TNReportAttribute -Name DISA
-            } catch {
-                Stop-PSFunction -EnableException:$EnableException -Message "DISA report attribute creation failed for $computer" -Continue
+                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Creation of scan zone failed for $computer" -Continue
             }
 
             # Import policy
@@ -160,7 +184,26 @@
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing policies on $computer"
                 $null = Import-TNPolicy -FilePath $PolicyFilePath
             } catch {
-                Stop-PSFunction -EnableException:$EnableException -Message "Policy import failed for $computer" -Continue
+                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Policy import failed for $computer" -Continue
+            }
+
+            # Connect as security manager
+            try {
+                $null = Remove-TNSession -SessionId 0
+                Write-PSFMessage -Level Verbose -Message "Connecting to $computer as $($SecurityManagerCredential.Username)"
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $computer"
+                $null = Connect-TNServer -ComputerName $computer -Credential $SecurityManagerCredential -Type $ServerType
+            } catch {
+                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Connect failed for $computer as $($SecurityManagerCredential.Username)" -Continue
+            }
+
+            # Report Attribute
+            try {
+                Write-PSFMessage -Level Verbose -Message "Creating DISA report attribute on $computer"
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating DISA report attribute on $computer"
+                $null = New-TNReportAttribute -Name DISA
+            } catch {
+                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "DISA report attribute creation failed for $computer" -Continue
             }
 
             # Scans!
@@ -169,10 +212,16 @@
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating scans on $computer"
                 $null = New-TNScan -Auto -Target $IpRange
             } catch {
-                Stop-PSFunction -EnableException:$EnableException -Message "Policy import failed for $computer" -Continue
+                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Policy import failed for $computer" -Continue
             }
 
             Write-Progress -Activity "Finished deploying $computer for $ServerType" -Completed
+
+            [pscustomobject]@{
+                ComputerName = $computer
+                ServerType   = $ServerType
+                Status       = "Success"
+            }
         }
     }
     end {

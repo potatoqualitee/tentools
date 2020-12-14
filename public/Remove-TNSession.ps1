@@ -44,19 +44,23 @@
             }
 
             foreach ($session in $toremove) {
+                if (-not $session.sc) {
+                    $uri = "/session"
+                } else {
+                    $uri = "/token"
+                }
                 Write-PSFMessage -Level Verbose -Message "Disposing of connection"
                 $params = @{
                     SessionObject = $session
                     Method        = "DELETE"
-                    URI           = "$($session.URI)/session"
-                    Headers       = @{"X-Cookie" = "token=$($session.Token)" }
+                    Path          = $uri
                     ErrorVariable = "DisconnectError"
                     ErrorAction   = "SilentlyContinue"
                 }
                 try {
-                    Invoke-RestMethod @params
+                    Invoke-TNRequest @params | ConvertFrom-TNRestResponse
                 } catch {
-                    Stop-PSFFunction -EnableException:$EnableException -Message "Session with Id $($session.SessionId) seems to have expired" -Continue
+                    Stop-PSFFunction -EnableException:$EnableException -Message "Session with Id $($session.SessionId) seems to have expired" -Continue -ErrorRecord $_
                 }
 
                 Write-PSFMessage -Level Verbose -Message "Removing session from `$script:NessusConn"
