@@ -41,13 +41,13 @@ function Set-TNRepositoryProperty {
     .EXAMPLE
         PS C:\> Set-TNRepositoryProperty -Name "All Computers" -DaysTrending 100
 
-        Adds port 1433-1434 to Policy with Id 32
+       Sets days trending to 100 for the "All Computers" repository
 
 
     .EXAMPLE
-        PS C:\> Get-TNPolicy -Name "Host Scans" | Set-TNRepositoryProperty -Port 1433,1434
+        PS C:\> Set-TNRepositoryProperty -Name "All Computers" -Organization Acme -TrendWithRaw
 
-        Adds port 1433-1434 to Host Scans policy
+        Adds access to the Acme organization and sets days trending to 365 for the "All Computers" repository
 #>
 
     [CmdletBinding()]
