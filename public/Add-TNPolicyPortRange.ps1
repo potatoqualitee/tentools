@@ -59,7 +59,7 @@
                         SessionObject   = $session
                         Path            = "/policies/$PolicyToChange"
                         Method          = $method
-                        ContentType     = 'application/json'
+                        ContentType     = "application/json"
                         Parameter       = "{`"settings`": {`"portscan_range`": `"$($Ports)`"}}"
                         EnableException = $EnableException
                     }

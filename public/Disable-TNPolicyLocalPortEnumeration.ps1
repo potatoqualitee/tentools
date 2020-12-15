@@ -80,7 +80,7 @@
                     SessionObject   = $session
                     Path            = "/policies/$policy"
                     Method          = 'PUT'
-                    ContentType     = 'application/json'
+                    ContentType     = "application/json"
                     Parameter       = $settingsJson
                     EnableException = $EnableException
                 }
