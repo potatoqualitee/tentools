@@ -120,6 +120,7 @@
         'Restart-TNService',
         'Save-TNPlugin',
         'Set-TNPolicyPortRange',
+        'Set-TNRepositoryProperty',
         'Set-TNUserPassword',
         'Start-TNDeploy',
         'Get-TNGroupMember',
