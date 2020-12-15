@@ -112,7 +112,7 @@
                     Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Initializing $computer"
                     $splat = @{
                         ComputerName = $computer
-                        Credential   = $Credential
+                        Credential   = $AdministratorCredential
                         LicensePath  = $LicensePath
                     }
                     Initialize-TNServer @splat
@@ -125,7 +125,7 @@
             try {
                 Write-PSFMessage -Level Verbose -Message "Connecting to $computer"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $computer"
-                #$null = Connect-TNServer -ComputerName $computer -Credential $AdministratorCredential -Type $ServerType
+                $null = Connect-TNServer -ComputerName $computer -Credential $AdministratorCredential -Type $ServerType
                 $null = Connect-TNServer -Type tenable.sc -Credential $AdministratorCredential -ComputerName securitycenter
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Connect failed for $computer" -Continue
@@ -212,7 +212,7 @@
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating scans on $computer"
                 $null = New-TNScan -Auto -Target $IpRange
             } catch {
-                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Policy import failed for $computer" -Continue
+                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Scan creation failed for $computer" -Continue
             }
 
             Write-Progress -Activity "Finished deploying $computer for $ServerType" -Completed
