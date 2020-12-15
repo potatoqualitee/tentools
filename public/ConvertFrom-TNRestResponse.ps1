@@ -75,12 +75,12 @@
             )
             # get columns to convert to camel case
             if ($null -eq $Object) {
-                return $null
+                return
             }
             try {
                 $fields = $Object | Get-Member -Type NoteProperty -ErrorAction Stop | Sort-Object Name
             } catch {
-                return $null
+                return
             }
 
             foreach ($row in $Object) {
