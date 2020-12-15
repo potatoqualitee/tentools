@@ -90,7 +90,7 @@
         [Parameter(Mandatory)]
         [string]$Repository,
         [string]$ScanZone = "All Computers",
-        [hashtable]$ScanCredentialHash,
+        [hashtable[]]$ScanCredentialHash,
         [Parameter(Mandatory)]
         [string[]]$IpRange,
         [Parameter(Mandatory)]
@@ -149,6 +149,15 @@
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Creation of repository failed for $computer" -Continue
             }
 
+            # Add org to repository
+            try {
+                Write-PSFMessage -Level Verbose -Message "Adding organization $Organization to repository $Repository on $computer"
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Adding organization $Organization to repository $Repository on $computer"
+                $null = Set-TNRepositoryProperty -Name $Repository -Organization $Organization
+            } catch {
+                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Creation of repository failed for $computer" -Continue
+            }
+
             # Organization User
             try {
                 Write-PSFMessage -Level Verbose -Message "Creating an organization user on $computer"
@@ -163,7 +172,9 @@
                 Write-PSFMessage -Level Verbose -Message "Creating credentials on $computer"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating credentials on $computer"
                 try {
-                    $null = New-TNCredential -Name "Windows Domain User" -Description "The user that has access to run scans on Windows computers" -AuthType password -Type windows -Credential windowsuser
+                    foreach ($scancred in $ScanCredentialHash) {
+                        $null = New-TNCredential @scancred
+                    }
                 } catch {
                     Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Credential creation failed for $computer" -Continue
                 }
