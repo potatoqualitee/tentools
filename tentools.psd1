@@ -102,6 +102,7 @@
         'New-TNScanZone',
         'New-TNScan',
         'New-TNUser',
+        'Remove-TNCredential',
         'Remove-TNGroup',
         'Remove-TNGroupUser',
         'Remove-TNPluginRule',
@@ -111,7 +112,9 @@
         'Remove-TNScanHistory',
         'Remove-TNSession',
         'Remove-TNUser',
+        'Remove-TNOrganization'
         'Remove-TNOrganizationUser',
+        'Remove-TNRepository',
         'Rename-TNGroup',
         'Resume-TNScan',
         'Restart-TNService',

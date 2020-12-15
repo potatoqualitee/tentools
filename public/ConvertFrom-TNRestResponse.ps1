@@ -26,7 +26,8 @@
     param
     (
         [Parameter(Mandatory, ValueFromPipeline)]
-        [PSCustomObject[]]$InputObject
+        [PSCustomObject[]]$InputObject,
+        [switch]$ExcludeEmptyResult
     )
     begin {
         function Convert-Name ($string) {
@@ -76,7 +77,11 @@
             if ($null -eq $Object) {
                 return $null
             }
-            $fields = $Object | Get-Member -Type NoteProperty | Sort-Object Name
+            try {
+                $fields = $Object | Get-Member -Type NoteProperty -ErrorAction Stop | Sort-Object Name
+            } catch {
+                return $null
+            }
 
             foreach ($row in $Object) {
                 if (-not $session) {
@@ -172,7 +177,7 @@
         }
     }
     process {
-        if ($null -eq $InputObject) {
+        if ($null -eq $InputObject -or ($ExcludeEmptyResult -and $InputObject.type -eq "regular")) {
             return
         }
         foreach ($object in $InputObject) {

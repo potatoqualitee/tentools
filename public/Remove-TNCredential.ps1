@@ -1,16 +1,19 @@
-﻿function Get-TNOrganization {
+function Remove-TNCredential {
     <#
     .SYNOPSIS
-        Gets a list of organizations
+        Removes a list of credentials
 
     .DESCRIPTION
-        Gets a list of organizations
+        Removes a list of credentials
 
     .PARAMETER SessionObject
         Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
 
     .PARAMETER Name
-        The name of the target organization
+        The name of the target credential
+
+    .PARAMETER InputObject
+        Description for InputObject
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
@@ -18,14 +21,9 @@
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS C:\> Get-TNOrganization
+        PS C:\> Remove-TNCredential
 
-        Gets a list of all organizations
-
-    .EXAMPLE
-        PS C:\> Get-TNOrganization -Name CNN, CRV
-
-        Gets a list of organizations named CNN and CRV, if they exist
+        Removes a list of credentials
 
 #>
     [CmdletBinding()]
@@ -33,8 +31,10 @@
     (
         [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
-        [Parameter(ValueFromPipelineByPropertyName)]
+        [parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string[]]$Name,
+        [parameter(ValueFromPipeline)]
+        [object[]]$InputObject,
         [switch]$EnableException
     )
     process {
@@ -42,17 +42,21 @@
             if (-not $session.sc) {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
-
-            $params = @{
-                Path            = "/organization"
-                Method          = "GET"
-                EnableException = $EnableException
+            if (-not $InputObject) {
+                $InputObject = Get-TNCredential -Name $Name
+                if (-not $InputObject) {
+                    Stop-PSFFunction -Message "Credential $Name does not in exist at $($session.URI)" -Continue
+                }
             }
 
-            if ($PSBoundParameters.Name) {
-                Invoke-TNRequest @params | ConvertFrom-TNRestResponse -ExcludeEmptyResult | Where-Object Name -in $Name
-            } else {
-                Invoke-TNRequest @params | ConvertFrom-TNRestResponse -ExcludeEmptyResult
+            foreach ($cred in $InputObject) {
+                $params = @{
+                    SessionObject   = $session
+                    EnableException = $EnableException
+                    Method          = "DELETE"
+                    Path            = "/credential/$($cred.Id)"
+                }
+                Invoke-TNRequest @params | ConvertFrom-TNRestResponse
             }
         }
     }

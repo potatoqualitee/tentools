@@ -38,7 +38,7 @@
                 $groupparams = @{
                     SessionObject = $session
                     Path          = "/groups/$GroupId"
-                    Method        = 'DELETE '
+                    Method        = "DELETE"
                 }
 
                 Invoke-TNRequest @groupparams | ConvertFrom-TNRestResponse
