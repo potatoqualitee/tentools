@@ -44,8 +44,20 @@
         }
         PS C:\> New-TNCredential @params -Verbose
 
-        Creates a new credential for ad\nessus
+        Creates a new Windows credential for ad\nessus
 
+    .EXAMPLE
+        PS C:\> $params = @{
+              Name = "Linux Scanner Account"
+              Type = "ssh"
+              AuthType = "password"
+              Credential = "acasaccount"
+              PrivilegeEscalation = "sudo"
+        }
+
+        PS C:\> New-TNCredential @params -Verbose
+
+        Creates a new SSH credential for acasaccount and sets the escalation type to sudo
 #>
     [CmdletBinding()]
     param
