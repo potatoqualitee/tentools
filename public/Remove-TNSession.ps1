@@ -22,6 +22,7 @@
 #>
     [CmdletBinding()]
     param(
+        [parameter(ValueFromPipelineByPropertyName)]
         [int[]]$SessionId,
         [switch]$EnableException
     )
