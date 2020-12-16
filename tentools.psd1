@@ -141,7 +141,8 @@
         'Wait-TNServerReady'
         'Add-TNScanner',
         'Remove-TNFolder',
-        'Rename-TNFolder'
+        'Rename-TNFolder',
+        'Set-TNScanProperty'
     )
 
     # Cmdlets to export from this module

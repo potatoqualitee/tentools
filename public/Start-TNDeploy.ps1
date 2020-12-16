@@ -27,6 +27,12 @@
     .PARAMETER SecurityManagerCredential
         Description for SecurityManagerCredential
 
+    .PARAMETER Scanner
+        The hostname of the scanner or scanners to add
+
+    .PARAMETER ScannerCredential
+        The username and password used to add the scanners
+
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
         This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
@@ -73,29 +79,40 @@
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string[]]$ComputerName,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [int]$Port,
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [Management.Automation.PSCredential]$AdministratorCredential,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [string]$LicensePath,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$AcceptSelfSignedCert,
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [ValidateSet("tenable.sc", "Nessus")]
         [string]$ServerType,
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [Management.Automation.PSCredential]$SecurityManagerCredential,
-        [Parameter(Mandatory)]
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$Scanner,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [Management.Automation.PSCredential]$ScannerCredential,
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string]$Organization,
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string]$Repository,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [string]$ScanZone = "All Computers",
-        [hashtable[]]$ScanCredentialHash,
-        [Parameter(Mandatory)]
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$ScanCredentialHash,
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string[]]$IpRange,
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string[]]$PolicyFilePath,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [string[]]$ScanFilePath,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$EnableException
     )
     begin {
@@ -104,8 +121,17 @@
         $PSDefaultParameterValues["*:EnableException"] = $true
     }
     process {
+        if ($PSBoundParameters.Scanner -and -not $PSBoundParameters.ScannerCredential) {
+            Stop-PSFFunction -EnableException:$EnableException -Message "You must provide a ScannerCredential when specifying a Scanner"
+            return
+        }
+
         foreach ($computer in $ComputerName) {
             $stepCounter = 0
+            $output = @{
+                ComputerName = $computer
+                ServerType   = $ServerType
+            }
             if ($LicensePath) {
                 try {
                     Write-PSFMessage -Level Verbose -Message "Initializing $computer"
@@ -116,6 +142,8 @@
                         LicensePath  = $LicensePath
                     }
                     Initialize-TNServer @splat
+                    $output["LicensePath"] = $LicensePath
+                    $output["Administrator"] = $AdministratorCredential.Username
                 } catch {
                     Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Initialization failed for $computer" -Continue
                 }
@@ -131,11 +159,30 @@
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Connect failed for $computer" -Continue
             }
 
+            if ($Scanner) {
+                try {
+                    foreach ($scannername in $scanner) {
+                        Write-PSFMessage -Level Verbose -Message "Adding scanner $scannername"
+                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Adding scanner $scannername"
+                        $splat = @{
+                            ComputerName = $scannername
+                            Credential   = $ScannerCredential
+                        }
+                        $null = Add-TNScanner @splat
+                    }
+                    $output["Scanner"] = $Scanner
+                    $output["ScannerCredential"] = $ScannerCredential.Username
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Failed to add scanners" -Continue
+                }
+            }
+
             # Org
             try {
                 Write-PSFMessage -Level Verbose -Message "Creating an organization on $computer"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating an organization on $computer"
                 $null = New-TNOrganization -Name $Organization
+                $output["Organization"] = $Organization
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Creation of organization failed for $computer" -Continue
             }
@@ -145,6 +192,8 @@
                 Write-PSFMessage -Level Verbose -Message "Creating a repository on $computer"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating a repository on $computer"
                 $null = New-TNRepository -Name $Repository -IpRange $IpRange
+                $output["Repository"] = $Repository
+                $output["IpRange"] = $IpRange
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Creation of repository failed for $computer" -Continue
             }
@@ -163,6 +212,7 @@
                 Write-PSFMessage -Level Verbose -Message "Creating an organization user on $computer"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating an organization user on $computer"
                 $null = New-TNOrganizationUser -Organization $Organization -Credential $SecurityManagerCredential
+                $output["SecurityManager"] = $SecurityManagerCredential.UserName
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Creation of organization user $($SecurityManagerCredential.Username) failed for $computer" -Continue
             }
@@ -173,11 +223,18 @@
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating credentials on $computer"
                 try {
                     foreach ($scancred in $ScanCredentialHash) {
-                        $null = New-TNCredential @scancred
+                        if ($scancred -is [hashtable]) {
+                            $null = New-TNCredential @scancred
+                        } else {
+                            $splat = ConvertTo-Hashtable $scancred
+                            $null = New-TNCredential @splat
+                        }
                     }
                 } catch {
                     Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Credential creation failed for $computer" -Continue
                 }
+
+                $output["ScanCredential"] = $SecurityManagerCredential.UserName
             }
 
             # Scan Zone
@@ -185,6 +242,11 @@
                 Write-PSFMessage -Level Verbose -Message "Creating scan zones on $computer"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating scan zones on $computer"
                 $null = New-TNScanZone -Name $ScanZone -IPRange $IpRange -Description "All organization computers"
+                $output["ScanZone"] = $ScanZone
+
+                if ($PSBoundParameters.Scanner) {
+                    $null = Set-TNScanZoneProperty -Name $ScanZone -Scanner $Scanner
+                }
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Creation of scan zone failed for $computer" -Continue
             }
@@ -194,6 +256,7 @@
                 Write-PSFMessage -Level Verbose -Message "Importing policies on $computer"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing policies on $computer"
                 $null = Import-TNPolicy -FilePath $PolicyFilePath
+                $output["PolicyFilePath"] = $PolicyFilePath
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Policy import failed for $computer" -Continue
             }
@@ -213,6 +276,7 @@
                 Write-PSFMessage -Level Verbose -Message "Creating DISA report attribute on $computer"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating DISA report attribute on $computer"
                 $null = New-TNReportAttribute -Name DISA
+                $output["ReportAttribute"] = "DISA"
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "DISA report attribute creation failed for $computer" -Continue
             }
@@ -221,18 +285,20 @@
             try {
                 Write-PSFMessage -Level Verbose -Message "Creating scans on $computer"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating scans on $computer"
-                $null = New-TNScan -Auto -Target $IpRange
+                $scans = New-TNScan -Auto -Target $IpRange
+                $output["Scans"] = $scans.Name
+
+                if ($PSBoundParameters.ScanCredentialHash) {
+                    Set-TNScanProperty -Name $scans.Name -ScanCredential $ScanCredentialHash.Name
+                }
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Scan creation failed for $computer" -Continue
             }
 
             Write-Progress -Activity "Finished deploying $computer for $ServerType" -Completed
 
-            [pscustomobject]@{
-                ComputerName = $computer
-                ServerType   = $ServerType
-                Status       = "Success"
-            }
+            $output["Status"] = "Success"
+            [pscustomobject]$output | ConvertFrom-TNRestResponse
         }
     }
     end {
