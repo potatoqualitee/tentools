@@ -6475,7 +6475,7 @@
 </preference>
 <preference>
 <name>name</name>
-<value>Upload This</value>
+<value>Host Discovery Demo</value>
 </preference>
 <preference>
 <name>plugin_selection.individual_plugin.14274</name>
@@ -6785,7 +6785,7 @@
 <Status>disabled</Status>
 </FamilyItem>
 </FamilySelection>
-<policyName>Upload This</policyName>
+<policyName>Host Discovery Demo</policyName>
 <IndividualPluginSelection>
 </IndividualPluginSelection>
 </Policy>

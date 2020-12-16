@@ -33,6 +33,7 @@
         [object[]]$SessionObject = (Get-TNSession),
         # Nessus session Id
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Alias("id")]
         [int32]$ScanId,
         [Parameter(ValueFromPipelineByPropertyName)]
         [string[]]$AlternateTarget,
@@ -48,11 +49,21 @@
     }
     process {
         foreach ($session in $SessionObject) {
-            foreach ($scans in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/launch" -Method 'Post' -Parameter $paramJson -ContentType "application/json")) {
-                [pscustomobject]@{
-                    ScanUUID  = $scans.scan_uuid
-                    ScanId    = $ScanId
-                    SessionId = $session.SessionId
+            if ($session.sc) {
+                foreach ($scans in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/launch" -Method 'Post' -Parameter $paramJson -ContentType "application/json")) {
+                    [pscustomobject]@{
+                        ScanUUID  = $scans.scan_uuid
+                        ScanId    = $ScanId
+                        SessionId = $session.SessionId
+                    }
+                }
+            } else {
+                foreach ($scans in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/launch" -Method 'Post' -Parameter $paramJson -ContentType "application/json")) {
+                    [pscustomobject]@{
+                        ScanUUID  = $scans.scan_uuid
+                        ScanId    = $ScanId
+                        SessionId = $session.SessionId
+                    }
                 }
             }
         }

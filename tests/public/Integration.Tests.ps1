@@ -204,7 +204,7 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
         $file = Resolve-Path .\tests\library\policy.nessus
         It -Skip "Uploads policy!" {
             $results = Import-TNPolicy -FilePath $file
-            $results.Name | Should -Match 'Upload This'
+            $results.Name | Should -Match 'Host Discovery Demo'
         }
     }
     Context "Import-TNScan" {

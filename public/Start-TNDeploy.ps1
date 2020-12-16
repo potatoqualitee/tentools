@@ -234,7 +234,7 @@
                     Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Credential creation failed for $computer" -Continue
                 }
 
-                $output["ScanCredential"] = $SecurityManagerCredential.UserName
+                $output["ScanCredential"] = $ScanCredentialHash.Name
             }
 
             # Scan Zone
@@ -255,8 +255,8 @@
             try {
                 Write-PSFMessage -Level Verbose -Message "Importing policies on $computer"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing policies on $computer"
-                $null = Import-TNPolicy -FilePath $PolicyFilePath
-                $output["PolicyFilePath"] = $PolicyFilePath
+                $results = Import-TNPolicy -FilePath $PolicyFilePath
+                $output["ImportedPolicy"] = $results.Name
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Policy import failed for $computer" -Continue
             }
@@ -289,7 +289,7 @@
                 $output["Scans"] = $scans.Name
 
                 if ($PSBoundParameters.ScanCredentialHash) {
-                    Set-TNScanProperty -Name $scans.Name -ScanCredential $ScanCredentialHash.Name
+                    $null = Set-TNScanProperty -Name $scans.Name -ScanCredential $ScanCredentialHash.Name
                 }
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Scan creation failed for $computer" -Continue
