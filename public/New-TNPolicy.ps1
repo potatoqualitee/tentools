@@ -72,7 +72,7 @@
                     SessionObject = $session
                     Path          = "/policies/"
                     Method        = 'POST'
-                    ContentType   = 'application/json'
+                    ContentType   = "application/json"
                     Parameter     = $SettingsJson
                 }
                 $newpolicy = Invoke-TNRequest @params

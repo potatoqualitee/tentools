@@ -1,13 +1,16 @@
-﻿function Restart-TNService {
+function Remove-TNScanZone {
     <#
     .SYNOPSIS
-        Restarts a list of services
+        Removes a list of scan zones
 
     .DESCRIPTION
-        Restarts a list of services
+        Removes a list of scan zones
 
     .PARAMETER SessionObject
         Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
+
+    .PARAMETER Name
+        The ID of the target scan zone
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
@@ -15,26 +18,29 @@
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS C:\> Restart-TNService
+        PS C:\> Remove-TNScanZone
 
-        Restarts a list of services
+        Removes a list of scan zones
 
 #>
     [CmdletBinding()]
-    param
+    Param
     (
         [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
-        # Nessus session Id
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [string[]]$Name,
         [switch]$EnableException
     )
-    begin {
-        $params = @{ }
-        $paramJson = ConvertTo-Json -InputObject $params -Compress
-    }
     process {
         foreach ($session in $SessionObject) {
-            Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/server/restart" -Method 'Post' -Parameter $paramJson -ContentType "application/json"
+            foreach ($scanzonename in $Name) {
+                $id = (Get-TNScanZone | Where-Object Name -eq $scanzonename).Id
+                if ($id) {
+                    Write-PSFMessage -Level Verbose -Message "Deleting scan zone with id $id"
+                    Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/zone/$id" -Method Delete | ConvertFrom-TNRestResponse
+                }
+            }
         }
     }
 }

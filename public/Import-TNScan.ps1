@@ -46,7 +46,7 @@
             foreach ($file in $FilePath) {
                 $body = $file | Publish-File -Session $session -EnableException:$EnableException
 
-                Invoke-TnRequest -Method Post -Path "/scans/import" -Parameter $body -ContentType 'application/json' -SessionObject $session |
+                Invoke-TnRequest -Method Post -Path "/scans/import" -Parameter $body -ContentType "application/json" -SessionObject $session |
                     ConvertFrom-TNRestResponse
             }
         }

@@ -102,21 +102,28 @@
         'New-TNScanZone',
         'New-TNScan',
         'New-TNUser',
+        'Remove-TNCredential',
         'Remove-TNGroup',
         'Remove-TNGroupUser',
         'Remove-TNPluginRule',
         'Remove-TNPolicy',
         'Remove-TNScan',
+        'Remove-TNScanner',
+        'Remove-TNScanZone',
         'Remove-TNScanHistory',
         'Remove-TNSession',
         'Remove-TNUser',
+        'Remove-TNOrganization'
         'Remove-TNOrganizationUser',
+        'Remove-TNRepository',
         'Rename-TNGroup',
         'Resume-TNScan',
         'Restart-TNService',
         'Save-TNPlugin',
         'Set-TNPolicyPortRange',
+        'Set-TNRepositoryProperty',
         'Set-TNUserPassword',
+        'Start-TNDeploy',
         'Get-TNGroupMember',
         'Get-TNPlugin',
         'Get-TNPluginFamilyDetails',
@@ -125,6 +132,7 @@
         'Get-TNScanHost',
         'Get-TNScanHostDetail',
         'Set-TNCertificate',
+        'Set-TNScanZoneProperty',
         'Start-TNDeploy',
         'Start-TNScan',
         'Stop-TNScan',
@@ -133,7 +141,8 @@
         'Wait-TNServerReady'
         'Add-TNScanner',
         'Remove-TNFolder',
-        'Rename-TNFolder'
+        'Rename-TNFolder',
+        'Set-TNScanProperty'
     )
 
     # Cmdlets to export from this module

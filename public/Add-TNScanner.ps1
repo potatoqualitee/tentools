@@ -1,28 +1,22 @@
-﻿function Add-TNScanner {
+function Add-TNScanner {
     <#
     .SYNOPSIS
-        Adds a list of scanners
+        Adds new Nessus scanners to tenable.sc
 
     .DESCRIPTION
-        Adds a list of scanners
+        Adds new Nessus scanners to tenable.sc
 
     .PARAMETER SessionObject
         Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
 
     .PARAMETER Name
-        The name of the target scanner
+        The name of the target Nessus scanner
+
+    .PARAMETER IPRange
+        Description for IPRange
 
     .PARAMETER Description
         Description for Description
-
-    .PARAMETER ComputerName
-        The network name or IP address of the Nessus or tenable.sc server
-
-    .PARAMETER Credential
-        The credential object (from Get-Credential) used to log into the target server. Specifies a user account that has permission to send the request.
-
-    .PARAMETER Port
-        The port of the Nessus or tenable.sc server. Defaults to 8834 which is the default port for Nessus.
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
@@ -30,9 +24,9 @@
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS C:\> Add-TNScanner -Name CNScanner -ComputerName cnscanner1 -Credential admin
+        PS C:\> Add-TNScanner
 
-        Adds the Nessus scanner, cnscanner1, with the name "CNScanner" using the Nessus credential "admin"
+        Adds new Nessus scanners
 
 #>
     [CmdletBinding()]
@@ -41,31 +35,48 @@
         [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
         [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
-        [string]$Name,
-        [string]$Description,
-        [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
         [string[]]$ComputerName,
+        [int]$Port = 8834,
         [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
         [pscredential]$Credential,
-        [int]$Port = 8834,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$Name,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string]$Description,
+        [ValidateSet("password")]
+        [string]$AuthenticationType = "password",
+        [switch]$VerifyHost,
         [switch]$EnableException
     )
     process {
+        if ($PSBoundParameters.ComputerName.Count -gt 1 -and $PSBoundParameters.Name) {
+            Stop-PSFFunction -EnableException:$EnableException -Message "You cannot specify Name when targeting multiple ComputerNames"
+            return
+        }
+
         foreach ($session in $SessionObject) {
             if (-not $session.sc) {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
 
             foreach ($computer in $ComputerName) {
+                if (-not $PSBoundParameters.Name) {
+                    $scannername = $computer
+                } else {
+                    $scannername = $Name | Select-Object -First 1
+                }
                 $body = @{
-                    name        = $Name
-                    description = $Description
-                    authType    = "password"
-                    username    = $Credential.UserName
-                    password    = $Credential.GetNetworkCredential().Password
-                    ip          = $computer
-                    port        = $Port
-                    enabled     = "true"
+                    name         = $scannername
+                    ip           = $computer
+                    description  = $Description
+                    authType     = $AuthenticationType
+                    username     = $Credential.UserName
+                    password     = $Credential.GetNetworkCredential().Password
+                    port         = $Port
+                    verifyHost   = $VerifyHost.ToString().ToLower()
+                    useProxy     = $false.ToString().ToLower()
+                    enable       = $true.ToString().ToLower()
+                    agentCapable = $false.ToString().ToLower()
                 }
 
                 $params = @{

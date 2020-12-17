@@ -48,7 +48,7 @@
                     Method        = 'DELETE'
                 }
 
-                Invoke-TNRequest @groupparams
+                Invoke-TNRequest @groupparams | ConvertFrom-TNRestResponse
             } else {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Server ($($session.ComputerName)) for session $($session.sessionid) is not licenced for multiple users" -Continue
             }

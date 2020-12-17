@@ -93,7 +93,7 @@
                 Path            = '/plugin-rules'
                 Method          = 'Post'
                 Parameter       = $pRuleJson
-                ContentType     = 'application/json'
+                ContentType     = "application/json"
                 EnableException = $EnableException
             }
 

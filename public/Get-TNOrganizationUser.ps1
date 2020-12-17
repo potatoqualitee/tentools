@@ -12,8 +12,8 @@
     .PARAMETER Organization
         The name of the target organization
 
-    .PARAMETER Name
-        The name of the target organization user
+    .PARAMETER Username
+        The username of the target organization user
 
     .PARAMETER Email
         The email address of the target user
@@ -45,7 +45,7 @@
         [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
         [string[]]$Organization,
-        [string[]]$Name,
+        [string[]]$Username,
         [string]$Email,
         [switch]$EnableException
     )
@@ -61,16 +61,18 @@
             }
 
             foreach ($org in $orgs) {
-                $users = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/organization/$($org.Id)/user" -Method GET
-                foreach ($user in $users) {
-                    $results = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/organization/$($org.Id)/user/$($user.id)?fields=id,firstname,lastname,status,role,username,title,email,address,city,state,country,phone,fax,createdTime,modifiedTime,lastLogin,lastLoginIP,mustChangePassword,locked,failedLogins,authType,fingerprint,password,description,responsibleAsset,group,managedUsersGroups,managedObjectsGroups,orgName,canUse,canManage,preferences,ldap,ldapUsername,parent" -Method GET
-                    $null = $results | Add-Member -MemberType NoteProperty -Name OrganizationId -Value $org.Id
-                    $null = $results | Add-Member -MemberType NoteProperty -Name Organization -Value $org.Name
+                if ($org.UserCount -gt 0) {
+                    $users = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/organization/$($org.Id)/user" -Method GET
+                    foreach ($user in $users) {
+                        $results = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/organization/$($org.Id)/user/$($user.id)?fields=id,firstname,lastname,status,role,username,title,email,address,city,state,country,phone,fax,createdTime,modifiedTime,lastLogin,lastLoginIP,mustChangePassword,locked,failedLogins,authType,fingerprint,password,description,responsibleAsset,group,managedUsersGroups,managedObjectsGroups,orgName,canUse,canManage,preferences,ldap,ldapUsername,parent" -Method GET
+                        $null = $results | Add-Member -MemberType NoteProperty -Name OrganizationId -Value $org.Id
+                        $null = $results | Add-Member -MemberType NoteProperty -Name Organization -Value $org.Name
 
-                    if ($PSBoundParameters.Name) {
-                        $results | ConvertFrom-TNRestResponse | Where-Object Name -in $Name
-                    } else {
-                        $results | ConvertFrom-TNRestResponse | Where-Object ErrorCode -ne 0
+                        if ($PSBoundParameters.Username) {
+                            $results | ConvertFrom-TNRestResponse | Where-Object Username -in $Username
+                        } else {
+                            $results | ConvertFrom-TNRestResponse | Where-Object ErrorCode -ne 0
+                        }
                     }
                 }
             }

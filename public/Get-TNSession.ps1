@@ -30,7 +30,11 @@
         if ($PSBoundParameters.SessionId) {
             $script:NessusConn | Where-Object SessionId -in $SessionId
         } else {
-            $script:NessusConn
+            try {
+                $script:NessusConn
+            } catch {
+                # who cares
+            }
         }
     }
 }

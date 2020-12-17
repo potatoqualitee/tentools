@@ -18,9 +18,9 @@
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS C:\> Get-TNRepository
+        PS C:\> Get-TNRepository -Name Acme | Remove-TNRepository
 
-        Gets a list of repositories
+        Removes the Acme repository
 
 #>
     [CmdletBinding()]
@@ -44,9 +44,9 @@
             }
 
             if ($PSBoundParameters.Name) {
-                Invoke-TNRequest @params | ConvertFrom-TNRestResponse | Where-Object Name -in $Name
+                Invoke-TNRequest @params | ConvertFrom-TNRestResponse -ExcludeEmptyResult | Where-Object Name -in $Name
             } else {
-                Invoke-TNRequest @params | ConvertFrom-TNRestResponse
+                Invoke-TNRequest @params | ConvertFrom-TNRestResponse -ExcludeEmptyResult
             }
         }
     }

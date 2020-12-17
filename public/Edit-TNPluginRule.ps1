@@ -102,7 +102,7 @@
                 Path            = ('/plugin-rules/{0}' -f $Id)
                 Method          = 'Put'
                 Parameter       = $pRuleJson
-                ContentType     = 'application/json'
+                ContentType     = "application/json"
                 EnableException = $EnableException
             }
 

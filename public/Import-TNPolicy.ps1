@@ -10,7 +10,10 @@
         Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
 
     .PARAMETER FilePath
-        Description for FilePath
+        The path to the policy file
+
+    .PARAMETER NoRename
+        By default, this command will remove "Imported Nessus Policy - " from the title of the imported file. Use this switch to keep the whole name "Imported Nessus Policy - Title of Policy"
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
@@ -23,7 +26,7 @@
         Imports C:\temp\policy.nessus
 
     .EXAMPLE
-        PS C:\> Import-TNPolicy -FilePath C:\temp\policy.nessus, C:\temp\policy2.nessus,
+        PS C:\> Import-TNPolicy -FilePath C:\temp\policy.nessus, C:\temp\policy2.nessus
 
         Imports C:\temp\policy.nessus and C:\temp\policy2.nessus
 #>
@@ -35,6 +38,7 @@
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [ValidateScript( { Test-Path -Path $_ })]
         [string[]]$FilePath,
+        [switch]$NoRename,
         [switch]$EnableException
     )
     process {
@@ -54,7 +58,23 @@
                     ContentType   = "application/json"
                 }
 
-                Invoke-TnRequest @params | ConvertFrom-TNRestResponse
+                if ($NoRename) {
+                    Invoke-TnRequest @params | ConvertFrom-TNRestResponse
+                } else {
+                    $results = Invoke-TnRequest @params | ConvertFrom-TNRestResponse
+                    # change the name
+                    $name = $results.Name.Replace("Imported Nessus Policy - ","")
+                    $body = @{ name = $name }
+
+                    $params = @{
+                        SessionObject = $session
+                        Method        = "PATCH"
+                        Path          = "/policy/$($results.id)"
+                        Parameter     = $body
+                        ContentType   = "application/json"
+                    }
+                    Invoke-TnRequest @params | ConvertFrom-TNRestResponse | Select-Object -ExcludeProperty Preferences -Property *
+                }
             }
         }
     }

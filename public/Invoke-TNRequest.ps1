@@ -114,7 +114,7 @@
                 }
             }
             if ($session.sc -and $Path -eq "/server/properties") {
-                return $null
+                return
             }
 
             $RestMethodParams = @{
