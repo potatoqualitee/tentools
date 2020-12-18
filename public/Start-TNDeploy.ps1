@@ -77,6 +77,7 @@
 
 #>
     [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "")]
     param
     (
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
@@ -285,7 +286,7 @@
             try {
                 Write-PSFMessage -Level Verbose -Message "Creating scans on $computer"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating scans on $computer"
-                $scans = New-TNScan -Auto -Target $IpRange
+                $scans = New-TNScan -Auto -TargetIpRange $IpRange
                 $output["Scans"] = $scans.Name
 
                 if ($PSBoundParameters.ScanCredentialHash) {
