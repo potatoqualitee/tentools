@@ -60,6 +60,7 @@
         Creates a new SSH credential for acasaccount and sets the escalation type to sudo
 #>
     [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "")]
     param
     (
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -75,7 +76,7 @@
         [ValidateSet("BeyondTrust", "cyberark", "Hashicorp", "kerberos", "lieberman", "lm", "ntlm", "password", "thycotic", "ibmDPGateway", "certificate", "publickey")]
         [string]$AuthType,
         [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
-        [pscredential]$Credential,
+        [psobject]$Credential,
         [hashtable]$CredentialHash,
         [ValidateSet("none", "su", "sudo", "su+sudo", "dzdo", "pbrun", "cisco", ".k5login")]
         [string]$PrivilegeEscalation = "none",
@@ -89,6 +90,10 @@
         if ($AuthType -eq "certificate" -and -not $PSBoundParameters.CredentailHash) {
             Stop-PSFFunction -Message "You must specify a CredentialHash when AuthType is $AuthType"
             return
+        }
+
+        if ($Credential -isnot [pscredential]) {
+            $Credential = Get-Credential $Credential -Message "Enter the username and password for the $Name credential"
         }
     }
     process {
