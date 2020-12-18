@@ -65,8 +65,10 @@
         [string]$PolicyUUID,
         [Parameter(Mandatory, ParameterSetName = "Policy", ValueFromPipelineByPropertyName)]
         [int]$PolicyId,
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
-        [string[]]$Target,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$TargetIpRange,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$TargetAsset,
         [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$Disabled,
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -87,10 +89,22 @@
         $enabled = $Disabled -eq $false
     }
     process {
+        if (-not $PSBoundParameters.TargetIpRange -and -not $PSBoundParameters.TargetAsset) {
+            Stop-PSFFunction -Message "You must specify either TargetIpRange or TargetAsset"
+            return
+        }
         foreach ($session in $SessionObject) {
 
             if ($session.sc) {
-                $targets = $Target -join ","
+                if ($TargetIpRange) {
+                    $iptargets = $TargetIpRange -join ","
+                } else {
+                    $assets = Get-TNAsset -Name $TargetAsset
+                    $array = @()
+                    foreach ($asset in $assets) {
+                        $array += @{ id = $asset.Id }
+                    }
+                }
                 $repository = @{ id = (Get-TNRepository | Select-Object -First 1).Id }
 
                 switch ($PSCmdlet.ParameterSetName) {
@@ -103,7 +117,8 @@
                                 description = $Description
                                 type        = "policy"
                                 policy      = @{ id = $policy.Id }
-                                ipList      = $targets
+                                ipList      = $iptargets
+                                assets      = $array
                                 repository  = $repository
                             }
                             $params = @{
@@ -122,7 +137,7 @@
                 $emails = $Email -join ","
 
                 # Join targets as a single comma separated string.
-                $targets = $Target -join ","
+                $targets = ($TargetIpRange, $TargetAsset -join ",").TrimEnd(",")
 
                 # Build Scan JSON
                 $settings = @{

@@ -78,6 +78,7 @@ function Set-TNScanZoneProperty {
                     if ($PSBoundParameters.Scanner) {
                         $nessus = Get-TNScanner -Name $Scanner
                         if ($nessus) {
+                            # Thanks Brett Miller for helping with the JSON array!
                             $nessusbody = [pscustomobject]@{scanners = @(@{id = $nessus.id }) } | ConvertTo-Json
 
                             $params = @{
