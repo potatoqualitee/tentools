@@ -85,7 +85,7 @@
         [Parameter(ValueFromPipelineByPropertyName)]
         [int]$Port,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
-        [Management.Automation.PSCredential]$AdministratorCredential,
+        [psobject]$AdministratorCredential,
         [Parameter(ValueFromPipelineByPropertyName)]
         [string]$LicensePath,
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -94,11 +94,11 @@
         [ValidateSet("tenable.sc", "Nessus")]
         [string]$ServerType,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
-        [Management.Automation.PSCredential]$SecurityManagerCredential,
+        [psobject]$SecurityManagerCredential,
         [Parameter(ValueFromPipelineByPropertyName)]
         [string[]]$Scanner,
         [Parameter(ValueFromPipelineByPropertyName)]
-        [Management.Automation.PSCredential]$ScannerCredential,
+        [psobject]$ScannerCredential,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string]$Organization,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
@@ -125,6 +125,18 @@
         if ($PSBoundParameters.Scanner -and -not $PSBoundParameters.ScannerCredential) {
             Stop-PSFFunction -EnableException:$EnableException -Message "You must provide a ScannerCredential when specifying a Scanner"
             return
+        }
+
+        if ($AdministratorCredential -isnot [pscredential]) {
+            $AdministratorCredential = Get-Credential $AdministratorCredential -Message "Enter the username and password for the administrator credential on the $ServerType server"
+        }
+
+        if ($PSBoundParameters.ScannerCredential -and $ScannerCredential -isnot [pscredential]) {
+            $ScannerCredential = Get-Credential $ScannerCredential -Message "Enter the administrator username and password for the Nessus scanner"
+        }
+
+        if ($SecurityManagerCredential -isnot [pscredential]) {
+            $SecurityManagerCredential = Get-Credential $SecurityManagerCredential -Message "Enter the username and password for the Security Manager credential for the organization $Organization"
         }
 
         foreach ($computer in $ComputerName) {
