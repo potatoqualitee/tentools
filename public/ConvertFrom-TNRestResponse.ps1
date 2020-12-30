@@ -27,6 +27,7 @@
     (
         [Parameter(Mandatory, ValueFromPipeline)]
         [PSCustomObject[]]$InputObject,
+        [switch]$NoUri,
         [switch]$ExcludeEmptyResult
     )
     begin {
@@ -51,7 +52,7 @@
             )
             if ($Key -notmatch 'date' -and $Key -notmatch 'time' -or $Key -match 'Updates') {
                 if ("$Value".StartsWith("@") -or "$Value".StartsWith("{")) {
-                    return $Value | ConvertFrom-TNRestResponse
+                    return $Value | ConvertFrom-TNRestResponse -NoUri
                 } else {
                     return $Value
                 }
@@ -149,7 +150,7 @@
                 # Set column order
                 $order = New-Object System.Collections.ArrayList
                 $keys = $hash.Keys
-                if ($session) {
+                if ($session -and -not $NoUri) {
                     $null = $order.Add("ServerUri")
                 }
                 if ('Id' -in $keys) {
