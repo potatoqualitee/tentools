@@ -142,7 +142,8 @@
         'Add-TNScanner',
         'Remove-TNFolder',
         'Rename-TNFolder',
-        'Set-TNScanProperty'
+        'Set-TNScanProperty',
+        'New-TNDisaAsrReport'
     )
 
     # Cmdlets to export from this module
