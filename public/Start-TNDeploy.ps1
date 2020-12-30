@@ -335,6 +335,16 @@
                 }
             }
 
+            # Create ASR Report
+            try {
+                Write-PSFMessage -Level Verbose -Message "Creating DISA ASR report on $computer"
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating DISA ASR report on $computer"
+                $null = New-TNDisaAsrReport -Name "DISA ASR" -Description "DISA Detailed Asset Summary Reporting"
+                $output["DISADetailedASR"] = "DISA ASR"
+            } catch {
+                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Policy import failed for $computer" -Continue
+            }
+
             Write-Progress -Activity "Finished deploying $computer for $ServerType" -Completed
 
             $output["Status"] = "Success"
