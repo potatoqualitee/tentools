@@ -29,11 +29,20 @@
     )
     process {
         foreach ($session in $SessionObject) {
-            # only show if it's called from the command line
-            if ((Get-PSCallStack).Count -eq 2 -and $session.sc) {
-                Stop-PSFFunction -Message "tenable.sc not supported" -Continue
+            if ($session.sc) {
+                # only show if it's called from the command line
+                if ((Get-PSCallStack).Count -eq 2) {
+                    $params = @{
+                        SessionObject   = $session
+                        Path            = "/status"
+                        Method          = "GET"
+                        EnableException = $EnableException
+                    }
+                    Invoke-TNRequest @params | ConvertFrom-TNRestResponse
+                }
+            } else {
+                Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/server/status' -Method GET
             }
-            Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/server/status' -Method GET
         }
     }
 }
