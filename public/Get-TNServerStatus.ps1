@@ -41,7 +41,13 @@
                     Invoke-TNRequest @params | ConvertFrom-TNRestResponse
                 }
             } else {
-                Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/server/status' -Method GET
+                $params = @{
+                    SessionObject   = $session
+                    Path            = "/server/status"
+                    Method          = "GET"
+                    EnableException = $EnableException
+                }
+                Invoke-TNRequest @params | ConvertFrom-TNRestResponse
             }
         }
     }
