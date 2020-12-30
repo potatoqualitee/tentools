@@ -71,7 +71,8 @@
         Repository = "All Computers"
         ScanZone = "All Computers"
         IpRange = "192.168.0.0/24"
-        PolicyFilePath = "C:\nessus\library\policy.nessus"
+        PolicyFilePath = "C:\nessus\library\policy.nessus",
+        ScanFilePath = "C:\nessus\library\scan.nessus","C:\nessus\library\scan2.nessus"
     }
     Start-TNDeploy -Verbose
 
@@ -318,23 +319,24 @@
                     Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing scans on $computer"
                     $results = Import-TNScan -FilePath $ScanFilePath
                     $output["ImportedScans"] = $results.Name
+                    foreach ($scanname in $resuls.Name) {
+                        # Set-TNScanProperty
+                    }
                 } catch {
                     Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Scan import failed for $computer" -Continue
                 }
             }
+
+            Write-Progress -Activity "Finished deploying $computer for $ServerType" -Completed
+
+            $output["Status"] = "Success"
+            [pscustomobject]$output | ConvertFrom-TNRestResponse
         }
-
-
-        Write-Progress -Activity "Finished deploying $computer for $ServerType" -Completed
-
-        $output["Status"] = "Success"
-        [pscustomobject]$output | ConvertFrom-TNRestResponse
     }
-}
-end {
-    $totalTime = ($elapsed.Elapsed.toString().Split(".")[0])
-    Write-PSFMessage -Level Verbose -Message "Export started: $started"
-    Write-PSFMessage -Level Verbose -Message "Export completed: $(Get-Date)"
-    Write-PSFMessage -Level Verbose -Message "Total Elapsed time: $totalTime"
-}
+    end {
+        $totalTime = ($elapsed.Elapsed.toString().Split(".")[0])
+        Write-PSFMessage -Level Verbose -Message "Export started: $started"
+        Write-PSFMessage -Level Verbose -Message "Export completed: $(Get-Date)"
+        Write-PSFMessage -Level Verbose -Message "Total Elapsed time: $totalTime"
+    }
 }
