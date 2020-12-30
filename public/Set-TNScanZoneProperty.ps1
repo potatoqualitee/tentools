@@ -92,7 +92,7 @@ function Set-TNScanZoneProperty {
 
                             $null = Invoke-TNRequest @params
                         } else {
-                            Stop-PSFFunction -Message "Scanner $nessusanization could not be found for $scanzone on $($session.Uri)" -Continue
+                            Stop-PSFFunction -Message "Scanner could not be found for $scanzone on $($session.Uri)" -Continue
                         }
                     }
 

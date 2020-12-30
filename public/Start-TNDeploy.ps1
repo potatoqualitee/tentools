@@ -319,8 +319,16 @@
                     Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing scans on $computer"
                     $results = Import-TNScan -FilePath $ScanFilePath
                     $output["ImportedScans"] = $results.Name
-                    foreach ($scanname in $resuls.Name) {
-                        # Set-TNScanProperty
+                    foreach ($scanname in $results.Name) {
+                        if ($PSBoundParameters.ScanCredentialHash) {
+                            $null = Set-TNScanProperty -Name $scans.Name -ScanCredential $ScanCredentialHash.Name
+                        }
+                        if ($PSBoundParameters.Repository) {
+                            $null = Set-TNScanProperty -Name $scans.Name -Repository $Repository
+                        }
+                        if ($PSBoundParameters.IpRange) {
+                            $null = Set-TNScanProperty -Name $scans.Name -IpRange $IpRange
+                        }
                     }
                 } catch {
                     Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Scan import failed for $computer" -Continue
