@@ -265,13 +265,15 @@
             }
 
             # Import policy
-            try {
-                Write-PSFMessage -Level Verbose -Message "Importing policies on $computer"
-                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing policies on $computer"
-                $results = Import-TNPolicy -FilePath $PolicyFilePath
-                $output["ImportedPolicy"] = $results.Name
-            } catch {
-                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Policy import failed for $computer" -Continue
+            if ($PSBoundParameters.PolicyFilePath) {
+                try {
+                    Write-PSFMessage -Level Verbose -Message "Importing policies on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing policies on $computer"
+                    $results = Import-TNPolicy -FilePath $PolicyFilePath
+                    $output["ImportedPolicy"] = $results.Name
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Policy import failed for $computer" -Continue
+                }
             }
 
             # Connect as security manager
@@ -294,30 +296,45 @@
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "DISA report attribute creation failed for $computer" -Continue
             }
 
-            # Scans!
-            try {
-                Write-PSFMessage -Level Verbose -Message "Creating scans on $computer"
-                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating scans on $computer"
-                $scans = New-TNScan -Auto -TargetIpRange $IpRange
-                $output["Scans"] = $scans.Name
+            # Auto Scans!
+            if ($PSBoundParameters.PolicyFilePath) {
+                try {
+                    Write-PSFMessage -Level Verbose -Message "Creating scans on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating scans on $computer"
+                    $scans = New-TNScan -Auto -TargetIpRange $IpRange
+                    $output["Scans"] = $scans.Name
 
-                if ($PSBoundParameters.ScanCredentialHash) {
-                    $null = Set-TNScanProperty -Name $scans.Name -ScanCredential $ScanCredentialHash.Name
+                    if ($PSBoundParameters.ScanCredentialHash) {
+                        $null = Set-TNScanProperty -Name $scans.Name -ScanCredential $ScanCredentialHash.Name
+                    }
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Scan creation failed for $computer" -Continue
                 }
-            } catch {
-                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Scan creation failed for $computer" -Continue
             }
 
-            Write-Progress -Activity "Finished deploying $computer for $ServerType" -Completed
-
-            $output["Status"] = "Success"
-            [pscustomobject]$output | ConvertFrom-TNRestResponse
+            if ($PSBoundParameters.ScanFilePath) {
+                try {
+                    Write-PSFMessage -Level Verbose -Message "Importing scans on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing scans on $computer"
+                    $results = Import-TNScan -FilePath $ScanFilePath
+                    $output["ImportedScans"] = $results.Name
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Scan import failed for $computer" -Continue
+                }
+            }
         }
+
+
+        Write-Progress -Activity "Finished deploying $computer for $ServerType" -Completed
+
+        $output["Status"] = "Success"
+        [pscustomobject]$output | ConvertFrom-TNRestResponse
     }
-    end {
-        $totalTime = ($elapsed.Elapsed.toString().Split(".")[0])
-        Write-PSFMessage -Level Verbose -Message "Export started: $started"
-        Write-PSFMessage -Level Verbose -Message "Export completed: $(Get-Date)"
-        Write-PSFMessage -Level Verbose -Message "Total Elapsed time: $totalTime"
-    }
+}
+end {
+    $totalTime = ($elapsed.Elapsed.toString().Split(".")[0])
+    Write-PSFMessage -Level Verbose -Message "Export started: $started"
+    Write-PSFMessage -Level Verbose -Message "Export completed: $(Get-Date)"
+    Write-PSFMessage -Level Verbose -Message "Total Elapsed time: $totalTime"
+}
 }
