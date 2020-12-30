@@ -133,6 +133,10 @@
                             $value = Convert-Value -Key $column -Value $row.$column
                             $hash["Created"] = $value
                         }
+                        { $PSItem -match "Last.Login" -or $PSItem -eq "LastLogin" } {
+                            $value = $script:origin.AddSeconds($row.$column).ToLocalTime()
+                            $hash["LastLogin"] = $value
+                        }
                         default {
                             # remove _, cap all words
                             $key = Convert-Name $column
