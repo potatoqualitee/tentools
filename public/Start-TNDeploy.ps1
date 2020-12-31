@@ -71,7 +71,8 @@
         Repository = "All Computers"
         ScanZone = "All Computers"
         IpRange = "192.168.0.0/24"
-        PolicyFilePath = "C:\nessus\library\policy.nessus"
+        PolicyFilePath = "C:\nessus\library\policy.nessus",
+        ScanFilePath = "C:\nessus\library\scan.nessus","C:\nessus\library\scan2.nessus"
     }
     Start-TNDeploy -Verbose
 
@@ -265,13 +266,15 @@
             }
 
             # Import policy
-            try {
-                Write-PSFMessage -Level Verbose -Message "Importing policies on $computer"
-                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing policies on $computer"
-                $results = Import-TNPolicy -FilePath $PolicyFilePath
-                $output["ImportedPolicy"] = $results.Name
-            } catch {
-                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Policy import failed for $computer" -Continue
+            if ($PSBoundParameters.PolicyFilePath) {
+                try {
+                    Write-PSFMessage -Level Verbose -Message "Importing policies on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing policies on $computer"
+                    $results = Import-TNPolicy -FilePath $PolicyFilePath
+                    $output["ImportedPolicy"] = $results.Name
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Policy import failed for $computer" -Continue
+                }
             }
 
             # Connect as security manager
@@ -294,18 +297,52 @@
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "DISA report attribute creation failed for $computer" -Continue
             }
 
-            # Scans!
-            try {
-                Write-PSFMessage -Level Verbose -Message "Creating scans on $computer"
-                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating scans on $computer"
-                $scans = New-TNScan -Auto -TargetIpRange $IpRange
-                $output["Scans"] = $scans.Name
+            # Auto Scans!
+            if ($PSBoundParameters.PolicyFilePath) {
+                try {
+                    Write-PSFMessage -Level Verbose -Message "Creating scans on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating scans on $computer"
+                    $scans = New-TNScan -Auto -TargetIpRange $IpRange
+                    $output["Scans"] = $scans.Name
 
-                if ($PSBoundParameters.ScanCredentialHash) {
-                    $null = Set-TNScanProperty -Name $scans.Name -ScanCredential $ScanCredentialHash.Name
+                    if ($PSBoundParameters.ScanCredentialHash) {
+                        $null = Set-TNScanProperty -Name $scans.Name -ScanCredential $ScanCredentialHash.Name
+                    }
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Scan creation failed for $computer" -Continue
                 }
+            }
+
+            if ($PSBoundParameters.ScanFilePath) {
+                try {
+                    Write-PSFMessage -Level Verbose -Message "Importing scans on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing scans on $computer"
+                    $results = Import-TNScan -FilePath $ScanFilePath
+                    $output["ImportedScans"] = $results.Name
+                    foreach ($scanname in $results.Name) {
+                        if ($PSBoundParameters.ScanCredentialHash) {
+                            $null = Set-TNScanProperty -Name $scans.Name -ScanCredential $ScanCredentialHash.Name
+                        }
+                        if ($PSBoundParameters.Repository) {
+                            $null = Set-TNScanProperty -Name $scans.Name -Repository $Repository
+                        }
+                        if ($PSBoundParameters.IpRange) {
+                            $null = Set-TNScanProperty -Name $scans.Name -IpRange $IpRange
+                        }
+                    }
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Scan import failed for $computer" -Continue
+                }
+            }
+
+            # Create ASR Report
+            try {
+                Write-PSFMessage -Level Verbose -Message "Creating DISA ASR report on $computer"
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating DISA ASR report on $computer"
+                $null = New-TNDisaAsrReport -Name "DISA ASR" -Description "DISA Detailed Asset Summary Reporting"
+                $output["DISADetailedASR"] = "DISA ASR"
             } catch {
-                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Scan creation failed for $computer" -Continue
+                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Policy import failed for $computer" -Continue
             }
 
             Write-Progress -Activity "Finished deploying $computer for $ServerType" -Completed

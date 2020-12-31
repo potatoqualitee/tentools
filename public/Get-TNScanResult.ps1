@@ -42,7 +42,7 @@
             if (-not $ScanId) {
                 $path = "/scanResult?filter=*&optimizeCompletedScans=true&fields=canUse,canManage,owner,groups,ownerGroup,status,name,details,diagnosticAvailable,importStatus,createdTime,startTime,finishTime,importStart,importFinish,running,totalIPs,scannedIPs,completedIPs,completedChecks,totalChecks,dataFormat,downloadAvailable,downloadFormat,repository,resultType,resultSource,scanDuration"
             } else {
-                $path = "/scanResult/$($ScanId)?fields=name,description,diagnosticAvailable,owner,ownerGroup,importStatus,importStart,importFinish,importDuration,ioSyncStatus,ioSyncStart,ioSyncFinish,ioSyncDuration,totalIPs,scannedIPs,completedIPs,completedChecks,totalChecks,status,jobID,errorDetails,downloadAvailable,dataFormat,finishTime,downloadFormat,scanID,running,importErrorDetails,ioSyncErrorDetails,initiatorID,startTime,repository,details,timeoutAction,rolloverSchedule,progress,dataSourceID,resultType,resultSource,scanDuration,canManage,canUse&expand=details,credentials"
+                $path = "/scanResult/$($ScanId)?fields=name,description,diagnosticAvailable,owner,ownerGroup,importStatus,importStart,importFinish,importDuration,ioSyncStatus,ioSyncStart,ioSyncFinish,ioSyncDuration,totalIPs,scannedIPs,completedIPs,completedChecks,totalChecks,status,jobID,errorDetails,downloadAvailable,dataFormat,finishTime,downloadFormat,scanID,running,importErrorDetails,ioSyncErrorDetails,initiatorID,startTime,repository,details,timeoutAction,rolloverSchedule,progress,dataSourceID,resultType,resultSource,scanDuration&expand=details,credentials"
             }
 
             Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path $path -Method GET | ConvertFrom-TNRestResponse

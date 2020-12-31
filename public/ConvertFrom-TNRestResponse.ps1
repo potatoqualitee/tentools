@@ -27,6 +27,7 @@
     (
         [Parameter(Mandatory, ValueFromPipeline)]
         [PSCustomObject[]]$InputObject,
+        [switch]$NoUri,
         [switch]$ExcludeEmptyResult
     )
     begin {
@@ -49,9 +50,9 @@
                 [string]$Key,
                 $Value
             )
-            if ($Key -notmatch 'date' -and $Key -notmatch 'time') {
-                if ("$Value".StartsWith("{@{")) {
-                    return $Value | ConvertFrom-TNRestResponse
+            if ($Key -notmatch 'date' -and $Key -notmatch 'time' -or $Key -match 'Updates') {
+                if ("$Value".StartsWith("@") -or "$Value".StartsWith("{")) {
+                    return $Value | ConvertFrom-TNRestResponse -NoUri
                 } else {
                     return $Value
                 }
@@ -133,6 +134,10 @@
                             $value = Convert-Value -Key $column -Value $row.$column
                             $hash["Created"] = $value
                         }
+                        { $PSItem -match "Last.Login" -or $PSItem -eq "LastLogin" } {
+                            $value = $script:origin.AddSeconds($row.$column).ToLocalTime()
+                            $hash["LastLogin"] = $value
+                        }
                         default {
                             # remove _, cap all words
                             $key = Convert-Name $column
@@ -145,7 +150,7 @@
                 # Set column order
                 $order = New-Object System.Collections.ArrayList
                 $keys = $hash.Keys
-                if ($session) {
+                if ($session -and -not $NoUri) {
                     $null = $order.Add("ServerUri")
                 }
                 if ('Id' -in $keys) {

@@ -27,6 +27,7 @@ function Set-TNScanProperty {
 #>
 
     [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "")]
     param
     (
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -34,7 +35,16 @@ function Set-TNScanProperty {
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string[]]$Name,
         [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$Asset,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [string[]]$ScanCredential,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string]$Policy,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string]$Repository,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$IPRange,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$EnableException
     )
     process {
@@ -48,6 +58,32 @@ function Set-TNScanProperty {
             foreach ($scan in $Scans) {
                 $scanid = $scan.id
                 try {
+                    # Assets
+                    if ($PSBoundParameters.Asset) {
+                        $assets = Get-TNAsset -Name $Asset
+                        if ($assets) {
+                            $all = @()
+                            foreach ($item in $assets) {
+                                $all += @{ id = $item.id }
+                            }
+                            $body = [pscustomobject]@{ assets = @($all) } | ConvertTo-Json
+
+                            $params = @{
+                                SessionObject   = $session
+                                Path            = "/scan/$scanid"
+                                Method          = "PATCH"
+                                ContentType     = "application/json"
+                                Parameter       = $body
+                                EnableException = $EnableException
+                            }
+
+                            $null = Invoke-TNRequest @params
+                        } else {
+                            Stop-PSFFunction -Message "Failed to modify assets $scan on $($session.Uri)" -Continue
+                        }
+                    }
+
+                    # Creds
                     if ($PSBoundParameters.ScanCredential) {
                         $creds = Get-TNCredential -Name $ScanCredential
                         if ($creds) {
@@ -68,14 +104,47 @@ function Set-TNScanProperty {
 
                             $null = Invoke-TNRequest @params
                         } else {
-                            Stop-PSFFunction -Message "Scanner $nessusanization could not be found for $Scan on $($session.Uri)" -Continue
+                            Stop-PSFFunction -Message "Failed to modify credentials for $scan on $($session.Uri)" -Continue
                         }
+                    }
+
+                    # Policy, Repository, IPRange or Plugin
+                    if ($PSBoundParameters.Policy -or $PSBoundParameters.Repository -or $PSBoundParameters.IPRange -or $PSBoundParameters.Plugin) {
+                        $body = @{}
+
+                        if ($PSBoundParameters.Policy) {
+                            $policies = Get-TNPolicy -Name $Policy
+                            if ($policy) {
+                                $body['policy'] = @{ id = $policies.Id }
+                            }
+                        }
+
+                        if ($PSBoundParameters.Repository) {
+                            $repo = Get-TNRepository -Name $Repository
+                            if ($repo) {
+                                $body['repository'] = @{ id = $repo.Id }
+                            }
+                        }
+
+                        if ($PSBoundParameters.IPRange) {
+                            $body['ipList'] = ($IPRange -join ", ")
+                        }
+
+                        $params = @{
+                            SessionObject   = $session
+                            Path            = "/scan/$scanid"
+                            Method          = "PATCH"
+                            ContentType     = "application/json"
+                            Parameter       = $body
+                            EnableException = $EnableException
+                        }
+
+                        $null = Invoke-TNRequest @params
                     }
                 } catch {
                     Stop-PSFFunction -EnableException:$EnableException -Message "Failure" -ErrorRecord $_ -Continue
                 }
             }
-
             Get-TNScan | Where-Object Name -eq $Name
         }
     }
