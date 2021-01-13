@@ -87,6 +87,7 @@
         'Get-TNOrganizationUser',
         'Import-TNPolicy',
         'Import-TNScan',
+        'Import-TNCustomPlugin',
         'Initialize-TNServer',
         'Invoke-TNRequest',
         'New-TNAsset',

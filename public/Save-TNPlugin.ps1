@@ -24,7 +24,7 @@ function Save-TNPlugin {
     )
 
     begin {
-        $CertificateThumbprint = [System.Security.Cryptography.X509Certificates.X509Certificate2[]](Get-ChildItem Cert:\CurrentUser\My | Where-Object FriendlyName -like "*ID Certificate*") | Select-Object -ExpandProperty Thumbprint
+        $thumbprint = [System.Security.Cryptography.X509Certificates.X509Certificate2[]](Get-ChildItem Cert:\CurrentUser\My | Where-Object FriendlyName -like "*ID Certificate*") | Select-Object -ExpandProperty Thumbprint
     }
 
     process {
@@ -34,7 +34,7 @@ function Save-TNPlugin {
         $OutPath = $path + $FolderName
 
         Write-PSFMessage -Level Verbose -Message "Prompting for CAC PIN"
-        $ACASFiles = Get-TNFiles
+        $acasfiles = Get-TNFiles
 
         if (Test-Path -Path $outpath) {
             Write-PSFMessage -Level Verbose -Message "Output folder exists"
@@ -42,49 +42,49 @@ function Save-TNPlugin {
             $null = New-Item -Path $Path -Name $Foldername -ItemType directory
         }
 
-        $FilesToDownload = $ACASFiles | Where-Object { $_.FileName -notlike "*diff*" -and $_.FileName -notlike "*md5*" } | Sort-Object length
-        if ($FilesToDownload.count -ge 1) {
-            Write-PSFMessage -Level Verbose -Message "Found $($FilesToDownload.count) files to download"
+        $filestodownload = $acasfiles | Where-Object { $PSItem.FileName -notlike "*diff*" -and $PSItem.FileName -notlike "*md5*" } | Sort-Object length
+        if ($filestodownload.count -ge 1) {
+            Write-PSFMessage -Level Verbose -Message "Found $($filestodownload.count) files to download"
         }
-        if ($FilesToDownload.count -ge 3) {
+        if ($filestodownload.count -ge 3) {
             Write-PSFMessage -Level Verbose -Message "More than 2 files found. Limited to 2 at a time. When the next download is started you may be prompted for your PIN again"
         }
 
         #scriptblock for splitting into seperate jobs
         $ScriptBlock = {
             $ProgressPreference = 'SilentlyContinue'
-            $CertificateThumbprint = [System.Security.Cryptography.X509Certificates.X509Certificate2[]](Get-ChildItem Cert:\CurrentUser\My | Where-Object FriendlyName -like "*ID Certificate*") | Select-Object -ExpandProperty Thumbprint
-            $null = Invoke-WebRequest -CertificateThumbprint $CertificateThumbprint -Uri "https://patches.csd.disa.mil/PkiLogin/Default.aspx" -SessionVariable DISALogin
-            $remote = $_.DownloadLink
-            [string]$target = $Using:OutPath + "\" + $($_.FileName)
-            Invoke-WebRequest -CertificateThumbprint $CertificateThumbprint -Uri $remote -OutFile $target -WebSession $DISALogin
+            $thumbprint = [System.Security.Cryptography.X509Certificates.X509Certificate2[]](Get-ChildItem Cert:\CurrentUser\My | Where-Object FriendlyName -like "*ID Certificate*") | Select-Object -ExpandProperty Thumbprint
+            $null = Invoke-WebRequest -CertificateThumbprint $thumbprint -Uri "https://patches.csd.disa.mil/PkiLogin/Default.aspx" -SessionVariable websession
+            $remote = $PSItem.DownloadLink
+            [string]$target = Join-Path -Path $Using:OutPath -ChildPath $PSItem.FileName
+            Invoke-WebRequest -CertificateThumbprint $thumbprint -Uri $remote -OutFile $target -WebSession $websession
         }
 
-        foreach ($File in $FilesToDownload) {
+        foreach ($File in $filestodownload) {
             $FileLength = [math]::round($File.Length / 1mb)
             Write-PSFMessage -Level Verbose -Message "Queueing download of $($file.FileName) which was last updated on $($file.PostedDate) and is $($FileLength)MB"
         }
 
-        $FilesToDownload | Start-RSjob -ScriptBlock $ScriptBlock -Throttle 2 | Wait-RSJob -ShowProgress | Receive-RSJob
+        $filestodownload | Start-RSjob -ScriptBlock $ScriptBlock -Throttle 2 | Wait-RSJob -ShowProgress | Receive-RSJob
         Get-RSJob | Remove-RSJob
 
         #make sure file hashes match what is reported on website
         Write-PSFMessage -Level Verbose -Message "Checking file hashes"
 
-        $FilesToCheck = Get-ChildItem -literalpath $outpath
-        foreach ($Check in $FilesToCheck) {
-            Write-PSFMessage -Level Verbose -Message "Checking hash on $($Check.Name)"
-            $GetFileHash = Get-FileHash -Path $Check.FullName
-            foreach ($ACASFile in $ACASFiles) {
-                if ($Check.Name -eq $ACASFile.FileName) {
-                    if ($Acasfile.SHA256 -eq $GetFileHash.Hash) {
-                        Write-PSFMessage -Level Verbose -Message "Hash on $($Check.Name) was valid"
+        $filestocheck = Get-ChildItem -LiteralPath $outpath
+        foreach ($file in $filestocheck) {
+            Write-PSFMessage -Level Verbose -Message "Checking hash on $($file.Name)"
+            $filehash = Get-FileHash -Path $file.FullName
+            foreach ($acasfile in $acasfiles) {
+                if ($file.Name -eq $acasfile.FileName) {
+                    if ($acasfile.SHA256 -eq $filehash.Hash) {
+                        Write-PSFMessage -Level Verbose -Message "Hash on $($file.Name) was valid"
                     } else {
-                        Write-PSFMessage -Level Verbose -Message "Hash on $($Check.Name) was not valid"
+                        Write-PSFMessage -Level Verbose -Message "Hash on $($file.Name) was not valid"
                     }
                 }
             }
-            Get-ChildItem -Path $Check.FullName
+            Get-ChildItem -Path $file.FullName
         }
     }
 }
