@@ -1,4 +1,7 @@
 function Get-TNAnalysis {
+    <#
+    Still doesn't work, the query JSON array is a challenge
+    #>
     [CmdletBinding()]
     param (
         [int]$QueryId,
