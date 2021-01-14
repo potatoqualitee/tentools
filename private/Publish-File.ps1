@@ -30,10 +30,10 @@ function Publish-File {
             }
             if ($session.sc) {
                 $filename = ($result.Content | ConvertFrom-Json | Select-Object Response | ConvertFrom-TNRestResponse).Filename
-                ConvertTo-Json @{'filename' = $filename; } -Compress
+                ConvertTo-Json @{'filename' = $filename } -Compress
             } else {
                 $fileinfo = Get-ItemProperty -Path $file
-                ConvertTo-Json @{'file' = $fileinfo.name; } -Compress
+                ConvertTo-Json @{'file' = $fileinfo.name } -Compress
             }
         }
     }
