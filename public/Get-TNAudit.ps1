@@ -1,4 +1,4 @@
-﻿function Get-TNAuditFile {
+﻿function Get-TNAudit {
     <#
     .SYNOPSIS
         Gets a list of audit files
@@ -18,12 +18,12 @@
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS C:\> Get-TNAuditFile
+        PS C:\> Get-TNAudit
 
         Gets a list of audit files
 
     .EXAMPLE
-        PS C:\> Get-TNAuditFile -Name "SQL Server"
+        PS C:\> Get-TNAudit -Name "SQL Server"
 
         Gets a list of audit files named SQL Server
 #>

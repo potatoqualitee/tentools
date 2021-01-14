@@ -1,4 +1,4 @@
-function Save-TNAuditFile {
+function Save-TNAudit {
     <#
 	.SYNOPSIS
     Saves audit files from https://www.tenable.com/downloads/download-all-compliance-audit-files
