@@ -18,7 +18,7 @@ function Remove-TNAudit {
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS C:\> Remove-TNAudit
+        PS C:\> Get-TNAudit | Remove-TNAudit
 
         Removes a list of audits
 
