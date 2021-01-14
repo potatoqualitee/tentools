@@ -34,24 +34,6 @@ function Remove-TNAudit {
         [switch]$EnableException
     )
     process {
-        <#
-        Invoke-WebRequest -Uri "https://securitycenter/rest/auditFile/5" `
--Method "DELETE" `
--Headers @{
-"Accept"="application/json, text/javascript, */*; q=0.01"
-  "X-Requested-With"="XMLHttpRequest"
-  "X-SecurityCenter"="2105869397"
-  "User-Agent"="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36"
-  "Origin"="https://securitycenter"
-  "Sec-Fetch-Site"="same-origin"
-  "Sec-Fetch-Mode"="cors"
-  "Sec-Fetch-Dest"="empty"
-  "Referer"="https://securitycenter/"
-  "Accept-Encoding"="gzip, deflate, br"
-  "Accept-Language"="en-US,en;q=0.9"
-  "Cookie"="TNS_SESSIONID=b6cfafb3564b21373fa6a7e829df1c31"
-}
-        #>
         foreach ($session in $SessionObject) {
             foreach ($id in $AuditId) {
                 Write-PSFMessage -Level Verbose -Message "Deleting audit with id $id"
