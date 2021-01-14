@@ -122,6 +122,7 @@
         'Resume-TNScan',
         'Restart-TNService',
         'Save-TNPlugin',
+        'Save-TNScapFile',
         'Set-TNPolicyPortRange',
         'Set-TNRepositoryProperty',
         'Set-TNUserPassword',
