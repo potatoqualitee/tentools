@@ -1,16 +1,16 @@
 function Import-TNAudit {
     <#
     .SYNOPSIS
-        Imports a list of audits
+        Imports audit files
 
     .DESCRIPTION
-        Imports a list of audits
+        Imports audit files
 
     .PARAMETER SessionObject
         Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
 
     .PARAMETER FilePath
-        The path to the policy file
+        The path to the audit file
 
     .PARAMETER NoRename
         By default, this command will remove "Imported Nessus Policy - " from the title of the imported file. Use this switch to keep the whole name "Imported Nessus Policy - Title of Policy"
@@ -21,14 +21,9 @@ function Import-TNAudit {
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS C:\> Import-TNPolicy -FilePath C:\temp\policy.nessus
+        PS C:\> Get-ChildItem C:\temp\portal_audits\DISA*v2r1* -Recurse  | Import-TNAudit
 
-        Imports C:\temp\policy.nessus
-
-    .EXAMPLE
-        PS C:\> Import-TNPolicy -FilePath C:\temp\policy.nessus, C:\temp\policy2.nessus
-
-        Imports C:\temp\policy.nessus and C:\temp\policy2.nessus
+        Imports all .audit files matching DISA v2r2
 #>
     [CmdletBinding()]
     param
@@ -36,9 +31,9 @@ function Import-TNAudit {
         [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Alias("FullName")]
         [ValidateScript( { Test-Path -Path $_ })]
         [string[]]$FilePath,
-        [switch]$NoRename,
         [switch]$EnableException
     )
     process {
@@ -59,24 +54,6 @@ function Import-TNAudit {
                 }
 
                 Invoke-TnRequest @params | ConvertFrom-TNRestResponse
-                continue
-                if ($NoRename) {
-                    Invoke-TnRequest @params | ConvertFrom-TNRestResponse
-                } else {
-                    $results = Invoke-TnRequest @params | ConvertFrom-TNRestResponse
-                    # change the name
-                    $name = $results.Name.Replace("Imported Nessus Policy - ","")
-                    $body = @{ name = $name }
-
-                    $params = @{
-                        SessionObject = $session
-                        Method        = "PATCH"
-                        Path          = "/policy/$($results.id)"
-                        Parameter     = $body
-                        ContentType   = "application/json"
-                    }
-                    Invoke-TnRequest @params | ConvertFrom-TNRestResponse | Select-Object -ExcludeProperty Preferences -Property *
-                }
             }
         }
     }
