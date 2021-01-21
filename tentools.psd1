@@ -126,6 +126,7 @@
         'Save-TNPlugin',
         'Save-TNScapFile',
         'Save-TNAudit',
+        'Save-TNScanResult',
         'Set-TNPolicyPortRange',
         'Set-TNRepositoryProperty',
         'Set-TNUserPassword',
