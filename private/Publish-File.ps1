@@ -5,6 +5,7 @@ function Publish-File {
         [Parameter(ValueFromPipeline)]
         $InputObject,
         $Session,
+        $Type,
         $EnableException
     )
     process {
@@ -30,7 +31,12 @@ function Publish-File {
             }
             if ($session.sc) {
                 $filename = ($result.Content | ConvertFrom-Json | Select-Object Response | ConvertFrom-TNRestResponse).Filename
-                ConvertTo-Json @{'filename' = $filename } -Compress
+
+                if ($Type -eq "Audit") {
+                    ConvertTo-Json @{ 'filename' = $filename; 'name' = $fileinfo.BaseName.Replace("_"," ") } -Compress
+                } else {
+                    ConvertTo-Json @{'filename' = $filename } -Compress
+                }
             } else {
                 $fileinfo = Get-ItemProperty -Path $file
                 ConvertTo-Json @{'file' = $fileinfo.name } -Compress
