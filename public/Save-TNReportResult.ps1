@@ -1,19 +1,19 @@
-function Save-TNScanResult {
+function Save-TNReportResult {
     <#
     .SYNOPSIS
-        Saves a scan result
+        Saves a report result
 
     .DESCRIPTION
-        Saves a scan result
+        Saves a report result
 
     .PARAMETER SessionObject
         Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
 
     .PARAMETER InputObject
-        The scan result
+        The report result
 
     .PARAMETER Path
-        The directory to save the scan result
+        The directory to save the report result
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
@@ -21,9 +21,9 @@ function Save-TNScanResult {
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS C:\> Get-TNScan | Get-TNScanResult | Save-TNScanResult -Path C:\temp
+        PS C:\> Get-TNReport | Get-TNReportResult | Save-TNReportResult -Path C:\temp
 
-        Saves all scan results to C:\temp
+        Saves all report results to C:\temp
 
 #>
     [CmdletBinding()]
@@ -43,13 +43,16 @@ function Save-TNScanResult {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
             foreach ($file in $InputObject) {
-                $filename = "$Path\$($file.Name)-$($file.Id).nessus"
+                $filename = "$Path\$($file.Name)-$($file.Id)-reportresults.zip"
                 Write-PSFMessage -Level Verbose -Message "Downloading $($file.Name) to $filename"
                 $params = @{
                     EnableException = $true
                     Method          = "POST"
-                    Path            = "/scanResult/$($file.id)/download"
-                    Parameter       = @{ downloadType = "v2" }
+                    Path            = "/report/$($file.id)/download"
+                    Parameter       = @{
+                        id   = $file.Id
+                        name = $file.Name
+                    }
                 }
                 try {
                     Invoke-TNRequest @params -OutFile $filename

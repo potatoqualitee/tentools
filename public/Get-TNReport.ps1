@@ -1,16 +1,16 @@
-﻿function Get-TNScanResult {
+function Get-TNReport {
     <#
     .SYNOPSIS
-        Gets a list of scan results
+        Gets a list of reports
 
     .DESCRIPTION
-        Gets a list of scan results
+        Gets a list of reports
 
     .PARAMETER SessionObject
         Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
 
-    .PARAMETER ScanId
-        The ID of the target scan
+    .PARAMETER ReportId
+        The ID of the target report
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
@@ -18,14 +18,14 @@
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS C:\> Get-TNScanResult -ScanId 10
+        PS C:\> Get-TNReport -ReportId 10
 
-        Gets scan results for ScanID 10
+        Gets reports for ReportID 10
 
     .EXAMPLE
-        PS C:\> Get-TNScan | Get-TNScanResult
+        PS C:\> Get-TNReport | Get-TNReport
 
-        Gets scan results for every scan
+        Gets reports for every scan
 
 #>
     [CmdletBinding()]
@@ -33,9 +33,9 @@
     (
         [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [Alias("Id")]
-        [int32]$ScanId,
+        [int32]$ReportId,
         [switch]$EnableException
     )
     process {
@@ -44,10 +44,10 @@
                 Stop-PSFFunction -Message "Nessus not supported" -Continue
             }
 
-            if (-not $ScanId) {
-                $path = "/scanResult?filter=*&optimizeCompletedScans=true&fields=canUse,canManage,owner,groups,ownerGroup,status,name,details,diagnosticAvailable,importStatus,createdTime,startTime,finishTime,importStart,importFinish,running,totalIPs,scannedIPs,completedIPs,completedChecks,totalChecks,dataFormat,downloadAvailable,downloadFormat,repository,resultType,resultSource,scanDuration"
+            if (-not $ReportId) {
+                $path = "/reportDefinition?filter=usable&fields=name,type,ownerGroup,owner,schedule,canManage,canUse,status"
             } else {
-                $path = "/scanResult/$($ScanId)?fields=name,description,diagnosticAvailable,owner,ownerGroup,importStatus,importStart,importFinish,importDuration,ioSyncStatus,ioSyncStart,ioSyncFinish,ioSyncDuration,totalIPs,scannedIPs,completedIPs,completedChecks,totalChecks,status,jobID,errorDetails,downloadAvailable,dataFormat,finishTime,downloadFormat,scanID,running,importErrorDetails,ioSyncErrorDetails,initiatorID,startTime,repository,details,timeoutAction,rolloverSchedule,progress,dataSourceID,resultType,resultSource,scanDuration&expand=details,credentials"
+                $path = "/reportDefinition/$($ReportId)?filter=usable&fields=name,type,ownerGroup,owner,schedule,canManage,canUse,status"
             }
 
             try {
