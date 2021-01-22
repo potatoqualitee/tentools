@@ -50,15 +50,16 @@
     process {
         foreach ($session in $SessionObject) {
             if ($session.sc) {
-                foreach ($scans in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/launch" -Method 'Post' -Parameter $paramJson -ContentType "application/json")) {
-                    [pscustomobject]@{
-                        ScanUUID  = $scans.scan_uuid
-                        ScanId    = $ScanId
-                        SessionId = $session.SessionId
-                    }
+                $params = @{
+                    SessionObject   = $session
+                    EnableException = $EnableException
+                    Path            = "/scan/$ScanId/launch"
+                    Method          = "POST"
+                    Parameter       = $paramJson
                 }
+                (Invoke-TNRequest @params).ScanResult | ConvertFrom-TNRestResponse
             } else {
-                foreach ($scans in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/launch" -Method 'Post' -Parameter $paramJson -ContentType "application/json")) {
+                foreach ($scans in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId/launch" -Method POST -Parameter $paramJson -ContentType "application/json")) {
                     [pscustomobject]@{
                         ScanUUID  = $scans.scan_uuid
                         ScanId    = $ScanId

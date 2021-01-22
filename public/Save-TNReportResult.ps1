@@ -43,7 +43,7 @@ function Save-TNReportResult {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
             foreach ($file in $InputObject) {
-                $filename = "$Path\$($file.Name)-$($file.Id)-reportresults.zip"
+                $filename = Join-Path -Path $Path -ChildPath "$($file.Name)-$($file.Id)-reportresults.zip"
                 Write-PSFMessage -Level Verbose -Message "Downloading $($file.Name) to $filename"
                 $params = @{
                     EnableException = $true

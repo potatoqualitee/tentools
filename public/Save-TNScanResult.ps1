@@ -43,7 +43,7 @@ function Save-TNScanResult {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
             foreach ($file in $InputObject) {
-                $filename = "$Path\$($file.Name)-$($file.Id).nessus"
+                $filename = Join-Path -Path $Path -ChildPath "$($file.Name)-$($file.Id)-scanresults.nessus"
                 Write-PSFMessage -Level Verbose -Message "Downloading $($file.Name) to $filename"
                 $params = @{
                     EnableException = $true
