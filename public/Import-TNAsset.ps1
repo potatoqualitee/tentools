@@ -21,9 +21,9 @@ function Import-TNAsset {
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS C:\> Get-ChildItem C:\sc\asset_lists\acas_asset-Bad-Authentication-Capable-or-Credentials-Not-Provided.xml | Import-TNAsset
+        PS C:\> Get-ChildItem C:\sc\asset_lists | Import-TNAsset
 
-        Imports all .asset files matching DISA v2r2
+        Imports all asset files from C:\sc\asset_lists
 #>
     [CmdletBinding()]
     param
