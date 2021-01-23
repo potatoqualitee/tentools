@@ -112,6 +112,7 @@
         'New-TNUser',
         'Remove-TNAudit',
         'Remove-TNCredential',
+        'Remove-TNDashboard',
         'Remove-TNGroup',
         'Remove-TNGroupUser',
         'Remove-TNPluginRule',
