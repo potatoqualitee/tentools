@@ -111,6 +111,7 @@
         'New-TNScan',
         'New-TNUser',
         'Remove-TNAudit',
+        'Remove-TNAsset',
         'Remove-TNCredential',
         'Remove-TNDashboard',
         'Remove-TNGroup',
