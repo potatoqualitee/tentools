@@ -94,6 +94,7 @@
         'Import-TNCustomPlugin',
         'Import-TNDashboard',
         'Import-TNPolicy',
+        'Import-TNReport',
         'Import-TNScan',
         'Initialize-TNServer',
         'Invoke-TNRequest',
