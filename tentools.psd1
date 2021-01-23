@@ -119,6 +119,7 @@
         'Remove-TNGroupUser',
         'Remove-TNPluginRule',
         'Remove-TNPolicy',
+        'Remove-TNReport',
         'Remove-TNScan',
         'Remove-TNScanner',
         'Remove-TNScanZone',
