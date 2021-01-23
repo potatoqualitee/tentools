@@ -120,6 +120,7 @@
         'Remove-TNPluginRule',
         'Remove-TNPolicy',
         'Remove-TNReport',
+        'Remove-TNReportResult',
         'Remove-TNScan',
         'Remove-TNScanner',
         'Remove-TNScanZone',
