@@ -21,7 +21,7 @@
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS C:\> Start-TNScan
+        PS C:\> Get-TNScan | Start-TNScan
 
         Starts a list of scans
 
