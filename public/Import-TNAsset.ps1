@@ -12,9 +12,6 @@ function Import-TNAsset {
     .PARAMETER FilePath
         The path to the asset file
 
-    .PARAMETER NoRename
-        By default, this command will remove "Imported Nessus Policy - " from the title of the imported file. Use this switch to keep the whole name "Imported Nessus Policy - Title of Policy"
-
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
         This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
