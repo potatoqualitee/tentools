@@ -32,51 +32,78 @@
         Creates new policies
 
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param
     (
         [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = "Template", ValueFromPipelineByPropertyName)]
         [string]$Name,
         [Parameter(ValueFromPipelineByPropertyName)]
         [string[]]$PolicyUUID,
         [Parameter(ValueFromPipelineByPropertyName)]
         [string]$TemplateName,
+        [string[]]$Audit,
         [Parameter(ValueFromPipelineByPropertyName)]
-        [string]$Description = '',
+        [string]$Description,
+        [Parameter(Mandatory, ParameterSetName = "Auto", ValueFromPipelineByPropertyName)]
+        [switch]$Auto,
         [switch]$EnableException
     )
     process {
-        if (-not $PSBoundParameters.TemplateName -and -not $PSBoundParameters.PolicyUUID) {
+        if (-not $PSBoundParameters.TemplateName -and -not $PSBoundParameters.PolicyUUID -and -not $Auto) {
             Stop-PSFFunction -EnableException:$EnableException -Message "Please specify either TemplateName or PolicyUUID"
             return
         }
 
         foreach ($session in $SessionObject) {
-            if ($PSBoundParameters.TemplateName) {
-                $PolicyUUID = (Get-TNPolicyTemplate -Name $TemplateName).PolicyUUID
-            }
+            if ($PSBoundParameters.Auto) {
+                $audits = Get-TNAudit
+                $template = Get-TNPolicyTemplate -Name 'SCAP and OVAL Auditing'
 
-            foreach ($policyid in $PolicyUUID) {
-                $req = @{
-                    uuid     = $policyid
-                    settings = @{
-                        'name'        = $Name
-                        'description' = $Description
+                foreach ($auditfile in $audits) {
+                    $preparams = @{
+                        name           = $auditfile.Name
+                        description    = $auditfile.Description
+                        policyTemplate = @{ id = $template.id }
+                        # brett worked!
+                        auditFiles     = @(@{ id = $auditfile.id })
                     }
-                }
 
-                $SettingsJson = ConvertTo-Json -InputObject $req -Compress
-                $params = @{
-                    SessionObject = $session
-                    Path          = "/policies/"
-                    Method        = 'POST'
-                    ContentType   = "application/json"
-                    Parameter     = $SettingsJson
+                    $json = ConvertTo-Json -InputObject $preparams -Compress
+                    $params = @{
+                        SessionObject = $session
+                        Path          = "/policy"
+                        Method        = "POST"
+                        ContentType   = "application/json"
+                        Parameter     = $json
+                    }
+                    $newpolicy = Invoke-TNRequest @params
+                    Get-TNPolicy -PolicyID $newpolicy.Id
                 }
-                $newpolicy = Invoke-TNRequest @params
-                Get-TNPolicy -PolicyID $newpolicy.policy_id
+            } else {
+                if ($PSBoundParameters.TemplateName) {
+                    $PolicyUUID = (Get-TNPolicyTemplate -Name $TemplateName).PolicyUUID
+                }
+                foreach ($policyid in $PolicyUUID) {
+                    $req = @{
+                        uuid     = $policyid
+                        settings = @{
+                            'name'        = $Name
+                            'description' = $Description
+                        }
+                    }
+                    $json = ConvertTo-Json -InputObject $req -Compress
+                    $params = @{
+                        SessionObject = $session
+                        Path          = "/policies/"
+                        Method        = "POST"
+                        ContentType   = "application/json"
+                        Parameter     = $json
+                    }
+                    $newpolicy = Invoke-TNRequest @params
+                    Get-TNPolicy -PolicyID $newpolicy.Id
+                }
             }
         }
     }
