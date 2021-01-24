@@ -142,6 +142,7 @@
         'Set-TNRepositoryProperty',
         'Set-TNUserPassword',
         'Start-TNDeploy',
+        'Start-TNReport',
         'Get-TNGroupMember',
         'Get-TNPlugin',
         'Get-TNPluginFamilyDetails',
