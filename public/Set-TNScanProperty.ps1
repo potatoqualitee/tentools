@@ -53,7 +53,7 @@ function Set-TNScanProperty {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
 
-            $Scans = Get-TNScan | Where-Object Name -eq $Name
+            $Scans = Get-TNScan | Where-Object Name -in $Name
 
             foreach ($scan in $Scans) {
                 $scanid = $scan.id
