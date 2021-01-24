@@ -29,7 +29,9 @@
         [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Alias("Id")]
         [Int]$FolderId,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$EnableException
     )
     process {

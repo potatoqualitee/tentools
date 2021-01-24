@@ -43,7 +43,7 @@
             }
 
             $params = @{
-                Path            = "/auditFile?fields=name,filename,originalFilename,dataStreamName,benchmarkName,profileName,tailoringOriginalFilename,typeFields,version,description,modifiedTime,createdTime,auditFileTemplate,type,editor,name,description,type,ownerGroup,groups,owner,version,canManage,canUse,originalFilename,modifiedTime,auditFileTemplate,typeFields,editor"
+                Path            = "/auditFile?filter=usable&fields=name,filename,originalFilename,dataStreamName,benchmarkName,profileName,tailoringOriginalFilename,typeFields,version,description,modifiedTime,createdTime,auditFileTemplate,type,editor,name,description,type,ownerGroup,groups,owner,version,canManage,canUse,originalFilename,modifiedTime,auditFileTemplate,typeFields,editor"
                 Method          = "GET"
                 EnableException = $EnableException
             }

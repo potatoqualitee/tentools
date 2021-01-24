@@ -142,7 +142,7 @@ Function Write-Help {
 
     $files = Get-ChildItem -Recurse C:\github\tentools\public\*.ps1
 
-    foreach ($file in $files) {
+    foreach ($file in $files.FullName) {
         write-warning "$file"
         $text = ($file | Get-Content -Raw).Trim()
         Set-Content -Path $file.FullName -Encoding UTF8 -Value (Get-Header $text).TrimEnd()

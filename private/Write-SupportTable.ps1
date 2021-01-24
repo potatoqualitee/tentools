@@ -4,7 +4,7 @@ Function Write-SupportTable {
 
     $files = Get-ChildItem -Recurse C:\github\tentools\public\*.ps1
 
-    foreach ($file in $files) {
+    foreach ($file in $files.FullName) {
         $name = $file.basename
         $text = ($file | Get-Content -Raw).Trim()
 

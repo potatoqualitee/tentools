@@ -43,7 +43,9 @@
             if ($session.sc) {
                 Stop-PSFFunction -Message "tenable.sc not supported :(" -Continue
             }
-            foreach ($file in $FilePath) {
+            $files = Get-ChildItem -Path $FilePath
+
+            foreach ($file in $files.FullName) {
                 $body = $file | Publish-File -Session $session -EnableException:$EnableException
 
                 Invoke-TnRequest -Method Post -Path "/scans/import" -Parameter $body -ContentType "application/json" -SessionObject $session |

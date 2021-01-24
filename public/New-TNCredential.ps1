@@ -58,6 +58,44 @@
         PS C:\> New-TNCredential @params -Verbose
 
         Creates a new SSH credential for acasaccount and sets the escalation type to sudo
+
+
+    .EXAMPLE
+        PS C:\> $credhash = @{
+                dbType = "SQL Server"
+                SQLServerAuthType = "SQL"
+            }
+
+        PS C:\> $params = @{
+              Name = "SQL Server sqladmin"
+              Type = "database"
+              AuthType = "password"
+              Credential = "sqladmin"
+              CredentialHash = $credhash
+        }
+
+        PS C:\> New-TNCredential @params -Verbose
+
+        Creates a new SQL Server credential for SQL Login sqladmin
+
+    .EXAMPLE
+        PS C:\> $credhash = @{
+                dbType = "SQL Server"
+                SQLServerAuthType = "Windows"
+            }
+
+        PS C:\> $params = @{
+              Name = "SQL Server sqladmin"
+              Type = "database"
+              AuthType = "password"
+              Credential = "ad\sqladmin"
+              CredentialHash = $credhash
+        }
+
+        PS C:\> New-TNCredential @params -Verbose
+
+        Creates a new SQL Server credential for Windows ad\sqladmin
+
 #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "")]
@@ -83,11 +121,11 @@
         [switch]$EnableException
     )
     begin {
-        if ($Type -notin "windows", "ssh" -and -not $PSBoundParameters.CredentailHash) {
+        if ($Type -notin "windows", "ssh" -and -not $PSBoundParameters.CredentialHash) {
             Stop-PSFFunction -Message "You must specify a CredentialHash when Type is $Type"
             return
         }
-        if ($AuthType -eq "certificate" -and -not $PSBoundParameters.CredentailHash) {
+        if ($AuthType -eq "certificate" -and -not $PSBoundParameters.CredentialHash) {
             Stop-PSFFunction -Message "You must specify a CredentialHash when AuthType is $AuthType"
             return
         }
@@ -104,7 +142,7 @@
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
 
-            if (-not $PSBoundParameters.CredentailHash) {
+            if (-not $PSBoundParameters.CredentialHash) {
                 $body = @{
                     name        = $Name
                     description = $Description
@@ -112,11 +150,34 @@
                     authType    = $AuthType.ToLower()
                 }
             } else {
-                $body = $PSBoundParameters.CredentailHash
+                $body = $PSBoundParameters.CredentialHash
                 $body.Add("name", $Name)
                 $body.Add("description", $Description)
                 $body.Add("type", $Type)
                 $body.Add("authType", $AuthType)
+
+                if (-not $CredentialHash.port) {
+                    switch ($CredentialHash.dbType) {
+                        "SQL Server" {
+                            $body.Add("port", "1433")
+                        }
+                        "DB2" {
+                            $body.Add("port", "50000")
+                        }
+                        "Informix/DRDA" {
+                            $body.Add("port", "1526")
+                        }
+                        "MySQL" {
+                            $body.Add("port", "3306")
+                        }
+                        "Oracle" {
+                            $body.Add("port", "1521")
+                        }
+                        "PostgreSQL" {
+                            $body.Add("port", "5432")
+                        }
+                    }
+                }
             }
 
             if ($PSBoundParameters.Credential) {
@@ -130,7 +191,13 @@
                 if ($Type -eq "ssh") {
                     $body.Add("privilegeEscalation", $PrivilegeEscalation.ToLower())
                 }
-                $body.Add("username", $username)
+
+                if ($Type -notin "database") {
+                    $body.Add("username", $username)
+                } else {
+                    $body.Add("login", $username)
+                }
+
                 $body.Add("password", ($Credential.GetNetworkCredential().Password))
             }
 

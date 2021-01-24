@@ -193,7 +193,7 @@
 
             # IF EVERY ONE HAS MULTIPLES INSIDE
             if ($fields.Count -eq 0) {
-                Write-Verbose "Found no inner objects"
+                Write-Debug "Found no inner objects"
                 if ($object.StartsWith("{")) {
                     try {
                         $object = $object.Replace("\","\\") | ConvertFrom-Json
@@ -216,11 +216,11 @@
             }
 
             if ($fields.Count -eq 1) {
-                Write-Verbose "Found one inner object"
+                Write-Debug "Found one inner object"
                 $name = $fields.Name
                 Convert-Row -Object $object.$name -Type $null
             } else {
-                Write-Verbose "Found multiple inner objects"
+                Write-Debug "Found multiple inner objects"
                 $result = $true
                 foreach ($definition in $fields.Definition) {
                     if (-not $definition.Contains("Object[]")) {

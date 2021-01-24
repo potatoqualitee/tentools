@@ -29,7 +29,9 @@
         [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Alias("Id")]
         [Int32]$GroupId,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$EnableException
     )
     process {

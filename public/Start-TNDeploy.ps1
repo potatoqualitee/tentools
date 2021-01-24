@@ -115,6 +115,14 @@
         [Parameter(ValueFromPipelineByPropertyName)]
         [string[]]$ScanFilePath,
         [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$AuditFilePath,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$DashboardFilePath,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$AssetFilePath,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$ReportFilePath,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$EnableException
     )
     begin {
@@ -171,6 +179,26 @@
                 $null = Connect-TNServer -Type tenable.sc -Credential $AdministratorCredential -ComputerName securitycenter
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Connect failed for $computer" -Continue
+            }
+
+            # Scanner Credentials
+            if ($ScanCredentialHash) {
+                Write-PSFMessage -Level Verbose -Message "Creating credentials on $computer"
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating credentials on $computer"
+                try {
+                    foreach ($scancred in $ScanCredentialHash) {
+                        if ($scancred -is [hashtable]) {
+                            $null = New-TNCredential @scancred
+                        } else {
+                            $splat = ConvertTo-Hashtable $scancred
+                            $null = New-TNCredential @splat
+                        }
+                    }
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Credential creation failed for $computer" -Continue
+                }
+
+                $output["ScanCredential"] = $ScanCredentialHash.Name
             }
 
             if ($Scanner) {
@@ -231,26 +259,6 @@
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Creation of organization user $($SecurityManagerCredential.Username) failed for $computer" -Continue
             }
 
-            # Scanner Credentials
-            if ($ScanCredentialHash) {
-                Write-PSFMessage -Level Verbose -Message "Creating credentials on $computer"
-                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating credentials on $computer"
-                try {
-                    foreach ($scancred in $ScanCredentialHash) {
-                        if ($scancred -is [hashtable]) {
-                            $null = New-TNCredential @scancred
-                        } else {
-                            $splat = ConvertTo-Hashtable $scancred
-                            $null = New-TNCredential @splat
-                        }
-                    }
-                } catch {
-                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Credential creation failed for $computer" -Continue
-                }
-
-                $output["ScanCredential"] = $ScanCredentialHash.Name
-            }
-
             # Scan Zone
             try {
                 Write-PSFMessage -Level Verbose -Message "Creating scan zones on $computer"
@@ -268,8 +276,8 @@
             # Import policy
             if ($PSBoundParameters.PolicyFilePath) {
                 try {
-                    Write-PSFMessage -Level Verbose -Message "Importing policies on $computer"
-                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing policies on $computer"
+                    Write-PSFMessage -Level Verbose -Message "Importing policies from $PolicyFilePath on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing policies from $PolicyFilePath on $computer"
                     $results = Import-TNPolicy -FilePath $PolicyFilePath
                     $output["ImportedPolicy"] = $results.Name
                 } catch {
@@ -297,14 +305,67 @@
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "DISA report attribute creation failed for $computer" -Continue
             }
 
+            # Import report
+            if ($PSBoundParameters.ReportFilePath) {
+                try {
+                    Write-PSFMessage -Level Verbose -Message "Importing reports from $ReportFilePath on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing reports from $ReportFilePath on $computer"
+                    $results = Import-TNReport -FilePath $ReportFilePath
+                    $output["ImportedReport"] = $results.Name
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Report import failed for $computer" -Continue
+                }
+            }
+
+            # Import audits
+            if ($PSBoundParameters.AuditFilePath) {
+                try {
+                    Write-PSFMessage -Level Verbose -Message "Importing audits from $AuditFilePath on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing audits from $AuditFilePath on $computer"
+                    $results = Import-TNAudit -FilePath $AuditFilePath
+                    $output["ImportedAudit"] = $results.Name
+
+
+                    Write-PSFMessage -Level Verbose -Message "Converting audits to policies on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Converting audits to policies on $computer"
+                    $results = New-TNPolicy -Auto
+                    $output["AuditPolicy"] = $results.Name
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Converting audits to policies failed for $computer" -Continue
+                }
+            }
+
+            # Import dashboard
+            if ($PSBoundParameters.DashboardFilePath) {
+                try {
+                    Write-PSFMessage -Level Verbose -Message "Importing dashboards from $DashboardFilePath on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing dashboards from $DashboardFilePath on $computer"
+                    $results = Import-TNDashboard -FilePath $DashboardFilePath
+                    $output["ImportedDashboard"] = $results.Name
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Dashboard import failed for $computer" -Continue
+                }
+            }
+
+            # Import asset
+            if ($PSBoundParameters.AssetFilePath) {
+                try {
+                    Write-PSFMessage -Level Verbose -Message "Importing assets from $AssetFilePath on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing assets from $AssetFilePath on $computer"
+                    $results = Import-TNAsset -FilePath $AssetFilePath
+                    $output["ImportedAsset"] = $results.Name
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Asset import failed for $computer" -Continue
+                }
+            }
+
             # Auto Scans!
-            if ($PSBoundParameters.PolicyFilePath) {
+            if ($PSBoundParameters.PolicyFilePath -or $PSBoundParameters.AuditFilePath) {
                 try {
                     Write-PSFMessage -Level Verbose -Message "Creating scans on $computer"
                     Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating scans on $computer"
                     $scans = New-TNScan -Auto -TargetIpRange $IpRange
                     $output["Scans"] = $scans.Name
-
                     if ($PSBoundParameters.ScanCredentialHash) {
                         $null = Set-TNScanProperty -Name $scans.Name -ScanCredential $ScanCredentialHash.Name
                     }
