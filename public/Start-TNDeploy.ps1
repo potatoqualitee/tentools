@@ -181,6 +181,26 @@
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Connect failed for $computer" -Continue
             }
 
+            # Scanner Credentials
+            if ($ScanCredentialHash) {
+                Write-PSFMessage -Level Verbose -Message "Creating credentials on $computer"
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating credentials on $computer"
+                try {
+                    foreach ($scancred in $ScanCredentialHash) {
+                        if ($scancred -is [hashtable]) {
+                            $null = New-TNCredential @scancred
+                        } else {
+                            $splat = ConvertTo-Hashtable $scancred
+                            $null = New-TNCredential @splat
+                        }
+                    }
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Credential creation failed for $computer" -Continue
+                }
+
+                $output["ScanCredential"] = $ScanCredentialHash.Name
+            }
+
             if ($Scanner) {
                 try {
                     foreach ($scannername in $scanner) {
@@ -237,26 +257,6 @@
                 $output["SecurityManager"] = $SecurityManagerCredential.UserName
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Creation of organization user $($SecurityManagerCredential.Username) failed for $computer" -Continue
-            }
-
-            # Scanner Credentials
-            if ($ScanCredentialHash) {
-                Write-PSFMessage -Level Verbose -Message "Creating credentials on $computer"
-                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating credentials on $computer"
-                try {
-                    foreach ($scancred in $ScanCredentialHash) {
-                        if ($scancred -is [hashtable]) {
-                            $null = New-TNCredential @scancred
-                        } else {
-                            $splat = ConvertTo-Hashtable $scancred
-                            $null = New-TNCredential @splat
-                        }
-                    }
-                } catch {
-                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Credential creation failed for $computer" -Continue
-                }
-
-                $output["ScanCredential"] = $ScanCredentialHash.Name
             }
 
             # Scan Zone
@@ -360,13 +360,12 @@
             }
 
             # Auto Scans!
-            if ($PSBoundParameters.PolicyFilePath) {
+            if ($PSBoundParameters.PolicyFilePath -or $PSBoundParameters.AuditFilePath) {
                 try {
                     Write-PSFMessage -Level Verbose -Message "Creating scans on $computer"
                     Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating scans on $computer"
                     $scans = New-TNScan -Auto -TargetIpRange $IpRange
                     $output["Scans"] = $scans.Name
-
                     if ($PSBoundParameters.ScanCredentialHash) {
                         $null = Set-TNScanProperty -Name $scans.Name -ScanCredential $ScanCredentialHash.Name
                     }
