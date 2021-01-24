@@ -33,6 +33,9 @@ function Write-ProgressHelper {
         } else {
             $percentComplete = ($StepNumber / $TotalSteps) * 100
         }
+        if ($percentComplete -gt 100) {
+            $percentComplete = "100"
+        }
         Write-Progress -Activity $Activity -Status $Message -PercentComplete $percentComplete
     }
 }
