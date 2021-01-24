@@ -83,11 +83,11 @@
         [switch]$EnableException
     )
     begin {
-        if ($Type -notin "windows", "ssh" -and -not $PSBoundParameters.CredentailHash) {
+        if ($Type -notin "windows", "ssh" -and -not $PSBoundParameters.CredentialHash) {
             Stop-PSFFunction -Message "You must specify a CredentialHash when Type is $Type"
             return
         }
-        if ($AuthType -eq "certificate" -and -not $PSBoundParameters.CredentailHash) {
+        if ($AuthType -eq "certificate" -and -not $PSBoundParameters.CredentialHash) {
             Stop-PSFFunction -Message "You must specify a CredentialHash when AuthType is $AuthType"
             return
         }
@@ -104,7 +104,7 @@
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
 
-            if (-not $PSBoundParameters.CredentailHash) {
+            if (-not $PSBoundParameters.CredentialHash) {
                 $body = @{
                     name        = $Name
                     description = $Description
@@ -112,7 +112,7 @@
                     authType    = $AuthType.ToLower()
                 }
             } else {
-                $body = $PSBoundParameters.CredentailHash
+                $body = $PSBoundParameters.CredentialHash
                 $body.Add("name", $Name)
                 $body.Add("description", $Description)
                 $body.Add("type", $Type)

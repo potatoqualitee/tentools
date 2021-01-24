@@ -295,6 +295,28 @@
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Connect failed for $computer as $($SecurityManagerCredential.Username)" -Continue
             }
 
+            # Report Attribute
+            try {
+                Write-PSFMessage -Level Verbose -Message "Creating DISA report attribute on $computer"
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating DISA report attribute on $computer"
+                $null = New-TNReportAttribute -Name DISA
+                $output["ReportAttribute"] = "DISA"
+            } catch {
+                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "DISA report attribute creation failed for $computer" -Continue
+            }
+
+            # Import report
+            if ($PSBoundParameters.ReportFilePath) {
+                try {
+                    Write-PSFMessage -Level Verbose -Message "Importing reports from $ReportFilePath on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing reports from $ReportFilePath on $computer"
+                    $results = Import-TNReport -FilePath $ReportFilePath
+                    $output["ImportedReport"] = $results.Name
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Report import failed for $computer" -Continue
+                }
+            }
+
             # Import audits
             if ($PSBoundParameters.AuditFilePath) {
                 try {
@@ -302,8 +324,14 @@
                     Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing audits from $AuditFilePath on $computer"
                     $results = Import-TNAudit -FilePath $AuditFilePath
                     $output["ImportedAudit"] = $results.Name
+
+
+                    Write-PSFMessage -Level Verbose -Message "Converting audits to policies on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Converting audits to policies on $computer"
+                    $results = New-TNPolicy -Auto
+                    $output["AuditPolicy"] = $results.Name
                 } catch {
-                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Audit import failed for $computer" -Continue
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Converting audits to policies failed for $computer" -Continue
                 }
             }
 
@@ -328,28 +356,6 @@
                     $output["ImportedAsset"] = $results.Name
                 } catch {
                     Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Asset import failed for $computer" -Continue
-                }
-            }
-
-            # Report Attribute
-            try {
-                Write-PSFMessage -Level Verbose -Message "Creating DISA report attribute on $computer"
-                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating DISA report attribute on $computer"
-                $null = New-TNReportAttribute -Name DISA
-                $output["ReportAttribute"] = "DISA"
-            } catch {
-                Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "DISA report attribute creation failed for $computer" -Continue
-            }
-
-            # Import report
-            if ($PSBoundParameters.ReportFilePath) {
-                try {
-                    Write-PSFMessage -Level Verbose -Message "Importing reports from $ReportFilePath on $computer"
-                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing reports from $ReportFilePath on $computer"
-                    $results = Import-TNReport -FilePath $ReportFilePath
-                    $output["ImportedReport"] = $results.Name
-                } catch {
-                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Report import failed for $computer" -Continue
                 }
             }
 
