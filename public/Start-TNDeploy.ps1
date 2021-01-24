@@ -115,6 +115,14 @@
         [Parameter(ValueFromPipelineByPropertyName)]
         [string[]]$ScanFilePath,
         [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$AuditFilePath,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$DashboardFilePath,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$AssetFilePath,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$ReportFilePath,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$EnableException
     )
     begin {
@@ -268,8 +276,8 @@
             # Import policy
             if ($PSBoundParameters.PolicyFilePath) {
                 try {
-                    Write-PSFMessage -Level Verbose -Message "Importing policies on $computer"
-                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing policies on $computer"
+                    Write-PSFMessage -Level Verbose -Message "Importing policies from $PolicyFilePath on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing policies from $PolicyFilePath on $computer"
                     $results = Import-TNPolicy -FilePath $PolicyFilePath
                     $output["ImportedPolicy"] = $results.Name
                 } catch {
@@ -287,6 +295,42 @@
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Connect failed for $computer as $($SecurityManagerCredential.Username)" -Continue
             }
 
+            # Import audits
+            if ($PSBoundParameters.AuditFilePath) {
+                try {
+                    Write-PSFMessage -Level Verbose -Message "Importing audits from $AuditFilePath on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing audits from $AuditFilePath on $computer"
+                    $results = Import-TNAudit -FilePath $AuditFilePath
+                    $output["ImportedAudit"] = $results.Name
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Audit import failed for $computer" -Continue
+                }
+            }
+
+            # Import dashboard
+            if ($PSBoundParameters.DashboardFilePath) {
+                try {
+                    Write-PSFMessage -Level Verbose -Message "Importing dashboards from $DashboardFilePath on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing dashboards from $DashboardFilePath on $computer"
+                    $results = Import-TNDashboard -FilePath $DashboardFilePath
+                    $output["ImportedDashboard"] = $results.Name
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Dashboard import failed for $computer" -Continue
+                }
+            }
+
+            # Import asset
+            if ($PSBoundParameters.AssetFilePath) {
+                try {
+                    Write-PSFMessage -Level Verbose -Message "Importing assets from $AssetFilePath on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing assets from $AssetFilePath on $computer"
+                    $results = Import-TNAsset -FilePath $AssetFilePath
+                    $output["ImportedAsset"] = $results.Name
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Asset import failed for $computer" -Continue
+                }
+            }
+
             # Report Attribute
             try {
                 Write-PSFMessage -Level Verbose -Message "Creating DISA report attribute on $computer"
@@ -295,6 +339,18 @@
                 $output["ReportAttribute"] = "DISA"
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "DISA report attribute creation failed for $computer" -Continue
+            }
+
+            # Import report
+            if ($PSBoundParameters.ReportFilePath) {
+                try {
+                    Write-PSFMessage -Level Verbose -Message "Importing reports from $ReportFilePath on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing reports from $ReportFilePath on $computer"
+                    $results = Import-TNReport -FilePath $ReportFilePath
+                    $output["ImportedReport"] = $results.Name
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Report import failed for $computer" -Continue
+                }
             }
 
             # Auto Scans!

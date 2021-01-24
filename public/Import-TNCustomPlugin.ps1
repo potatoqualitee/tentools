@@ -47,7 +47,9 @@ function Import-TNCustomPlugin {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
 
-            foreach ($file in $FilePath) {
+            $files = Get-ChildItem -Path $FilePath
+
+            foreach ($file in $files.FullName) {
                 $body = $file | Publish-File -Session $session -EnableException:$EnableException
 
                 $params = @{

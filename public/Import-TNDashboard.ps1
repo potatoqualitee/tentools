@@ -40,7 +40,9 @@ function Import-TNDashboard {
             }
 
             $max = ((Get-TNDashboard).ID | Measure-Object -Maximum).Maximum + 1
-            foreach ($file in $FilePath) {
+            $files = Get-ChildItem -Path $FilePath
+
+            foreach ($file in $files.FullName) {
                 $body = $file | Publish-File -Session $session -EnableException:$EnableException -Type Asset | ConvertFrom-Json | ConvertTo-Hashtable
                 $body.order = $max
                 $params = @{
