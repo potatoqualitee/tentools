@@ -51,7 +51,7 @@
         [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
         [Parameter(ValueFromPipelineByPropertyName, Mandatory)]
-        [string]$Name,
+        [string[]]$Name,
         [string]$Description,
         [ValidateSet("auto_only", "locked", "selectable", "selectable+auto", "selectable+auto_restricted")]
         [string]$ZoneSelection = "auto_only",
@@ -70,25 +70,27 @@
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
 
-            $allips = $IpRange -join ", "
-            $body = @{
-                name         = $Name
-                description  = $Description
-                dataFormat   = $DataFormat
-                type         = $Type
-                ipRange      = $allips
-                trendingDays = $TrendingDays
-                trendWithRaw = "true"
-            }
+            foreach ($repositoryname in $Name) {
+                $allips = $IpRange -join ", "
+                $body = @{
+                    name         = $repositoryname
+                    description  = $Description
+                    dataFormat   = $DataFormat
+                    type         = $Type
+                    ipRange      = $allips
+                    trendingDays = $TrendingDays
+                    trendWithRaw = "true"
+                }
 
-            $params = @{
-                SessionObject   = $session
-                Path            = "/repository"
-                Method          = "POST"
-                Parameter       = $body
-                EnableException = $EnableException
+                $params = @{
+                    SessionObject   = $session
+                    Path            = "/repository"
+                    Method          = "POST"
+                    Parameter       = $body
+                    EnableException = $EnableException
+                }
+                Invoke-TNRequest @params | ConvertFrom-TNRestResponse
             }
-            Invoke-TNRequest @params | ConvertFrom-TNRestResponse
         }
     }
 }

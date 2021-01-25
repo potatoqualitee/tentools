@@ -9,7 +9,7 @@ This toolset extends Posh-Nessus by adding more functionality, including the abi
 
 ## Installer
 
-tentools works on PowerShell Core. This means that you can run all commands on <strong>Windows</strong>, <strong>Linux</strong> and <strong>macOS </strong>.
+tentools works on PowerShell Core. This means that you can run all commands on <strong>Windows</strong>, <strong>Linux</strong> and <strong>macOS</strong>.
 
 Run the following to install tentools from the PowerShell Gallery (to install on a server or for all users, remove the `-Scope` parameter and run in an elevated session):
 
@@ -33,6 +33,8 @@ Please rename the folders from `name-master` to `name` and store in your `$Env:P
 - Manage some objects that are not available in the web interface
 
 ## Usage examples
+
+<p align="center"><img align="center" src="https://user-images.githubusercontent.com/8278033/105730891-1d068400-5f2f-11eb-8ca1-1e12d8b58e7d.gif"></p>
 
 Initalize a newly setup Nessus server with a license and username
 
