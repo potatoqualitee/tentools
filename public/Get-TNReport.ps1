@@ -12,6 +12,9 @@ function Get-TNReport {
     .PARAMETER ReportId
         The ID of the target report
 
+    .PARAMETER Name
+        The Name of the target report
+
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
         This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
@@ -36,6 +39,7 @@ function Get-TNReport {
         [Parameter(ValueFromPipelineByPropertyName)]
         [Alias("Id")]
         [int32]$ReportId,
+        [string[]]$Name,
         [switch]$EnableException
     )
     process {
@@ -51,7 +55,12 @@ function Get-TNReport {
             }
 
             try {
-                Invoke-TNRequest -SessionObject $session -EnableException -Path $path -Method GET | ConvertFrom-TNRestResponse
+                $results = Invoke-TNRequest -SessionObject $session -EnableException -Path $path -Method GET | ConvertFrom-TNRestResponse
+                if ($Name) {
+                    $results | Where-Object Name -in $name
+                } else {
+                    $results
+                }
             } catch {
                 if ($PSItem -match "does not exist") {
                     Stop-PSFFunction -EnableException:$EnableException -Message $PSItem -ErrorRecord $PSItem
