@@ -77,8 +77,12 @@ function New-TNDisaAsrReport {
                 asrInfo    = @{ content = "plugin"; format = "detail"; includeARF = "true" }
             }
 
-            # CHECK IF IT EXISTS
             $arf = Get-TNReportAttribute -Name DISA
+
+            if (-not $arf) {
+                $null = New-TNReportAttribute -Name DISA
+                $arf = Get-TNReportAttribute -Name DISA
+            }
 
             $schedule = @{
                 repeatRule = "FREQ = TEMPLATE;INTERVAL = 1"

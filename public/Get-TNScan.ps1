@@ -9,6 +9,9 @@
     .PARAMETER SessionObject
         Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
 
+    .PARAMETER Name
+        Description for Name
+
     .PARAMETER FolderId
         Description for FolderId
 
@@ -33,6 +36,8 @@
         [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
         [Parameter(ValueFromPipelineByPropertyName)]
+        [string[]]$Name,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [int32]$FolderId,
         [Parameter(ValueFromPipelineByPropertyName)]
         [ValidateSet('Completed', 'Imported', 'Running', 'Paused', 'Canceled')]
@@ -55,16 +60,21 @@
 
             if ($scans.scans) {
                 if ($Status) {
-                    $scans.scans | ConvertFrom-TNRestResponse | Where-Object { $PSItem.Status -eq $Status -and $PSItem.Type -eq "Usable" }
+                    $collection = $scans.scans | ConvertFrom-TNRestResponse | Where-Object { $PSItem.Status -eq $Status -and $PSItem.Type -eq "Usable" }
                 } else {
-                    $scans.scans | ConvertFrom-TNRestResponse | Where-Object Type -eq Usable
+                    $collection = $scans.scans | ConvertFrom-TNRestResponse | Where-Object Type -eq Usable
                 }
             } elseif ($scans) {
                 if ($Status) {
-                    $scans | ConvertFrom-TNRestResponse | Where-Object { $PSItem.Status -eq $Status -and $PSItem.Type -eq "Usable" }
+                    $collection = $scans | ConvertFrom-TNRestResponse | Where-Object { $PSItem.Status -eq $Status -and $PSItem.Type -eq "Usable" }
                 } else {
-                    $scans | ConvertFrom-TNRestResponse | Where-Object Type -eq Usable
+                    $collection = $scans | ConvertFrom-TNRestResponse | Where-Object Type -eq Usable
                 }
+            }
+            if ($Name) {
+                $collection | Where-Object Name -in $Name
+            } else {
+                $collection
             }
         }
     }

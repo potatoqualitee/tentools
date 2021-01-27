@@ -60,8 +60,10 @@
 
         Starts a list of deploys
 
-        $admincred = Get-Credential admin2
-        $secmancred = Get-Credential secmancred2
+    .EXAMPLE
+        $admincred = Get-Credential admin
+        $secmancred = Get-Credential secmancred
+
         $splat = @{
         ComputerName = "securitycenter"
         AdministratorCredential = $admincred
@@ -74,7 +76,8 @@
         PolicyFilePath = "C:\nessus\library\policy.nessus",
         ScanFilePath = "C:\nessus\library\scan.nessus","C:\nessus\library\scan2.nessus"
     }
-    Start-TNDeploy -Verbose
+
+        PS C:\> Start-TNDeploy -Verbose
 
 #>
     [CmdletBinding()]
@@ -103,7 +106,7 @@
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string]$Organization,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
-        [string]$Repository,
+        [string[]]$Repository,
         [Parameter(ValueFromPipelineByPropertyName)]
         [string]$ScanZone = "All Computers",
         [Parameter(ValueFromPipelineByPropertyName)]

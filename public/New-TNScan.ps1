@@ -83,6 +83,8 @@
         [switch]$CreateDashboard,
         [Parameter(Mandatory, ParameterSetName = "Auto", ValueFromPipelineByPropertyName)]
         [switch]$Auto,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string]$Repository,
         [switch]$EnableException
     )
     begin {
@@ -105,12 +107,26 @@
                         $array += @{ id = $asset.Id }
                     }
                 }
-                $repository = @{ id = (Get-TNRepository | Select-Object -First 1).Id }
 
                 switch ($PSCmdlet.ParameterSetName) {
                     "Auto" {
+                        $repos = Get-TNRepository
                         $policies = Get-TNPolicy
                         foreach ($policy in $policies) {
+                            if ($Repository) {
+                                $repositoryhash = @{ id = ($repos | Where-Object Name -eq $Repository | Select-Object -First 1).Id }
+                            } else {
+                                if ($policy.PolicyTemplate.Name -eq 'SCAP and OVAL Auditing') {
+                                    $repo = $repos | Where-Object Name -match Audit | Select-Object -First 1
+                                    if (-not $repo) {
+                                        $repo = $repos | Select-Object -First 1
+                                    }
+                                    $repositoryhash = @{ id = $repo.Id }
+                                } else {
+                                    $repositoryhash = @{ id = ($repos | Select-Object -First 1).Id }
+                                }
+                            }
+
                             Write-PSFMessage -Level Verbose -Message "Adding scan for $($policy.Name)"
                             $body = @{
                                 name        = $policy.Name
@@ -119,7 +135,7 @@
                                 policy      = @{ id = $policy.Id }
                                 ipList      = $iptargets
                                 assets      = $array
-                                repository  = $repository
+                                repository  = $repositoryhash
                             }
                             $params = @{
                                 SessionObject = $session
