@@ -30,7 +30,7 @@
     Description        = "Automation for DISA ACAS, including tenable.sc, Nessus and more. Based off of Carlos Perez's Posh-Nessus module."
 
     # Minimum version of the Windows PowerShell engine required by this module
-    PowerShellVersion  = '3.0'
+    PowerShellVersion  = '5.1'
 
     # Modules that must be imported into the global environment prior to importing this module
     RequiredModules    = @('PSFramework', 'PoshRSJob')
@@ -163,7 +163,10 @@
         'Rename-TNFolder',
         'Set-TNScanProperty',
         'New-TNDisaAsrReport',
-        'Get-TNSystemLog'
+        'Get-TNSystemLog',
+        'Get-TNQuery',
+        'New-TNQuery',
+        'Remove-TNQuery'
     )
 
     # Cmdlets to export from this module

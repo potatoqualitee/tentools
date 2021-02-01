@@ -59,6 +59,24 @@ $script:replace = @{
     scans   = 'scan'
 }
 
+$script:querytool = @{
+    Alert         = "alertName", "createdEndTime", "createdStartTime", "createdTimeFrame", "description", "didTriggerLastEvaluation", "lastEvaluatedEndTime", "lastEvaluatedStartTime", "lastEvaluatedTimeFrame", "lastTriggeredEndTime", "lastTriggeredStartTime", "lastTriggeredTimeFrame", "modifiedEndTime", "modifiedStartTime", "modifiedTimeFrame"
+    Lce           = "listdata", "sumasset", "sumclassa", "sumclassb", "sumclassc", "sumdate", "sumevent", "sumevent2", "sumip", "sumport", "sumprotocol", "sumsensor", "sumtime", "sumtype", "sumuser", "syslog", "timedist"
+    Mobile        = "listvuln", "sumdeviceid", "summdmuser", "summodel", "sumoscpe", "sumpluginid", "vulndetails"
+    Ticket        = "listtickets", "sumassignee", "sumclassification", "sumcreator", "sumstatus"
+    User          = "listusers", "sumgroup", "sumrole"
+    Vulnerability = "iplist", "listmailclients", "listos", "listservices", "listsoftware", "listsshservers", "listvuln", "listwebclients", "listwebservers", "sumasset", "sumcce", "sumclassa", "sumclassb", "sumclassc", "sumcve", "sumdnsname", "sumfamily", "sumiavm", "sumid", "sumip", "summsbulletin", "sumport", "sumprotocol", "sumremediation", "sumseverity", "sumuserresponsibility", "vulndetails", "vulnipdetail", "vulnipsummary"
+}
+
 $script:origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
 
 $PSDefaultParameterValues['*:UseBasicParsing'] = $true
+
+Register-ArgumentCompleter -ParameterName Tool -CommandName New-TNQuery -ScriptBlock {
+    param($Command, $Parameter, $WordToComplete, $CommandAst, $FakeBoundParams)
+    $list = "alertName", "createdEndTime", "createdStartTime", "createdTimeFrame", "description", "didTriggerLastEvaluation", "lastEvaluatedEndTime", "lastEvaluatedStartTime", "lastEvaluatedTimeFrame", "lastTriggeredEndTime", "lastTriggeredStartTime", "lastTriggeredTimeFrame", "modifiedEndTime", "modifiedStartTime", "modifiedTimeFrame", "listdata", "sumasset", "sumclassa", "sumclassb", "sumclassc", "sumdate", "sumevent", "sumevent2", "sumip", "sumport", "sumprotocol", "sumsensor", "sumtime", "sumtype", "sumuser", "syslog", "timedist", "listvuln", "sumdeviceid", "summdmuser", "summodel", "sumoscpe", "sumpluginid", "vulndetails", "listtickets", "sumassignee", "sumclassification", "sumcreator", "sumstatus", "listusers", "sumgroup", "sumrole", "iplist", "listmailclients", "listos", "listservices", "listsoftware", "listsshservers", "listvuln", "listwebclients", "listwebservers", "sumasset", "sumcce", "sumclassa", "sumclassb", "sumclassc", "sumcve", "sumdnsname", "sumfamily", "sumiavm", "sumid", "sumip", "summsbulletin", "sumport", "sumprotocol", "sumremediation", "sumseverity", "sumuserresponsibility", "vulndetails", "vulnipdetail", "vulnipsummary"
+    $list | Where-Object { $PSItem -like "$WordToComplete*" } | Select-Object -Unique | Sort-Object | ForEach-Object {
+        [System.Management.Automation.CompletionResult]::new($PSItem, $PSItem, "ParameterName", $PSItem)
+    }
+}
+# | Where-Object $PSItem -like "$WordToComplete*"

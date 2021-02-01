@@ -63,7 +63,7 @@ Get-TNScan
 
 ## Support
 
-* PowerShell v3 and above
+* PowerShell v5.1 and above
 * Windows, macOS and Linux
 
 
