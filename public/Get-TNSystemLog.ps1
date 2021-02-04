@@ -1,26 +1,24 @@
 function Get-TNSystemLog {
     <#
     .SYNOPSIS
-       Adds a report attribute for DISA ARF
+       Gets the system log
 
     .DESCRIPTION
-        Adds a report attribute for DISA ARF
-
-        https://docs.tenable.com/tenablesc/Content/Reports/ReportAttributes.htm
+        Gets the system log
 
     .PARAMETER SessionObject
         Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
 
-    .PARAMETER Name
-        Name of the DISA ARF
+    .PARAMETER StartOffSet
+        The record to start at. Defaults to 0.
 
-    .PARAMETER Description
-        Description for Description
+    .PARAMETER EndOffset
+        The record to end at. Defaults to 100.
 
-    .PARAMETER Type
-        The type of report attribute
+    .PARAMETER Value
+        Managed by a Program of Record. False by default.
 
-    .PARAMETER PorManaged
+    .PARAMETER Date
         Managed by a Program of Record. False by default.
 
     .PARAMETER EnableException
@@ -39,8 +37,8 @@ function Get-TNSystemLog {
     (
         [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
-        [int]$First = 0,
-        [int]$Last = 50,
+        [int]$StartOffSet = 0,
+        [int]$EndOffset = 100,
         [string]$Value,
         [datetime]$Date = (Get-Date),
         [switch]$EnableException
@@ -55,8 +53,8 @@ function Get-TNSystemLog {
             $query = @{
                 type        = "scLog"
                 tool        = "scLog"
-                startOffset = $First
-                endOffset   = $Last
+                startOffset = $StartOffSet
+                endOffset   = $EndOffset
                 filters     = { @{
                         id          = "date"
                         filterName  = "date"

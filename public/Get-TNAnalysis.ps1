@@ -1,9 +1,56 @@
 function Get-TNAnalysis {
     <#
-    Still doesn't work, the query JSON array is a challenge
-    #>
+    .SYNOPSIS
+       Gets things like Vulnerability Analysis
+
+    .DESCRIPTION
+       Gets things like Vulnerability Analysis
+
+    .PARAMETER SessionObject
+        Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
+
+    .PARAMETER QueryId
+        The ID of the Query you want to run
+
+    .PARAMETER Filter
+        A filter
+
+    .PARAMETER Tool
+        The tool parameter
+
+    .PARAMETER SourceType
+        The source type
+
+    .PARAMETER ScanID
+        The scan ID
+
+    .PARAMETER StartOffSet
+        The source type
+
+    .PARAMETER EndOffset
+        The source type
+
+    .PARAMETER SortBy
+        The source type
+
+    .PARAMETER SortDirection
+        The source type
+
+    .PARAMETER EnableException
+        By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
+        This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
+        Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
+
+    .EXAMPLE
+        PS C:\> New-TNReportAttribute
+
+        Adds a report attribute for DISA ARF
+
+#>
     [CmdletBinding()]
     param (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [object[]]$SessionObject = (Get-TNSession),
         [int]$QueryId,
         [string[]] $Filter = @(),
         [ValidateSet("sumip", "sumclassa", "sumclassb", "sumport", "sumprotocol", "sumid", "sumseverity", "sumfamily", "listvuln", "vulndetails", "listwebclients", "listwebservers", "listos", "iplist", "listmailclients", "listservices", "listsshservers", "sumasset", "vulnipsummary", "vulnipetail", "sumcve", "summsbulletin", "sumiavm", "listofsoftware", "sumdnsname", "cveipdetail", "iavmipdetail", "sumcce", "cceipdetail", "sumremediation", "sumuserresponsibility", "popcount", "trend")]
@@ -11,54 +58,35 @@ function Get-TNAnalysis {
         [ValidateSet("cumulative", "individual", "patched")]
         [string]$SourceType = "cumulative",
         [int]$ScanID,
-        [int]$StartOffSet,
-        [int]$EndOffset,
+        [int]$StartOffSet = 0,
+        [int]$EndOffset = 100,
         [string]$SortBy,
         [ValidateSet("asc", "desc")]
         [string]$SortDirection = "asc"
     )
     begin {
         $body = @{}
-    }
-    process {
+        <#
+        totalRecords             : 69
+        returnedRecords          : 69
+#>
+
         if ($SortBy) {
             $body.sortField = $SortBy
             $body.sortDir = $SortDirection
         }
 
-        $filterstring = $Filter -join ","
-
         $query = @{
-            filters     = $filterstring
+            filters     = $Filter -join ","
             context     = "analysis"
             type        = "vuln"
             tool        = $Tool
-            subtype     = $sourceType
-            scanID      = $ScanID
+            subtype     = $SourceType
+            scanID      = $SourceType
             view        = "all"
-            startOffset = $startOffset
-            endOffset   = $endOffset
+            startOffset = $StartOffSet
+            endOffset   = $EndOffset
         }
-
-        <#
-        query
-            name          :
-            description   :
-            context       :
-            status        : - 1
-            createdTime   : 0
-            modifiedTime  : 0
-            groups        : {}
-            type          : vuln
-            tool          : sumiavm
-            sourceType    : cumulative
-            startOffset   : 0
-            endOffset     : 50
-            filters       : {}
-            sortColumn    : severity
-            sortDirection : desc
-            vulnTool      : sumiavm
-        #>
 
         if ($QueryId) {
             $query.id = $QueryId
@@ -69,6 +97,20 @@ function Get-TNAnalysis {
         $body.scanID = $ScanID
         $body.type = "vuln"
 
-        Invoke-TNRequest -Path "/analysis" -Method POST -Parameter $body
+    }
+    process {
+        foreach ($session in $SessionObject) {
+
+            $params = @{
+                SessionObject = $session
+                Path          = "/analysis"
+                Method        = "POST"
+                Parameter     = $body
+            }
+
+            foreach ($result in (Invoke-TNRequest @params)) {
+                $result.results | Add-Member -MemberType NoteProperty -Name TotalResults -Value $result.totalRecords -PassThru | ConvertFrom-TNRestResponse
+            }
+        }
     }
 }
