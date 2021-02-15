@@ -179,7 +179,7 @@
             Category     = "Security"
 
             # Keyword tags to help users find this module via navigations and search.
-            Tags         = @('nessus', 'tenable', 'acas', 'security', 'disa', 'dod', 'tenable.sc', 'securitycenter', 'Assured Compliance Assessment Solution')
+            Tags         = @('nessus', 'tenable', 'acas', 'security', 'disa', 'dod', 'tenable.sc', 'securitycenter')
 
             # The web address of an icon which can be used in galleries to represent this module
             IconUri      = "https://user-images.githubusercontent.com/8278033/107939993-d9c88f80-6f87-11eb-892b-a7f090b1f619.png"
