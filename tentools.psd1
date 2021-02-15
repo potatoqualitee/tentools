@@ -24,7 +24,7 @@
     CompanyName        = ''
 
     # Copyright statement for this module
-    Copyright          = 'Copyright (c) 2019, licensed under MIT'
+    Copyright          = 'Copyright (c) 2021, licensed under BSD 3'
 
     # Description of the functionality provided by this module
     Description        = "Automation for DISA ACAS, including tenable.sc, Nessus and more. Based off of Carlos Perez's Posh-Nessus module and commands by Joseph Warren."
