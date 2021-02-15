@@ -18,7 +18,7 @@
     GUID               = '1e19a8e4-ef98-4f0a-bd7d-f6613c3b7375'
 
     # Author of this module
-    Author             = 'Chrissy LeMaire & Joseph Warren'
+    Author             = 'Chrissy LeMaire'
 
     # Company or vendor of this module
     CompanyName        = ''
@@ -27,7 +27,7 @@
     Copyright          = 'Copyright (c) 2019, licensed under MIT'
 
     # Description of the functionality provided by this module
-    Description        = "Automation for DISA ACAS, including tenable.sc, Nessus and more. Based off of Carlos Perez's Posh-Nessus module."
+    Description        = "Automation for DISA ACAS, including tenable.sc, Nessus and more. Based off of Carlos Perez's Posh-Nessus module and commands by Joseph Warren."
 
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion  = '5.1'
@@ -56,7 +56,6 @@
         'Enable-TNPolicyPortScanner',
         'Export-TNPolicy',
         'Export-TNScan',
-        'Get-TNAnalysis',
         'Get-TNAsset',
         'Get-TNAudit',
         'Get-TNCredential',
@@ -191,10 +190,10 @@
             Tags         = @('nessus', 'tenable', 'acas', 'security', 'disa', 'dod', 'tenable.sc', 'securitycenter', 'Assured Compliance Assessment Solution')
 
             # The web address of an icon which can be used in galleries to represent this module
-            IconUri      = "https://user-images.githubusercontent.com/8278033/55955866-d3b64900-5c62-11e9-8175-92a8427d7f94.png"
+            IconUri      = "https://user-images.githubusercontent.com/8278033/107939993-d9c88f80-6f87-11eb-892b-a7f090b1f619.png"
 
             # The web address of this module's project or support homepage.
-            ProjectUri   = "https://github.com/potatoqualitee/acas"
+            ProjectUri   = "https://github.com/potatoqualitee/tentools"
 
             # The web address of this module's license. Points to a page that's embeddable and linkable.
             LicenseUri   = "https://opensource.org/licenses/MIT"
