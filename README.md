@@ -23,9 +23,9 @@ If you need to install this module to an offline server, you can run
 ```powershell
 Save-Module tentools -Path C:\temp
 ```
-And it will save all dependent modules. You can also [download the zip](https://github.com/potatoqualitee/tentools/archive/master.zip) from our repo, but you'll also need to download [PSFramework](https://github.com/PowershellFrameworkCollective/psframework/archive/development.zip).
+And it will save all dependent modules. You can also [download the zip](https://github.com/potatoqualitee/tentools/archive/main.zip) from our repo, but you'll also need to download [PSFramework](https://github.com/PowershellFrameworkCollective/psframework/archive/development.zip).
 
-Please rename the folders from `name-master` to `name` and store in your `$Env:PSModulePath`.
+Please rename the folders from `name-main` to `name` and store in your `$Env:PSModulePath`.
 
 ## Usage scenarios
 
