@@ -50,6 +50,10 @@ function Set-TNCertificate {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
+        PS> # export without extended properties
+        PS> openssl pkcs12 -in nessus.pfx -nokeys -out cert.pem
+        PS> openssl pkcs12 -in nessus.pfx -nocerts -out serverkey.pem -nodes
+        PS> openssl rsa -in serverkey.pem -out serverkey.key
         PS> Set-TNCertificate -ComputerName securitycenter -Credential acasadmin -CertPath C:\sc\cert.pem -KeyPath C:\sc\serverkey.key -Verbose -AcceptAnyThumbprint
     #>
     [CmdletBinding()]
