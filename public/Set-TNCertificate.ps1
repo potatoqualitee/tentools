@@ -1,10 +1,10 @@
 function Set-TNCertificate {
     <#
     .SYNOPSIS
-        Sets certificates for both Nessus and Tenable.sc
+        Sets certificates for both Nessus and Tenable.sc. Note,this stops and restarts services.
 
     .DESCRIPTION
-        Sets certificates for both Nessus and Tenable.sc
+        Sets certificates for both Nessus and Tenable.sc. Note,this stops and restarts services.
 
         This command only works on a Windows machine with WinSCP installed and ony works when the destination server is running linux
 
@@ -50,7 +50,12 @@ function Set-TNCertificate {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> # export without extended properties
+        PS> Set-TNCertificate -ComputerName securitycenter.ad.local -Credential acasadmin -CertPath C:\sc\cert.pem -KeyPath C:\sc\serverkey.key
+
+        Logs into securitycenter.ad.local with the acasadmin credential and installs cert.pem and serverkey.key to both nessus and securitycenter.
+
+    .EXAMPLE
+        PS> # export cert to pfx without extended properties
         PS> openssl pkcs12 -in nessus.pfx -nokeys -out cert.pem
         PS> openssl pkcs12 -in nessus.pfx -nocerts -out serverkey.pem -nodes
         PS> openssl rsa -in serverkey.pem -out serverkey.key
