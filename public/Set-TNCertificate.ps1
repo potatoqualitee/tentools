@@ -59,10 +59,12 @@ function Set-TNCertificate {
         [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory)]
         [string[]]$ComputerName,
+        [parameter(Mandatory)]
         [Management.Automation.PSCredential]$Credential,
+        [parameter(Mandatory)]
         [string]$CertPath,
+        [parameter(Mandatory)]
         [string]$KeyPath,
-        [string]$PfxPath,
         [string]$CaCertPath,
         [ValidateSet("tenable.sc", "Nessus")]
         [string[]]$Type = @("tenable.sc", "Nessus"),
@@ -76,33 +78,23 @@ function Set-TNCertificate {
         [switch]$EnableException
     )
     process {
-        if (-not $PSBoundParameters.CertPath -and -not $PSBoundParameters.KeyPath -and -not $PSBoundParameters.PfxPath) {
-            Stop-PSFFunction -EnableException:$EnableException -Message "You must specify CertPath and KeyPath or PfxPath"
-            return
-        }
-
         if (-not (Get-Command WinScp)) {
             Stop-PSFFunction -EnableException:$EnableException -Message "WinScp must be installed to run this command"
             return
         }
 
-        if ($PSBoundParameters.CertPath -and -not (Test-Path -Path $CertPath)) {
+        if (-not (Test-Path -Path $CertPath)) {
             Stop-PSFFunction -EnableException:$EnableException -Message "$CertPath does not exist"
             return
         }
 
-        if ($PSBoundParameters.KeyPath -and -not (Test-Path -Path $KeyPath)) {
+        if (-not (Test-Path -Path $KeyPath)) {
             Stop-PSFFunction -EnableException:$EnableException -Message "$KeyPath does not exist"
             return
         }
 
         if ($PSBoundParameters.CaCertPath -and -not (Test-Path -Path $CaCertPath)) {
             Stop-PSFFunction -EnableException:$EnableException -Message "$CaCertPath does not exist"
-            return
-        }
-
-        if ($PSBoundParameters.PfxPath -and -not (Test-Path -Path $PfxPath)) {
-            Stop-PSFFunction -EnableException:$EnableException -Message "$PfxPath does not exist"
             return
         }
 
