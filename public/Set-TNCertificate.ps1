@@ -87,7 +87,7 @@ function Set-TNCertificate {
         [switch]$EnableException
     )
     process {
-        if (-not (Get-Command WinScp)) {
+        if (-not ($winscp = Get-Command WinScp)) {
             Stop-PSFFunction -EnableException:$EnableException -Message "WinScp must be installed to run this command"
             return
         }
@@ -135,11 +135,20 @@ function Set-TNCertificate {
                 try {
                     Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Loading up WinSCP"
 
-                    if ($PSVersionTable.PSEdition -ne "Core") {
-                        Add-Type -Path "$ModuleRoot/bin/net40/WinSCPnet.dll"
-                    } else {
-                        Add-Type -Path "$ModuleRoot/bin/netstandard2.0/WinSCPnet.dll"
+                    $dir = "C:\Program Files (x86)\WinSCP\"
+                    if (-not (Test-Path -Path $dir)) {
+                        $dir = Split-Path -Path $winscp.Source
                     }
+
+                    $dll = Join-Path -Path $dir -ChildPath WinSCPnet.dll
+
+                    if (-not (Test-Path -Path $dir)) {
+                        Stop-PSFFunction -Message "Can't find WinSCPnet.dll :("
+                        return
+                    } else {
+                        Add-Type -Path $dll
+                    }
+
                     Write-PSFMessage -Level Verbose -Message "Loaded WinSCP and parsed text files, looks good"
 
                     # Setup session options
@@ -165,7 +174,6 @@ function Set-TNCertificate {
                     }
 
                     Write-PSFMessage -Level Verbose -Message "Setup session options for WinSCP"
-
                     $session = New-Object WinSCP.Session
                     $session.Open($sessionOptions)
 
@@ -196,6 +204,7 @@ function Set-TNCertificate {
                         }
                     }
                     if ("tenable.sc" -in $Type) {
+                        Write-PSFMessage -Level Verbose -Message "Stopping securitycenter"
                         Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Stopping securitycenter"
                         $command = "service SecurityCenter stop"
                         $null = $session.ExecuteCommand($command).Check()
@@ -223,6 +232,7 @@ function Set-TNCertificate {
                         }
 
                         Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting securitycenter"
+                        Write-PSFMessage -Level Verbose -Message "Starting securitycenter"
                         $command = "service SecurityCenter start"
                         $null = $session.ExecuteCommand($command).Check()
                     }
@@ -246,14 +256,14 @@ function Set-TNCertificate {
                         }
                     }
                 } catch {
-                    if ("Nessus" -in $Type) {
+                    if ("Nessus" -in $Type -and $session.Opened) {
                         Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting the nessus service"
                         Write-PSFMessage -Level Verbose -Message "Starting nessusd"
                         $command = "service nessusd start"
                         $null = $session.ExecuteCommand($command).Check()
                     }
 
-                    if ("tenable.sc" -in $Type) {
+                    if ("tenable.sc" -in $Type -and $session.Opened) {
                         Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting the securitycenter service"
                         Write-PSFMessage -Level Verbose -Message "Starting securitycenter"
                         $command = "service SecurityCenter start"
@@ -261,15 +271,14 @@ function Set-TNCertificate {
                     }
 
                     Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername" -ErrorRecord $_ -Continue
-                } finally {
-                    if ($session) {
-                        # Disconnect, clean up
-                        $session.Dispose()
-                    }
                 }
             } else {
                 Stop-PSFFunction -Message "Only SSH and Linux are supported at this time"
                 return
+            }
+            if ($session.Opened) {
+                $session.Close()
+                $session.Dispose()
             }
         }
     }

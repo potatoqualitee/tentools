@@ -110,36 +110,77 @@
         }
 
         $license = (Get-Content -Path $LicensePath -Raw).Replace("`r`n", "")
+        $lp = $LicensePath
+        $null = $PSBoundParameters.Remove("LicensePath")
+
 
         foreach ($computer in $ComputerName) {
-            $null = Wait-TNServerReady -ComputerName $computer -Port $Port -Register -WarningAction SilentlyContinue -AcceptSelfSignedCert:$AcceptSelfSignedCert
+            if ($Type -ne "tenable.sc") {
+                $null = Wait-TNServerReady -ComputerName $computer -Port $Port -Register -WarningAction SilentlyContinue -AcceptSelfSignedCert:$AcceptSelfSignedCert
+            }
             if ($Port -eq 443) {
-                $uri = "https://$($computer):$Port/rest"
-                $fulluri = "$uri/user"
-                $body = @{
-                    username    = $Credential.UserName
-                    password    = $Credential.GetNetworkCredential().password
-                    permissions = "128"
-                } | ConvertTo-Json
+                # add license
+                $session = Connect-TNServer -ComputerName $computer -InitialConnect -Type $Type -Credential $Credential
+                $files = Get-ChildItem -Path $lp
+                foreach ($file in $files.FullName) {
+                    $body = $file | Publish-File -Session $session -EnableException:$EnableException -Type Report
 
-                $headers = @{"HTTP" = "X-SecurityCenter" }
+                    $params = @{
+                        SessionObject = $session
+                        Method        = "POST"
+                        Path          = "/config/license/register"
+                        Parameter     = $body
+                        ContentType   = "application/json"
+                    }
 
-                try {
-                    $null = Invoke-RestMethod @adminuserparams -ErrorAction Stop
-                } catch {
-                    $msg = Get-ErrorMessage -Record $_
-                    Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                    Invoke-TnRequest @params | ConvertFrom-TNRestResponse
                 }
 
-                $adminuserparams = @{
-                    Headers         = $headers
-                    ContentType     = "application/json"
-                    Method          = 'POST'
-                    URI             = $fulluri
-                    Body            = $body
-                    ErrorVariable   = 'NessusLoginError'
-                    SessionVariable = 'websession'
+                # add or modify username
+                if ($Credential.UserName -ne "admin") {
+                    $body = @{
+                        username    = $Credential.UserName
+                        password    = $Credential.GetNetworkCredential().Password
+                        permissions = "128"
+                        authType    = "tns"
+                        roleID      = 1
+                    } | ConvertTo-Json
+
+                    $params = @{
+                        Path            = "/user"
+                        Method          = "POST"
+                        ContentType     = "application/json"
+                        Parameter       = $body
+                        EnableException = $EnableException
+                    }
+                    Write-PSFMessage -Level Verbose -Message "Creating admin account"
+                    try {
+                        Invoke-TnRequest @params
+                    } catch {
+                        $msg = Get-ErrorMessage -Record $_
+                        Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                    }
+                } else {
+                    $body = @{
+                        password = $Credential.GetNetworkCredential().Password
+                    } | ConvertTo-Json
+
+                    $params = @{
+                        Path            = "/user/1"
+                        Method          = "PATCH"
+                        ContentType     = "application/json"
+                        Parameter       = $body
+                        EnableException = $EnableException
+                    }
+                    Write-PSFMessage -Level Verbose -Message "Modifying admin account password"
+                    try {
+                        Invoke-TnRequest @params
+                    } catch {
+                        $msg = Get-ErrorMessage -Record $_
+                        Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                    }
                 }
+                Connect-TNServer @PSBoundParameters
             } else {
                 $Uri = "https://$($computer):$Port"
                 $fulluri = "$uri/server/register"
@@ -178,17 +219,19 @@
                     ErrorVariable   = 'NessusLoginError'
                     SessionVariable = 'websession'
                 }
-            }
-
-
-            try {
-                $null = Invoke-RestMethod @adminuserparams -ErrorAction Stop
-                $null = $PSBoundParameters.Remove("LicensePath")
-                Connect-TNServer @PSBoundParameters
-                Restart-TNService
-            } catch {
-                $msg = Get-ErrorMessage -Record $_
-                Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                try {
+                    $null = Invoke-RestMethod @adminuserparams -ErrorAction Stop
+                } catch {
+                    $msg = Get-ErrorMessage -Record $_
+                    Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                }
+                try {
+                    Connect-TNServer @PSBoundParameters
+                    Restart-TNService
+                } catch {
+                    $msg = Get-ErrorMessage -Record $_
+                    Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                }
             }
         }
     }

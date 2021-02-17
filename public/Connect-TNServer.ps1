@@ -65,11 +65,12 @@
         [switch]$AcceptSelfSignedCert,
         [ValidateSet("tenable.sc", "Nessus")]
         [string]$Type,
+        [switch]$InitialConnect,
         [switch]$EnableException
     )
     begin {
         if (-not $PSBoundParameters.Credential) {
-            $UseDefaultCredential = $true
+            #$UseDefaultCredential = $true
         }
 
         if ($PSVersionTable.PSEdition -eq 'Core') {
@@ -124,15 +125,33 @@
     }
     process {
         foreach ($computer in $ComputerName) {
-            #$null = Wait-TNServerReady -ComputerName $computer -Port $Port -SilentUntil 5 -AcceptSelfSignedCert:$AcceptSelfSignedCert
+            if ($Type -ne "tenable.sc") {
+                $null = Wait-TNServerReady -ComputerName $computer -Port $Port -SilentUntil 5 -AcceptSelfSignedCert:$AcceptSelfSignedCert
+            }
             if ($Port -eq 443) {
                 $uri = "https://$($computer):$Port/rest"
                 $fulluri = "$uri/token"
-                if ($PSBoundParameters.Credential) {
+                if ($PSBoundParameters.Credential -and -not $InitialConnect) {
                     $body = @{
                         username       = $Credential.UserName
-                        password       = $Credential.GetNetworkCredential().password
+                        password       = $Credential.GetNetworkCredential().Password
                         releaseSession = "FALSE"
+                    } | ConvertTo-Json
+                } elseif ($PSBoundParameters.Credential -and $InitialConnect) {
+                    try {
+                        $first = Invoke-NonAuthRequest -ComputerName $computer -Path "/rest/system" -Port 443 -Method Get
+                    } catch {
+                        Stop-PSFFunction -Message "Oups" -ErrorRecord $PSItem
+                        return
+                    }
+                    if ($nonauthsession) {
+                        $cookietoken = $nonauthsession.Cookies.GetCookies("https://$computer").Value
+                    }
+                    $body = @{
+                        username = "admin"
+                        password = "admin"
+                        a        = $first.timestamp
+                        b        = $cookietoken
                     } | ConvertTo-Json
                 } else {
                     $body = @{
@@ -183,7 +202,7 @@
                 if ($PSBoundParameters.Credential) {
                     $username = $Credential.UserName
                 } else {
-                    $username = "$env:USERDOMAIN\$env:USERNAME"
+                    $username = $null
                 }
                 $usertoken = $token.token
                 if (-not $usertoken) {

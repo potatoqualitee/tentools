@@ -118,11 +118,11 @@
             }
 
             $RestMethodParams = @{
-                Method          = $Method
-                'URI'           = "$($session.URI)$($Path)"
-                'Headers'       = $session.Headers
-                'ErrorVariable' = 'NessusUserError'
-                'WebSession'    = $session.WebSession
+                Method        = $Method
+                URI           = "$($session.URI)$($Path)"
+                Headers       = $session.Headers
+                ErrorVariable = 'NessusUserError'
+                WebSession    = $session.WebSession
             }
 
             if ($Parameter) {

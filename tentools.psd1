@@ -157,7 +157,8 @@
         'Get-TNSystemLog',
         'Get-TNQuery',
         'New-TNQuery',
-        'Remove-TNQuery'
+        'Remove-TNQuery',
+        'Register-TNLicense'
     )
 
     # Cmdlets to export from this module

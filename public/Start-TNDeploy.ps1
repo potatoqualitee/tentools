@@ -132,6 +132,11 @@
         $elapsed = [System.Diagnostics.Stopwatch]::StartNew()
         $started = Get-Date
         $PSDefaultParameterValues["*:EnableException"] = $true
+
+
+        if ($AcceptSelfSignedCert) {
+            $PSDefaultParameterValues['*-TN*:AcceptSelfSignedCert'] = $true
+        }
     }
     process {
         if ($PSBoundParameters.Scanner -and -not $PSBoundParameters.ScannerCredential) {
