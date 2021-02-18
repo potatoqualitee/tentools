@@ -115,25 +115,39 @@
 
 
         foreach ($computer in $ComputerName) {
+            $output = @{
+                Computer     = $computer
+                AdminAccount = $Credential.UserName
+                Connected    = $false
+                LicensePath  = $LicensePath
+                Session      = $null
+                Success      = $false
+            }
             if ($Type -ne "tenable.sc") {
                 $null = Wait-TNServerReady -ComputerName $computer -Port $Port -Register -WarningAction SilentlyContinue -AcceptSelfSignedCert:$AcceptSelfSignedCert
             }
             if ($Port -eq 443) {
                 # add license
-                $session = Connect-TNServer -ComputerName $computer -InitialConnect -Type $Type -Credential $Credential
+                $session = Connect-TNServer -ComputerName $computer -InitialConnect -Type $Type -Credential $Credential -EnableException
                 $files = Get-ChildItem -Path $lp
                 foreach ($file in $files.FullName) {
-                    $body = $file | Publish-File -Session $session -EnableException:$EnableException -Type Report
+                    $body = $file | Publish-File -Session $session -ErrorAction Stop -Type Report
 
                     $params = @{
-                        SessionObject = $session
-                        Method        = "POST"
-                        Path          = "/config/license/register"
-                        Parameter     = $body
-                        ContentType   = "application/json"
+                        SessionObject   = $session
+                        Method          = "POST"
+                        Path            = "/config/license/register"
+                        Parameter       = $body
+                        ContentType     = "application/json"
+                        EnableException = $true
                     }
 
-                    Invoke-TnRequest @params | ConvertFrom-TNRestResponse
+                    try {
+                        $null = Invoke-TnRequest @params | ConvertFrom-TNRestResponse
+                    } catch {
+                        $msg = Get-ErrorMessage -Record $_
+                        Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                    }
                 }
 
                 # add or modify username
@@ -151,11 +165,11 @@
                         Method          = "POST"
                         ContentType     = "application/json"
                         Parameter       = $body
-                        EnableException = $EnableException
+                        EnableException = $true
                     }
                     Write-PSFMessage -Level Verbose -Message "Creating admin account"
                     try {
-                        Invoke-TnRequest @params
+                        $null = Invoke-TnRequest @params
                     } catch {
                         $msg = Get-ErrorMessage -Record $_
                         Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
@@ -170,17 +184,24 @@
                         Method          = "PATCH"
                         ContentType     = "application/json"
                         Parameter       = $body
-                        EnableException = $EnableException
+                        EnableException = $true
                     }
                     Write-PSFMessage -Level Verbose -Message "Modifying admin account password"
                     try {
-                        Invoke-TnRequest @params
+                        $null = Invoke-TnRequest @params
                     } catch {
                         $msg = Get-ErrorMessage -Record $_
                         Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
                     }
                 }
-                Connect-TNServer @PSBoundParameters
+                try {
+                    $session = Connect-TNServer @PSBoundParameters
+                    $output.Connected = $true
+                    $output.Session = $session
+                } catch {
+                    $msg = Get-ErrorMessage -Record $_
+                    Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                }
             } else {
                 $Uri = "https://$($computer):$Port"
                 $fulluri = "$uri/server/register"
@@ -195,10 +216,11 @@
                     URI           = $fulluri
                     Body          = $body
                     ErrorVariable = 'NessusLicenseError'
+                    ErrorAction   = "Stop"
                 }
 
                 try {
-                    $null = Invoke-RestMethod @licenseparams -ErrorAction Stop
+                    $null = Invoke-RestMethod @licenseparams
                 } catch {
                     $msg = Get-ErrorMessage -Record $_
                     Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
@@ -218,21 +240,26 @@
                     Body            = $body
                     ErrorVariable   = 'NessusLoginError'
                     SessionVariable = 'websession'
+                    ErrorAction     = "Stop"
                 }
                 try {
-                    $null = Invoke-RestMethod @adminuserparams -ErrorAction Stop
+                    $null = Invoke-RestMethod @adminuserparams
                 } catch {
                     $msg = Get-ErrorMessage -Record $_
                     Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
                 }
                 try {
-                    Connect-TNServer @PSBoundParameters
-                    Restart-TNService
+                    $session = Connect-TNServer @PSBoundParameters
+                    $null = Restart-TNService
+                    $output.Connected = $true
+                    $output.Session = $session
                 } catch {
                     $msg = Get-ErrorMessage -Record $_
                     Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
                 }
             }
+            $output.Success = $true
+            [pscustomobject]$output | ConvertFrom-TNRestResponse
         }
     }
 }

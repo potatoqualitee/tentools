@@ -117,14 +117,14 @@ function Set-TNCertificate {
 
         $txt = Get-Content -Path $CertPath -Raw
         if ($txt -notmatch "-----BEGIN CERTIFICATE-----" -and $txt -notmatch "-----END CERTIFICATE-----") {
-            Stop-PSFFunction -Message "$CertPath does not appear to be a valid cert (must contain the text -----BEGIN CERTIFICATE----- and -----END CERTIFICATE-----)"
+            Stop-PSFFunction -EnableException:$EnableException -Message "$CertPath does not appear to be a valid cert (must contain the text -----BEGIN CERTIFICATE----- and -----END CERTIFICATE-----)"
             return
 
         }
 
         $txt = Get-Content -Path $KeyPath -Raw
         if ($txt -notmatch "KEY") {
-            Stop-PSFFunction -Message "$KeyPath does not appear to be a valid key (must contain the text 'KEY')"
+            Stop-PSFFunction -EnableException:$EnableException -Message "$KeyPath does not appear to be a valid key (must contain the text 'KEY')"
             return
         }
 
@@ -143,7 +143,7 @@ function Set-TNCertificate {
                     $dll = Join-Path -Path $dir -ChildPath WinSCPnet.dll
 
                     if (-not (Test-Path -Path $dir)) {
-                        Stop-PSFFunction -Message "Can't find WinSCPnet.dll :("
+                        Stop-PSFFunction -EnableException:$EnableException -Message "Can't find WinSCPnet.dll :("
                         return
                     } else {
                         Add-Type -Path $dll
@@ -273,7 +273,7 @@ function Set-TNCertificate {
                     Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername" -ErrorRecord $_ -Continue
                 }
             } else {
-                Stop-PSFFunction -Message "Only SSH and Linux are supported at this time"
+                Stop-PSFFunction -EnableException:$EnableException -Message "Only SSH and Linux are supported at this time"
                 return
             }
             if ($session.Opened) {

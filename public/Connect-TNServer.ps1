@@ -141,8 +141,7 @@
                     try {
                         $first = Invoke-NonAuthRequest -ComputerName $computer -Path "/rest/system" -Port 443 -Method Get
                     } catch {
-                        Stop-PSFFunction -Message "Oups" -ErrorRecord $PSItem
-                        return
+                        Stop-PSFFunction -EnableException:$EnableException -Message "Failure connecting to $computer" -ErrorRecord $_ -Continue
                     }
                     if ($nonauthsession) {
                         $cookietoken = $nonauthsession.Cookies.GetCookies("https://$computer").Value

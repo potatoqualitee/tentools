@@ -171,7 +171,7 @@
                         Credential   = $AdministratorCredential
                         LicensePath  = $LicensePath
                     }
-                    Initialize-TNServer @splat
+                    $null = Initialize-TNServer @splat
                     $output["LicensePath"] = $LicensePath
                     $output["Administrator"] = $AdministratorCredential.Username
                 } catch {
