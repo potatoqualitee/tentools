@@ -66,11 +66,12 @@
         [ValidateSet("tenable.sc", "Nessus")]
         [string]$Type,
         [switch]$InitialConnect,
+        [switch]$NoWait,
         [switch]$EnableException
     )
     begin {
         if (-not $PSBoundParameters.Credential) {
-            #$UseDefaultCredential = $true
+            $UseDefaultCredential = $true
         }
 
         if ($PSVersionTable.PSEdition -eq 'Core') {
@@ -125,7 +126,7 @@
     }
     process {
         foreach ($computer in $ComputerName) {
-            if ($Type -ne "tenable.sc") {
+            if ($Type -ne "tenable.sc" -and -not $NoWait) {
                 $null = Wait-TNServerReady -ComputerName $computer -Port $Port -SilentUntil 5 -AcceptSelfSignedCert:$AcceptSelfSignedCert
             }
             if ($Port -eq 443) {
