@@ -179,6 +179,7 @@ function Set-TNCertificate {
 
                     $transferOptions = New-Object WinSCP.TransferOptions
                     $transferOptions.TransferMode = [WinSCP.TransferMode]::Ascii
+                    $transferOptions.OverwriteMode = [WinSCP.OverwriteMode ]::Overwrite
 
                     if ("Nessus" -in $Type) {
                         Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Stopping the nessus service"
@@ -190,17 +191,27 @@ function Set-TNCertificate {
                         Write-PSFMessage -Level Verbose -Message "Backing up files if they exist"
                         $command = "[ -f /opt/nessus/com/nessus/CA/servercert.pem ] && mv /opt/nessus/com/nessus/CA/servercert.pem /opt/nessus/com/nessus/CA/servercert.bak"
                         $null = $session.ExecuteCommand($command).Check()
-                        $command = "[ -f /opt/nessus/com/nessus/CA/serverkey.pem ] && mv /opt/nessus/com/nessus/CA/serverkey.pem /opt/nessus/com/nessus/CA/serverkey.bak"
+                        $command = "[ -f /opt/nessus/var/nessus/CA/serverkey.pem ] && mv /opt/nessus/var/nessus/CA/serverkey.pem /opt/nessus/com/nessus/CA/serverkey.bak"
                         $null = $session.ExecuteCommand($command).Check()
 
                         Write-PSFMessage -Level Verbose -Message "Uploading $CertPath to /opt/nessus/com/nessus/CA/servercert.pem"
                         $results += $session.PutFiles($CertPath, "/opt/nessus/com/nessus/CA/servercert.pem", $false, $transferOptions)
 
-                        Write-PSFMessage -Level Verbose -Message "Uploading $KeyPath to /opt/nessus/com/nessus/CA/serverkey.pem"
-                        $results += $session.PutFiles($KeyPath, "/opt/nessus/com/nessus/CA/serverkey.pem", $false, $transferOptions)
+                        Write-PSFMessage -Level Verbose -Message "Uploading $KeyPath to /opt/nessus/var/nessus/CA/serverkey.pem"
+                        $results += $session.PutFiles($KeyPath, "/opt/nessus/var/nessus/CA/serverkey.pem", $false, $transferOptions)
+
+
+                        $command = "chown tns:tns /opt/nessus/com/nessus/CA/servercert.pem"
+                        $null = $session.ExecuteCommand($command).Check()
+
+                        $command = "chown tns:tns /opt/nessus/var/nessus/CA/serverkey.pem"
+                        $null = $session.ExecuteCommand($command).Check()
+
                         if ($CaCertPath) {
                             Write-PSFMessage -Level Verbose -Message "Uploading $CaCertPath to /opt/nessus/lib/nessus/plugins/custom_CA.inc"
                             $results += $session.PutFiles($CaCertPath, "/opt/nessus/lib/nessus/plugins/custom_CA.inc", $false, $transferOptions)
+                            $command = "chown tns:tns /opt/nessus/lib/nessus/plugins/custom_CA.inc"
+                            $null = $session.ExecuteCommand($command).Check()
                         }
                     }
                     if ("tenable.sc" -in $Type) {
