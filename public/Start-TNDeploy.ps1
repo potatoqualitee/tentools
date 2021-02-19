@@ -1,10 +1,10 @@
 ﻿function Start-TNDeploy {
     <#
     .SYNOPSIS
-        Starts a list of deploys
+        Deploys tenable.sc
 
     .DESCRIPTION
-        Starts a list of deploys
+        Deploys tenable.sc
 
     .PARAMETER ComputerName
         The network name or IP address of the Nessus or tenable.sc server
@@ -103,6 +103,8 @@
         [string[]]$Scanner,
         [Parameter(ValueFromPipelineByPropertyName)]
         [psobject]$ScannerCredential,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [switch]$InitializeScanner,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string]$Organization,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
@@ -144,6 +146,11 @@
             return
         }
 
+        if ($PSBoundParameters.InitializeScanner -and -not $PSBoundParameters.ScannerCredential) {
+            Stop-PSFFunction -EnableException:$EnableException -Message "You must provide a ScannerCredential when specifying a InitializeScanner"
+            return
+        }
+
         if ($AdministratorCredential -isnot [pscredential]) {
             $AdministratorCredential = Get-Credential $AdministratorCredential -Message "Enter the username and password for the administrator credential on the $ServerType server"
         }
@@ -166,11 +173,23 @@
                 try {
                     Write-PSFMessage -Level Verbose -Message "Initializing $computer"
                     Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Initializing $computer"
+                    if ($InitializeScanner -and $ScannerCredential) {
+                        $splat = @{
+                            ComputerName   = $computer
+                            Credential     = $ScannerCredential
+                            Type           = "Nessus"
+                            ManagedScanner = $true
+                        }
+
+                        $null = Initialize-TNServer @splat
+                    }
                     $splat = @{
                         ComputerName = $computer
                         Credential   = $AdministratorCredential
                         LicensePath  = $LicensePath
+                        Type         = "tenable.sc"
                     }
+
                     $null = Initialize-TNServer @splat
                     $output["LicensePath"] = $LicensePath
                     $output["Administrator"] = $AdministratorCredential.Username
@@ -207,24 +226,6 @@
                 }
 
                 $output["ScanCredential"] = $ScanCredentialHash.Name
-            }
-
-            if ($Scanner) {
-                try {
-                    foreach ($scannername in $scanner) {
-                        Write-PSFMessage -Level Verbose -Message "Adding scanner $scannername"
-                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Adding scanner $scannername"
-                        $splat = @{
-                            ComputerName = $scannername
-                            Credential   = $ScannerCredential
-                        }
-                        $null = Add-TNScanner @splat
-                    }
-                    $output["Scanner"] = $Scanner
-                    $output["ScannerCredential"] = $ScannerCredential.Username
-                } catch {
-                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Failed to add scanners" -Continue
-                }
             }
 
             # Org
@@ -265,6 +266,26 @@
                 $output["SecurityManager"] = $SecurityManagerCredential.UserName
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Creation of organization user $($SecurityManagerCredential.Username) failed for $computer" -Continue
+            }
+
+            # Scanner
+            if ($Scanner) {
+                if ($InitializeScanner) { Start-Sleep 3 }
+                try {
+                    foreach ($scannername in $scanner) {
+                        Write-PSFMessage -Level Verbose -Message "Adding scanner $scannername"
+                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Adding scanner $scannername"
+                        $splat = @{
+                            ComputerName = $scannername
+                            Credential   = $ScannerCredential
+                        }
+                        $null = Add-TNScanner @splat
+                    }
+                    $output["Scanner"] = $Scanner
+                    $output["ScannerCredential"] = $ScannerCredential.Username
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Failed to add scanners" -Continue
+                }
             }
 
             # Scan Zone

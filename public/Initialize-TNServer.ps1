@@ -51,11 +51,11 @@
         [int]$Port,
         [Parameter(Mandatory)]
         [Management.Automation.PSCredential]$Credential,
-        [Parameter(Mandatory)]
         [string]$LicensePath,
         [switch]$AcceptSelfSignedCert,
         [ValidateSet("tenable.sc", "Nessus")]
         [string[]]$Type = @("tenable.sc", "Nessus"),
+        [switch]$ManagedScanner,
         [switch]$EnableException
     )
     begin {
@@ -88,23 +88,38 @@
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     }
     process {
-        if (-not (Test-Path -Path $LicensePath)) {
+        if (-not $ManagedScanner -and -not $LicensePath) {
+            Stop-PSFFunction -EnableException:$EnableException -Message "You must specify either ManagedScanner or LicensePath"
+            return
+        }
+
+        if ($Type -contains "tenable.sc" -and -not $LicensePath) {
+            Stop-PSFFunction -EnableException:$EnableException -Message "You must specify either LicensePath when initializing tenable.sc"
+            return
+        }
+
+        if ($LicensePath -and -not (Test-Path -Path $LicensePath)) {
             Stop-PSFFunction -EnableException:$EnableException -Message "$LicensePath not found"
             return
         }
 
-        $license = (Get-Content -Path $LicensePath -Raw).Replace("`r`n", "")
+        if ($LicensePath) {
+            $license = (Get-Content -Path $LicensePath -Raw).Replace("`r`n", "")
+        }
+
         $lp = $LicensePath
         $servertypes = $Type
+        $managed = $ManagedScanner
         $null = $PSBoundParameters.Remove("LicensePath")
         $null = $PSBoundParameters.Remove("Type")
+        $null = $PSBoundParameters.Remove("ManagedScanner")
 
 
         foreach ($computer in $ComputerName) {
             Write-PSFMessage -Level Verbose -Message "Connecting to $computer"
             Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $computer"
-            # CREATE OUTPUT OBJECT
 
+            # CREATE OUTPUT OBJECT
             $output = @{
                 Computer     = $computer
                 AdminAccount = $Credential.UserName
@@ -261,7 +276,31 @@
                         Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
                     }
 
-                    if ($Type -notcontains "tenable.sc") {
+                    ################ RESTART
+
+                    $fulluri = "$uri/server/restart"
+
+                    $restartparams = @{
+                        Method        = "POST"
+                        ContentType   = "application/json"
+                        URI           = $fulluri
+                        ErrorVariable = "NessusLoginError"
+                        WebSession    = $websession
+                        ErrorAction   = "Stop"
+                    }
+
+                    Write-PSFMessage -Level Verbose -Message "Restarting Nessus on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Restarting Nessus on $computer"
+                    try {
+                        $null = Invoke-RestMethod @restartparams
+                    } catch {
+                        $msg = Get-ErrorMessage -Record $_
+                        Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                    }
+
+                    ################ REGISTER
+
+                    if ($Type -notcontains "tenable.sc" -and -not $managed) {
                         $fulluri = "$uri/server/register"
 
                         $body = @{
@@ -287,16 +326,17 @@
                         }
                     }
 
-                    Write-PSFMessage -Level Verbose -Message "Connecting to Nessus on $computer"
-                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to Nessus on $computer"
-                    try {
-                        $session = Connect-TNServer @PSBoundParameters -NoWait
-                        # $null = Restart-TNService
-                        $output.Connected = $true
-                        $output.Session = $session
-                    } catch {
-                        $msg = Get-ErrorMessage -Record $_
-                        Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                    if (-not $managed) {
+                        Write-PSFMessage -Level Verbose -Message "Connecting to Nessus on $computer"
+                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to Nessus on $computer"
+                        try {
+                            $session = Connect-TNServer @PSBoundParameters -NoWait
+                            $output.Connected = $true
+                            $output.Session = $session
+                        } catch {
+                            $msg = Get-ErrorMessage -Record $_
+                            Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                        }
                     }
                 }
                 $output.Success = $true
