@@ -272,8 +272,8 @@
                     try {
                         $null = Invoke-RestMethod @adminuserparams
                     } catch {
-                        $msg = Get-ErrorMessage -Record $_
-                        Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                        $details = ($_.ErrorDetails | ConvertFrom-Json).error
+                        Stop-PSFFunction -EnableException:$EnableException -Message "Nessus reports: $details" -Continue
                     }
 
                     ################ RESTART
@@ -294,8 +294,8 @@
                     try {
                         $null = Invoke-RestMethod @restartparams
                     } catch {
-                        $msg = Get-ErrorMessage -Record $_
-                        Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                        $details = ($_.ErrorDetails | ConvertFrom-Json).error
+                        Stop-PSFFunction -EnableException:$EnableException -Message "Nessus reports: $details" -Continue
                     }
 
                     ################ REGISTER
@@ -321,8 +321,8 @@
                         try {
                             $null = Invoke-RestMethod @licenseparams
                         } catch {
-                            $msg = Get-ErrorMessage -Record $_
-                            Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                            $details = ($_.ErrorDetails | ConvertFrom-Json).error
+                            Stop-PSFFunction -EnableException:$EnableException -Message "Nessus reports: $details" -Continue
                         }
                     }
 
