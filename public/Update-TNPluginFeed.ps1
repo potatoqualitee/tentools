@@ -1,22 +1,22 @@
 function Update-TNPlugin {
     <#
     .SYNOPSIS
-        Starts a list of scans
+        Updates plugins or feeds
 
     .DESCRIPTION
-        Starts a list of scans
+        Updates plugins or feeds
 
     .PARAMETER SessionObject
         Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
 
-    .PARAMETER ScanId
-        The ID of the target scan
+    .PARAMETER FilePath
+        The path to the feed or plugin
 
-    .PARAMETER AlternateTarget
-        Description for AlternateTarget
+    .PARAMETER Type
+        The type of update, "Feed","ActivePlugin", "PassivePlugin", or "Lce"
 
     .PARAMETER Wait
-        Wait for scan to finish before outputting results
+        Wait for the upload to process before outputting results
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
@@ -24,14 +24,14 @@ function Update-TNPlugin {
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS C:\> Get-TNScan | Start-TNScan
+        PS C:\> Update-TNPlugin -Type ActivePlugin -FilePath "C:\sc\CM-253478-sc-plugins.tar.gz" -Wait
 
-        Starts every scan asynchronously
+        Uploads an active plugin update C:\sc\CM-253478-sc-plugins.tar.gz and wait for it to process
 
     .EXAMPLE
-        PS C:\> Get-TNScan | Where-Object Id -eq 3 | Start-TNScan -Wait
+        PS C:\> Update-TNPlugin -Type Feed -FilePath "C:\sc\CM-253480-SecurityCenterFeed48.tar.gz"
 
-        Starts a specific scan and waits for the scan to finish before outputting the results
+        Uploads an a feed file update C:\sc\CM-253478-sc-plugins.tar.gz and does not wait for the file to process
 
 #>
     [CmdletBinding()]
@@ -43,7 +43,7 @@ function Update-TNPlugin {
         [ValidateScript( { Test-Path -Path $_ })]
         [string]$FilePath,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
-        [ValidateSet("Feed","ActivePlugin")]
+        [ValidateSet("Feed","ActivePlugin", "PassivePlugin", "Lce")]
         [string]$Type,
         [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$Wait,
