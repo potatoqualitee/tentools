@@ -74,7 +74,6 @@ As described in the [wiki](https://github.com/potatoqualitee/tentools/wiki), you
 ```json
 {
     "ComputerName": "securitycenter",
-    "ServerType": "tenable.sc",
     "AdministratorCredential": "admin",
     "Scanner": "localhost",
     "ScannerCredential": "admin",
