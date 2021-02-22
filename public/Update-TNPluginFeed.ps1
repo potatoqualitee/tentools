@@ -51,10 +51,10 @@ function Update-TNPlugin {
     )
     begin {
         switch ($Type) {
-            "Feed" { $configtype = "feedUpdate"; $path = "sc" }
-            "ActivePlugins" { $configtype = "pluginUpdate"; $path = "active" }
-            "PassivePlugins" { $configtype = "passivePluginUpdate"; $path = "passive" }
-            "Lce" { $configtype = "lcePluginUpdate"; $path = "lce" }
+            "Feed" { $webpath = "sc" }
+            "ActivePlugin" { $webpath = "active" }
+            "PassivePlugin" { $webpath = "passive" }
+            "Lce" { $webpath = "lce" }
         }
     }
     process {
@@ -72,7 +72,7 @@ function Update-TNPlugin {
                 $params = @{
                     SessionObject = $session
                     Method        = "POST"
-                    Path          = "/feed/$path/process"
+                    Path          = "/feed/$webpath/process"
                     Parameter     = $body
                     ContentType   = "application/json"
                 }
@@ -82,14 +82,7 @@ function Update-TNPlugin {
                     Get-TNFeedStatus -Session $session
                 } else {
                     $stepnumber = 0
-                    Start-Sleep 3
-                    <#
-                    SecurityCenterUpdateRunning : True
-                    ActivePluginsUpdateRunning  : False
-                    PassivePluginsUpdateRunning : False
-                    IndustrialUpdateRunning     : False
-                    LceRunning                  : False
-                    #>
+                    Start-Sleep -Seconds 2
                     $result = Get-TNFeedStatus | Select-Object *Running
                     while ($result.SecurityCenterUpdateRunning -ne $true -and
                         $result.ActivePluginsUpdateRunning -ne $true -and
@@ -99,9 +92,8 @@ function Update-TNPlugin {
                         $stepnumber -lt 100) {
                         # Wait for it to start
                         Write-ProgressHelper -TotalSteps 100 -StepNumber ($stepnumber++) -Activity "Running update for $Type" -Message "Status: File uploaded, waiting for update to start"
-                        Start-Sleep 1
+                        Start-Sleep -Seconds 1
                         $result = Get-TNFeedStatus | Select-Object *Running
-                        $result
                     }
                     while ($result.SecurityCenterUpdateRunning -eq $true -or
                         $result.ActivePluginsUpdateRunning -eq $true -or
@@ -112,9 +104,9 @@ function Update-TNPlugin {
                         if ($stepnumber -eq 100) {
                             $stepnumber = 0
                         } else {
-                            Write-ProgressHelper -TotalSteps 100 -StepNumber ($stepnumber++) -Activity "Running update for $Type" -Message "Status: Updating $thing"
+                            Write-ProgressHelper -TotalSteps 100 -StepNumber ($stepnumber++) -Activity "Running update for $Type" -Message "Status: Updating. This may take a while."
                         }
-                        $result = Get-TNFeedStatus | Select-Object *Running
+                        $result = Get-TNFeedStatus -Session $session | Select-Object *Running
                     }
                     Get-TNFeedStatus -Session $session
                 }
