@@ -44,7 +44,6 @@
             AdministratorCredential = (Get-Credential admin)
             LicensePath = ""
             AcceptSelfSignedCert = ""
-            ServerType = ""
             SecurityManagerCredential = ""
             Organization = ""
             Repository = ""
@@ -67,7 +66,6 @@
         $splat = @{
         ComputerName = "securitycenter"
         AdministratorCredential = $admincred
-        ServerType = "tenable.sc"
         SecurityManagerCredential = $secmancred
         Organization = "Acme"
         Repository = "All Computers"
@@ -94,9 +92,6 @@
         [string]$LicensePath,
         [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$AcceptSelfSignedCert,
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
-        [ValidateSet("tenable.sc", "Nessus")]
-        [string]$ServerType,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [psobject]$SecurityManagerCredential,
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -134,6 +129,7 @@
         $elapsed = [System.Diagnostics.Stopwatch]::StartNew()
         $started = Get-Date
         $PSDefaultParameterValues["*:EnableException"] = $true
+        $servertype = "tenable.sc"
 
 
         if ($AcceptSelfSignedCert) {
@@ -152,7 +148,7 @@
         }
 
         if ($AdministratorCredential -isnot [pscredential]) {
-            $AdministratorCredential = Get-Credential $AdministratorCredential -Message "Enter the username and password for the administrator credential on the $ServerType server"
+            $AdministratorCredential = Get-Credential $AdministratorCredential -Message "Enter the username and password for the administrator credential on the $servertype server"
         }
 
         if ($PSBoundParameters.ScannerCredential -and $ScannerCredential -isnot [pscredential]) {
@@ -167,7 +163,7 @@
             $stepCounter = 0
             $output = @{
                 ComputerName = $computer
-                ServerType   = $ServerType
+                ServerType   = "tenable.sc"
             }
             if ($LicensePath) {
                 try {
@@ -206,7 +202,7 @@
             try {
                 Write-PSFMessage -Level Verbose -Message "Connecting to $computer"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $computer"
-                $null = Connect-TNServer -ComputerName $computer -Credential $AdministratorCredential -Type $ServerType
+                $null = Connect-TNServer -ComputerName $computer -Credential $AdministratorCredential -Type $servertype
                 $null = Connect-TNServer -Type tenable.sc -Credential $AdministratorCredential -ComputerName securitycenter
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Connect failed for $computer" -Continue
@@ -323,7 +319,7 @@
                 $null = Remove-TNSession -SessionId 0
                 Write-PSFMessage -Level Verbose -Message "Connecting to $computer as $($SecurityManagerCredential.Username)"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $computer"
-                $null = Connect-TNServer -ComputerName $computer -Credential $SecurityManagerCredential -Type $ServerType
+                $null = Connect-TNServer -ComputerName $computer -Credential $SecurityManagerCredential -Type $servertype
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Connect failed for $computer as $($SecurityManagerCredential.Username)" -Continue
             }
@@ -439,7 +435,7 @@
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Policy import failed for $computer" -Continue
             }
 
-            Write-Progress -Activity "Finished deploying $computer for $ServerType" -Completed
+            Write-Progress -Activity "Finished deploying $computer for $servertype" -Completed
 
             $output["Status"] = "Success"
             [pscustomobject]$output | ConvertFrom-TNRestResponse
