@@ -159,7 +159,8 @@
         'New-TNQuery',
         'Remove-TNQuery',
         'Register-TNLicense',
-        'Get-TNFeedStatus'
+        'Get-TNFeedStatus',
+        'Update-TNPluginFeed'
     )
 
     # Cmdlets to export from this module

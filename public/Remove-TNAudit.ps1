@@ -35,6 +35,10 @@ function Remove-TNAudit {
     )
     process {
         foreach ($session in $SessionObject) {
+            if (-not $session.sc) {
+                Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
+            }
+
             foreach ($id in $AuditId) {
                 Write-PSFMessage -Level Verbose -Message "Deleting audit with id $id"
                 Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/auditFile/$id" -Method Delete | ConvertFrom-TNRestResponse

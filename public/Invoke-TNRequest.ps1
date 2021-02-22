@@ -58,7 +58,9 @@
         [String]$OutFile,
         [String]$ContentType,
         [String]$InFile,
+        [switch]$Header,
         [switch]$EnableException
+
 
     )
     process {
@@ -79,9 +81,9 @@
                 if ($Path -match '/user' -and $Path -notmatch '/group/') {
                     $Path = $Path.Replace("/users", "/user?fields=apiKeys,name,username,firstname,lastname,group,role,lastLogin,canManage,canUse,locked,status,title,email,id")
                 }
-                # https://macmini:8834/#/scans/reports/5/hosts
-                # https://macmini:8834/#/scans/reports/5/vulnerabilities
-                # https://macmini:8834/#/scans/reports/5/history
+                # https://securitycenter:8834/#/scans/reports/5/hosts
+                # https://securitycenter:8834/#/scans/reports/5/vulnerabilities
+                # https://securitycenter:8834/#/scans/reports/5/history
 
                 if ($Path -match '/scans') {
                     if ($Path -notmatch '/scans/') {
@@ -90,16 +92,6 @@
                         $id = Split-path $Path -Leaf
                         $Path = $Path.Replace("/$id","/")
                         $Path = $Path.Replace("/scans/", "/scan/$($id)?fields=modifiedTime,description,name,repository,schedule,dhcpTracking,emailOnLaunch,emailOnFinish,reports,history,canUse,canManage,status,canUse,canManage,owner,groups,ownerGroup,status,name,createdTime,schedule,policy,plugin,type,policy,zone,credentials,timeoutAction,rolloverType,scanningVirtualHosts,classifyMitigatedAge,assets,ipList,maxScanTime,plugin&expand=details,credentials")
-                    }
-                }
-
-                if ($Path -match '/policies') {
-                    if ($Path -notmatch '/policies/') {
-                        $Path = $Path.Replace("/policies", "/policy?filter=usable&fields=name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
-                    } else {
-                        $id = Split-path $Path -Leaf
-                        $Path = $Path.Replace("/$id","/")
-                        $Path = $Path.Replace("/policies/", "/policy/$($id)?fields=name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
                     }
                 }
 
@@ -146,9 +138,16 @@
             }
 
             try {
+                if ($Header) {
+                    Write-PSFMessage -Level Verbose -Message "Connecting to $($session.URI)"
+                    $results = Invoke-WebRequest @RestMethodParams -ErrorAction Stop
+                    return $results.Headers
+                }
+
                 #$RestMethodParams.Uri
                 Write-PSFMessage -Level Verbose -Message "Connecting to $($session.URI)"
                 $results = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
+
             } catch [Net.WebException] {
                 [int]$responsecode = $_.Exception.Response.StatusCode
                 if ($responsecode -eq 401) {

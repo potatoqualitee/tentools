@@ -6,7 +6,7 @@ function Publish-File {
         $InputObject,
         $Session,
         $Type,
-        $EnableException
+        [switch]$EnableException
     )
     process {
         foreach ($file in $InputObject) {
