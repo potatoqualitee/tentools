@@ -175,19 +175,23 @@
                     Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Initializing $computer"
                     if ($InitializeScanner -and $ScannerCredential) {
                         $splat = @{
-                            ComputerName   = $computer
-                            Credential     = $ScannerCredential
-                            Type           = "Nessus"
-                            ManagedScanner = $true
+                            ComputerName    = $computer
+                            Credential      = $ScannerCredential
+                            Type            = "Nessus"
+                            ManagedScanner  = $true
+                            EnableException = $true
+                            ErrorAction     = "Stop"
                         }
 
                         $null = Initialize-TNServer @splat
                     }
                     $splat = @{
-                        ComputerName = $computer
-                        Credential   = $AdministratorCredential
-                        LicensePath  = $LicensePath
-                        Type         = "tenable.sc"
+                        ComputerName    = $computer
+                        Credential      = $AdministratorCredential
+                        LicensePath     = $LicensePath
+                        Type            = "tenable.sc"
+                        EnableException = $true
+                        ErrorAction     = "Stop"
                     }
 
                     $null = Initialize-TNServer @splat
@@ -307,7 +311,7 @@
                 try {
                     Write-PSFMessage -Level Verbose -Message "Importing policies from $PolicyFilePath on $computer"
                     Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing policies from $PolicyFilePath on $computer"
-                    $results = Import-TNPolicy -FilePath $PolicyFilePath
+                    $results = Import-TNPolicy -FilePath $PolicyFilePath -EnableException:$EnableException
                     $output["ImportedPolicy"] = $results.Name
                 } catch {
                     Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Policy import failed for $computer" -Continue

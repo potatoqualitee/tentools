@@ -150,8 +150,8 @@
                 Write-PSFMessage -Level Verbose -Message "Connecting to $($session.URI)"
                 $results = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
             } catch [Net.WebException] {
-                [int]$res = $_.Exception.Response.StatusCode
-                if ($res -eq 401) {
+                [int]$responsecode = $_.Exception.Response.StatusCode
+                if ($responsecode -eq 401) {
                     # Request failed. More than likely do to time-out.
                     # Re-Authenticating using information from session.
                     Write-PSFMessage -Level Verbose -Message 'The session has expired, Re-authenticating'
@@ -165,12 +165,15 @@
                         Stop-PSFFunction -EnableException:$EnableException -Message $msg -ErrorRecord $_ -Continue
                     }
                 } else {
-                    $msg = Get-ErrorMessage -Record $_
-                    Stop-PSFFunction -EnableException:$EnableException -Message $msg -ErrorRecord $_ -Continue
+                    $details = $_.ErrorDetails | ConvertFrom-Json
+                    $errormsg = $details.error_msg.ToString().Replace("`n", " ")
+                    $msg = "Response code $responsecode, Error $($details.error_code): $errormsg"
+                    Stop-PSFFunction -EnableException:$EnableException -Message $msg -Continue
                 }
             } catch {
-                $msg = Get-ErrorMessage -Record $_
-                Stop-PSFFunction -EnableException:$EnableException -Message $msg -ErrorRecord $_ -Continue
+                $details = $_.ErrorDetails | ConvertFrom-Json
+                $msg = "Response code $responsecode, Error $($details.error_code): $($details.error_msg)"
+                Stop-PSFFunction -EnableException:$EnableException -Message $msg -Continue
             }
 
             if ($results.response) {
