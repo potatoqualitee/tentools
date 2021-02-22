@@ -75,7 +75,7 @@
                         Parameter     = $body
                         ContentType   = "application/json"
                     }
-                    Invoke-TnRequest @params | ConvertFrom-TNRestResponse | Select-Object -ExcludeProperty Preferences -Property *
+                    Invoke-TnRequest @params | ConvertFrom-TNRestResponse
                 }
             }
         }
