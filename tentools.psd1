@@ -158,7 +158,8 @@
         'Get-TNQuery',
         'New-TNQuery',
         'Remove-TNQuery',
-        'Register-TNLicense'
+        'Register-TNLicense',
+        'Get-TNFeedStatus'
     )
 
     # Cmdlets to export from this module
