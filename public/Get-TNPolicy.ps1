@@ -39,8 +39,13 @@
     )
     process {
         foreach ($session in $SessionObject) {
-            $policies = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/policies' -Method GET |
-                ConvertFrom-TNRestResponse
+            if ($session.sc) {
+                $policies = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/policy?expand=policyTemplate&fields=preferences,families,auditFiles,name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status" -Method GET |
+                    ConvertFrom-TNRestResponse
+            } else {
+                $policies = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/policies' -Method GET |
+                    ConvertFrom-TNRestResponse
+            }
 
             switch ($PSCmdlet.ParameterSetName) {
                 'ByName' {
