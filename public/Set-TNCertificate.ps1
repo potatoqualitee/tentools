@@ -174,6 +174,7 @@ function Set-TNCertificate {
                     }
 
                     Write-PSFMessage -Level Verbose -Message "Setup session options for WinSCP"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $computer"
                     $session = New-Object WinSCP.Session
                     $session.Open($sessionOptions)
 
@@ -267,21 +268,30 @@ function Set-TNCertificate {
                         }
                     }
                 } catch {
+                    $record = $_
                     if ("Nessus" -in $Type -and $session.Opened) {
                         Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting the nessus service"
                         Write-PSFMessage -Level Verbose -Message "Starting nessusd"
                         $command = "service nessusd start"
-                        $null = $session.ExecuteCommand($command).Check()
+                        try {
+                            $null = $session.ExecuteCommand($command).Check()
+                        } catch {
+                            # don't care
+                        }
                     }
 
                     if ("tenable.sc" -in $Type -and $session.Opened) {
                         Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting the securitycenter service"
                         Write-PSFMessage -Level Verbose -Message "Starting securitycenter"
                         $command = "service SecurityCenter start"
-                        $null = $session.ExecuteCommand($command).Check()
+                        try {
+                            $null = $session.ExecuteCommand($command).Check()
+                        } catch {
+                            # don't care
+                        }
                     }
 
-                    Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername" -ErrorRecord $_ -Continue
+                    Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername" -ErrorRecord $record -Continue
                 }
             } else {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only SSH and Linux are supported at this time"
