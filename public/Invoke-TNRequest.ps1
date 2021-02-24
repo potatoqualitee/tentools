@@ -95,6 +95,16 @@
                     }
                 }
 
+                if ($Path -match '/policies') {
+                    if ($Path -notmatch '/policies/') {
+                        $Path = $Path.Replace("/policies", "/policy?filter=usable&fields=name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
+                    } else {
+                        $id = Split-path $Path -Leaf
+                        $Path = $Path.Replace("/$id","/")
+                        $Path = $Path.Replace("/policies/", "/policy/$($id)?fields=name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
+                    }
+                }
+
                 if ($Path -match '/editor/policy') {
                     if ($Path -notmatch '/editor/policy/') {
                         $Path = $Path.Replace("/editor/policy", "/policy?filter=*&expand=policyTemplate&fields=preferences,families,auditFiles,name,description,tags,type,createdTime,ownerGroup,groups,owner,modifiedTime,policyTemplate,canUse,canManage,status")
@@ -164,15 +174,24 @@
                         Stop-PSFFunction -EnableException:$EnableException -Message $msg -ErrorRecord $_ -Continue
                     }
                 } else {
+                    if ($_.ErrorDetails) {
+                        $details = $_.ErrorDetails | ConvertFrom-Json
+                        $errormsg = $details.error_msg.ToString().Replace("`n", " ")
+                        $msg = "Response code $responsecode, Error $($details.error_code): $errormsg"
+                        Stop-PSFFunction -EnableException:$EnableException -Message $msg -Continue
+                    } else {
+                        Stop-PSFFunction -EnableException:$EnableException -Message $PSitem -Continue
+                    }
+                }
+            } catch {
+                if ($_.ErrorDetails) {
                     $details = $_.ErrorDetails | ConvertFrom-Json
                     $errormsg = $details.error_msg.ToString().Replace("`n", " ")
                     $msg = "Response code $responsecode, Error $($details.error_code): $errormsg"
                     Stop-PSFFunction -EnableException:$EnableException -Message $msg -Continue
+                } else {
+                    Stop-PSFFunction -EnableException:$EnableException -Message $PSitem -Continue
                 }
-            } catch {
-                $details = $_.ErrorDetails | ConvertFrom-Json
-                $msg = "Response code $responsecode, Error $($details.error_code): $($details.error_msg)"
-                Stop-PSFFunction -EnableException:$EnableException -Message $msg -Continue
             }
 
             if ($results.response) {
