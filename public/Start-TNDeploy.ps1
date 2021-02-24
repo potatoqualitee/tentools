@@ -89,6 +89,7 @@
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [psobject]$AdministratorCredential,
         [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidateScript( { Test-Path -Path $_ })]
         [string]$LicensePath,
         [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$AcceptSelfSignedCert,
@@ -111,17 +112,29 @@
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string[]]$IpRange,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [ValidateScript( { Test-Path -Path $_ })]
         [string[]]$PolicyFilePath,
         [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidateScript( { Test-Path -Path $_ })]
         [string[]]$ScanFilePath,
         [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidateScript( { Test-Path -Path $_ })]
         [string[]]$AuditFilePath,
         [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidateScript( { Test-Path -Path $_ })]
         [string[]]$DashboardFilePath,
         [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidateScript( { Test-Path -Path $_ })]
         [string[]]$AssetFilePath,
         [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidateScript( { Test-Path -Path $_ })]
         [string[]]$ReportFilePath,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidateScript( { Test-Path -Path $_ })]
+        [string]$FeedFilePath,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidateScript( { Test-Path -Path $_ })]
+        [string]$PluginFilePath,
         [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$EnableException
     )
@@ -139,6 +152,11 @@
     process {
         if ($PSBoundParameters.Scanner -and -not $PSBoundParameters.ScannerCredential) {
             Stop-PSFFunction -EnableException:$EnableException -Message "You must provide a ScannerCredential when specifying a Scanner"
+            return
+        }
+
+        if ($PSBoundParameters.PolicyFilePath -and -not $PSBoundParameters.FeedFilePath) {
+            Stop-PSFFunction -EnableException:$EnableException -Message "You must provide a FeedFilePath when specifying a PolicyFilePath. Not sure why, but no Policy File uploads work without an initial feed update."
             return
         }
 
@@ -301,6 +319,35 @@
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Creation of scan zone failed for $computer" -Continue
             }
+
+
+
+            # Update Feed
+            if ($FeedFilePath) {
+                Write-PSFMessage -Level Verbose -Message "Updating feed on $computer"
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Updating feed on $computer"
+                try {
+                    $null = Update-TNPluginFeed -Type Feed -FilePath $FeedFilePath -Wait
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Feed update failed for $computer" -Continue
+                }
+
+                $output["FeedFilePath"] = $FeedFilePath
+            }
+
+            # Update active plugins
+            if ($PluginFilePath) {
+                Write-PSFMessage -Level Verbose -Message "Updating active plugins on $computer"
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Updating active plugins on $computer"
+                try {
+                    $null = Update-TNPluginFeed -Type ActivePlugin -FilePath $PluginFilePath -Wait
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Feed update failed for $computer" -Continue
+                }
+
+                $output["PluginFilePath"] = $PluginFilePath
+            }
+
 
             # Import policy
             if ($PSBoundParameters.PolicyFilePath) {
