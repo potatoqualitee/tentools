@@ -1,4 +1,4 @@
-function Update-TNPlugin {
+function Update-TNPluginFeed {
     <#
     .SYNOPSIS
         Updates plugins or feeds
@@ -24,12 +24,12 @@ function Update-TNPlugin {
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS C:\> Update-TNPlugin -Type ActivePlugin -FilePath "C:\sc\CM-253478-sc-plugins.tar.gz" -Wait
+        PS C:\> Update-TNPluginFeed -Type ActivePlugin -FilePath "C:\sc\CM-253478-sc-plugins.tar.gz" -Wait
 
         Uploads an active plugin update C:\sc\CM-253478-sc-plugins.tar.gz and wait for it to process
 
     .EXAMPLE
-        PS C:\> Update-TNPlugin -Type Feed -FilePath "C:\sc\CM-253480-SecurityCenterFeed48.tar.gz"
+        PS C:\> Update-TNPluginFeed -Type Feed -FilePath "C:\sc\CM-253480-SecurityCenterFeed48.tar.gz"
 
         Uploads an a feed file update C:\sc\CM-253478-sc-plugins.tar.gz and does not wait for the file to process
 
