@@ -152,7 +152,7 @@ function Set-TNCertificate {
                     Write-PSFMessage -Level Verbose -Message "Loaded WinSCP and parsed text files, looks good"
 
                     # Setup session options
-                    $sessionOptions = New-Object WinSCP.SessionOptions -Property @{
+                    $winscpsessionOptions = New-Object WinSCP.SessionOptions -Property @{
                         Protocol                             = [WinSCP.Protocol]::Sftp
                         HostName                             = $computer
                         UserName                             = $Credential.UserName
@@ -161,22 +161,22 @@ function Set-TNCertificate {
                     }
 
                     if ($SshHostKeyFingerprint) {
-                        $sessionOptions.SshHostKeyFingerprint = $SshHostKeyFingerprint
+                        $winscpsessionOptions.SshHostKeyFingerprint = $SshHostKeyFingerprint
                     }
                     if ($SshPort) {
-                        $sessionOptions.PortNumber = $SshPort
+                        $winscpsessionOptions.PortNumber = $SshPort
                     }
                     if ($SecurePrivateKeyPassphrase) {
-                        $sessionOptions.SecurePrivateKeyPassphrase = $SecurePrivateKeyPassphrase
+                        $winscpsessionOptions.SecurePrivateKeyPassphrase = $SecurePrivateKeyPassphrase
                     }
                     if ($SshPrivateKeyPath) {
-                        $sessionOptions.SshPrivateKeyPath = $SshPrivateKeyPath
+                        $winscpsessionOptions.SshPrivateKeyPath = $SshPrivateKeyPath
                     }
 
                     Write-PSFMessage -Level Verbose -Message "Setup session options for WinSCP"
                     Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $computer"
-                    $session = New-Object WinSCP.Session
-                    $session.Open($sessionOptions)
+                    $winscpsession = New-Object WinSCP.Session
+                    $winscpsession.Open($winscpsessionOptions)
 
                     $transferOptions = New-Object WinSCP.TransferOptions
                     $transferOptions.TransferMode = [WinSCP.TransferMode]::Ascii
@@ -186,49 +186,49 @@ function Set-TNCertificate {
                         Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Stopping the nessus service"
                         Write-PSFMessage -Level Verbose -Message "Stopping nessusd"
                         $command = "service nessusd stop"
-                        $null = $session.ExecuteCommand($command).Check()
+                        $null = $winscpsession.ExecuteCommand($command).Check()
                         Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Adding files to Nessus"
 
                         Write-PSFMessage -Level Verbose -Message "Backing up files if they exist"
                         $command = "[ -f /opt/nessus/com/nessus/CA/servercert.pem ] && mv /opt/nessus/com/nessus/CA/servercert.pem /opt/nessus/com/nessus/CA/servercert.bak"
-                        $null = $session.ExecuteCommand($command).Check()
+                        $null = $winscpsession.ExecuteCommand($command).Check()
                         $command = "[ -f /opt/nessus/var/nessus/CA/serverkey.pem ] && mv /opt/nessus/var/nessus/CA/serverkey.pem /opt/nessus/com/nessus/CA/serverkey.bak"
-                        $null = $session.ExecuteCommand($command).Check()
+                        $null = $winscpsession.ExecuteCommand($command).Check()
 
                         Write-PSFMessage -Level Verbose -Message "Uploading $CertPath to /opt/nessus/com/nessus/CA/servercert.pem"
-                        $results += $session.PutFiles($CertPath, "/opt/nessus/com/nessus/CA/servercert.pem", $false, $transferOptions)
+                        $results += $winscpsession.PutFiles($CertPath, "/opt/nessus/com/nessus/CA/servercert.pem", $false, $transferOptions)
 
                         Write-PSFMessage -Level Verbose -Message "Uploading $KeyPath to /opt/nessus/var/nessus/CA/serverkey.pem"
-                        $results += $session.PutFiles($KeyPath, "/opt/nessus/var/nessus/CA/serverkey.pem", $false, $transferOptions)
+                        $results += $winscpsession.PutFiles($KeyPath, "/opt/nessus/var/nessus/CA/serverkey.pem", $false, $transferOptions)
 
 
                         $command = "chown tns:tns /opt/nessus/com/nessus/CA/servercert.pem"
-                        $null = $session.ExecuteCommand($command).Check()
+                        $null = $winscpsession.ExecuteCommand($command).Check()
 
                         $command = "chown tns:tns /opt/nessus/var/nessus/CA/serverkey.pem"
-                        $null = $session.ExecuteCommand($command).Check()
+                        $null = $winscpsession.ExecuteCommand($command).Check()
 
                         if ($CaCertPath) {
                             Write-PSFMessage -Level Verbose -Message "Uploading $CaCertPath to /opt/nessus/lib/nessus/plugins/custom_CA.inc"
-                            $results += $session.PutFiles($CaCertPath, "/opt/nessus/lib/nessus/plugins/custom_CA.inc", $false, $transferOptions)
+                            $results += $winscpsession.PutFiles($CaCertPath, "/opt/nessus/lib/nessus/plugins/custom_CA.inc", $false, $transferOptions)
                             $command = "chown tns:tns /opt/nessus/lib/nessus/plugins/custom_CA.inc"
-                            $null = $session.ExecuteCommand($command).Check()
+                            $null = $winscpsession.ExecuteCommand($command).Check()
                         }
                     }
                     if ("tenable.sc" -in $Type) {
                         Write-PSFMessage -Level Verbose -Message "Stopping securitycenter"
                         Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Stopping securitycenter"
                         $command = "service SecurityCenter stop"
-                        $null = $session.ExecuteCommand($command).Check()
+                        $null = $winscpsession.ExecuteCommand($command).Check()
                         Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Adding files to tenable.sc"
                         Write-PSFMessage -Level Verbose -Message "Uploading $CertPath to /opt/sc/support/conf/SecurityCenter.crt"
-                        $results += $session.PutFiles($CertPath, "/opt/sc/support/conf/SecurityCenter.crt", $false, $transferOptions)
+                        $results += $winscpsession.PutFiles($CertPath, "/opt/sc/support/conf/SecurityCenter.crt", $false, $transferOptions)
 
                         Write-PSFMessage -Level Verbose -Message "Uploading $KeyPath to /opt/sc/support/conf/SecurityCenter.key"
-                        $results += $session.PutFiles($KeyPath, "/opt/sc/support/conf/SecurityCenter.key", $false, $transferOptions)
+                        $results += $winscpsession.PutFiles($KeyPath, "/opt/sc/support/conf/SecurityCenter.key", $false, $transferOptions)
                         if ($CaCertPath) {
                             Write-PSFMessage -Level Verbose -Message "Uploading $CaCertPath to /tmp/custom_CA.inc"
-                            $results += $session.PutFiles($CaCertPath, "/tmp/custom_CA.inc", $false, $transferOptions)
+                            $results += $winscpsession.PutFiles($CaCertPath, "/tmp/custom_CA.inc", $false, $transferOptions)
                         }
 
                         if ($CaCertPath) {
@@ -236,7 +236,7 @@ function Set-TNCertificate {
                             Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Installing CA cert on securitycenter"
                             $command = "/opt/sc/support/bin/php /opt/sc/src/tools/installCA.php /tmp/custom_CA.inc"
                             try {
-                                $null = $session.ExecuteCommand($command).Check()
+                                $null = $winscpsession.ExecuteCommand($command).Check()
                             } catch {
                                 # seems like it works but then it gives an error so catch it
                                 # i am unsure if removing .Check() waits for the command to run, so I'll just leave it in and catch
@@ -246,14 +246,14 @@ function Set-TNCertificate {
                         Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting securitycenter"
                         Write-PSFMessage -Level Verbose -Message "Starting securitycenter"
                         $command = "service SecurityCenter start"
-                        $null = $session.ExecuteCommand($command).Check()
+                        $null = $winscpsession.ExecuteCommand($command).Check()
                     }
 
                     if ("Nessus" -in $Type) {
                         Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting the nessus service"
                         Write-PSFMessage -Level Verbose -Message "Starting nessusd"
                         $command = "service nessusd start"
-                        $null = $session.ExecuteCommand($command).Check()
+                        $null = $winscpsession.ExecuteCommand($command).Check()
                     }
 
 
@@ -269,23 +269,23 @@ function Set-TNCertificate {
                     }
                 } catch {
                     $record = $_
-                    if ("Nessus" -in $Type -and $session.Opened) {
+                    if ("Nessus" -in $Type -and $winscpsession.Opened) {
                         Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting the nessus service"
                         Write-PSFMessage -Level Verbose -Message "Starting nessusd"
                         $command = "service nessusd start"
                         try {
-                            $null = $session.ExecuteCommand($command).Check()
+                            $null = $winscpsession.ExecuteCommand($command).Check()
                         } catch {
                             # don't care
                         }
                     }
 
-                    if ("tenable.sc" -in $Type -and $session.Opened) {
+                    if ("tenable.sc" -in $Type -and $winscpsession.Opened) {
                         Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting the securitycenter service"
                         Write-PSFMessage -Level Verbose -Message "Starting securitycenter"
                         $command = "service SecurityCenter start"
                         try {
-                            $null = $session.ExecuteCommand($command).Check()
+                            $null = $winscpsession.ExecuteCommand($command).Check()
                         } catch {
                             # don't care
                         }
@@ -297,9 +297,9 @@ function Set-TNCertificate {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only SSH and Linux are supported at this time"
                 return
             }
-            if ($session.Opened) {
-                $session.Close()
-                $session.Dispose()
+            if ($winscpsession.Opened) {
+                $winscpsession.Close()
+                $winscpsession.Dispose()
             }
         }
     }
