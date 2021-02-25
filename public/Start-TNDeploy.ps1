@@ -220,8 +220,7 @@
             try {
                 Write-PSFMessage -Level Verbose -Message "Connecting to $computer"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $computer"
-                $null = Connect-TNServer -ComputerName $computer -Credential $AdministratorCredential -Type $servertype
-                $null = Connect-TNServer -Type tenable.sc -Credential $AdministratorCredential -ComputerName securitycenter
+                $null = Connect-TNServer -ComputerName $computer -Credential $AdministratorCredential -Type tenable.sc
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Connect failed for $computer" -Continue
             }

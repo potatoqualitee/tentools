@@ -71,6 +71,7 @@ $script:querytool = @{
 $script:origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
 
 $PSDefaultParameterValues['*:UseBasicParsing'] = $true
+$PSDefaultParameterValues['*:TimeoutSec'] = 300
 
 Register-ArgumentCompleter -ParameterName Tool -CommandName New-TNQuery -ScriptBlock {
     param($Command, $Parameter, $WordToComplete, $CommandAst, $FakeBoundParams)
