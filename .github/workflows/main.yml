@@ -31,7 +31,7 @@ jobs:
         shell: bash
         env:
           CACERT: ${{secrets.CACERT}}
-      - name: 🦖 Trust the CA
+      - name: 🔐 Trust the CA
         run: |
           sudo cp /tmp/cacert.pem /etc/ssl/certs/ca.crt
           sudo chmod 644 /etc/ssl/certs/ca.crt
