@@ -16,6 +16,7 @@ function Invoke-NonAuthRequest {
         if ($PSVersionTable.PSEdition -eq 'Core') {
             if ($AcceptSelfSignedCert) {
                 $PSDefaultParameterValues['Invoke-RestMethod:SkipCertificateCheck'] = $true
+                $PSDefaultParameterValues['Invoke-WebRequest:SkipCertificateCheck'] = $true
             }
         } else {
             if ($AcceptSelfSignedCert -and [System.Net.ServicePointManager]::CertificatePolicy.ToString() -ne 'IgnoreCerts') {
@@ -46,13 +47,15 @@ function Invoke-NonAuthRequest {
             $uri = "https://$($computer):$Port$Path"
 
             $params = @{
-                Method      = $Method
-                ContentType = $ContentType
-                URI         = $uri
+                Method          = $Method
+                ContentType     = $ContentType
+                URI             = $uri
+                SessionVariable = "nonauth"
             }
 
             try {
                 Invoke-RestMethod @params -ErrorAction Stop
+                Set-Variable -Name nonauthsession -Scope 2 -Value $nonauth
             } catch {
                 $msg = Get-ErrorMessage -Record $_
                 Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue

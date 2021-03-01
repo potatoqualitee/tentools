@@ -1,19 +1,16 @@
-﻿function Import-TNPolicy {
+function Register-TNLicense {
     <#
     .SYNOPSIS
-        Imports a list of policies
+        Registers license
 
     .DESCRIPTION
-        Imports a list of policies
+        Registers license
 
     .PARAMETER SessionObject
         Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
 
     .PARAMETER FilePath
-        The path to the policy file
-
-    .PARAMETER NoRename
-        By default, this command will remove "Imported Nessus Policy - " from the title of the imported file. Use this switch to keep the whole name "Imported Nessus Policy - Title of Policy"
+        The path to the license file
 
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
@@ -21,14 +18,14 @@
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS C:\> Import-TNPolicy -FilePath C:\temp\policy.nessus
+        PS C:\> Get-ChildItem "C:\sc\RID#12345;SERVER1;SecurityCenter-5.1-1024IPs.key" | Register-TNLicense
 
-        Imports C:\temp\policy.nessus
+        Updates the license from "C:\sc\RID#12345;SERVER1;SecurityCenter-5.1-1024IPs.key"
 
     .EXAMPLE
-        PS C:\> Import-TNPolicy -FilePath C:\temp\policy.nessus, C:\temp\policy2.nessus
+        PS C:\> Register-TNLicense -FilePath "C:\sc\RID#12345;SERVER1;SecurityCenter-5.1-1024IPs.key"
 
-        Imports C:\temp\policy.nessus and C:\temp\policy2.nessus
+        Updates the license from "C:\sc\RID#12345;SERVER1;SecurityCenter-5.1-1024IPs.key"
 #>
     [CmdletBinding()]
     param
@@ -36,9 +33,9 @@
         [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Alias("FullName")]
         [ValidateScript( { Test-Path -Path $_ })]
         [string[]]$FilePath,
-        [switch]$NoRename,
         [switch]$EnableException
     )
     process {
@@ -50,33 +47,17 @@
             $files = Get-ChildItem -Path $FilePath
 
             foreach ($file in $files.FullName) {
-                $body = $file | Publish-File -Session $session -EnableException:$EnableException
+                $body = $file | Publish-File -Session $session -EnableException:$EnableException -Type Report
 
                 $params = @{
                     SessionObject = $session
                     Method        = "POST"
-                    Path          = "/policies/import"
+                    Path          = "/config/license/register"
                     Parameter     = $body
                     ContentType   = "application/json"
                 }
 
-                if ($NoRename) {
-                    Invoke-TnRequest @params | ConvertFrom-TNRestResponse
-                } else {
-                    $results = Invoke-TnRequest @params | ConvertFrom-TNRestResponse
-                    # change the name
-                    $name = $results.Name.Replace("Imported Nessus Policy - ","")
-                    $body = @{ name = $name }
-
-                    $params = @{
-                        SessionObject = $session
-                        Method        = "PATCH"
-                        Path          = "/policy/$($results.id)"
-                        Parameter     = $body
-                        ContentType   = "application/json"
-                    }
-                    Invoke-TnRequest @params | ConvertFrom-TNRestResponse
-                }
+                Invoke-TnRequest @params | ConvertFrom-TNRestResponse
             }
         }
     }

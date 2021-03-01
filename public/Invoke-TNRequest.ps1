@@ -58,7 +58,9 @@
         [String]$OutFile,
         [String]$ContentType,
         [String]$InFile,
+        [switch]$Header,
         [switch]$EnableException
+
 
     )
     process {
@@ -79,9 +81,9 @@
                 if ($Path -match '/user' -and $Path -notmatch '/group/') {
                     $Path = $Path.Replace("/users", "/user?fields=apiKeys,name,username,firstname,lastname,group,role,lastLogin,canManage,canUse,locked,status,title,email,id")
                 }
-                # https://macmini:8834/#/scans/reports/5/hosts
-                # https://macmini:8834/#/scans/reports/5/vulnerabilities
-                # https://macmini:8834/#/scans/reports/5/history
+                # https://securitycenter:8834/#/scans/reports/5/hosts
+                # https://securitycenter:8834/#/scans/reports/5/vulnerabilities
+                # https://securitycenter:8834/#/scans/reports/5/history
 
                 if ($Path -match '/scans') {
                     if ($Path -notmatch '/scans/') {
@@ -118,11 +120,11 @@
             }
 
             $RestMethodParams = @{
-                Method          = $Method
-                'URI'           = "$($session.URI)$($Path)"
-                'Headers'       = $session.Headers
-                'ErrorVariable' = 'NessusUserError'
-                'WebSession'    = $session.WebSession
+                Method        = $Method
+                URI           = "$($session.URI)$($Path)"
+                Headers       = $session.Headers
+                ErrorVariable = 'NessusUserError'
+                WebSession    = $session.WebSession
             }
 
             if ($Parameter) {
@@ -146,12 +148,19 @@
             }
 
             try {
+                if ($Header) {
+                    Write-PSFMessage -Level Verbose -Message "Connecting to $($session.URI)"
+                    $results = Invoke-WebRequest @RestMethodParams -ErrorAction Stop
+                    return $results.Headers
+                }
+
                 #$RestMethodParams.Uri
                 Write-PSFMessage -Level Verbose -Message "Connecting to $($session.URI)"
                 $results = Invoke-RestMethod @RestMethodParams -ErrorAction Stop
+
             } catch [Net.WebException] {
-                [int]$res = $_.Exception.Response.StatusCode
-                if ($res -eq 401) {
+                [int]$responsecode = $_.Exception.Response.StatusCode
+                if ($responsecode -eq 401) {
                     # Request failed. More than likely do to time-out.
                     # Re-Authenticating using information from session.
                     Write-PSFMessage -Level Verbose -Message 'The session has expired, Re-authenticating'
@@ -165,12 +174,32 @@
                         Stop-PSFFunction -EnableException:$EnableException -Message $msg -ErrorRecord $_ -Continue
                     }
                 } else {
-                    $msg = Get-ErrorMessage -Record $_
-                    Stop-PSFFunction -EnableException:$EnableException -Message $msg -ErrorRecord $_ -Continue
+                    if ($_.ErrorDetails) {
+                        $details = $_.ErrorDetails | ConvertFrom-Json
+                        if ($details.error_msg) {
+                            $errormsg = $details.error_msg.ToString().Replace("`n", " ")
+                            $msg = "Response code $responsecode, Error $($details.error_code): $errormsg"
+                            Stop-PSFFunction -EnableException:$EnableException -Message $PSitem -Continue
+                        } else {
+                            Stop-PSFFunction -EnableException:$EnableException -Message "$details $psitem" -Continue
+                        }
+                    } else {
+                        Stop-PSFFunction -EnableException:$EnableException -Message $PSitem -Continue
+                    }
                 }
             } catch {
-                $msg = Get-ErrorMessage -Record $_
-                Stop-PSFFunction -EnableException:$EnableException -Message $msg -ErrorRecord $_ -Continue
+                if ($_.ErrorDetails) {
+                    $details = $_.ErrorDetails | ConvertFrom-Json
+                    if ($details.error_msg) {
+                        $errormsg = $details.error_msg.ToString().Replace("`n", " ")
+                        $msg = "Response code $responsecode, Error $($details.error_code): $errormsg"
+                        Stop-PSFFunction -EnableException:$EnableException -Message $PSitem -Continue
+                    } else {
+                        Stop-PSFFunction -EnableException:$EnableException -Message "$details $psitem" -Continue
+                    }
+                } else {
+                    Stop-PSFFunction -EnableException:$EnableException -Message $PSitem -Continue
+                }
             }
 
             if ($results.response) {

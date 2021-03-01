@@ -1,10 +1,10 @@
 ﻿function Start-TNDeploy {
     <#
     .SYNOPSIS
-        Starts a list of deploys
+        Deploys tenable.sc
 
     .DESCRIPTION
-        Starts a list of deploys
+        Deploys tenable.sc
 
     .PARAMETER ComputerName
         The network name or IP address of the Nessus or tenable.sc server
@@ -44,7 +44,6 @@
             AdministratorCredential = (Get-Credential admin)
             LicensePath = ""
             AcceptSelfSignedCert = ""
-            ServerType = ""
             SecurityManagerCredential = ""
             Organization = ""
             Repository = ""
@@ -67,7 +66,6 @@
         $splat = @{
         ComputerName = "securitycenter"
         AdministratorCredential = $admincred
-        ServerType = "tenable.sc"
         SecurityManagerCredential = $secmancred
         Organization = "Acme"
         Repository = "All Computers"
@@ -87,22 +85,24 @@
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string[]]$ComputerName,
         [Parameter(ValueFromPipelineByPropertyName)]
-        [int]$Port,
+        [int]$NessusPort = 8443,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [int]$ScPort = 443,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [psobject]$AdministratorCredential,
         [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidateScript( { Test-Path -Path $_ })]
         [string]$LicensePath,
         [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$AcceptSelfSignedCert,
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
-        [ValidateSet("tenable.sc", "Nessus")]
-        [string]$ServerType,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [psobject]$SecurityManagerCredential,
         [Parameter(ValueFromPipelineByPropertyName)]
         [string[]]$Scanner,
         [Parameter(ValueFromPipelineByPropertyName)]
         [psobject]$ScannerCredential,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [switch]$InitializeScanner,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string]$Organization,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
@@ -114,17 +114,29 @@
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string[]]$IpRange,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [ValidateScript( { Test-Path -Path $_ })]
         [string[]]$PolicyFilePath,
         [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidateScript( { Test-Path -Path $_ })]
         [string[]]$ScanFilePath,
         [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidateScript( { Test-Path -Path $_ })]
         [string[]]$AuditFilePath,
         [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidateScript( { Test-Path -Path $_ })]
         [string[]]$DashboardFilePath,
         [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidateScript( { Test-Path -Path $_ })]
         [string[]]$AssetFilePath,
         [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidateScript( { Test-Path -Path $_ })]
         [string[]]$ReportFilePath,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidateScript( { Test-Path -Path $_ })]
+        [string]$FeedFilePath,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidateScript( { Test-Path -Path $_ })]
+        [string]$PluginFilePath,
         [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$EnableException
     )
@@ -132,6 +144,12 @@
         $elapsed = [System.Diagnostics.Stopwatch]::StartNew()
         $started = Get-Date
         $PSDefaultParameterValues["*:EnableException"] = $true
+        $servertype = "tenable.sc"
+
+
+        if ($AcceptSelfSignedCert) {
+            $PSDefaultParameterValues['*-TN*:AcceptSelfSignedCert'] = $true
+        }
     }
     process {
         if ($PSBoundParameters.Scanner -and -not $PSBoundParameters.ScannerCredential) {
@@ -139,8 +157,18 @@
             return
         }
 
+        if ($PSBoundParameters.PolicyFilePath -and -not $PSBoundParameters.FeedFilePath) {
+            Stop-PSFFunction -EnableException:$EnableException -Message "You must provide a FeedFilePath when specifying a PolicyFilePath. Not sure why, but no Policy File uploads work without an initial feed update."
+            return
+        }
+
+        if ($PSBoundParameters.InitializeScanner -and -not $PSBoundParameters.ScannerCredential) {
+            Stop-PSFFunction -EnableException:$EnableException -Message "You must provide a ScannerCredential when specifying a InitializeScanner"
+            return
+        }
+
         if ($AdministratorCredential -isnot [pscredential]) {
-            $AdministratorCredential = Get-Credential $AdministratorCredential -Message "Enter the username and password for the administrator credential on the $ServerType server"
+            $AdministratorCredential = Get-Credential $AdministratorCredential -Message "Enter the username and password for the administrator credential on the $servertype server"
         }
 
         if ($PSBoundParameters.ScannerCredential -and $ScannerCredential -isnot [pscredential]) {
@@ -155,18 +183,34 @@
             $stepCounter = 0
             $output = @{
                 ComputerName = $computer
-                ServerType   = $ServerType
+                ServerType   = "tenable.sc"
             }
             if ($LicensePath) {
                 try {
                     Write-PSFMessage -Level Verbose -Message "Initializing $computer"
                     Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Initializing $computer"
-                    $splat = @{
-                        ComputerName = $computer
-                        Credential   = $AdministratorCredential
-                        LicensePath  = $LicensePath
+                    if ($InitializeScanner -and $ScannerCredential) {
+                        $splat = @{
+                            ComputerName    = $computer
+                            Credential      = $ScannerCredential
+                            Type            = "Nessus"
+                            ManagedScanner  = $true
+                            EnableException = $true
+                            ErrorAction     = "Stop"
+                        }
+
+                        $null = Initialize-TNServer @splat -Port $NessusPort
                     }
-                    Initialize-TNServer @splat
+                    $splat = @{
+                        ComputerName    = $computer
+                        Credential      = $AdministratorCredential
+                        LicensePath     = $LicensePath
+                        Type            = "tenable.sc"
+                        EnableException = $true
+                        ErrorAction     = "Stop"
+                    }
+
+                    $null = Initialize-TNServer @splat -Port $ScPort
                     $output["LicensePath"] = $LicensePath
                     $output["Administrator"] = $AdministratorCredential.Username
                 } catch {
@@ -178,8 +222,7 @@
             try {
                 Write-PSFMessage -Level Verbose -Message "Connecting to $computer"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $computer"
-                $null = Connect-TNServer -ComputerName $computer -Credential $AdministratorCredential -Type $ServerType
-                $null = Connect-TNServer -Type tenable.sc -Credential $AdministratorCredential -ComputerName securitycenter
+                $null = Connect-TNServer -ComputerName $computer -Credential $AdministratorCredential -Type tenable.sc -Port $ScPort
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Connect failed for $computer" -Continue
             }
@@ -202,24 +245,6 @@
                 }
 
                 $output["ScanCredential"] = $ScanCredentialHash.Name
-            }
-
-            if ($Scanner) {
-                try {
-                    foreach ($scannername in $scanner) {
-                        Write-PSFMessage -Level Verbose -Message "Adding scanner $scannername"
-                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Adding scanner $scannername"
-                        $splat = @{
-                            ComputerName = $scannername
-                            Credential   = $ScannerCredential
-                        }
-                        $null = Add-TNScanner @splat
-                    }
-                    $output["Scanner"] = $Scanner
-                    $output["ScannerCredential"] = $ScannerCredential.Username
-                } catch {
-                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Failed to add scanners" -Continue
-                }
             }
 
             # Org
@@ -262,6 +287,26 @@
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Creation of organization user $($SecurityManagerCredential.Username) failed for $computer" -Continue
             }
 
+            # Scanner
+            if ($Scanner) {
+                if ($InitializeScanner) { Start-Sleep 3 }
+                try {
+                    foreach ($scannername in $scanner) {
+                        Write-PSFMessage -Level Verbose -Message "Adding scanner $scannername"
+                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Adding scanner $scannername"
+                        $splat = @{
+                            ComputerName = $scannername
+                            Credential   = $ScannerCredential
+                        }
+                        $null = Add-TNScanner @splat
+                    }
+                    $output["Scanner"] = $Scanner
+                    $output["ScannerCredential"] = $ScannerCredential.Username
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Failed to add scanners" -Continue
+                }
+            }
+
             # Scan Zone
             try {
                 Write-PSFMessage -Level Verbose -Message "Creating scan zones on $computer"
@@ -276,12 +321,41 @@
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Creation of scan zone failed for $computer" -Continue
             }
 
+
+
+            # Update Feed
+            if ($FeedFilePath) {
+                Write-PSFMessage -Level Verbose -Message "Updating feed on $computer"
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Updating feed on $computer"
+                try {
+                    $null = Update-TNPluginFeed -Type Feed -FilePath $FeedFilePath -Wait
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Feed update failed for $computer" -Continue
+                }
+
+                $output["FeedFilePath"] = $FeedFilePath
+            }
+
+            # Update active plugins
+            if ($PluginFilePath) {
+                Write-PSFMessage -Level Verbose -Message "Updating active plugins on $computer"
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Updating active plugins on $computer"
+                try {
+                    $null = Update-TNPluginFeed -Type ActivePlugin -FilePath $PluginFilePath -Wait
+                } catch {
+                    Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Feed update failed for $computer" -Continue
+                }
+
+                $output["PluginFilePath"] = $PluginFilePath
+            }
+
+
             # Import policy
             if ($PSBoundParameters.PolicyFilePath) {
                 try {
                     Write-PSFMessage -Level Verbose -Message "Importing policies from $PolicyFilePath on $computer"
                     Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Importing policies from $PolicyFilePath on $computer"
-                    $results = Import-TNPolicy -FilePath $PolicyFilePath
+                    $results = Import-TNPolicy -FilePath $PolicyFilePath -EnableException:$EnableException
                     $output["ImportedPolicy"] = $results.Name
                 } catch {
                     Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Policy import failed for $computer" -Continue
@@ -293,7 +367,7 @@
                 $null = Remove-TNSession -SessionId 0
                 Write-PSFMessage -Level Verbose -Message "Connecting to $computer as $($SecurityManagerCredential.Username)"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $computer"
-                $null = Connect-TNServer -ComputerName $computer -Credential $SecurityManagerCredential -Type $ServerType
+                $null = Connect-TNServer -ComputerName $computer -Credential $SecurityManagerCredential -Type $servertype -Port $ScPort
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Connect failed for $computer as $($SecurityManagerCredential.Username)" -Continue
             }
@@ -409,7 +483,7 @@
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Policy import failed for $computer" -Continue
             }
 
-            Write-Progress -Activity "Finished deploying $computer for $ServerType" -Completed
+            Write-Progress -Activity "Finished deploying $computer for $servertype" -Completed
 
             $output["Status"] = "Success"
             [pscustomobject]$output | ConvertFrom-TNRestResponse

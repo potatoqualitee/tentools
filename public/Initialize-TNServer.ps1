@@ -51,28 +51,28 @@
         [int]$Port,
         [Parameter(Mandatory)]
         [Management.Automation.PSCredential]$Credential,
-        [Parameter(Mandatory)]
         [string]$LicensePath,
         [switch]$AcceptSelfSignedCert,
         [ValidateSet("tenable.sc", "Nessus")]
-        [string]$Type,
+        [string[]]$Type = @("tenable.sc", "Nessus"),
+        [switch]$ManagedScanner,
         [switch]$EnableException
     )
     begin {
-        if ($PSVersionTable.PSEdition -eq 'Core') {
+        if ($PSVersionTable.PSEdition -eq "Core") {
             if ($AcceptSelfSignedCert) {
-                $PSDefaultParameterValues['Invoke-RestMethod:SkipCertificateCheck'] = $true
+                $PSDefaultParameterValues["Invoke-RestMethod:SkipCertificateCheck"] = $true
             }
         } else {
-            if ($AcceptSelfSignedCert -and [System.Net.ServicePointManager]::CertificatePolicy.ToString() -ne 'IgnoreCerts') {
+            if ($AcceptSelfSignedCert -and [System.Net.ServicePointManager]::CertificatePolicy.ToString() -ne "IgnoreCerts") {
                 $Domain = [AppDomain]::CurrentDomain
-                $DynAssembly = New-Object System.Reflection.AssemblyName('IgnoreCerts')
+                $DynAssembly = New-Object System.Reflection.AssemblyName("IgnoreCerts")
                 $AssemblyBuilder = $Domain.DefineDynamicAssembly($DynAssembly, [System.Reflection.Emit.AssemblyBuilderAccess]::Run)
-                $ModuleBuilder = $AssemblyBuilder.DefineDynamicModule('IgnoreCerts', $false)
-                $TypeBuilder = $ModuleBuilder.DefineType('IgnoreCerts', 'AutoLayout, AnsiClass, Class, Public, BeforeFieldInit', [System.Object], [System.Net.ICertificatePolicy])
-                $TypeBuilder.DefineDefaultConstructor('PrivateScope, Public, HideBySig, SpecialName, RTSpecialName') | Out-Null
-                $MethodInfo = [System.Net.ICertificatePolicy].GetMethod('CheckValidationResult')
-                $MethodBuilder = $TypeBuilder.DefineMethod($MethodInfo.Name, 'PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask', $MethodInfo.CallingConvention, $MethodInfo.ReturnType, ([Type[]] ($MethodInfo.GetParameters() | ForEach-Object { $_.ParameterType })))
+                $ModuleBuilder = $AssemblyBuilder.DefineDynamicModule("IgnoreCerts", $false)
+                $TypeBuilder = $ModuleBuilder.DefineType("IgnoreCerts", "AutoLayout, AnsiClass, Class, Public, BeforeFieldInit", [System.Object], [System.Net.ICertificatePolicy])
+                $TypeBuilder.DefineDefaultConstructor("PrivateScope, Public, HideBySig, SpecialName, RTSpecialName") | Out-Null
+                $MethodInfo = [System.Net.ICertificatePolicy].GetMethod("CheckValidationResult")
+                $MethodBuilder = $TypeBuilder.DefineMethod($MethodInfo.Name, "PrivateScope, Public, Virtual, HideBySig, VtableLayoutMask", $MethodInfo.CallingConvention, $MethodInfo.ReturnType, ([Type[]] ($MethodInfo.GetParameters() | ForEach-Object { $_.ParameterType })))
                 $ILGen = $MethodBuilder.GetILGenerator()
                 $ILGen.Emit([Reflection.Emit.Opcodes]::Ldc_I4_1)
                 $ILGen.Emit([Reflection.Emit.Opcodes]::Ret)
@@ -86,109 +86,261 @@
         # Force usage of TSL1.2 as Nessus web server only supports this and will hang otherwise
         # Source: https://stackoverflow.com/questions/32355556/powershell-invoke-restmethod-over-https
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
-        if (-Not $Type) {
-            if ($Port -eq 443) {
-                $Type = "tenable.sc"
-            } else {
-                $Type = "Nessus"
-            }
-        }
-
-        if ($Type -and -not $Port) {
-            if ($Type -eq "tenable.sc") {
-                $Port = "443"
-            } else {
-                $Port = "8834"
-            }
-        }
     }
     process {
-        if (-not (Test-Path -Path $LicensePath)) {
+        if (-not $ManagedScanner -and -not $LicensePath) {
+            Stop-PSFFunction -EnableException:$EnableException -Message "You must specify either ManagedScanner or LicensePath"
+            return
+        }
+
+        if ($Type -contains "tenable.sc" -and -not $LicensePath) {
+            Stop-PSFFunction -EnableException:$EnableException -Message "You must specify either LicensePath when initializing tenable.sc"
+            return
+        }
+
+        if ($LicensePath -and -not (Test-Path -Path $LicensePath)) {
             Stop-PSFFunction -EnableException:$EnableException -Message "$LicensePath not found"
             return
         }
 
-        $license = (Get-Content -Path $LicensePath -Raw).Replace("`r`n", "")
+        if ($LicensePath) {
+            $license = (Get-Content -Path $LicensePath -Raw).Replace("`r`n", "")
+        }
+
+        $lp = $LicensePath
+        $servertypes = $Type
+        $managed = $ManagedScanner
+        $null = $PSBoundParameters.Remove("LicensePath")
+        $null = $PSBoundParameters.Remove("Type")
+        $null = $PSBoundParameters.Remove("ManagedScanner")
+
 
         foreach ($computer in $ComputerName) {
-            $null = Wait-TNServerReady -ComputerName $computer -Port $Port -Register -WarningAction SilentlyContinue -AcceptSelfSignedCert:$AcceptSelfSignedCert
-            if ($Port -eq 443) {
-                $uri = "https://$($computer):$Port/rest"
-                $fulluri = "$uri/user"
-                $body = @{
-                    username    = $Credential.UserName
-                    password    = $Credential.GetNetworkCredential().password
-                    permissions = "128"
-                } | ConvertTo-Json
+            Write-PSFMessage -Level Verbose -Message "Connecting to $computer"
+            Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $computer"
 
-                $headers = @{"HTTP" = "X-SecurityCenter" }
-
-                try {
-                    $null = Invoke-RestMethod @adminuserparams -ErrorAction Stop
-                } catch {
-                    $msg = Get-ErrorMessage -Record $_
-                    Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
-                }
-
-                $adminuserparams = @{
-                    Headers         = $headers
-                    ContentType     = "application/json"
-                    Method          = 'POST'
-                    URI             = $fulluri
-                    Body            = $body
-                    ErrorVariable   = 'NessusLoginError'
-                    SessionVariable = 'websession'
-                }
-            } else {
-                $Uri = "https://$($computer):$Port"
-                $fulluri = "$uri/server/register"
-
-                $body = @{
-                    "key" = $license
-                } | ConvertTo-Json
-
-                $licenseparams = @{
-                    Method        = 'POST'
-                    ContentType   = "application/json"
-                    URI           = $fulluri
-                    Body          = $body
-                    ErrorVariable = 'NessusLicenseError'
-                }
-
-                try {
-                    $null = Invoke-RestMethod @licenseparams -ErrorAction Stop
-                } catch {
-                    $msg = Get-ErrorMessage -Record $_
-                    Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
-                }
-
-                $fulluri = "$uri/users"
-                $body = @{
-                    username    = $Credential.UserName
-                    password    = $Credential.GetNetworkCredential().password
-                    permissions = "128"
-                } | ConvertTo-Json
-
-                $adminuserparams = @{
-                    Method          = 'POST'
-                    ContentType     = "application/json"
-                    URI             = $fulluri
-                    Body            = $body
-                    ErrorVariable   = 'NessusLoginError'
-                    SessionVariable = 'websession'
-                }
+            # CREATE OUTPUT OBJECT
+            $output = @{
+                Computer     = $computer
+                AdminAccount = $Credential.UserName
+                Connected    = $false
+                LicensePath  = $LicensePath
+                Session      = $null
+                Success      = $false
+                Type         = $null
             }
 
+            # ADD TYPE STUFF HERE THEN SAY IF BOTH THEN DONT USE THE LICENSE
 
-            try {
-                $null = Invoke-RestMethod @adminuserparams -ErrorAction Stop
-                $null = $PSBoundParameters.Remove("LicensePath")
-                Connect-TNServer @PSBoundParameters
-                Restart-TNService
-            } catch {
-                $msg = Get-ErrorMessage -Record $_
-                Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+            foreach ($servertype in $servertypes) {
+                if (-not $PSBoundParameters.Port) {
+                    if ($servertype -eq "tenable.sc") {
+                        $Port = "443"
+                    } else {
+                        $Port = "8834"
+                    }
+                }
+                if ($servertype -eq "tenable.sc") {
+                    <#
+                    #
+                    #
+                    #                            tenable.sc
+                    #
+                    #
+                    #>
+                    $output.Type = "tenable.sc"
+                    try {
+                        $session = Connect-TNServer -ComputerName $computer -InitialConnect -Type $servertype -Credential $Credential -EnableException -Port $Port
+                    } catch {
+                        $msg = Get-ErrorMessage -Record $_
+                        Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                    }
+
+                    $files = Get-ChildItem -Path $lp
+                    foreach ($file in $files.FullName) {
+                        $body = $file | Publish-File -Session $session -ErrorAction Stop -Type Report
+
+                        $params = @{
+                            SessionObject   = $session
+                            Method          = "POST"
+                            Path            = "/config/license/register"
+                            Parameter       = $body
+                            ContentType     = "application/json"
+                            EnableException = $true
+                        }
+
+                        Write-PSFMessage -Level Verbose -Message "Uploading license to $computer"
+                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Uploading license to $computer"
+                        try {
+                            $null = Invoke-TnRequest @params | ConvertFrom-TNRestResponse
+                        } catch {
+                            $msg = Get-ErrorMessage -Record $_
+                            Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                        }
+                    }
+
+                    # add or modify username
+                    if ($Credential.UserName -ne "admin") {
+                        $body = @{
+                            username    = $Credential.UserName
+                            password    = $Credential.GetNetworkCredential().Password
+                            permissions = "128"
+                            authType    = "tns"
+                            roleID      = 1
+                        } | ConvertTo-Json
+
+                        $params = @{
+                            Path            = "/user"
+                            Method          = "POST"
+                            ContentType     = "application/json"
+                            Parameter       = $body
+                            EnableException = $true
+                        }
+                        Write-PSFMessage -Level Verbose -Message "Creating admin account on $computer"
+                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating admin account on $computer"
+                        try {
+                            $null = Invoke-TnRequest @params
+                        } catch {
+                            $msg = Get-ErrorMessage -Record $_
+                            Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                        }
+                    } else {
+                        $body = @{
+                            password = $Credential.GetNetworkCredential().Password
+                        } | ConvertTo-Json
+
+                        $params = @{
+                            Path            = "/user/1"
+                            Method          = "PATCH"
+                            ContentType     = "application/json"
+                            Parameter       = $body
+                            EnableException = $true
+                        }
+                        Write-PSFMessage -Level Verbose -Message "Modifying admin account password"
+                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Modifying admin account password"
+                        try {
+                            $null = Invoke-TnRequest @params
+                        } catch {
+                            $msg = Get-ErrorMessage -Record $_
+                            Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                        }
+                    }
+
+                    Write-PSFMessage -Level Verbose -Message "Connecting to $computer with new admin credentials for tenable.sc"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $computer with new admin credentials for tenable.sc"
+                    try {
+                        $session = Connect-TNServer @PSBoundParameters -Type $servertype
+                        $output.Connected = $true
+                        $output.Session = $session
+                    } catch {
+                        $msg = Get-ErrorMessage -Record $_
+                        Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                    }
+                } else {
+                    <#
+                    #
+                    #
+                    #                            Nessus
+                    #
+                    #
+                    #>
+
+                    $output.Type = "Nessus"
+                    $null = Wait-TNServerReady -ComputerName $computer -Port $Port -Register -WarningAction SilentlyContinue -AcceptSelfSignedCert:$AcceptSelfSignedCert
+                    $Uri = "https://$($computer):$Port"
+
+
+                    $fulluri = "$uri/users"
+                    $body = @{
+                        username    = $Credential.UserName
+                        password    = $Credential.GetNetworkCredential().password
+                        permissions = "128"
+                    } | ConvertTo-Json
+
+                    $adminuserparams = @{
+                        Method          = "POST"
+                        ContentType     = "application/json"
+                        URI             = $fulluri
+                        Body            = $body
+                        ErrorVariable   = "NessusLoginError"
+                        SessionVariable = "websession"
+                        ErrorAction     = "Stop"
+                    }
+
+                    Write-PSFMessage -Level Verbose -Message "Creating new admin account for Nessus on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating new admin account for Nessus on $computer"
+                    try {
+                        $null = Invoke-RestMethod @adminuserparams
+                    } catch {
+                        $details = ($_.ErrorDetails | ConvertFrom-Json).error
+                        Stop-PSFFunction -EnableException:$EnableException -Message "Nessus reports: $details" -Continue
+                    }
+
+                    ################ RESTART
+
+                    $fulluri = "$uri/server/restart"
+
+                    $restartparams = @{
+                        Method        = "POST"
+                        ContentType   = "application/json"
+                        URI           = $fulluri
+                        ErrorVariable = "NessusLoginError"
+                        WebSession    = $websession
+                        ErrorAction   = "Stop"
+                    }
+
+                    Write-PSFMessage -Level Verbose -Message "Restarting Nessus on $computer"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Restarting Nessus on $computer"
+                    try {
+                        $null = Invoke-RestMethod @restartparams
+                    } catch {
+                        $details = ($_.ErrorDetails | ConvertFrom-Json).error
+                        Stop-PSFFunction -EnableException:$EnableException -Message "Nessus reports: $details" -Continue
+                    }
+
+                    ################ REGISTER
+
+                    if ($Type -notcontains "tenable.sc" -and -not $managed) {
+                        $fulluri = "$uri/server/register"
+
+                        $body = @{
+                            "key" = $license
+                        } | ConvertTo-Json
+
+                        $licenseparams = @{
+                            Method        = "POST"
+                            ContentType   = "application/json"
+                            URI           = $fulluri
+                            Body          = $body
+                            ErrorVariable = "NessusLicenseError"
+                            ErrorAction   = "Stop"
+                        }
+
+                        Write-PSFMessage -Level Verbose -Message "Uploading license for Nessus on $computer"
+                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Uploading license for Nessus on $computer"
+                        try {
+                            $null = Invoke-RestMethod @licenseparams
+                        } catch {
+                            $details = ($_.ErrorDetails | ConvertFrom-Json).error
+                            Stop-PSFFunction -EnableException:$EnableException -Message "Nessus reports: $details" -Continue
+                        }
+                    }
+
+                    if (-not $managed) {
+                        Write-PSFMessage -Level Verbose -Message "Connecting to Nessus on $computer"
+                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to Nessus on $computer"
+                        try {
+                            $session = Connect-TNServer @PSBoundParameters -NoWait
+                            $output.Connected = $true
+                            $output.Session = $session
+                        } catch {
+                            $msg = Get-ErrorMessage -Record $_
+                            Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue
+                        }
+                    }
+                }
+                $output.Success = $true
+                [pscustomobject]$output | ConvertFrom-TNRestResponse
             }
         }
     }

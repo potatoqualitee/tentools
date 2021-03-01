@@ -1,24 +1,24 @@
 ﻿function Get-TNSessionInfo {
-<#
+    <#
     .SYNOPSIS
         Gets a list of session infos
 
     .DESCRIPTION
         Gets a list of session infos
-        
+
     .PARAMETER SessionObject
         Optional parameter to force using specific SessionObjects. By default, each command will connect to all connected servers that have been connected to using Connect-TNServer
-        
+
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
         This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
-        
+
     .EXAMPLE
         PS C:\> Get-TNSessionInfo
 
         Gets a list of session infos
-        
+
 #>
     [CmdletBinding()]
     param
@@ -29,7 +29,7 @@
     )
     process {
         foreach ($session in $SessionObject) {
-            Write-PSFMessage -Level Verbose -Message "Removing server session $id"
+            Write-PSFMessage -Level Verbose -Message "Getting server session $id"
 
             $RestMethodParams = @{
                 Method          = 'Get'
