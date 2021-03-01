@@ -176,9 +176,13 @@
                 } else {
                     if ($_.ErrorDetails) {
                         $details = $_.ErrorDetails | ConvertFrom-Json
-                        $errormsg = $details.error_msg.ToString().Replace("`n", " ")
-                        $msg = "Response code $responsecode, Error $($details.error_code): $errormsg"
-                        Stop-PSFFunction -EnableException:$EnableException -Message $msg -Continue
+                        if ($details.error_msg) {
+                            $errormsg = $details.error_msg.ToString().Replace("`n", " ")
+                            $msg = "Response code $responsecode, Error $($details.error_code): $errormsg"
+                            Stop-PSFFunction -EnableException:$EnableException -Message $PSitem -Continue
+                        } else {
+                            Stop-PSFFunction -EnableException:$EnableException -Message "$details $psitem" -Continue
+                        }
                     } else {
                         Stop-PSFFunction -EnableException:$EnableException -Message $PSitem -Continue
                     }
@@ -186,9 +190,13 @@
             } catch {
                 if ($_.ErrorDetails) {
                     $details = $_.ErrorDetails | ConvertFrom-Json
-                    $errormsg = $details.error_msg.ToString().Replace("`n", " ")
-                    $msg = "Response code $responsecode, Error $($details.error_code): $errormsg"
-                    Stop-PSFFunction -EnableException:$EnableException -Message $msg -Continue
+                    if ($details.error_msg) {
+                        $errormsg = $details.error_msg.ToString().Replace("`n", " ")
+                        $msg = "Response code $responsecode, Error $($details.error_code): $errormsg"
+                        Stop-PSFFunction -EnableException:$EnableException -Message $PSitem -Continue
+                    } else {
+                        Stop-PSFFunction -EnableException:$EnableException -Message "$details $psitem" -Continue
+                    }
                 } else {
                     Stop-PSFFunction -EnableException:$EnableException -Message $PSitem -Continue
                 }
