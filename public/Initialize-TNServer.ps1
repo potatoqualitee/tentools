@@ -150,7 +150,7 @@
                     #>
                     $output.Type = "tenable.sc"
                     try {
-                        $session = Connect-TNServer -ComputerName $computer -InitialConnect -Type $servertype -Credential $Credential -EnableException
+                        $session = Connect-TNServer -ComputerName $computer -InitialConnect -Type $servertype -Credential $Credential -EnableException -Port $Port
                     } catch {
                         $msg = Get-ErrorMessage -Record $_
                         Stop-PSFFunction -EnableException:$EnableException -Message "$msg $_" -ErrorRecord $_ -Continue

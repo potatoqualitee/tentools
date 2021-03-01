@@ -129,7 +129,7 @@
             if ($Type -ne "tenable.sc" -and -not $NoWait) {
                 $null = Wait-TNServerReady -ComputerName $computer -Port $Port -SilentUntil 5 -AcceptSelfSignedCert:$AcceptSelfSignedCert
             }
-            if ($Port -eq 443) {
+            if ($Type -eq "tenable.sc") {
                 $uri = "https://$($computer):$Port/rest"
                 $fulluri = "$uri/token"
                 if ($PSBoundParameters.Credential -and -not $InitialConnect) {
@@ -140,7 +140,7 @@
                     } | ConvertTo-Json
                 } elseif ($PSBoundParameters.Credential -and $InitialConnect) {
                     try {
-                        $first = Invoke-NonAuthRequest -ComputerName $computer -Path "/rest/system" -Port 443 -Method Get
+                        $first = Invoke-NonAuthRequest -ComputerName $computer -Path "/rest/system" -Port $Port -Method Get
                     } catch {
                         Stop-PSFFunction -EnableException:$EnableException -Message "Failure connecting to $computer" -ErrorRecord $_ -Continue
                     }
