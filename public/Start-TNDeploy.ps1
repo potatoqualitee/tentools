@@ -85,7 +85,9 @@
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string[]]$ComputerName,
         [Parameter(ValueFromPipelineByPropertyName)]
-        [int]$Port,
+        [int]$NessusPort = 8443,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [int]$ScPort = 443,
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [psobject]$AdministratorCredential,
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -197,7 +199,7 @@
                             ErrorAction     = "Stop"
                         }
 
-                        $null = Initialize-TNServer @splat
+                        $null = Initialize-TNServer @splat -Port $NessusPort
                     }
                     $splat = @{
                         ComputerName    = $computer
@@ -208,7 +210,7 @@
                         ErrorAction     = "Stop"
                     }
 
-                    $null = Initialize-TNServer @splat
+                    $null = Initialize-TNServer @splat -Port $ScPort
                     $output["LicensePath"] = $LicensePath
                     $output["Administrator"] = $AdministratorCredential.Username
                 } catch {
@@ -220,7 +222,7 @@
             try {
                 Write-PSFMessage -Level Verbose -Message "Connecting to $computer"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $computer"
-                $null = Connect-TNServer -ComputerName $computer -Credential $AdministratorCredential -Type tenable.sc
+                $null = Connect-TNServer -ComputerName $computer -Credential $AdministratorCredential -Type tenable.sc -Port $ScPort
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Connect failed for $computer" -Continue
             }
@@ -365,7 +367,7 @@
                 $null = Remove-TNSession -SessionId 0
                 Write-PSFMessage -Level Verbose -Message "Connecting to $computer as $($SecurityManagerCredential.Username)"
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $computer"
-                $null = Connect-TNServer -ComputerName $computer -Credential $SecurityManagerCredential -Type $servertype
+                $null = Connect-TNServer -ComputerName $computer -Credential $SecurityManagerCredential -Type $servertype -Port $ScPort
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Connect failed for $computer as $($SecurityManagerCredential.Username)" -Continue
             }
