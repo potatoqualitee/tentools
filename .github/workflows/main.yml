@@ -65,6 +65,7 @@ jobs:
             Credential = $cred
             EnableException = $true
             LicensePath = "/tmp/nessus.license"
+            Type = "Nessus"
           }
           Initialize-TNServer @splat
       - name: Run Pester tests
