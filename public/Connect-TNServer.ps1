@@ -118,7 +118,7 @@
             }
         }
 
-        if ($Port -eq 443 -and $Type -eq "tenable.sc") {
+        if ($Type -eq "tenable.sc") {
             $sc = $true
         } else {
             $sc = $false
