@@ -180,6 +180,10 @@
                             $errormsg = $details.error_msg.ToString().Replace("`n", " ")
                             $msg = "Response code $responsecode, Error $($details.error_code): $errormsg"
                             Stop-PSFFunction -EnableException:$EnableException -Message $PSitem -Continue
+                        } elseif ($details.error) {
+                            $errormsg = $details.error.ToString().Replace("`n", " ")
+                            $msg = "Response code $responsecode, Error $($details.error_code): $errormsg"
+                            Stop-PSFFunction -EnableException:$EnableException -Message $PSitem -Continue
                         } else {
                             Stop-PSFFunction -EnableException:$EnableException -Message "$details $psitem" -Continue
                         }
@@ -192,6 +196,10 @@
                     $details = $_.ErrorDetails | ConvertFrom-Json
                     if ($details.error_msg) {
                         $errormsg = $details.error_msg.ToString().Replace("`n", " ")
+                        $msg = "Response code $responsecode, Error $($details.error_code): $errormsg"
+                        Stop-PSFFunction -EnableException:$EnableException -Message $PSitem -Continue
+                    } elseif ($details.error) {
+                        $errormsg = $details.error.ToString().Replace("`n", " ")
                         $msg = "Response code $responsecode, Error $($details.error_code): $errormsg"
                         Stop-PSFFunction -EnableException:$EnableException -Message $PSitem -Continue
                     } else {
