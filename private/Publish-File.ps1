@@ -14,6 +14,10 @@ function Publish-File {
             $fullname = $fileinfo.FullName
             $restclient = New-Object RestSharp.RestClient
             $restrequest = New-Object RestSharp.RestRequest
+            $restclient.Timeout = 30000000
+            $restclient.ReadWriteTimeout = 30000000
+            $restrequest.Timeout = 30000000
+            $restrequest.ReadWriteTimeout = 30000000
             $restclient.UserAgent = 'tentools'
             $restclient.BaseUrl = $session.uri
             $restrequest.Method = [RestSharp.Method]::POST
