@@ -25,7 +25,7 @@
     PowerShellVersion  = '5.1'
 
     # Modules that must be imported into the global environment prior to importing this module
-    RequiredModules    = @('PSFramework', 'PoshRSJob')
+    RequiredModules    = @('PSFramework', 'PoshRSJob', @{ ModuleName = 'posh-ssh'; ModuleVersion = '2.3.0' } )
 
     # Assemblies that must be loaded prior to importing this module
     RequiredAssemblies = @('bin\RestSharp.dll')
