@@ -6,7 +6,7 @@ function Set-TNCertificate {
     .DESCRIPTION
         Sets certificates for both Nessus and Tenable.sc. Note,this stops and restarts services.
 
-        This command only works on a Windows machine with WinSCP installed and ony works when the destination server is running linux
+        This command only works when the destination server is running linux
 
     .PARAMETER ComputerName
         Target Nessus or Tenable.sc IP Address or FQDN
@@ -67,49 +67,67 @@ function Set-TNCertificate {
         [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
         [Parameter(Mandatory)]
-        [string[]]$ComputerName,
+        [string]$ComputerName,
         [parameter(Mandatory)]
         [Management.Automation.PSCredential]$Credential,
         [parameter(Mandatory)]
+        [ValidateScript( { Test-Path -Path $_ })]
         [string]$CertPath,
         [parameter(Mandatory)]
+        [ValidateScript( { Test-Path -Path $_ })]
         [string]$KeyPath,
+        [ValidateScript( { Test-Path -Path $_ })]
         [string]$CaCertPath,
         [ValidateSet("tenable.sc", "Nessus")]
         [string[]]$Type = @("tenable.sc", "Nessus"),
         [ValidateSet("SSH", "WinRM")]
         [string]$Method = "SSH",
-        [int]$SshPort,
+        [int]$SshPort = 22,
         [string]$SshHostKeyFingerprint,
         [switch]$AcceptAnyThumbprint,
         [securestring]$SecurePrivateKeyPassphrase,
         [string]$SshPrivateKeyPath,
         [switch]$EnableException
     )
+    begin {
+        # Set default parameter values
+        $PSDefaultParameterValues['*-SSH*:ErrorAction'] = "Stop"
+        $PSDefaultParameterValues['*-SCP*:ErrorAction'] = "Stop"
+        $PSDefaultParameterValues['*-SCP*:Credential'] = $Credential
+        $PSDefaultParameterValues['*-SSH*:Credential'] = $Credential
+        $PSDefaultParameterValues['*-SSH*:ComputerName'] = $ComputerName
+        $PSDefaultParameterValues['*-SCP*:ComputerName'] = $ComputerName
+        $PSDefaultParameterValues['*-SCP*:AcceptKey'] = [bool]$AcceptAnyThumbprint
+        $PSDefaultParameterValues['*-SSH*:AcceptKey'] = [bool]$AcceptAnyThumbprint
+
+        # The SCP copy relies on the name being right, so "rename" it in temp
+        $temp = [System.IO.Path]::GetTempPath()
+
+        Copy-Item -Path $CertPath -Destination (Join-Path -Path $temp -ChildPath servercert.pem) -Force
+        Copy-Item -Path $CertPath -Destination (Join-Path -Path $temp -ChildPath SecurityCenter.crt) -Force
+        $CertPath = Join-Path -Path $temp -ChildPath servercert.pem
+        $ScCertPath = Join-Path -Path $temp -ChildPath SecurityCenter.crt
+
+        Copy-Item -Path $KeyPath -Destination (Join-Path -Path $temp -ChildPath serverkey.pem) -Force
+        Copy-Item -Path $KeyPath -Destination (Join-Path -Path $temp -ChildPath SecurityCenter.key) -Force
+        $KeyPath = Join-Path -Path $temp -ChildPath serverkey.pem
+        $ScKeyPath = Join-Path -Path $temp -ChildPath SecurityCenter.key
+
+        if ($CaCertPath) {
+            Copy-Item -Path $CaCertPath -Destination (Join-Path -Path $temp -ChildPath custom_CA.inc) -Force
+            $CaCertPath = Join-Path -Path $temp -ChildPath custom_CA.inc
+        }
+
+        $stepCounter = 0
+    }
     process {
-        if (-not ($winscp = Get-Command WinScp)) {
-            Stop-PSFFunction -EnableException:$EnableException -Message "WinScp must be installed to run this command"
-            return
-        }
-
-        if (-not (Test-Path -Path $CertPath)) {
-            Stop-PSFFunction -EnableException:$EnableException -Message "$CertPath does not exist"
-            return
-        }
-
-        if (-not (Test-Path -Path $KeyPath)) {
-            Stop-PSFFunction -EnableException:$EnableException -Message "$KeyPath does not exist"
-            return
-        }
-
-        if ($PSBoundParameters.CaCertPath -and -not (Test-Path -Path $CaCertPath)) {
-            Stop-PSFFunction -EnableException:$EnableException -Message "$CaCertPath does not exist"
+        if ($Method -ne "SSH") {
+            Stop-PSFFunction -EnableException:$EnableException -Message "Only SSH and Linux are supported at this time"
             return
         }
 
         $CertPath = Resolve-Path -Path $CertPath
         $KeyPath = Resolve-Path -Path $KeyPath
-
 
         if ($PSBoundParameters.CaCertPath) {
             $CaCertPath = Resolve-Path -Path $CaCertPath
@@ -128,179 +146,148 @@ function Set-TNCertificate {
             return
         }
 
-        foreach ($computer in $ComputerName) {
-            $results += @()
-            $stepCounter = 0
-            if ($Method -eq "SSH") {
-                try {
-                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Loading up WinSCP"
+        try {
+            Write-PSFMessage -Level Verbose -Message "Connecting to $ComputerName"
 
-                    $dir = "C:\Program Files (x86)\WinSCP\"
-                    if (-not (Test-Path -Path $dir)) {
-                        $dir = Split-Path -Path $winscp.Source
-                    }
+            $connection = New-SSHSession -Port $SshPort
+            $stream = $connection.Session.CreateShellStream("PS-SSH", 0, 0, 0, 0, 1000)
 
-                    $dll = Join-Path -Path $dir -ChildPath WinSCPnet.dll
-
-                    if (-not (Test-Path -Path $dir)) {
-                        Stop-PSFFunction -EnableException:$EnableException -Message "Can't find WinSCPnet.dll :("
-                        return
-                    } else {
-                        Add-Type -Path $dll
-                    }
-
-                    Write-PSFMessage -Level Verbose -Message "Loaded WinSCP and parsed text files, looks good"
-
-                    # Setup session options
-                    $winscpsessionOptions = New-Object WinSCP.SessionOptions -Property @{
-                        Protocol                             = [WinSCP.Protocol]::Sftp
-                        HostName                             = $computer
-                        UserName                             = $Credential.UserName
-                        SecurePassword                       = $Credential.Password
-                        GiveUpSecurityAndAcceptAnySshHostKey = $AcceptAnyThumbprint
-                    }
-
-                    if ($SshHostKeyFingerprint) {
-                        $winscpsessionOptions.SshHostKeyFingerprint = $SshHostKeyFingerprint
-                    }
-                    if ($SshPort) {
-                        $winscpsessionOptions.PortNumber = $SshPort
-                    }
-                    if ($SecurePrivateKeyPassphrase) {
-                        $winscpsessionOptions.SecurePrivateKeyPassphrase = $SecurePrivateKeyPassphrase
-                    }
-                    if ($SshPrivateKeyPath) {
-                        $winscpsessionOptions.SshPrivateKeyPath = $SshPrivateKeyPath
-                    }
-
-                    Write-PSFMessage -Level Verbose -Message "Setup session options for WinSCP"
-                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $computer"
-                    $winscpsession = New-Object WinSCP.Session
-                    $winscpsession.Open($winscpsessionOptions)
-
-                    $transferOptions = New-Object WinSCP.TransferOptions
-                    $transferOptions.TransferMode = [WinSCP.TransferMode]::Ascii
-                    $transferOptions.OverwriteMode = [WinSCP.OverwriteMode ]::Overwrite
-
-                    if ("Nessus" -in $Type) {
-                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Stopping the nessus service"
-                        Write-PSFMessage -Level Verbose -Message "Stopping nessusd"
-                        $command = "service nessusd stop"
-                        $null = $winscpsession.ExecuteCommand($command).Check()
-                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Adding files to Nessus"
-
-                        Write-PSFMessage -Level Verbose -Message "Backing up files if they exist"
-                        $command = "[ -f /opt/nessus/com/nessus/CA/servercert.pem ] && mv /opt/nessus/com/nessus/CA/servercert.pem /opt/nessus/com/nessus/CA/servercert.bak"
-                        $null = $winscpsession.ExecuteCommand($command).Check()
-                        $command = "[ -f /opt/nessus/var/nessus/CA/serverkey.pem ] && mv /opt/nessus/var/nessus/CA/serverkey.pem /opt/nessus/com/nessus/CA/serverkey.bak"
-                        $null = $winscpsession.ExecuteCommand($command).Check()
-
-                        Write-PSFMessage -Level Verbose -Message "Uploading $CertPath to /opt/nessus/com/nessus/CA/servercert.pem"
-                        $results += $winscpsession.PutFiles($CertPath, "/opt/nessus/com/nessus/CA/servercert.pem", $false, $transferOptions)
-
-                        Write-PSFMessage -Level Verbose -Message "Uploading $KeyPath to /opt/nessus/var/nessus/CA/serverkey.pem"
-                        $results += $winscpsession.PutFiles($KeyPath, "/opt/nessus/var/nessus/CA/serverkey.pem", $false, $transferOptions)
+            $null = Invoke-SSHStreamExpectSecureAction -ShellStream $stream -Command "sudo su -" -ExpectString "[sudo] password for $($Credential.UserName):" -SecureAction $Credential.Password
 
 
-                        $command = "chown tns:tns /opt/nessus/com/nessus/CA/servercert.pem"
-                        $null = $winscpsession.ExecuteCommand($command).Check()
+            if ($SshHostKeyFingerprint) {
+                $connection.SshHostKeyFingerprint = $SshHostKeyFingerprint
+            }
 
-                        $command = "chown tns:tns /opt/nessus/var/nessus/CA/serverkey.pem"
-                        $null = $winscpsession.ExecuteCommand($command).Check()
+            if ($SecurePrivateKeyPassphrase) {
+                $connection.SecurePrivateKeyPassphrase = $SecurePrivateKeyPassphrase
+            }
+            if ($SshPrivateKeyPath) {
+                $connection.SshPrivateKeyPath = $SshPrivateKeyPath
+            }
 
-                        if ($CaCertPath) {
-                            Write-PSFMessage -Level Verbose -Message "Uploading $CaCertPath to /opt/nessus/lib/nessus/plugins/custom_CA.inc"
-                            $results += $winscpsession.PutFiles($CaCertPath, "/opt/nessus/lib/nessus/plugins/custom_CA.inc", $false, $transferOptions)
-                            $command = "chown tns:tns /opt/nessus/lib/nessus/plugins/custom_CA.inc"
-                            $null = $winscpsession.ExecuteCommand($command).Check()
-                        }
-                    }
-                    if ("tenable.sc" -in $Type) {
-                        Write-PSFMessage -Level Verbose -Message "Stopping securitycenter"
-                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Stopping securitycenter"
-                        $command = "service SecurityCenter stop"
-                        $null = $winscpsession.ExecuteCommand($command).Check()
-                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Adding files to tenable.sc"
-                        Write-PSFMessage -Level Verbose -Message "Uploading $CertPath to /opt/sc/support/conf/SecurityCenter.crt"
-                        $results += $winscpsession.PutFiles($CertPath, "/opt/sc/support/conf/SecurityCenter.crt", $false, $transferOptions)
+            Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $ComputerName"
 
-                        Write-PSFMessage -Level Verbose -Message "Uploading $KeyPath to /opt/sc/support/conf/SecurityCenter.key"
-                        $results += $winscpsession.PutFiles($KeyPath, "/opt/sc/support/conf/SecurityCenter.key", $false, $transferOptions)
-                        if ($CaCertPath) {
-                            Write-PSFMessage -Level Verbose -Message "Uploading $CaCertPath to /tmp/custom_CA.inc"
-                            $results += $winscpsession.PutFiles($CaCertPath, "/tmp/custom_CA.inc", $false, $transferOptions)
-                        }
+            if ("Nessus" -in $Type) {
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Stopping the nessus service"
+                Write-PSFMessage -Level Verbose -Message "Stopping nessusd"
+                $command = "service nessusd stop"
+                $null = Invoke-SSHCommand -Command $command -SessionId $connection.SessionId
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Adding files to Nessus"
 
-                        if ($CaCertPath) {
-                            Write-PSFMessage -Level Verbose -Message "Installing CA cert on securitycenter"
-                            Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Installing CA cert on securitycenter"
-                            $command = "/opt/sc/support/bin/php /opt/sc/src/tools/installCA.php /tmp/custom_CA.inc"
-                            try {
-                                $null = $winscpsession.ExecuteCommand($command).Check()
-                            } catch {
-                                # seems like it works but then it gives an error so catch it
-                                # i am unsure if removing .Check() waits for the command to run, so I'll just leave it in and catch
-                            }
-                        }
+                Write-PSFMessage -Level Verbose -Message "Backing up files if they exist"
+                $command = "[ -f /opt/nessus/com/nessus/CA/servercert.pem ] && mv /opt/nessus/com/nessus/CA/servercert.pem /opt/nessus/com/nessus/CA/servercert.bak"
+                $null = Invoke-SSHCommand -Command $command -SessionId $connection.SessionId
+                $command = "[ -f /opt/nessus/var/nessus/CA/serverkey.pem ] && mv /opt/nessus/var/nessus/CA/serverkey.pem /opt/nessus/com/nessus/CA/serverkey.bak"
+                $null = Invoke-SSHCommand -Command $command -SessionId $connection.SessionId
 
-                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting securitycenter"
-                        Write-PSFMessage -Level Verbose -Message "Starting securitycenter"
-                        $command = "service SecurityCenter start"
-                        $null = $winscpsession.ExecuteCommand($command).Check()
-                    }
+                Write-PSFMessage -Level Verbose -Message "Uploading $CertPath to /opt/nessus/com/nessus/CA/servercert.pem"
+                $null = Set-SCPItem -Destination /tmp -Path $CertPath
+                $command = "mv /tmp/servercert.pem /opt/nessus/com/nessus/CA/"
+                $null = Invoke-SSHCommand -Command $command -SessionId $connection.SessionId
 
-                    if ("Nessus" -in $Type) {
-                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting the nessus service"
-                        Write-PSFMessage -Level Verbose -Message "Starting nessusd"
-                        $command = "service nessusd start"
-                        $null = $winscpsession.ExecuteCommand($command).Check()
-                    }
+                Write-PSFMessage -Level Verbose -Message "Uploading $KeyPath to /opt/nessus/var/nessus/CA/serverkey.pem"
+                $null = Set-SCPItem -Destination /tmp -Path $KeyPath
+                $command = "mv /tmp/serverkey.pem /opt/nessus/var/nessus/CA/"
+                $null = Invoke-SSHCommand -Command $command -SessionId $connection.SessionId
 
+                $command = "chown tns:tns /opt/nessus/com/nessus/CA/servercert.pem"
+                $null = Invoke-SSHCommand -Command $command -SessionId $connection.SessionId
 
-                    foreach ($result in $results) {
-                        [pscustomobject]@{
-                            ComputerName = $computer
-                            FileName     = $result.Transfers.FileName
-                            Destination  = $result.Transfers.Destination
-                            ErrorMessage = $result.Transfers.Error
-                            Failures     = $result.Failures
-                            Success      = $result.IsSuccess
-                        }
-                    }
-                } catch {
-                    $record = $_
-                    if ("Nessus" -in $Type -and $winscpsession.Opened) {
-                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting the nessus service"
-                        Write-PSFMessage -Level Verbose -Message "Starting nessusd"
-                        $command = "service nessusd start"
-                        try {
-                            $null = $winscpsession.ExecuteCommand($command).Check()
-                        } catch {
-                            # don't care
-                        }
-                    }
+                $command = "chown tns:tns /opt/nessus/var/nessus/CA/serverkey.pem"
+                $null = Invoke-SSHCommand -Command $command -SessionId $connection.SessionId
 
-                    if ("tenable.sc" -in $Type -and $winscpsession.Opened) {
-                        Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting the securitycenter service"
-                        Write-PSFMessage -Level Verbose -Message "Starting securitycenter"
-                        $command = "service SecurityCenter start"
-                        try {
-                            $null = $winscpsession.ExecuteCommand($command).Check()
-                        } catch {
-                            # don't care
-                        }
-                    }
-
-                    Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername" -ErrorRecord $record -Continue
+                if ($CaCertPath) {
+                    Write-PSFMessage -Level Verbose -Message "Uploading $CaCertPath to /opt/nessus/lib/nessus/plugins/custom_CA.inc"
+                    $null = Set-SCPItem -Destination /tmp -Path $CaCertPath
+                    $command = "mv /tmp/custom_CA.inc /opt/nessus/lib/nessus/plugins/"
+                    $null = Invoke-SSHCommand -Command $command -SessionId $connection.SessionId
+                    $command = "chown tns:tns /opt/nessus/lib/nessus/plugins/custom_CA.inc"
+                    $null = Invoke-SSHCommand -Command $command -SessionId $connection.SessionId
                 }
-            } else {
-                Stop-PSFFunction -EnableException:$EnableException -Message "Only SSH and Linux are supported at this time"
-                return
             }
-            if ($winscpsession.Opened) {
-                $winscpsession.Close()
-                $winscpsession.Dispose()
+            if ("tenable.sc" -in $Type) {
+                Write-PSFMessage -Level Verbose -Message "Stopping securitycenter"
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Stopping securitycenter"
+                $command = "service SecurityCenter stop"
+                $null = Invoke-SSHCommand -Command $command -SessionId $connection.SessionId
+
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Adding files to tenable.sc"
+                Write-PSFMessage -Level Verbose -Message "Uploading $CertPath to /opt/sc/support/conf/SecurityCenter.crt"
+                $null = Set-SCPItem -Destination /tmp -Path $ScCertPath
+                $command = "mv /tmp/SecurityCenter.crt /opt/sc/support/conf/"
+                $null = Invoke-SSHCommand -Command $command -SessionId $connection.SessionId
+
+
+                Write-PSFMessage -Level Verbose -Message "Uploading $KeyPath to /opt/sc/support/conf/SecurityCenter.key"
+                $null = Set-SCPItem -Destination /tmp -Path $ScKeyPath
+                $command = "mv /tmp/SecurityCenter.key /opt/sc/support/conf/"
+                $null = Invoke-SSHCommand -Command $command -SessionId $connection.SessionId
+
+
+                if ($CaCertPath) {
+                    Write-PSFMessage -Level Verbose -Message "Uploading $CaCertPath to /tmp/custom_CA.inc"
+
+                    $command = "[ -f /tmp/custom_CA.inc ] && rm -rf /tmp/custom_CA.inc"
+                    $null = Invoke-SSHCommand -Command $command -SessionId $connection.SessionId
+                    $null = Set-SCPItem -Destination "/tmp/" -Path $CaCertPath
+                }
+
+                if ($CaCertPath) {
+                    Write-PSFMessage -Level Verbose -Message "Installing CA cert on securitycenter"
+                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Installing CA cert on securitycenter"
+                    $command = "/opt/sc/support/bin/php /opt/sc/src/tools/installCA.php /tmp/custom_CA.inc"
+                    try {
+                        $null = Invoke-SSHCommand -Command $command -SessionId $connection.SessionId
+                    } catch {
+                        # seems like it works but then it gives an error so catch it
+                    }
+                }
+
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting securitycenter"
+                Write-PSFMessage -Level Verbose -Message "Starting securitycenter"
+                $command = "service SecurityCenter start"
+                $null = Invoke-SSHCommand -Command $command -SessionId $connection.SessionId
             }
+
+            if ("Nessus" -in $Type) {
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting the nessus service"
+                Write-PSFMessage -Level Verbose -Message "Starting nessusd"
+                $command = "service nessusd start"
+                $null = Invoke-SSHCommand -Command $command -SessionId $connection.SessionId
+            }
+
+            [pscustomobject]@{
+                ComputerName = $ComputerName
+                Success      = $true
+            }
+        } catch {
+            $record = $_
+            if ("Nessus" -in $Type -and $connection) {
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting the nessus service"
+                Write-PSFMessage -Level Verbose -Message "Starting nessusd"
+                $command = "service nessusd start"
+                try {
+                    $null = Invoke-SSHCommand -Command $command -SessionId $connection.SessionId
+                } catch {
+                    # don't care
+                }
+            }
+
+            if ("tenable.sc" -in $Type -and $connection) {
+                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting the securitycenter service"
+                Write-PSFMessage -Level Verbose -Message "Starting securitycenter"
+                $command = "service SecurityCenter start"
+                try {
+                    $null = Invoke-SSHCommand -Command $command -SessionId $connection.SessionId
+                } catch {
+                    # don't care
+                }
+                $null = $connection | Remove-SSHSession -ErrorAction SilentlyContinue
+            }
+
+            Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername" -ErrorRecord $record -Continue
         }
+
     }
 }
