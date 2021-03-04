@@ -50,8 +50,6 @@ function Backup-TNServer {
     [CmdletBinding()]
     param
     (
-        [Parameter(ValueFromPipelineByPropertyName)]
-        [object[]]$SessionObject = (Get-TNSession),
         [object]$SshSession,
         [object]$SftpSession,
         [string]$ComputerName,

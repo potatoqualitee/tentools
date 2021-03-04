@@ -52,7 +52,6 @@ function Restore-TNServer {
     [CmdletBinding()]
     param
     (
-        [object[]]$SessionObject = (Get-TNSession),
         [object]$SshSession,
         [object]$SftpSession,
         [string]$ComputerName,
