@@ -1,10 +1,10 @@
 function Backup-TNServer {
     <#
     .SYNOPSIS
-        Sets certificates for both Nessus and Tenable.sc. Note,this stops and restarts services.
+        Backs up Nessus or tenable.sc and downloads the file to a local path
 
     .DESCRIPTION
-        Sets certificates for both Nessus and Tenable.sc. Note,this stops and restarts services.
+        Backs up Nessus or tenable.sc and downloads the file to a local path
 
         This command only works when the destination server is running linux
 
@@ -14,28 +14,20 @@ function Backup-TNServer {
     .PARAMETER Credential
         The credential to login. This user must have access to restart services and replace keys.
 
-        Basically, the user must have access.
-
     .PARAMETER SshSession
         If you use a private key to connect to your server, use New-SshSession to configure what you need and pass it to SShSession instead of using ComputerName and Credential
 
-    .PARAMETER Port
+    .PARAMETER SftpSession
+        If you use a private key to connect to your server, use New-SftpSession to configure what you need and pass it to SShSession instead of using ComputerName and Credential
+
+    .PARAMETER SshPort
         Port number of the Nessus SSH service. Defaults to 22.
 
-    .PARAMETER CertPath
-        The path to the public certificate
-
-    .PARAMETER KeyPath
-        The path to the private key
-
-    .PARAMETER CaCertPath
-        The path to the CA public key
+    .PARAMETER FilePath
+        The path to the tar.gz file
 
     .PARAMETER Type
-        Nessus or Tenable.sc. Defaults to both.
-
-    .PARAMETER Method
-        Transfer method - SSH or WinRM. Currently, only SSH is implemented.
+        Nessus or Tenable.sc.
 
     .PARAMETER AcceptAnyThumbprint
         Give up security and accept any SSH host key. To be used in exceptional situations only, when security is not required. To set, use Posh-SSH commands.
@@ -46,16 +38,14 @@ function Backup-TNServer {
         Using this switch turns this "nice by default" feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS> Backup-TNServer -ComputerName securitycenter.ad.local -Credential acasadmin -CertPath C:\sc\cert.pem -KeyPath C:\sc\serverkey.key
+        PS> Backup-TNServer -ComputerName securitycenter.ad.local -Credential acasadmin -Path C:\temp
 
-        Logs into securitycenter.ad.local with the acasadmin credential and installs cert.pem and serverkey.key to both nessus and securitycenter.
+        Backs up both Nessus and tenable.sc to C:\temp\ from securitycenter.ad.local and uses the acasadmin account which has sudo access
 
     .EXAMPLE
-        PS> # export cert to pfx without extended properties
-        PS> openssl pkcs12 -in nessus.pfx -nokeys -out cert.pem
-        PS> openssl pkcs12 -in nessus.pfx -nocerts -out serverkey.pem -nodes
-        PS> openssl rsa -in serverkey.pem -out serverkey.key
-        PS> Backup-TNServer -ComputerName securitycenter -Credential acasadmin -CertPath C:\sc\cert.pem -KeyPath C:\sc\serverkey.key -Verbose -AcceptAnyThumbprint
+        PS> Backup-TNServer -ComputerName securitycenter.ad.local -Credential acasadmin -Path C:\temp -Type Nessus
+
+        Backs up both Nessus to C:\temp\ from securitycenter.ad.local and uses the acasadmin account which has sudo access
     #>
     [CmdletBinding()]
     param
