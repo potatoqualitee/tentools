@@ -175,6 +175,7 @@ Some commands are not supported on all platforms. Here is is legend to help.
 | Add-TNPluginRule                     | x      |            |
 | Add-TNPolicyPortRange                | x      | x          |
 | Add-TNScanner                        |        | x          |
+| Backup-TNServer                      | x      | x          |
 | Connect-TNServer                     | x      | x          |
 | ConvertFrom-TNRestResponse           | x      | x          |
 | Copy-TNPolicy                        | x      | x          |
@@ -190,6 +191,7 @@ Some commands are not supported on all platforms. Here is is legend to help.
 | Get-TNAudit                          |        | x          |
 | Get-TNCredential                     |        | x          |
 | Get-TNDashboard                      |        | x          |
+| Get-TNFeedStatus                     |        | x          |
 | Get-TNFolder                         | x      |            |
 | Get-TNGroup                          | x      | x          |
 | Get-TNGroupMember                    | x      | x          |
@@ -206,6 +208,7 @@ Some commands are not supported on all platforms. Here is is legend to help.
 | Get-TNPolicyPortRange                | x      | x          |
 | Get-TNPolicyPortScanner              | x      | x          |
 | Get-TNPolicyTemplate                 | x      | x          |
+| Get-TNQuery                          |        | x          |
 | Get-TNReport                         |        | x          |
 | Get-TNReportAttribute                |        | x          |
 | Get-TNReportResult                   |        | x          |
@@ -244,13 +247,15 @@ Some commands are not supported on all platforms. Here is is legend to help.
 | New-TNOrganization                   |        | x          |
 | New-TNOrganizationUser               |        | x          |
 | New-TNPolicy                         | x      | x          |
+| New-TNQuery                          |        | x          |
 | New-TNReportAttribute                |        | x          |
 | New-TNRepository                     |        | x          |
 | New-TNScan                           | x      | x          |
 | New-TNScanZone                       |        | x          |
 | New-TNUser                           | x      | x          |
+| Register-TNLicense                   |        | x          |
 | Remove-TNAsset                       | x      | x          |
-| Remove-TNAudit                       | x      | x          |
+| Remove-TNAudit                       |        | x          |
 | Remove-TNCredential                  |        | x          |
 | Remove-TNDashboard                   | x      | x          |
 | Remove-TNFolder                      | x      | x          |
@@ -260,6 +265,7 @@ Some commands are not supported on all platforms. Here is is legend to help.
 | Remove-TNOrganizationUser            |        | x          |
 | Remove-TNPluginRule                  | x      | x          |
 | Remove-TNPolicy                      | x      | x          |
+| Remove-TNQuery                       |        | x          |
 | Remove-TNReport                      | x      | x          |
 | Remove-TNReportResult                | x      | x          |
 | Remove-TNRepository                  |        | x          |
@@ -272,6 +278,7 @@ Some commands are not supported on all platforms. Here is is legend to help.
 | Rename-TNFolder                      | x      | x          |
 | Rename-TNGroup                       | x      | x          |
 | Restart-TNService                    | x      | x          |
+| Restore-TNServer                     | x      | x          |
 | Resume-TNScan                        | x      | x          |
 | Save-TNAudit                         | x      | x          |
 | Save-TNPlugin                        | x      | x          |
@@ -290,4 +297,5 @@ Some commands are not supported on all platforms. Here is is legend to help.
 | Stop-TNScan                          | x      | x          |
 | Suspend-TNScan                       | x      | x          |
 | Test-TNAccessibility                 | x      | x          |
+| Update-TNPluginFeed                  |        | x          |
 | Wait-TNServerReady                   | x      | x          |
