@@ -84,7 +84,7 @@ function Backup-TNServer {
 
         if ($PSBoundParameters.Credential -and $Credential.UserName -ne "root") {
             $sudo = "sudo"
-            Write-PSFMessage -Level Warning -Message "root seems required :( I couldn't get $sudo to work but you may have more luck"
+            Write-PSFMessage -Level Warning -Message "root seems required :( I couldn't get sudo to work but you may have more luck"
         }
 
         # Set default parameter values
