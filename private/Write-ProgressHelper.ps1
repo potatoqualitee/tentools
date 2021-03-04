@@ -11,6 +11,10 @@ function Write-ProgressHelper {
 
     $caller = (Get-PSCallStack)[1].Command
 
+    if ($caller -in "Invoke-BackupCommand","Set-TNCertificate","Backup-TNServer","Restore-TNServer") {
+        $TotalSteps = 20
+    }
+
     if (-not $Activity) {
         $Activity = switch ($caller) {
             "Export-DbaInstance" {

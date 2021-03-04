@@ -63,24 +63,12 @@ function Backup-TNServer {
         [switch]$AcceptAnyThumbprint,
         [switch]$EnableException
     )
-    begin {
-        function Invoke-BackupCommand ($Message, $Command) {
-            Write-ProgressHelper -StepNumber ($stepCounter++) -Message $message -TotalSteps 7
-            if ($stream) {
-                Write-PSFMessage -Level Verbose -Message "SUDO MODE: $message : $command"
-                Invoke-SSHStreamShellCommand -ShellStream $stream -Command $Command
-                if ($stream.DataAvailable) {
-                    $null = $stream.Read()
-                }
-            } else {
-                Write-PSFMessage -Level Verbose -Message "REGULAR MODE: $message : $command"
-                $results = Invoke-SSHCommand -Command $command
-                if ($results.ExitStatus -notin 0,1) {
-                    Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                }
-                $results
-            }
+    process {
+        if ((-not $PSBoundParameters.SshSession -and -not $PSBoundParameters.SftpSession) -and -not ($PSBoundParameters.ComputerName -and $PSBoundParameters.Credential)) {
+            Stop-PSFFunction -EnableException:$EnableException -Message "You must specify either SshSession and SftpSession or ComputerName and Credential"
+            return
         }
+
         # Set default parameter values
         $PSDefaultParameterValues['*-SCP*:Timeout'] = 1000000
         $PSDefaultParameterValues['*-SSH*:Timeout'] = 1000000
@@ -92,12 +80,6 @@ function Backup-TNServer {
         $PSDefaultParameterValues['*-SCP*:ComputerName'] = $ComputerName
         $PSDefaultParameterValues['*-SCP*:AcceptKey'] = [bool]$AcceptAnyThumbprint
         $PSDefaultParameterValues['*-SSH*:AcceptKey'] = [bool]$AcceptAnyThumbprint
-    }
-    process {
-        if ((-not $PSBoundParameters.SshSession -and -not $PSBoundParameters.SftpSession) -and -not ($PSBoundParameters.ComputerName -and $PSBoundParameters.Credential)) {
-            Stop-PSFFunction -EnableException:$EnableException -Message "You must specify either SshSession and SftpSession or ComputerName and Credential"
-            return
-        }
 
         try {
             Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $ComputerName"
@@ -127,17 +109,17 @@ function Backup-TNServer {
             $PSDefaultParameterValues['*-SFTP*:Force'] = $true
 
             if ("Nessus" -in $Type) {
-                $null = Invoke-BackupCommand -Message "Stopping the Nessus service" -Command "$sudo service nessusd stop"
-                $null = Invoke-BackupCommand -Message "Backing up Nessus files" -Command "$sudo tar -zcvf /tmp/nessus_backup.tar.gz /opt/nessus"
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Stopping the Nessus service" -Command "$sudo service nessusd stop"
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Backing up Nessus files" -Command "$sudo tar -zcvf /tmp/nessus_backup.tar.gz /opt/nessus"
 
                 if ($stream) {
                     do {
                         Start-Sleep 1
-                        $running = Invoke-BackupCommand -Message "Waiting for backup to finish. This will take a bit." -Command "ps aux | grep nessus_backup | grep -v grep"
+                        $running = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Waiting for backup to finish. This will take a bit." -Command "ps aux | grep nessus_backup | grep -v grep"
                     } until ($null -eq $running)
                 }
 
-                $null = Invoke-BackupCommand -Message "$sudo chown $($Credential.UserName) /tmp/nessus_backup.tar.gz" -Command "$sudo chown $($Credential.UserName) /tmp/nessus_backup.tar.gz"
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "$sudo chown $($Credential.UserName) /tmp/nessus_backup.tar.gz" -Command "$sudo chown $($Credential.UserName) /tmp/nessus_backup.tar.gz"
 
                 try {
                     Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Downloading files from Nessus"
@@ -148,29 +130,29 @@ function Backup-TNServer {
                     return
                 }
 
-                $null = Invoke-BackupCommand -Message "Removing backup files from Nessus" -Command "$sudo rm -rf /tmp/nessus_backup.tar.gz"
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Removing backup files from Nessus" -Command "$sudo rm -rf /tmp/nessus_backup.tar.gz"
                 Get-ChildItem (Join-Path -Path $Path -ChildPath nessus_backup.tar.gz)
             }
 
             if ("tenable.sc" -in $Type) {
-                $null = Invoke-BackupCommand -Message "Stopping securitycenter" -Command "$sudo service SecurityCenter stop"
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Stopping securitycenter" -Command "$sudo service SecurityCenter stop"
 
                 # if not already stopped
                 if ("nessus" -notin $Type) {
-                    $null = Invoke-BackupCommand -Message "Stopping the Nessus service" -Command "$sudo service nessusd stop"
+                    $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Stopping the Nessus service" -Command "$sudo service nessusd stop"
                 }
 
-                $null = Invoke-BackupCommand -Message "Stopping all tns processes" -Command "$sudo killall -u tns"
-                $null = Invoke-BackupCommand -Message "Stopping all httpd processes" -Command "$sudo killall httpd"
-                $null = Invoke-BackupCommand -Message "Zipping up tenable.sc files" -Command "$sudo tar -pzcf /tmp/sc_backup.tar.gz /opt/sc"
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Stopping all tns processes" -Command "$sudo killall -u tns"
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Stopping all httpd processes" -Command "$sudo killall httpd"
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Zipping up tenable.sc files" -Command "$sudo tar -pzcf /tmp/sc_backup.tar.gz /opt/sc"
 
                 if ($stream) {
                     do {
                         Start-Sleep 1
-                        $running = Invoke-BackupCommand -Message "Waiting for backup to finish. This will take a few minutes." -Command "ps aux | grep sc_backup | grep -v grep"
+                        $running = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Waiting for backup to finish. This will take a few minutes." -Command "ps aux | grep sc_backup | grep -v grep"
                     } until ($null -eq $running)
 
-                    $null = Invoke-BackupCommand -Message "$sudo chown $($Credential.UserName) /tmp/sc_backup.tar.gz" -Command "$sudo chown $($Credential.UserName) /tmp/sc_backup.tar.gz"
+                    $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "$sudo chown $($Credential.UserName) /tmp/sc_backup.tar.gz" -Command "$sudo chown $($Credential.UserName) /tmp/sc_backup.tar.gz"
                 }
 
                 try {
@@ -182,21 +164,21 @@ function Backup-TNServer {
                     return
                 }
 
-                $null = Invoke-BackupCommand -Message "Removing backup files from tenable.sc" -Command "$sudo rm -rf /tmp/sc_backup.tar.gz"
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Removing backup files from tenable.sc" -Command "$sudo rm -rf /tmp/sc_backup.tar.gz"
                 Get-ChildItem (Join-Path -Path $Path -ChildPath sc_backup.tar.gz)
             }
 
-            $null = Invoke-BackupCommand -Message "Starting the nessus service" -Command "$sudo service nessusd start"
-            $null = Invoke-BackupCommand -Message "Starting the SecurityCenter service" -Command "$sudo service SecurityCenter start"
+            $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the nessus service" -Command "$sudo service nessusd start"
+            $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the SecurityCenter service" -Command "$sudo service SecurityCenter start"
         } catch {
             $record = $_
             try {
                 if ("Nessus" -in $Type -and $SshSession) {
-                    $null = Invoke-BackupCommand -Message "Starting the nessus service" -Command "$sudo service nessusd start"
+                    $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the nessus service" -Command "$sudo service nessusd start"
                 }
 
                 if ("tenable.sc" -in $Type -and $SshSession) {
-                    $null = Invoke-BackupCommand -Message "Starting the SecurityCenter service" -Command "$sudo service SecurityCenter start"
+                    $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the SecurityCenter service" -Command "$sudo service SecurityCenter start"
                 }
             } catch {
                 # don't care

@@ -166,140 +166,54 @@ function Set-TNCertificate {
             Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $ComputerName"
 
             if ("Nessus" -in $Type) {
-                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Stopping the nessus service"
-                Write-PSFMessage -Level Verbose -Message "Stopping nessusd"
-                $command = "sudo service nessusd stop"
-                $results = Invoke-SSHCommand -Command $command
-                if ($results.ExitStatus -ne 1) {
-                    Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                }
-                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Adding files to Nessus"
-
-                Write-PSFMessage -Level Verbose -Message "Backing up files if they exist"
-                $command = "sudo [ -f /opt/nessus/com/nessus/CA/servercert.pem ] && sudo mv /opt/nessus/com/nessus/CA/servercert.pem /opt/nessus/com/nessus/CA/servercert.bak"
-                $results = Invoke-SSHCommand -Command $command
-                if ($results.ExitStatus -ne 1) {
-                    Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                }
-                $command = "sudo [ -f /opt/nessus/var/nessus/CA/serverkey.pem ] && sudo mv /opt/nessus/var/nessus/CA/serverkey.pem /opt/nessus/com/nessus/CA/serverkey.bak"
-                $results = Invoke-SSHCommand -Command $command
-                if ($results.ExitStatus -ne 1) {
-                    Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                }
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Stopping the nessus service" -Command "$sudo service nessusd stop"
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Backing up cert if it exists" -Command "$sudo [ -f /opt/nessus/com/nessus/CA/servercert.pem ] && $sudo mv /opt/nessus/com/nessus/CA/servercert.pem /opt/nessus/com/nessus/CA/servercert.bak"
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Backing up key if it exists" -Command "$sudo [ -f /opt/nessus/var/nessus/CA/serverkey.pem ] && $sudo mv /opt/nessus/var/nessus/CA/serverkey.pem /opt/nessus/com/nessus/CA/serverkey.bak"
 
                 Write-PSFMessage -Level Verbose -Message "Uploading $CertPath to /opt/nessus/com/nessus/CA/servercert.pem"
                 $null = Set-SFTPItem -Destination /tmp -Path $CertPath
-                $command = "sudo mv /tmp/servercert.pem /opt/nessus/com/nessus/CA/"
-                $results = Invoke-SSHCommand -Command $command
-                if ($results.ExitStatus -ne 1) {
-                    Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                }
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving file from temp to prod" -Command "$sudo mv /tmp/servercert.pem /opt/nessus/com/nessus/CA/"
+
 
                 Write-PSFMessage -Level Verbose -Message "Uploading $KeyPath to /opt/nessus/var/nessus/CA/serverkey.pem"
                 $null = Set-SFTPItem -Destination /tmp -Path $KeyPath
-                $command = "sudo mv /tmp/serverkey.pem /opt/nessus/var/nessus/CA/"
-                $results = Invoke-SSHCommand -Command $command
-                if ($results.ExitStatus -ne 1) {
-                    Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                }
 
-                $command = "chown tns:tns /opt/nessus/com/nessus/CA/servercert.pem"
-                $results = Invoke-SSHCommand -Command $command
-                if ($results.ExitStatus -ne 1) {
-                    Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                }
-
-                $command = "chown tns:tns /opt/nessus/var/nessus/CA/serverkey.pem"
-                $results = Invoke-SSHCommand -Command $command
-                if ($results.ExitStatus -ne 1) {
-                    Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                }
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving file from temp to prod" -Command "$sudo mv /tmp/serverkey.pem /opt/nessus/var/nessus/CA/"
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Changing perms" -Command "$sudo chown tns:tns /opt/nessus/com/nessus/CA/servercert.pem"
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Changing perms" -Command "$sudo chown tns:tns /opt/nessus/var/nessus/CA/serverkey.pem"
 
                 if ($CaCertPath) {
                     Write-PSFMessage -Level Verbose -Message "Uploading $CaCertPath to /opt/nessus/lib/nessus/plugins/custom_CA.inc"
                     $null = Set-SFTPItem -Destination /tmp -Path $CaCertPath
-                    $command = "sudo mv /tmp/custom_CA.inc /opt/nessus/lib/nessus/plugins/"
-                    $results = Invoke-SSHCommand -Command $command
-                    if ($results.ExitStatus -ne 1) {
-                        Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                    }
-                    $command = "chown tns:tns /opt/nessus/lib/nessus/plugins/custom_CA.inc"
-                    $results = Invoke-SSHCommand -Command $command
-                    if ($results.ExitStatus -ne 1) {
-                        Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                    }
+                    $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving custom_CA.inc from temp to prod" -Command "$sudo mv /tmp/custom_CA.inc /opt/nessus/lib/nessus/plugins/"
+                    $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Updating permissions" -Command "$sudo chown tns:tns /opt/nessus/lib/nessus/plugins/custom_CA.inc"
                 }
             }
+
             if ("tenable.sc" -in $Type) {
-                Write-PSFMessage -Level Verbose -Message "Stopping securitycenter"
-                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Stopping securitycenter"
-                $command = "sudo service SecurityCenter stop"
-                $results = Invoke-SSHCommand -Command $command
-                if ($results.ExitStatus -ne 1) {
-                    Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                }
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Stopping securitycenter" -Command "$sudo service SecurityCenter stop"
 
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Adding files to tenable.sc"
                 Write-PSFMessage -Level Verbose -Message "Uploading $CertPath to /opt/sc/support/conf/SecurityCenter.crt"
                 $null = Set-SFTPItem -Destination /tmp -Path $ScCertPath
-                $command = "sudo mv /tmp/SecurityCenter.crt /opt/sc/support/conf/"
-                $results = Invoke-SSHCommand -Command $command
-                if ($results.ExitStatus -ne 1) {
-                    Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                }
-
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving file" -Command "$sudo mv /tmp/SecurityCenter.crt /opt/sc/support/conf/"
 
                 Write-PSFMessage -Level Verbose -Message "Uploading $KeyPath to /opt/sc/support/conf/SecurityCenter.key"
                 $null = Set-SFTPItem -Destination /tmp -Path $ScKeyPath
-                $command = "sudo mv /tmp/SecurityCenter.key /opt/sc/support/conf/"
-                $results = Invoke-SSHCommand -Command $command
-                if ($results.ExitStatus -ne 1) {
-                    Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                }
-
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving file" -Command "$sudo mv /tmp/SecurityCenter.key /opt/sc/support/conf/"
 
                 if ($CaCertPath) {
                     Write-PSFMessage -Level Verbose -Message "Uploading $CaCertPath to /tmp/custom_CA.inc"
-
-                    $command = "sudo [ -f /tmp/custom_CA.inc ] && sudo rm -rf /tmp/custom_CA.inc"
-                    $results = Invoke-SSHCommand -Command $command
-                    if ($results.ExitStatus -ne 1) {
-                        Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                    }
+                    $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving file" -Command "$sudo [ -f /tmp/custom_CA.inc ] && sudo rm -rf /tmp/custom_CA.inc"
                     $null = Set-SFTPItem -Destination "/tmp/" -Path $CaCertPath
+                    $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Installing CA cert on securitycenter" -Command "$sudo /opt/sc/support/bin/php /opt/sc/src/tools/installCA.php /tmp/custom_CA.inc"
                 }
 
-                if ($CaCertPath) {
-                    Write-PSFMessage -Level Verbose -Message "Installing CA cert on securitycenter"
-                    Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Installing CA cert on securitycenter"
-                    $command = "sudo /opt/sc/support/bin/php /opt/sc/src/tools/installCA.php /tmp/custom_CA.inc"
-                    try {
-                        $results = Invoke-SSHCommand -Command $command
-                        if ($results.ExitStatus -ne 1) {
-                            Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                        }
-                    } catch {
-                        # seems like it works but then it gives an error so catch it
-                    }
-                }
-
-                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting securitycenter"
-                Write-PSFMessage -Level Verbose -Message "Starting securitycenter"
-                $command = "sudo service SecurityCenter start"
-                $results = Invoke-SSHCommand -Command $command
-                if ($results.ExitStatus -ne 1) {
-                    Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                }
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting securitycenter" -Command "$sudo service SecurityCenter start"
             }
 
             if ("Nessus" -in $Type) {
-                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting the nessus service"
-                Write-PSFMessage -Level Verbose -Message "Starting nessusd"
-                $command = "sudo service nessusd start"
-                $results = Invoke-SSHCommand -Command $command
-                if ($results.ExitStatus -ne 1) {
-                    Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                }
+                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the nessus service" -Command "$sudo service nessusd start"
             }
             [pscustomobject]@{
                 ComputerName = $ComputerName
@@ -307,34 +221,17 @@ function Set-TNCertificate {
             }
         } catch {
             $record = $_
-            if ("Nessus" -in $Type -and $SshSession) {
-                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting the nessus service"
-                Write-PSFMessage -Level Verbose -Message "Starting nessusd"
-                $command = "sudo service nessusd start"
-                try {
-                    $results = Invoke-SSHCommand -Command $command
-                    if ($results.ExitStatus -ne 1) {
-                        Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                    }
-                } catch {
-                    # don't care
+            try {
+                if ("Nessus" -in $Type -and $SshSession) {
+                    $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the nessus service" -Command "$sudo service nessusd start"
                 }
-            }
 
-            if ("tenable.sc" -in $Type -and $SshSession) {
-                Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Starting the securitycenter service"
-                Write-PSFMessage -Level Verbose -Message "Starting securitycenter"
-                $command = "sudo service SecurityCenter start"
-                try {
-                    $results = Invoke-SSHCommand -Command $command
-                    if ($results.ExitStatus -ne 1) {
-                        Write-PSFMessage -Level Warning -Message "Command '$command' failed with exit status $($results.ExitStatus)"
-                    }
-                } catch {
-                    # don't care
+                if ("tenable.sc" -in $Type -and $SshSession) {
+                    $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the securitycenter service" -Command "$sudo service SecurityCenter start"
                 }
+            } catch {
+                # don't care
             }
-
             Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername" -ErrorRecord $record -Continue
         } finally {
             if (-not $PSBoundParameters.SshSession -and $SshSession.SessionId) {
