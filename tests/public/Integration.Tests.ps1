@@ -214,6 +214,14 @@ Describe "Integration Tests" -Tag "IntegrationTests" {
             $results.Name | Should -Match 'Imported Scan'
         }
     }
+
+    Context "Backup-TNServer" {
+        It "Creates a backup" {
+            $cred = New-Object -TypeName PSCredential -ArgumentList "admin", (ConvertTo-SecureString -String admin123 -AsPlainText -Force)
+            $results = Backup-TNServer -ComputerName localhost -Credential $cred -Path /tmp -Verbose -Type Nessus
+            $results.FullName | Should -Not -BeNullOrEmpty
+        }
+    }
     Context "New-TNFolder" {
         It -Skip "Creates a folder" {
             $results = New-TNFolder -Name 'Integration Test Folder'
