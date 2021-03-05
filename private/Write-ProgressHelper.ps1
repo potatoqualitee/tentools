@@ -11,7 +11,7 @@ function Write-ProgressHelper {
 
     $caller = (Get-PSCallStack)[1].Command
 
-    if ($caller -in "Invoke-BackupCommand","Set-TNCertificate","Backup-TNServer","Restore-TNServer") {
+    if ($caller -in "Invoke-BackupCommand","Set-TNCertificate","Backup-TNServer","Restore-TNServer","Send-TNAcasFile") {
         $TotalSteps = 20
     }
 

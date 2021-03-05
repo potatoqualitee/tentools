@@ -115,7 +115,6 @@ function Restore-TNServer {
             }
 
             $PSDefaultParameterValues['*-SFTP*:SFTPSession'] = $SftpSession
-            $PSDefaultParameterValues['*-SFTP*:Force'] = $true
 
             if ("Nessus" -eq $Type) {
                 try {
