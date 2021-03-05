@@ -45,6 +45,7 @@
         'Copy-TNPolicy',
         'Disable-TNPolicyLocalPortEnumeration',
         'Disable-TNPolicyPortScanner',
+        'Disable-TNTelemetry',
         'Edit-TNPluginRule',
         'Enable-TNPolicyLocalPortEnumeration',
         'Enable-TNPolicyPortScanner',
