@@ -148,6 +148,7 @@
         'Save-TNReportResult',
         'Save-TNScanResult',
         'Save-TNScapFile',
+        'Send-TNAcasFile',
         'Set-TNCertificate',
         'Set-TNPolicyPortRange',
         'Set-TNRepositoryProperty',
