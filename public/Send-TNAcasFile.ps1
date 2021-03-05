@@ -45,9 +45,9 @@ function Send-TNAcasFile {
         Uploads Nessus-8.9.0-es6.x86_64.rpm to /opt/acas/var to securitycenter.ad.local and a credential which has sudo access
 
     .EXAMPLE
-        PS> Get-ChildItem C:\temp\SecurityCenter-5.14.1-es6.x86_64.rpm | Send-TNAcasFile -ComputerName securitycenter.ad.local -Credential $cred
+        PS> Get-ChildItem C:\temp\*.rpm | Send-TNAcasFile -ComputerName securitycenter.ad.local -Credential $cred
 
-        Uploads SecurityCenter-5.14.1-es6.x86_64.rpm to /opt/acas/var to securitycenter.ad.local and a credential which has sudo access
+        Uploads all RPMs in C:\temp to /opt/acas/var to securitycenter.ad.local and a credential which has sudo access
     #>
     [CmdletBinding()]
     param
