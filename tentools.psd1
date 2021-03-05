@@ -7,7 +7,7 @@
     RootModule         = 'tentools.psm1'
 
     # Version number of this module.
-    ModuleVersion      = '0.0.2'
+    ModuleVersion      = '0.0.3'
 
     # ID used to uniquely identify this module
     GUID               = '1e19a8e4-ef98-4f0a-bd7d-f6613c3b7375'
@@ -25,7 +25,7 @@
     PowerShellVersion  = '5.1'
 
     # Modules that must be imported into the global environment prior to importing this module
-    RequiredModules    = @('PSFramework', 'PoshRSJob')
+    RequiredModules    = @('PSFramework', 'PoshRSJob', @{ ModuleName = 'posh-ssh'; ModuleVersion = '2.3.0' } )
 
     # Assemblies that must be loaded prior to importing this module
     RequiredAssemblies = @('bin\RestSharp.dll')
@@ -38,6 +38,8 @@
         'Add-TNGroupUser',
         'Add-TNPluginRule',
         'Add-TNPolicyPortRange',
+        'Add-TNScanner',
+        'Backup-TNServer',
         'Connect-TNServer',
         'ConvertFrom-TNRestResponse',
         'Copy-TNPolicy',
@@ -52,10 +54,16 @@
         'Get-TNAudit',
         'Get-TNCredential',
         'Get-TNDashboard',
+        'Get-TNFeedStatus',
         'Get-TNFolder',
         'Get-TNGroup',
+        'Get-TNGroupMember',
+        'Get-TNLdapServer',
         'Get-TNOrganization',
+        'Get-TNOrganizationUser',
+        'Get-TNPlugin',
         'Get-TNPluginFamily',
+        'Get-TNPluginFamilyDetails',
         'Get-TNPluginRule',
         'Get-TNPolicy',
         'Get-TNPolicyDetail',
@@ -63,8 +71,17 @@
         'Get-TNPolicyPortRange',
         'Get-TNPolicyPortScanner',
         'Get-TNPolicyTemplate',
+        'Get-TNQuery',
+        'Get-TNReport',
+        'Get-TNReportAttribute',
+        'Get-TNReportResult',
+        'Get-TNRepository',
         'Get-TNRole',
         'Get-TNScan',
+        'Get-TNScanDetail',
+        'Get-TNScanHistory',
+        'Get-TNScanHost',
+        'Get-TNScanHostDetail',
         'Get-TNScanner',
         'Get-TNScanResult',
         'Get-TNScanTemplate',
@@ -73,13 +90,8 @@
         'Get-TNServerStatus',
         'Get-TNSession',
         'Get-TNSessionInfo',
+        'Get-TNSystemLog',
         'Get-TNUser',
-        'Get-TNLdapServer',
-        'Get-TNReport',
-        'Get-TNReportResult',
-        'Get-TNReportAttribute',
-        'Get-TNRepository',
-        'Get-TNOrganizationUser',
         'Import-TNAsset',
         'Import-TNAudit',
         'Import-TNCustomPlugin',
@@ -91,76 +103,65 @@
         'Invoke-TNRequest',
         'New-TNAsset',
         'New-TNCredential',
+        'New-TNDisaAsrReport',
         'New-TNFolder',
         'New-TNGroup',
         'New-TNLdapServer',
-        'New-TNPolicy',
-        'New-TNRepository',
         'New-TNOrganization',
         'New-TNOrganizationUser',
+        'New-TNPolicy',
+        'New-TNQuery',
         'New-TNReportAttribute',
-        'New-TNScanZone',
+        'New-TNRepository',
         'New-TNScan',
+        'New-TNScanZone',
         'New-TNUser',
-        'Remove-TNAudit',
+        'Register-TNLicense',
         'Remove-TNAsset',
+        'Remove-TNAudit',
         'Remove-TNCredential',
         'Remove-TNDashboard',
+        'Remove-TNFolder',
         'Remove-TNGroup',
         'Remove-TNGroupUser',
+        'Remove-TNOrganization',
+        'Remove-TNOrganizationUser',
         'Remove-TNPluginRule',
         'Remove-TNPolicy',
+        'Remove-TNQuery',
         'Remove-TNReport',
         'Remove-TNReportResult',
+        'Remove-TNRepository',
         'Remove-TNScan',
+        'Remove-TNScanHistory',
         'Remove-TNScanner',
         'Remove-TNScanZone',
-        'Remove-TNScanHistory',
         'Remove-TNSession',
         'Remove-TNUser',
-        'Remove-TNOrganization'
-        'Remove-TNOrganizationUser',
-        'Remove-TNRepository',
+        'Rename-TNFolder',
         'Rename-TNGroup',
-        'Resume-TNScan',
         'Restart-TNService',
-        'Save-TNPlugin',
-        'Save-TNScapFile',
+        'Restore-TNServer',
+        'Resume-TNScan',
         'Save-TNAudit',
-        'Save-TNScanResult',
+        'Save-TNPlugin',
         'Save-TNReportResult',
+        'Save-TNScanResult',
+        'Save-TNScapFile',
+        'Set-TNCertificate',
         'Set-TNPolicyPortRange',
         'Set-TNRepositoryProperty',
+        'Set-TNScanProperty',
+        'Set-TNScanZoneProperty',
         'Set-TNUserPassword',
         'Start-TNDeploy',
         'Start-TNReport',
-        'Get-TNGroupMember',
-        'Get-TNPlugin',
-        'Get-TNPluginFamilyDetails',
-        'Get-TNScanDetail',
-        'Get-TNScanHistory',
-        'Get-TNScanHost',
-        'Get-TNScanHostDetail',
-        'Set-TNCertificate',
-        'Set-TNScanZoneProperty',
-        'Start-TNDeploy',
         'Start-TNScan',
         'Stop-TNScan',
         'Suspend-TNScan',
         'Test-TNAccessibility',
+        'Update-TNPluginFeed',
         'Wait-TNServerReady'
-        'Add-TNScanner',
-        'Remove-TNFolder',
-        'Rename-TNFolder',
-        'Set-TNScanProperty',
-        'New-TNDisaAsrReport',
-        'Get-TNSystemLog',
-        'Get-TNQuery',
-        'New-TNQuery',
-        'Remove-TNQuery',
-        'Register-TNLicense',
-        'Get-TNFeedStatus',
-        'Update-TNPluginFeed'
     )
 
     # Cmdlets to export from this module
@@ -182,7 +183,7 @@
             Category     = "Security"
 
             # Keyword tags to help users find this module via navigations and search.
-            Tags         = @('nessus', 'tenable', 'acas', 'security', 'disa', 'dod', 'tenable.sc', 'securitycenter')
+            Tags         = @('nessus', 'tenable', 'acas', 'security', 'disa', 'dod', 'tenable.sc', 'securitycenter', 'migration')
 
             # The web address of an icon which can be used in galleries to represent this module
             IconUri      = "https://user-images.githubusercontent.com/8278033/107939993-d9c88f80-6f87-11eb-892b-a7f090b1f619.png"

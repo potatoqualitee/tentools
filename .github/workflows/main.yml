@@ -42,7 +42,7 @@ jobs:
         id: psmodulecache
         uses: potatoqualitee/psmodulecache@v1
         with:
-          modules-to-cache: PSFramework, PoshRSJob
+          modules-to-cache: PSFramework, PoshRSJob, posh-ssh
       - name: 🧰 Setup PowerShell module cache
         id: cacher
         uses: actions/cache@v2
