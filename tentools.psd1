@@ -145,6 +145,7 @@
         'Restore-TNServer',
         'Resume-TNScan',
         'Save-TNAudit',
+        'Save-TNLatestPluginFile',
         'Save-TNPlugin',
         'Save-TNReportResult',
         'Save-TNScanResult',
