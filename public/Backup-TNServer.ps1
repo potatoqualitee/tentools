@@ -106,7 +106,6 @@ function Backup-TNServer {
             }
 
             $PSDefaultParameterValues['*-SFTP*:SFTPSession'] = $SftpSession
-            $PSDefaultParameterValues['*-SFTP*:Force'] = $true
 
             if ("Nessus" -in $Type) {
                 $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Stopping the Nessus service" -Command "$sudo service nessusd stop"

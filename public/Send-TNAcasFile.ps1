@@ -59,7 +59,7 @@ function Send-TNAcasFile {
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [ValidateScript( { Test-Path -Path $_ })]
         [Alias("FullName")]
-        [string]$FilePath,
+        [string[]]$FilePath,
         [int]$SshPort = 22,
         [string]$Destination = "/opt/acas/var",
         [switch]$AcceptAnyThumbprint,
@@ -110,7 +110,6 @@ function Send-TNAcasFile {
             }
 
             $PSDefaultParameterValues['*-SFTP*:SFTPSession'] = $SftpSession
-            $PSDefaultParameterValues['*-SFTP*:Force'] = $true
 
             foreach ($file in $FilePath) {
                 $basename = Split-Path -Path $file -Leaf
@@ -120,9 +119,10 @@ function Send-TNAcasFile {
                     Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Uploading files to Nessus"
                     Write-PSFMessage -Level Verbose -Message "Uploading files to Nessus"
                     $null = Set-SFTPItem -Destination /tmp -Path $file -ErrorAction Stop
+                    $failure = $false
                 } catch {
-                    Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername. Couldn't upload $file" -ErrorRecord $record
-                    return
+                    $failure = $true
+                    Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername. Couldn't upload $file" -ErrorRecord $PSItem -Continue
                 }
 
                 $results = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving from /tmp to $Destination" -Command "$sudo mv $filename $Destination"
@@ -133,7 +133,7 @@ function Send-TNAcasFile {
                     $results = "Success"
                 }
 
-                if ($stream -and $results -eq "Success") {
+                if ($stream -and $results -eq "Success" -and -not $failure) {
                     do {
                         Start-Sleep 1
                         $running = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Waiting for move to complete" -Command "ps aux | grep mv | grep $filename | grep -v grep"

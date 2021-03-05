@@ -153,7 +153,6 @@ function Set-TNCertificate {
             $PSDefaultParameterValues['*-SCP*:SessionId'] = $SshSession.SessionId
             $PSDefaultParameterValues['*-SSH*:SessionId'] = $SshSession.SessionId
             $PSDefaultParameterValues['*-SFTP*:SFTPSession'] = $SftpSession
-            $PSDefaultParameterValues['*-SFTP*:Force'] = $true
 
             If ($PSBoundParameters.Credential -and $Credential.UserName -ne "root") {
                 $stream = $SshSession.Session.CreateShellStream("PS-SSH", 0, 0, 0, 0, 1000)
