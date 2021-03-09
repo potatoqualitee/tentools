@@ -40,7 +40,7 @@ function Disable-TNTelemetry {
                 Parameter     = $body
                 ContentType   = "application/json"
             }
-            Invoke-TnRequest @params | ConvertFrom-TNRestResponse
+            Invoke-TnRequest @params | ConvertFrom-TNRestResponse | Select-Object ServerUri, TelemetryEnabled
         }
     }
 }

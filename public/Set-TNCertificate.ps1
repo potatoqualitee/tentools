@@ -165,54 +165,54 @@ function Set-TNCertificate {
             Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $ComputerName"
 
             if ("Nessus" -in $Type) {
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Stopping the nessus service" -Command "$sudo service nessusd stop"
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Backing up cert if it exists" -Command "$sudo [ -f /opt/nessus/com/nessus/CA/servercert.pem ] && $sudo mv /opt/nessus/com/nessus/CA/servercert.pem /opt/nessus/com/nessus/CA/servercert.bak"
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Backing up key if it exists" -Command "$sudo [ -f /opt/nessus/var/nessus/CA/serverkey.pem ] && $sudo mv /opt/nessus/var/nessus/CA/serverkey.pem /opt/nessus/com/nessus/CA/serverkey.bak"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Stopping the nessus service" -Command "$sudo service nessusd stop"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Backing up cert if it exists" -Command "$sudo [ -f /opt/nessus/com/nessus/CA/servercert.pem ] && $sudo mv /opt/nessus/com/nessus/CA/servercert.pem /opt/nessus/com/nessus/CA/servercert.bak"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Backing up key if it exists" -Command "$sudo [ -f /opt/nessus/var/nessus/CA/serverkey.pem ] && $sudo mv /opt/nessus/var/nessus/CA/serverkey.pem /opt/nessus/com/nessus/CA/serverkey.bak"
 
                 Write-PSFMessage -Level Verbose -Message "Uploading $CertPath to /opt/nessus/com/nessus/CA/servercert.pem"
                 $null = Set-SFTPItem -Destination /tmp -Path $CertPath
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving file from temp to prod" -Command "$sudo mv /tmp/servercert.pem /opt/nessus/com/nessus/CA/"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving file from temp to prod" -Command "$sudo mv /tmp/servercert.pem /opt/nessus/com/nessus/CA/"
 
 
                 Write-PSFMessage -Level Verbose -Message "Uploading $KeyPath to /opt/nessus/var/nessus/CA/serverkey.pem"
                 $null = Set-SFTPItem -Destination /tmp -Path $KeyPath
 
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving file from temp to prod" -Command "$sudo mv /tmp/serverkey.pem /opt/nessus/var/nessus/CA/"
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Changing perms" -Command "$sudo chown tns:tns /opt/nessus/com/nessus/CA/servercert.pem"
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Changing perms" -Command "$sudo chown tns:tns /opt/nessus/var/nessus/CA/serverkey.pem"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving file from temp to prod" -Command "$sudo mv /tmp/serverkey.pem /opt/nessus/var/nessus/CA/"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Changing perms" -Command "$sudo chown tns:tns /opt/nessus/com/nessus/CA/servercert.pem"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Changing perms" -Command "$sudo chown tns:tns /opt/nessus/var/nessus/CA/serverkey.pem"
 
                 if ($CaCertPath) {
                     Write-PSFMessage -Level Verbose -Message "Uploading $CaCertPath to /opt/nessus/lib/nessus/plugins/custom_CA.inc"
                     $null = Set-SFTPItem -Destination /tmp -Path $CaCertPath
-                    $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving custom_CA.inc from temp to prod" -Command "$sudo mv /tmp/custom_CA.inc /opt/nessus/lib/nessus/plugins/"
-                    $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Updating permissions" -Command "$sudo chown tns:tns /opt/nessus/lib/nessus/plugins/custom_CA.inc"
+                    $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving custom_CA.inc from temp to prod" -Command "$sudo mv /tmp/custom_CA.inc /opt/nessus/lib/nessus/plugins/"
+                    $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Updating permissions" -Command "$sudo chown tns:tns /opt/nessus/lib/nessus/plugins/custom_CA.inc"
                 }
             }
 
             if ("tenable.sc" -in $Type) {
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Stopping securitycenter" -Command "$sudo service SecurityCenter stop"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Stopping securitycenter" -Command "$sudo service SecurityCenter stop"
 
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Adding files to tenable.sc"
                 Write-PSFMessage -Level Verbose -Message "Uploading $CertPath to /opt/sc/support/conf/SecurityCenter.crt"
                 $null = Set-SFTPItem -Destination /tmp -Path $ScCertPath
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving file" -Command "$sudo mv /tmp/SecurityCenter.crt /opt/sc/support/conf/"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving file" -Command "$sudo mv /tmp/SecurityCenter.crt /opt/sc/support/conf/"
 
                 Write-PSFMessage -Level Verbose -Message "Uploading $KeyPath to /opt/sc/support/conf/SecurityCenter.key"
                 $null = Set-SFTPItem -Destination /tmp -Path $ScKeyPath
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving file" -Command "$sudo mv /tmp/SecurityCenter.key /opt/sc/support/conf/"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving file" -Command "$sudo mv /tmp/SecurityCenter.key /opt/sc/support/conf/"
 
                 if ($CaCertPath) {
                     Write-PSFMessage -Level Verbose -Message "Uploading $CaCertPath to /tmp/custom_CA.inc"
-                    $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving file" -Command "$sudo [ -f /tmp/custom_CA.inc ] && sudo rm -rf /tmp/custom_CA.inc"
+                    $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving file" -Command "$sudo [ -f /tmp/custom_CA.inc ] && sudo rm -rf /tmp/custom_CA.inc"
                     $null = Set-SFTPItem -Destination "/tmp/" -Path $CaCertPath
-                    $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Installing CA cert on securitycenter" -Command "$sudo /opt/sc/support/bin/php /opt/sc/src/tools/installCA.php /tmp/custom_CA.inc"
+                    $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Installing CA cert on securitycenter" -Command "$sudo /opt/sc/support/bin/php /opt/sc/src/tools/installCA.php /tmp/custom_CA.inc"
                 }
 
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting securitycenter" -Command "$sudo service SecurityCenter start"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting securitycenter" -Command "$sudo service SecurityCenter start"
             }
 
             if ("Nessus" -in $Type) {
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the nessus service" -Command "$sudo service nessusd start"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the nessus service" -Command "$sudo service nessusd start"
             }
             [pscustomobject]@{
                 ComputerName = $ComputerName
@@ -222,11 +222,11 @@ function Set-TNCertificate {
             $record = $_
             try {
                 if ("Nessus" -in $Type -and $SshSession) {
-                    $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the nessus service" -Command "$sudo service nessusd start"
+                    $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the nessus service" -Command "$sudo service nessusd start"
                 }
 
                 if ("tenable.sc" -in $Type -and $SshSession) {
-                    $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the securitycenter service" -Command "$sudo service SecurityCenter start"
+                    $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the securitycenter service" -Command "$sudo service SecurityCenter start"
                 }
             } catch {
                 # don't care

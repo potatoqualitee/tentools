@@ -125,7 +125,7 @@ function Send-TNAcasFile {
                     Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername. Couldn't upload $file" -ErrorRecord $PSItem -Continue
                 }
 
-                $results = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving from /tmp to $Destination" -Command "$sudo mv $filename $Destination"
+                $results = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving from /tmp to $Destination" -Command "$sudo mv $filename $Destination"
 
                 if ($results -match "mv") {
                     Write-PSFMessage -Level Verbose -Message $results
@@ -136,7 +136,7 @@ function Send-TNAcasFile {
                 if ($stream -and $results -eq "Success" -and -not $failure) {
                     do {
                         Start-Sleep 1
-                        $running = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Waiting for move to complete" -Command "ps aux | grep mv | grep $filename | grep -v grep"
+                        $running = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Waiting for move to complete" -Command "ps aux | grep mv | grep $filename | grep -v grep"
                     } until ($null -eq $running)
                 }
 

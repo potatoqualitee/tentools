@@ -126,10 +126,10 @@ function Restore-TNServer {
                     return
                 }
 
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Stopping the nessus service" -Command "$sudo service nessusd stop"
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Unzipping Nessus files. This will take a moment." -Command "$sudo tar -xvzf $filename --directory /"
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Removing backup files from nessus" -Command "$sudo rm -rf $filename"
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the nessus service" -Command "$sudo service nessusd start"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Stopping the nessus service" -Command "$sudo service nessusd stop"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Unzipping Nessus files. This will take a moment." -Command "$sudo tar -xvzf $filename --directory /"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Removing backup files from nessus" -Command "$sudo rm -rf $filename"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the nessus service" -Command "$sudo service nessusd start"
             }
 
             if ("tenable.sc" -eq $Type) {
@@ -142,18 +142,18 @@ function Restore-TNServer {
                     return
                 }
 
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Stopping securitycenter" -Command "$sudo service SecurityCenter stop"
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Unzipping backup. This will take a moment." -Command "$sudo tar -xvzf $filename --directory /"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Stopping securitycenter" -Command "$sudo service SecurityCenter stop"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Unzipping backup. This will take a moment." -Command "$sudo tar -xvzf $filename --directory /"
 
                 if ($stream) {
                     do {
                         Start-Sleep 1
-                        $running = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Waiting for backup to finish. This will take a few minutes." -Command "ps aux | grep tar | grep $filename | grep -v grep"
+                        $running = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Waiting for backup to finish. This will take a few minutes." -Command "ps aux | grep tar | grep $filename | grep -v grep"
                     } until ($null -eq $running)
                 }
 
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the SecurityCenter service" -Command "$sudo service SecurityCenter start"
-                $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Removing backup files from tenable.sc" -Command "$sudo rm -rf /tmp/sc_backup.tar.gz"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the SecurityCenter service" -Command "$sudo service SecurityCenter start"
+                $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Removing backup files from tenable.sc" -Command "$sudo rm -rf /tmp/sc_backup.tar.gz"
             }
 
             [PSCustomObject]@{
@@ -166,11 +166,11 @@ function Restore-TNServer {
             $record = $_
             try {
                 if ("Nessus" -eq $Type -and $SshSession) {
-                    $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the nessus service" -Command "$sudo service nessusd start"
+                    $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the nessus service" -Command "$sudo service nessusd start"
                 }
 
                 if ("tenable.sc" -eq $Type -and $SshSession) {
-                    $null = Invoke-BackupCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the SecurityCenter service" -Command "$sudo service SecurityCenter start"
+                    $null = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Starting the SecurityCenter service" -Command "$sudo service SecurityCenter start"
                 }
             } catch {
                 # don't care

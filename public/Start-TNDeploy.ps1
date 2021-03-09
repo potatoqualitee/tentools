@@ -7,25 +7,23 @@
         Deploys tenable.sc
 
     .PARAMETER ComputerName
-        The network name or IP address of the Nessus or tenable.sc server
+        The network name or IP address of the tenable.sc server
 
-    .PARAMETER Port
-        The port of the Nessus or tenable.sc server. Defaults to 8834 which is the default port for Nessus.
+    .PARAMETER NessusPort
+        The port of the Nessus server. Defaults to 8834 which is the default port for Nessus.
 
-    .PARAMETER Credential
-        The credential object (from Get-Credential) used to log into the target server. Specifies a user account that has permission to send the request.
+    .PARAMETER ScPort
+        The port of the tenable.sc server. Defaults to 443 which is the default port for tenable.sc.
+
+    .PARAMETER AdministratorCredential
+        The credential object (from Get-Credential) used to log into the target server. Specifies a user account that has permission to send the request
 
     .PARAMETER LicensePath
-        Description for LicensePath
 
     .PARAMETER AcceptSelfSignedCert
         Accept self-signed certs
 
-    .PARAMETER Type
-        The type of deploy
-
     .PARAMETER SecurityManagerCredential
-        Description for SecurityManagerCredential
 
     .PARAMETER Scanner
         The hostname of the scanner or scanners to add
@@ -33,31 +31,41 @@
     .PARAMETER ScannerCredential
         The username and password used to add the scanners
 
+    .PARAMETER InitializeScanner
+
+    .PARAMETER Organization
+
+    .PARAMETER Repository
+
+    .PARAMETER ScanZone
+        The name of the ScanZone. Defaults to "All Computers"
+
+    .PARAMETER ScanCredentialHash
+
+    .PARAMETER IpRange
+
+    .PARAMETER PolicyFilePath
+
+    .PARAMETER ScanFilePath
+
+    .PARAMETER AuditFilePath
+
+    .PARAMETER DashboardFilePath
+
+    .PARAMETER AssetFilePath
+
+    .PARAMETER ReportFilePath
+
+    .PARAMETER FeedFilePath
+
+    .PARAMETER PluginFilePath
+
+    .PARAMETER EnableTelemetry
+
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
         This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
-
-    .EXAMPLE
-        PS C:\> $splat = @{
-            ComputerName = "securitycenter"
-            AdministratorCredential = (Get-Credential admin)
-            LicensePath = ""
-            AcceptSelfSignedCert = ""
-            SecurityManagerCredential = ""
-            Organization = ""
-            Repository = ""
-            ScanZone = "All Computers"
-            ScanCredentialHash = ""
-            IpRange = ""
-            PolicyFilePath = ""
-            ScanFilePath = ""
-            EnableException = ""
-        }
-
-        PS C:\> Start-TNDeploy
-
-        Starts a list of deploys
 
     .EXAMPLE
         $admincred = Get-Credential admin
@@ -137,6 +145,8 @@
         [Parameter(ValueFromPipelineByPropertyName)]
         [ValidateScript( { Test-Path -Path $_ })]
         [string]$PluginFilePath,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [switch]$EnableTelemetry,
         [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$EnableException
     )
@@ -227,6 +237,11 @@
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Connect failed for $computer" -Continue
             }
 
+            # Disable telemetry
+            if (-not $EnableTelemetry) {
+                $results = Disable-TNTelemetry
+                $output["TelemetryEnabled"] = $results.TelemetryEnabled -eq $true
+            }
             # Scanner Credentials
             if ($ScanCredentialHash) {
                 Write-PSFMessage -Level Verbose -Message "Creating credentials on $computer"
@@ -320,8 +335,6 @@
             } catch {
                 Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Creation of scan zone failed for $computer" -Continue
             }
-
-
 
             # Update Feed
             if ($FeedFilePath) {

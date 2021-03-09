@@ -1,5 +1,5 @@
 
-function Invoke-BackupCommand ($Stream, $Message, $Command, $StepCounter) {
+function Invoke-SecureShellCommand ($Stream, $Message, $Command, $StepCounter) {
     Write-ProgressHelper -StepNumber $StepCounter -Message $message
     if ($Stream) {
         Write-PSFMessage -Level Verbose -Message "SUDO MODE: $message : $command"
