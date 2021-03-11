@@ -454,11 +454,8 @@
                 try {
                     Write-PSFMessage -Level Verbose -Message "Creating scans on $computer"
                     Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Creating scans on $computer"
-                    $scans = New-TNScan -Auto -TargetIpRange $IpRange
+                    $scans = New-TNScan -Auto -TargetIpRange $IpRange -ScanCredentialHash $ScanCredentialHash
                     $output["Scans"] = $scans.Name
-                    if ($PSBoundParameters.ScanCredentialHash) {
-                        $null = Set-TNScanProperty -Name $scans.Name -ScanCredential $ScanCredentialHash.Name
-                    }
                 } catch {
                     Stop-PSFFunction -ErrorRecord $_ -EnableException:$EnableException -Message "Scan creation failed for $computer" -Continue
                 }
