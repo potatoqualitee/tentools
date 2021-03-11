@@ -21,6 +21,9 @@
     .PARAMETER Target
         Description for Target
 
+    .PARAMETER ScanCredentialHash
+        Optional ScanCredentialHash to use with -Auto
+
     .PARAMETER Disabled
         Description for Disabled
 
@@ -70,6 +73,8 @@
         [Parameter(ValueFromPipelineByPropertyName)]
         [string[]]$TargetAsset,
         [Parameter(ValueFromPipelineByPropertyName)]
+        [psobject[]]$ScanCredentialHash,
+        [Parameter(ValueFromPipelineByPropertyName)]
         [switch]$Disabled,
         [Parameter(ValueFromPipelineByPropertyName)]
         [string]$Description,
@@ -113,6 +118,12 @@
                         $repos = Get-TNRepository
                         $policies = Get-TNPolicy
                         foreach ($policy in $policies) {
+                            if ($ScanCredentialHash) {
+                                $allcreds = @()
+                                foreach ($cred in $ScanCredentialHash) {
+                                    $allcreds += @{ id = $cred.id }
+                                }
+                            }
                             if ($Repository) {
                                 $repositoryhash = @{ id = ($repos | Where-Object Name -eq $Repository | Select-Object -First 1).Id }
                             } else {
@@ -136,6 +147,7 @@
                                 ipList      = $iptargets
                                 assets      = $array
                                 repository  = $repositoryhash
+                                credentials = @($allcreds)
                             }
                             $params = @{
                                 SessionObject = $session
@@ -144,6 +156,7 @@
                                 ContentType   = "application/json"
                                 Parameter     = $body
                             }
+
                             Invoke-TNRequest @params | ConvertFrom-TNRestResponse
                         }
                     }
