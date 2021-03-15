@@ -51,6 +51,7 @@
         'Enable-TNPolicyPortScanner',
         'Export-TNPolicy',
         'Export-TNScan',
+        'Get-TNAnalysis',
         'Get-TNAsset',
         'Get-TNAudit',
         'Get-TNCredential',
