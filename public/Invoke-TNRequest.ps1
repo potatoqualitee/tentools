@@ -50,7 +50,8 @@
     (
         [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
-        $Parameter,
+        [Alias("Parameter")]
+        [string]$Body,
         [Parameter(Mandatory)]
         [String]$Path,
         [Parameter(Mandatory)]
@@ -127,12 +128,12 @@
                 WebSession    = $session.WebSession
             }
 
-            if ($Parameter) {
-                if ($Parameter -is [hashtable]) {
+            if ($Body) {
+                if ($Body -is [hashtable]) {
                     $ContentType = "application/json"
-                    $Parameter = $Parameter | ConvertTo-Json
+                    $Body = $Body | ConvertTo-Json
                 }
-                $RestMethodParams.Add('Body', $Parameter)
+                $RestMethodParams.Add('Body', $Body)
             }
 
             if ($OutFile) {
