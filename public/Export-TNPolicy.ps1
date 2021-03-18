@@ -39,6 +39,7 @@
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             Write-PSFMessage -Level Verbose -Message "Exporting policy with id $PolicyId"
             $policy = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/policies/$PolicyId/export" -Method GET
             if ($PSBoundParameters.OutFile) {

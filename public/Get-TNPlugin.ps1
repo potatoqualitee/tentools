@@ -34,6 +34,7 @@
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             if ($PluginId) {
                 foreach ($plugin in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/plugins/plugin/$PluginId" -Method GET)) {
                     $attributes = [ordered]@{ }

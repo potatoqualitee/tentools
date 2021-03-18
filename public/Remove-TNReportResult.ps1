@@ -35,6 +35,7 @@ function Remove-TNReportResult {
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             foreach ($id in $ReportResultId) {
                 Write-PSFMessage -Level Verbose -Message "Deleting report result with id $id"
                 Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/report/$id" -Method Delete | ConvertFrom-TNRestResponse

@@ -52,6 +52,7 @@
     }
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             if ($FolderId) {
                 $scans = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/scans' -Method GET -Parameter $params
             } else {

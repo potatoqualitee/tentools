@@ -59,6 +59,7 @@ function Update-TNPluginFeed {
     }
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             if (-not $session.sc) {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }

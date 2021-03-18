@@ -46,6 +46,7 @@
     }
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             foreach ($Host in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId" -Method GET -Parameter $params).hosts) {
                 [pscustomobject]@{
                     HostName  = $Host.hostname

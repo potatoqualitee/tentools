@@ -34,6 +34,7 @@
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             foreach ($detail in (Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/plugins/families/$($FamilyId)" -Method GET)) {
                 [pscustomobject]@{
                     Name     = $detail.name

@@ -66,6 +66,7 @@
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             # to manage differences between nessus and tenable.sc
             if ($session.sc) {
                 $replace = @{

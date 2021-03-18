@@ -122,6 +122,7 @@ function Get-TNAnalysis {
     }
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             $params = @{
                 SessionObject = $session
                 Path          = "/analysis"

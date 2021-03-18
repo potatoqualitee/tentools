@@ -44,6 +44,7 @@ function Get-TNReport {
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             if (-not $session.sc) {
                 Stop-PSFFunction -Message "Nessus not supported" -Continue
             }

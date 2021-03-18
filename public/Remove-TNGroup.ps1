@@ -36,6 +36,7 @@
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             if ($session.MultiUser) {
                 $groupparams = @{
                     SessionObject = $session

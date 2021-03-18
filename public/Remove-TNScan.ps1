@@ -36,6 +36,7 @@
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             Write-PSFMessage -Level Verbose -Message "Removing scan with Id $ScanId"
             Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/scans/$ScanId" -Method Delete -Parameter $params | ConvertFrom-TNRestResponse
             Write-PSFMessage -Level Verbose -Message 'Scan Removed'

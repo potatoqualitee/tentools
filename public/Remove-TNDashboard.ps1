@@ -35,6 +35,7 @@ function Remove-TNDashboard {
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             foreach ($id in $DashboardId) {
                 Write-PSFMessage -Level Verbose -Message "Deleting dashboard with id $id"
                 Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/dashboard/$id" -Method Delete | ConvertFrom-TNRestResponse

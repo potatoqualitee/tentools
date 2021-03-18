@@ -34,6 +34,7 @@
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             $CopiedPolicy = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/policies/$PolicyId/copy" -Method 'Post'
             [PSCustomObject]@{
                 Name     = $CopiedPolicy.Name

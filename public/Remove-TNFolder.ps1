@@ -36,6 +36,7 @@
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/folders/$($FolderId)" -Method Delete | ConvertFrom-TNRestResponse
         }
     }

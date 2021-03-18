@@ -57,6 +57,7 @@
         }
 
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             if ($PSBoundParameters.Auto) {
                 $audits = Get-TNAudit
                 $template = Get-TNPolicyTemplate -Name 'SCAP and OVAL Auditing'

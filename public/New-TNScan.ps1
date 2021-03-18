@@ -101,6 +101,7 @@
             return
         }
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
 
             if ($session.sc) {
                 if ($TargetIpRange) {
