@@ -41,7 +41,7 @@ function Get-TNOS {
             # $recentscan ?
             foreach ($os in (Get-TNAnalysis -Tool listos)) {
                 foreach ($name in $os.Name) {
-                    # too generic
+                    # plain ol Windows is too generic and duplicates
                     if ($name -eq "Windows") { continue }
                     $filters = @(
                         @{
@@ -59,7 +59,7 @@ function Get-TNOS {
                     $results = Get-TNAnalysis -Tool sumip -SourceType cumulative -Filter $filters
                     foreach ($result in $results) {
                         if ($result.OsCPE -match "linux_kernel") {
-                            Write-PSFMessage -Level Warning -Message "$($result.Ip) is running too generic of a Linux distro. Moving on."
+                            Write-PSFMessage -Level Warning -Message "The Linux distribution detected on $($result.Ip) is too generic. Moving on."
                             continue
                         }
                         [pscustomobject]@{
