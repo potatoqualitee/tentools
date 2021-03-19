@@ -42,9 +42,27 @@ function Get-TNAnalysis {
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS C:\> New-TNReportAttribute
+        PS C:\> Get-TNAnalysis -Tool listos
 
-        Adds a report attribute for DISA ARF
+        List Operating Systems
+
+    .EXAMPLE
+        PS C:\> $filters = @(
+                        @{
+                            filterName = 'pluginID'
+                            operator   = '='
+                            value      = '11936, 1'
+                        }
+                        @{
+                            filterName = 'pluginText'
+                            operator   = '='
+                            value      = 'Linux'
+                        }
+                    )
+
+        PS C:\> Get-TNAnalysis -Tool sumip -SourceType cumulative -Filter $filters
+
+        Get details of Linux computers and thier IP address
 
 #>
     [CmdletBinding()]
@@ -123,6 +141,10 @@ function Get-TNAnalysis {
     process {
         foreach ($session in $SessionObject) {
             $PSDefaultParameterValues["*:SessionObject"] = $session
+            if (-not $session.sc) {
+                Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
+            }
+
             $params = @{
                 SessionObject = $session
                 Path          = "/analysis"
