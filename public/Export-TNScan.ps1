@@ -109,6 +109,7 @@
     }
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             if ($HistoryId) {
                 $urlpath = "/scans/$ScanId/export?history_id=$HistoryId"
             } else {

@@ -49,18 +49,34 @@ function Set-TNScanProperty {
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             if (-not $session.sc) {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
+            $creds = $policies = $assets = $repo = $null
+            $scans = Get-TNScan | Where-Object Name -in $Name
 
-            $Scans = Get-TNScan | Where-Object Name -in $Name
+            if ($PSBoundParameters.ScanCredential) {
+                $creds = Get-TNCredential -Name $ScanCredential
+            }
 
-            foreach ($scan in $Scans) {
+            if ($PSBoundParameters.Policy) {
+                $policies = Get-TNPolicy -Name $Policy
+            }
+
+            if ($PSBoundParameters.Asset) {
+                $assets = Get-TNAsset -Name $Asset
+            }
+
+            if ($PSBoundParameters.Repository) {
+                $repo = Get-TNRepository -Name $Repository
+            }
+
+            foreach ($scan in $scans) {
                 $scanid = $scan.id
                 try {
                     # Assets
                     if ($PSBoundParameters.Asset) {
-                        $assets = Get-TNAsset -Name $Asset
                         if ($assets) {
                             $all = @()
                             foreach ($item in $assets) {
@@ -85,7 +101,6 @@ function Set-TNScanProperty {
 
                     # Creds
                     if ($PSBoundParameters.ScanCredential) {
-                        $creds = Get-TNCredential -Name $ScanCredential
                         if ($creds) {
                             $allcreds = @()
                             foreach ($cred in $creds) {
@@ -112,18 +127,12 @@ function Set-TNScanProperty {
                     if ($PSBoundParameters.Policy -or $PSBoundParameters.Repository -or $PSBoundParameters.IPRange -or $PSBoundParameters.Plugin) {
                         $body = @{}
 
-                        if ($PSBoundParameters.Policy) {
-                            $policies = Get-TNPolicy -Name $Policy
-                            if ($policy) {
-                                $body['policy'] = @{ id = $policies.Id }
-                            }
+                        if ($policy) {
+                            $body['policy'] = @{ id = $policies.Id }
                         }
 
-                        if ($PSBoundParameters.Repository) {
-                            $repo = Get-TNRepository -Name $Repository
-                            if ($repo) {
-                                $body['repository'] = @{ id = $repo.Id }
-                            }
+                        if ($repo) {
+                            $body['repository'] = @{ id = $repo.Id }
                         }
 
                         if ($PSBoundParameters.IPRange) {
@@ -144,8 +153,9 @@ function Set-TNScanProperty {
                 } catch {
                     Stop-PSFFunction -EnableException:$EnableException -Message "Failure" -ErrorRecord $_ -Continue
                 }
+
+                Get-TNScan | Where-Object Name -eq $scan.Name
             }
-            Get-TNScan | Where-Object Name -eq $Name
         }
     }
 }

@@ -34,6 +34,7 @@
     }
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/server/restart" -Method 'Post' -Parameter $paramJson -ContentType "application/json"
         }
     }

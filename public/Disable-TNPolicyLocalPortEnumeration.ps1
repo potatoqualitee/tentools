@@ -75,6 +75,7 @@
     }
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             foreach ($policy in $PolicyId) {
                 $params = @{
                     SessionObject   = $session

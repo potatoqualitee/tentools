@@ -36,6 +36,7 @@
 
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             if ($session.sc) {
                 Stop-PSFFunction -Message "tenable.sc not supported" -Continue
             }

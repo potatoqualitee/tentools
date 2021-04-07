@@ -39,6 +39,7 @@
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             if ($session.sc) {
                 $templates = Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path '/policyTemplate?fields=name,description,editor,profiles,credentials' -Method GET | ConvertFrom-TNRestResponse
             } else {

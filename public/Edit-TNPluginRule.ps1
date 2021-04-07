@@ -67,6 +67,7 @@
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
 
             $dtExpiration = $null
 

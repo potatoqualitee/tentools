@@ -35,6 +35,7 @@ function Remove-TNAsset {
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             foreach ($id in $AssetId) {
                 Write-PSFMessage -Level Verbose -Message "Deleting asset with id $id"
                 Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/asset/$id" -Method Delete | ConvertFrom-TNRestResponse

@@ -29,6 +29,7 @@
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             if ($session.sc) {
                 # only show if it's called from the command line
                 if ((Get-PSCallStack).Count -eq 2) {

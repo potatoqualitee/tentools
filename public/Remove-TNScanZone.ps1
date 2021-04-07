@@ -34,6 +34,7 @@ function Remove-TNScanZone {
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             foreach ($scanzonename in $Name) {
                 $id = (Get-TNScanZone | Where-Object Name -eq $scanzonename).Id
                 if ($id) {

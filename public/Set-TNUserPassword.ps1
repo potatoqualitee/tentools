@@ -39,6 +39,7 @@
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             foreach ($uid in $UserId) {
                 Write-PSFMessage -Level Verbose -Message "Updating user with Id $uid"
                 $params = @{'password' = $([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))) }

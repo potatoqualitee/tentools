@@ -29,6 +29,7 @@
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             Write-PSFMessage -Level Verbose -Message "Getting server session $id"
 
             $RestMethodParams = @{

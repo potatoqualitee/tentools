@@ -35,6 +35,7 @@
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             foreach ($id in $PolicyId) {
                 Write-PSFMessage -Level Verbose -Message "Deleting policy with id $id"
                 Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path "/policies/$id" -Method Delete | ConvertFrom-TNRestResponse

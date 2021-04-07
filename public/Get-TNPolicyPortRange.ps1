@@ -36,6 +36,7 @@
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             foreach ($policy in $PolicyId) {
                 try {
                     $policydetail = Get-TNPolicyDetail -PolicyId $policy

@@ -42,9 +42,27 @@ function Get-TNAnalysis {
         Using this switch turns this 'nice by default' feature off and enables you to catch exceptions with your own try/catch.
 
     .EXAMPLE
-        PS C:\> New-TNReportAttribute
+        PS C:\> Get-TNAnalysis -Tool listos
 
-        Adds a report attribute for DISA ARF
+        List Operating Systems
+
+    .EXAMPLE
+        PS C:\> $filters = @(
+                        @{
+                            filterName = 'pluginID'
+                            operator   = '='
+                            value      = '11936, 1'
+                        }
+                        @{
+                            filterName = 'pluginText'
+                            operator   = '='
+                            value      = 'Linux'
+                        }
+                    )
+
+        PS C:\> Get-TNAnalysis -Tool sumip -SourceType cumulative -Filter $filters
+
+        Get details of Linux computers and thier IP address
 
 #>
     [CmdletBinding()]
@@ -52,7 +70,7 @@ function Get-TNAnalysis {
         [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
         [int]$QueryId,
-        [string[]] $Filter = @(),
+        [psobject[]]$Filter,
         [ValidateSet("sumip", "sumclassa", "sumclassb", "sumport", "sumprotocol", "sumid", "sumseverity", "sumfamily", "listvuln", "vulndetails", "listwebclients", "listwebservers", "listos", "iplist", "listmailclients", "listservices", "listsshservers", "sumasset", "vulnipsummary", "vulnipetail", "sumcve", "summsbulletin", "sumiavm", "listofsoftware", "sumdnsname", "cveipdetail", "iavmipdetail", "sumcce", "cceipdetail", "sumremediation", "sumuserresponsibility", "popcount", "trend")]
         [string]$Tool = "listvuln",
         [ValidateSet("cumulative", "individual", "patched")]
@@ -62,50 +80,76 @@ function Get-TNAnalysis {
         [int]$EndOffset = 100,
         [string]$SortBy,
         [ValidateSet("asc", "desc")]
-        [string]$SortDirection = "asc"
+        [string]$SortDirection = "desc"
     )
     begin {
-        $body = @{}
-        <#
-        totalRecords             : 69
-        returnedRecords          : 69
-#>
+        $body = @{
+            sourceType = $SourceType
+            type       = "vuln"
+        }
+
+        $query = @{
+            startOffset = $StartOffSet
+            endOffset   = $EndOffset
+        }
+
+        if ($SourceType -eq "cumulative") {
+            if (-not $SortBy) {
+                switch ($Tool) {
+                    "listos" { $SortBy = "count" }
+                    "sumip" {
+                        $SortBy = "score"
+                        $query.sortColumn = "score"
+                        $query.sortDirection = "desc"
+                    }
+                }
+            }
+            $body.sortField = $SortBy
+            $body.sortDir = "desc"
+            $body.type = "vuln"
+            $body.sourceType = $SourceType
+            $query.type = "vuln"
+            $query.tool = $Tool
+            $query.vulnTool = $Tool
+            $query.sourceType = $SourceType
+        } else {
+            $query.type = "vuln"
+            $query.tool = $Tool
+            $query.subtype = $SourceType
+            $query.view = "all"
+        }
+
+        if ($Filter) {
+            $query.filters = $Filter
+        }
 
         if ($SortBy) {
             $body.sortField = $SortBy
             $body.sortDir = $SortDirection
         }
 
-        $query = @{
-            filters     = $Filter -join ","
-            context     = "analysis"
-            type        = "vuln"
-            tool        = $Tool
-            subtype     = $SourceType
-            scanID      = $SourceType
-            view        = "all"
-            startOffset = $StartOffSet
-            endOffset   = $EndOffset
-        }
-
         if ($QueryId) {
             $query.id = $QueryId
         }
 
+        if ($ScanId) {
+            $body.scanID = $ScanID
+            $query.scanID = $ScanID
+        }
         $body.query = $query
-        $body.sourceType = $SourceType
-        $body.scanID = $ScanID
-        $body.type = "vuln"
-
     }
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
+            if (-not $session.sc) {
+                Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
+            }
 
             $params = @{
                 SessionObject = $session
                 Path          = "/analysis"
                 Method        = "POST"
-                Parameter     = $body
+                Body          = $body | ConvertTo-Json -Depth 5
             }
 
             foreach ($result in (Invoke-TNRequest @params)) {

@@ -46,6 +46,7 @@
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             if ($session.sc) {
                 $method = "PATCH"
             } else {

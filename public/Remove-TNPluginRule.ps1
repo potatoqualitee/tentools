@@ -48,6 +48,7 @@
     )
     process {
         foreach ($session in $SessionObject) {
+            $PSDefaultParameterValues["*:SessionObject"] = $session
             Invoke-TNRequest -SessionObject $session -EnableException:$EnableException -Path ('/plugin-rules/{0}' -f $RuleId) -Method Delete | ConvertFrom-TNRestResponse
         }
     }
