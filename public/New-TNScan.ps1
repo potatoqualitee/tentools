@@ -118,6 +118,9 @@
                     "Auto" {
                         $repos = Get-TNRepository
                         $policies = Get-TNPolicy
+                        if (-not ($ScanCredentialHash | Get-Member -Name Id)) {
+                            $ScanCredentialHash = Get-TNCredential -Name $ScanCredentialHash.Name
+                        }
                         foreach ($policy in $policies) {
                             if ($ScanCredentialHash) {
                                 $allcreds = @()
