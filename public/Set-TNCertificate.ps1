@@ -40,6 +40,9 @@ function Set-TNCertificate {
     .PARAMETER AcceptAnyThumbprint
         Give up security and accept any SSH host key. To be used in exceptional situations only, when security is not required. To set, use Posh-SSH commands.
 
+   .PARAMETER Force
+        Force accept new key
+
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
         This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
@@ -76,8 +79,10 @@ function Set-TNCertificate {
         [string[]]$Type = @("tenable.sc", "Nessus"),
         [ValidateSet("SSH", "WinRM")]
         [string]$Method = "SSH",
+        [Alias("Port")]
         [int]$SshPort = 22,
         [switch]$AcceptAnyThumbprint,
+        [switch]$Force,
         [switch]$EnableException
     )
     process {
@@ -92,6 +97,7 @@ function Set-TNCertificate {
         }
 
         # Set default parameter values
+        $PSDefaultParameterValues['New-SSHSession:Force'] = $Force
         $PSDefaultParameterValues['*-SSH*:ErrorAction'] = "Stop"
         $PSDefaultParameterValues['*-SCP*:ErrorAction'] = "Stop"
         $PSDefaultParameterValues['*-SCP*:Credential'] = $Credential
@@ -141,11 +147,22 @@ function Set-TNCertificate {
         }
 
         try {
-            Write-PSFMessage -Level Verbose -Message "Connecting to $ComputerName"
+            Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $ComputerName, port $SshPort"
 
             if (-not $PSBoundParameters.SshSession) {
-                $SshSession = New-SSHSession -Port $SshPort
+                try {
+                    $SshSession = New-SSHSession -Port $SshPort
+                } catch {
+                    if ($PSItem -match "Key exchange negotiation failed") {
+                        Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $ComputerName, port $SshPort. Key exchange negotiation failed. Use -Force to accept new key" -ErrorRecord $PSItem
+                        return
+                    } else {
+                        Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $ComputerName, port $SshPort. Couldn't upload $FilePath to /opt/acas/var" -ErrorRecord $PSItem
+                        return
+                    }
+                }
             }
+
             if (-not $PSBoundParameters.SftpSession) {
                 $SftpSession = New-SFTPSession -ComputerName $ComputerName -Credential $Credential -Port $SshPort
             }

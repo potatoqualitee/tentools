@@ -32,6 +32,9 @@ function Backup-TNServer {
     .PARAMETER AcceptAnyThumbprint
         Give up security and accept any SSH host key. To be used in exceptional situations only, when security is not required. To set, use Posh-SSH commands.
 
+    .PARAMETER Force
+        Force accept new key.
+
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
         This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
@@ -55,12 +58,15 @@ function Backup-TNServer {
         [string]$ComputerName,
         [Management.Automation.PSCredential]$Credential,
         [parameter(Mandatory)]
+        [Alias("FullName")]
         [ValidateScript( { Test-Path -Path $_ })]
         [string]$Path,
         [ValidateSet("tenable.sc", "Nessus")]
         [string[]]$Type = @("tenable.sc", "Nessus"),
+        [Alias("Port")]
         [int]$SshPort = 22,
         [switch]$AcceptAnyThumbprint,
+        [switch]$Force,
         [switch]$EnableException
     )
     process {
@@ -70,6 +76,7 @@ function Backup-TNServer {
         }
 
         # Set default parameter values
+        $PSDefaultParameterValues['New-SSHSession:Force'] = $Force
         $PSDefaultParameterValues['*-SCP*:Timeout'] = 1000000
         $PSDefaultParameterValues['*-SSH*:Timeout'] = 1000000
         $PSDefaultParameterValues['*-SSH*:ErrorAction'] = "Stop"
@@ -86,7 +93,17 @@ function Backup-TNServer {
             Write-PSFMessage -Level Verbose -Message "Connecting to $ComputerName"
 
             if (-not $PSBoundParameters.SshSession) {
-                $SshSession = New-SSHSession -Port $SshPort
+                try {
+                    $SshSession = New-SSHSession -Port $SshPort
+                } catch {
+                    if ($PSItem -match "Key exchange negotiation failed") {
+                        Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $ComputerName, port $SshPort. Key exchange negotiation failed. Use -Force to accept new key" -ErrorRecord $PSItem
+                        return
+                    } else {
+                        Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $ComputerName, port $SshPort. Couldn't upload $FilePath" -ErrorRecord $PSItem
+                        return
+                    }
+                }
             }
 
             $PSDefaultParameterValues['*-SCP*:SessionId'] = $SshSession.SessionId
@@ -125,7 +142,7 @@ function Backup-TNServer {
                     Write-PSFMessage -Level Verbose -Message "Downloading files from Nessus"
                     $null = Get-SFTPItem -Destination $Path -Path /tmp/nessus_backup.tar.gz -ErrorAction Stop -Force
                 } catch {
-                    Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername. Couldn't download /tmp/nessus_backup.tar.gz" -ErrorRecord $record
+                    Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $ComputerName, port $SshPort. Couldn't download /tmp/nessus_backup.tar.gz" -ErrorRecord $record
                     return
                 }
 
@@ -159,7 +176,7 @@ function Backup-TNServer {
                     Write-PSFMessage -Level Verbose -Message "Downloading files from tenable.sc server"
                     $null = Get-SFTPItem -Destination $Path -Path /tmp/sc_backup.tar.gz -ErrorAction Stop
                 } catch {
-                    Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername. Couldn't download /tmp/sc_backup.tar.gz" -ErrorRecord $record
+                    Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $ComputerName, port $SshPort. Couldn't download /tmp/sc_backup.tar.gz" -ErrorRecord $record
                     return
                 }
 
@@ -183,7 +200,7 @@ function Backup-TNServer {
                 # don't care
             }
 
-            Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername" -ErrorRecord $record
+            Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $ComputerName" -ErrorRecord $record
         } finally {
             if (-not $PSBoundParameters.SshSession -and $SshSession.SessionId) {
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Logging out from SSH"

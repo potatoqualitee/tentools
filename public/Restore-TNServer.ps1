@@ -34,6 +34,9 @@ function Restore-TNServer {
     .PARAMETER AcceptAnyThumbprint
         Give up security and accept any SSH host key. To be used in exceptional situations only, when security is not required. To set, use Posh-SSH commands.
 
+    .PARAMETER Force
+        Force accept new key.
+
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
         This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
@@ -63,8 +66,10 @@ function Restore-TNServer {
         [ValidateSet("tenable.sc", "Nessus")]
         [parameter(Mandatory)]
         [string]$Type,
+        [Alias("Port")]
         [int]$SshPort = 22,
         [switch]$AcceptAnyThumbprint,
+        [switch]$Force,
         [switch]$EnableException
     )
     process {
@@ -74,6 +79,7 @@ function Restore-TNServer {
         }
 
         # Set default parameter values
+        $PSDefaultParameterValues['New-SSHSession:Force'] = $Force
         $PSDefaultParameterValues['*-SCP*:Timeout'] = 1000000
         $PSDefaultParameterValues['*-SSH*:Timeout'] = 1000000
         $PSDefaultParameterValues['*-SSH*:ErrorAction'] = "Stop"
@@ -93,7 +99,17 @@ function Restore-TNServer {
             Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $ComputerName"
 
             if (-not $PSBoundParameters.SshSession) {
-                $SshSession = New-SSHSession -Port $SshPort
+                try {
+                    $SshSession = New-SSHSession -Port $SshPort
+                } catch {
+                    if ($PSItem -match "Key exchange negotiation failed") {
+                        Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $ComputerName, port $SshPort. Key exchange negotiation failed. Use -Force to accept new key" -ErrorRecord $PSItem
+                        return
+                    } else {
+                        Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $ComputerName, port $SshPort. Couldn't upload $FilePath" -ErrorRecord $PSItem
+                        return
+                    }
+                }
             }
 
             $PSDefaultParameterValues['*-SCP*:SessionId'] = $SshSession.SessionId
@@ -122,7 +138,7 @@ function Restore-TNServer {
                     Write-PSFMessage -Level Verbose -Message "Uploading files to Nessus"
                     $null = Set-SFTPItem -Destination /tmp -Path $FilePath -ErrorAction Stop
                 } catch {
-                    Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername. Couldn't upload $FilePath" -ErrorRecord $record
+                    Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $ComputerName, port $SshPort. Couldn't upload $FilePath" -ErrorRecord $record
                     return
                 }
 
@@ -138,7 +154,7 @@ function Restore-TNServer {
                     Write-PSFMessage -Level Verbose -Message "Uploading files to the tenable.sc server"
                     $null = Set-SFTPItem -Destination /tmp -Path $FilePath -ErrorAction Stop
                 } catch {
-                    Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername. Couldn't upload $FilePath" -ErrorRecord $record
+                    Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $ComputerName, port $SshPort. Couldn't upload $FilePath" -ErrorRecord $record
                     return
                 }
 
@@ -176,7 +192,7 @@ function Restore-TNServer {
                 # don't care
             }
 
-            Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername" -ErrorRecord $record
+            Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $ComputerName" -ErrorRecord $record
         } finally {
             if (-not $PSBoundParameters.SshSession -and $SshSession.SessionId) {
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Logging out from SSH"
