@@ -2,12 +2,6 @@
 
 This toolset extends Posh-Nessus by adding more functionality, including the ability to work with tenable.sc / SecurityCenter.
 
-## Key links for reference:
-
-- [tentools wiki](https://github.com/potatoqualitee/tentools/wiki) for an overall view of tentools, things like purpose, roles and simplified deployment
-- [ACAS overview](https://www.ask-ten.info/overview/) for discussion around contributing to the project
-- [Tenable ACAS Blog](https://www.tenable.com/blog/tenable-selected-for-disa-s-ten-vulnerability-management-solution) for general discussion on the module and asking questions
-
 ## Installer
 
 tentools works on PowerShell Core. This means that you can run all commands on <strong>Windows</strong>, <strong>Linux</strong> and <strong>macOS</strong>.
@@ -299,3 +293,9 @@ Some commands are not supported on all platforms. Here is is legend to help.
 | Test-TNAccessibility                 | x      | x          |
 | Update-TNPluginFeed                  |        | x          |
 | Wait-TNServerReady                   | x      | x          |
+
+## Key links for reference:
+
+- [tentools wiki](https://github.com/potatoqualitee/tentools/wiki) for an overall view of tentools, things like purpose, roles and simplified deployment
+- [ACAS overview](https://www.ask-ten.info/overview/) for discussion around contributing to the project
+- [Tenable ACAS Blog](https://www.tenable.com/blog/tenable-selected-for-disa-s-ten-vulnerability-management-solution) for general discussion on the module and asking questions
