@@ -147,7 +147,7 @@ function Set-TNCertificate {
         }
 
         try {
-            Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $ComputerName, port $SshPort"
+            Write-PSFMessage -Level Verbose -Message "Connecting to $ComputerName, port $SshPort"
 
             if (-not $PSBoundParameters.SshSession) {
                 try {
