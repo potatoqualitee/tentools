@@ -34,6 +34,9 @@ function Send-TNAcasFile {
     .PARAMETER AcceptAnyThumbprint
         Give up security and accept any SSH host key. To be used in exceptional situations only, when security is not required. To set, use Posh-SSH commands.
 
+    .PARAMETER Force
+        Force accept new key
+
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
         This avoids overwhelming you with "sea of red" exceptions, but is inconvenient because it basically disables advanced scripting.
@@ -60,9 +63,11 @@ function Send-TNAcasFile {
         [ValidateScript( { Test-Path -Path $_ })]
         [Alias("FullName")]
         [string[]]$FilePath,
+        [Alias("Port")]
         [int]$SshPort = 22,
         [string]$Destination = "/opt/acas/var",
         [switch]$AcceptAnyThumbprint,
+        [switch]$Force,
         [switch]$EnableException
     )
     process {
@@ -72,6 +77,7 @@ function Send-TNAcasFile {
         }
 
         # Set default parameter values
+        $PSDefaultParameterValues['New-SSHSession:Force'] = $Force
         $PSDefaultParameterValues['*-SCP*:Timeout'] = 1000000
         $PSDefaultParameterValues['*-SSH*:Timeout'] = 1000000
         $PSDefaultParameterValues['*-SSH*:ErrorAction'] = "Stop"
@@ -85,10 +91,20 @@ function Send-TNAcasFile {
 
         try {
             Write-PSFMessage -Level Verbose -Message "Connecting to $ComputerName"
-            Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $ComputerName"
+            Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Connecting to $ComputerName, port $SshPort"
 
             if (-not $PSBoundParameters.SshSession) {
-                $SshSession = New-SSHSession -Port $SshPort
+                try {
+                    $SshSession = New-SSHSession -Port $SshPort
+                } catch {
+                    if ($PSItem -match "Key exchange negotiation failed") {
+                        Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $ComputerName, port $SshPort. Key exchange negotiation failed. Use -Force to accept new key" -ErrorRecord $PSItem
+                        return
+                    } else {
+                        Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $ComputerName, port $SshPort. Couldn't upload $FilePath to /opt/acas/var" -ErrorRecord $PSItem
+                        return
+                    }
+                }
             }
 
             $PSDefaultParameterValues['*-SCP*:SessionId'] = $SshSession.SessionId
@@ -122,7 +138,7 @@ function Send-TNAcasFile {
                     $failure = $false
                 } catch {
                     $failure = $true
-                    Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername. Couldn't upload $file" -ErrorRecord $PSItem -Continue
+                    Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $ComputerName, port $SshPort. Couldn't upload $file" -ErrorRecord $PSItem -Continue
                 }
 
                 $results = Invoke-SecureShellCommand -Stream $stream -StepCounter ($stepcounter++) -Message "Moving from /tmp to $Destination" -Command "$sudo mv $filename $Destination"
@@ -148,7 +164,7 @@ function Send-TNAcasFile {
                 }
             }
         } catch {
-            Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $computername" -ErrorRecord $PSItem
+            Stop-PSFFunction -EnableException:$EnableException -Message "Failure for $ComputerName" -ErrorRecord $PSItem
         } finally {
             if (-not $PSBoundParameters.SshSession -and $SshSession.SessionId) {
                 Write-ProgressHelper -StepNumber ($stepCounter++) -Message "Logging out from SSH"
