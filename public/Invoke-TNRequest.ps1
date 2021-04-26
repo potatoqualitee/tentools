@@ -51,7 +51,7 @@
         [Parameter(ValueFromPipelineByPropertyName)]
         [object[]]$SessionObject = (Get-TNSession),
         [Alias("Parameter")]
-        [string]$Body,
+        [psobject]$Body,
         [Parameter(Mandatory)]
         [String]$Path,
         [Parameter(Mandatory)]
