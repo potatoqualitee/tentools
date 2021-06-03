@@ -117,8 +117,8 @@
                 switch ($PSCmdlet.ParameterSetName) {
                     "Auto" {
                         $repos = Get-TNRepository
-                        $policies = Get-TNPolicy
-                        if (-not ($ScanCredentialHash | Get-Member -Name Id)) {
+                        $policies = Get-TNPolicy | Where-Object Type -eq "Usable"
+                        if (-not ($ScanCredentialHash | Get-Member -Name Id -ErrorAction SilentlyContinue)) {
                             $ScanCredentialHash = Get-TNCredential -Name $ScanCredentialHash.Name
                         }
                         foreach ($policy in $policies) {
