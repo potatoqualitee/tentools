@@ -15,6 +15,9 @@ function Import-TNAudit {
     .PARAMETER NoRename
         By default, this command will remove "Imported Nessus Policy - " from the title of the imported file. Use this switch to keep the whole name "Imported Nessus Policy - Title of Policy"
 
+    .PARAMETER Create Policy
+        Create corresponding policy
+
     .PARAMETER EnableException
         By default, when something goes wrong we try to catch it, interpret it and give you a friendly warning message.
         This avoids overwhelming you with 'sea of red' exceptions, but is inconvenient because it basically disables advanced scripting.
@@ -34,6 +37,7 @@ function Import-TNAudit {
         [Alias("FullName")]
         [ValidateScript( { Test-Path -Path $_ })]
         [string[]]$FilePath,
+        [switch]$CreatePolicy,
         [switch]$EnableException
     )
     process {
@@ -42,7 +46,9 @@ function Import-TNAudit {
             if (-not $session.sc) {
                 Stop-PSFFunction -EnableException:$EnableException -Message "Only tenable.sc supported" -Continue
             }
-
+            if ($CreatePolicy) {
+                $template = Get-TNPolicyTemplate -Name 'SCAP and OVAL Auditing'
+            }
             $files = Get-ChildItem -Path $FilePath
 
             foreach ($file in $files.FullName) {
@@ -56,7 +62,26 @@ function Import-TNAudit {
                     ContentType   = "application/json"
                 }
 
-                Invoke-TnRequest @params | ConvertFrom-TNRestResponse
+                Invoke-TnRequest @params | ConvertFrom-TNRestResponse -Outvariable auditfile
+
+                if ($CreatePolicy -and $auditfile) {
+                    $preparams = @{
+                        name           = $auditfile.Name
+                        description    = $auditfile.Description
+                        policyTemplate = @{ id = $template.id }
+                        auditFiles     = @(@{ id = $auditfile.id })
+                    }
+
+                    $json = ConvertTo-Json -InputObject $preparams -Compress
+                    $params = @{
+                        SessionObject = $session
+                        Path          = "/policy"
+                        Method        = "POST"
+                        ContentType   = "application/json"
+                        Parameter     = $json
+                    }
+                    $null = Invoke-TNRequest @params
+                }
             }
         }
     }

@@ -60,9 +60,14 @@
             $PSDefaultParameterValues["*:SessionObject"] = $session
             if ($PSBoundParameters.Auto) {
                 $audits = Get-TNAudit
+                $policies = Get-TNPolicy
                 $template = Get-TNPolicyTemplate -Name 'SCAP and OVAL Auditing'
 
                 foreach ($auditfile in $audits) {
+                    if (($policies | Where-Object Name -eq $auditfile.Name)) {
+                        Write-Verbose -Message "Skipping $($auditfile.Name) (already exists)"
+                        continue
+                    }
                     $preparams = @{
                         name           = $auditfile.Name
                         description    = $auditfile.Description

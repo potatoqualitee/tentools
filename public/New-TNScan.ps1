@@ -118,6 +118,7 @@
                     "Auto" {
                         $repos = Get-TNRepository
                         $policies = Get-TNPolicy | Where-Object Type -eq "Usable"
+                        $scans = Get-TNScan
                         if (-not ($ScanCredentialHash | Get-Member -Name Id -ErrorAction SilentlyContinue)) {
                             $ScanCredentialHash = Get-TNCredential -Name $ScanCredentialHash.Name
                         }
@@ -142,6 +143,10 @@
                                 }
                             }
 
+                            if (($scans | Where-Object Name -eq $policy.Name)) {
+                                Write-Verbose -Message "$($policy.Name) already exists. Skipping."
+                                continue
+                            }
                             Write-PSFMessage -Level Verbose -Message "Adding scan for $($policy.Name)"
                             $body = @{
                                 name        = $policy.Name

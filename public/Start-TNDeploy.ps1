@@ -32,10 +32,13 @@
         The username and password used to add the scanners
 
     .PARAMETER InitializeScanner
+        Initialize the Nessus scanner with admin password, don't just connect
 
     .PARAMETER Organization
+        The name of the organization
 
     .PARAMETER Repository
+        The name or names of the repositories
 
     .PARAMETER ScanZone
         The name of the ScanZone. Defaults to "All Computers"
