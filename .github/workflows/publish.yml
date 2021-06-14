@@ -5,7 +5,7 @@ on:
       - test
 defaults:
   run:
-    shell: pwsh
+    shell: powershell
 
 jobs:
   publish:
@@ -58,7 +58,7 @@ jobs:
           if ($env:SIGNCERT) {
             $buffer = [System.Convert]::FromBase64String($env:SIGNCERT)
             $certificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::New($buffer, $env:SECURESTRING)
-            Get-ChildItem C:\gallery -Recurse -Filter *.ps*1* | Set-AuthenticodeSignature -Certificate $certificate -TimestampServer http://timestamp.digicert.com
+            # Get-ChildItem C:\gallery -Recurse -Filter *.ps*1* | Set-AuthenticodeSignature -Certificate $certificate -TimestampServer http://timestamp.digicert.com
           }
 
           $publishparams = @{
