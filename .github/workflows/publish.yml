@@ -5,7 +5,7 @@ on:
       - test
 defaults:
   run:
-    shell: powershell
+    shell: pwsh
 
 jobs:
   publish:
@@ -20,7 +20,6 @@ jobs:
         uses: potatoqualitee/psmodulecache@test
         with:
           modules-to-cache: PSFramework, PoshRSJob, posh-ssh
-          shell-to-use: powershell
       - name: 🧰 Setup PowerShell module cache
         id: cacher
         uses: actions/cache@v2
