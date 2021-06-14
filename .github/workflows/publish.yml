@@ -1,0 +1,59 @@
+name: Actions Workflow
+on:
+  push:
+    branches:
+      - test
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    if: "!contains(github.event.head_commit.message, 'update version')"
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Sign and publish
+        env:
+          NUGETAPIKEY: ${{secrets.NUGETAPIKEY}}
+          SECURESTRING: ${{secrets.SECURESTRING}}
+          SIGNCERT: ${{secrets.SIGNCERT}}
+        run: |
+          # Get manifest
+          $psd1 = Get-ChildItem *.psd1
+          $modulename = Get-ChildItem *.psd1 | Select -ExpandProperty BaseName
+
+          # Update version. Update-ModuleManifest reformats, use replace instead.
+          $manifest = Import-PowerShellDataFile $psd1.FullName
+          [version]$version = $Manifest.ModuleVersion
+          [version]$newversion = "{0}.{1}.{2}" -f $Version.Major, $Version.Minor, ($Version.Build + 1)
+          (Get-Content $psd1.FullName) -replace $version, $NewVersion | Set-Content $psd1.FullName -Encoding UTF8
+
+          # Prep for gallery
+          Remove-Item -Recurse C:\gallery -Force
+          $null = New-Item -Type Directory -Path C:\gallery\$modulename
+          robocopy $pwd C:\gallery\$modulename /S /XF *.psproj* *.git* *.yml /XD .git .github Tests .vscode | Out-String | Out-Null
+
+          # Sign
+          if ($env:SIGNCERT) {
+            $buffer = [System.Convert]::FromBase64String($env:SIGNCERT)
+            $certificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::New($buffer, $env:SECURESTRING)
+            Get-ChildItem C:\gallery -Recurse -Filter *.ps*1* | Set-AuthenticodeSignature -Certificate $certificate -TimestampServer http://timestamp.digicert.com
+          }
+
+          $publishparams = @{
+            Path              = "C:\gallery\$modulename"
+            NuGetApiKey       = $env:NUGETAPIKEY
+            SkipAutomaticTags = $true
+            WhatIf            = $true
+            Verbose           = $true
+          }
+          Publish-Module @publishparams
+
+      - name: Commit updated version
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git commit -am "update version"
+          git push
