@@ -50,7 +50,11 @@ jobs:
           $psd1 = Get-ChildItem *.psd1
           $modulename = Get-ChildItem *.psd1 | Select -ExpandProperty BaseName
           $null = New-Item -Type Directory -Path C:\gallery\$modulename
-          robocopy $pwd C:\gallery\$modulename /S /XD .git .github tests .vscode
+          robocopy $pwd C:\gallery\$modulename /S /XF *.psproj* *.git* *.yml /XD .git .github Tests .vscode | Out-String | Out-Null
+          # robocopy gives exit codes other than 0, which breaks github actions
+          if ($LASTEXITCODE -eq 1) {
+            $LASTEXITCODE = 0
+          }
 
       - name: 📝 Sign
         env:
