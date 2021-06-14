@@ -38,7 +38,6 @@ jobs:
           SECURESTRING: ${{secrets.SECURESTRING}}
           SIGNCERT: ${{secrets.SIGNCERT}}
         run: |
-          Write-Warning "$env:PSModulePath"
           # Get manifest
           $psd1 = Get-ChildItem *.psd1
           Import-Module $psd1.FullName
