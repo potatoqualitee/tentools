@@ -28,7 +28,6 @@ jobs:
           key: ${{ steps.psmodulecache.outputs.keygen }}
       - name: 🤩 Install required PowerShell modules
         if: steps.cacher.outputs.cache-hit != 'true'
-        shell: pwsh
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module ${{ steps.psmodulecache.outputs.needed }} -ErrorAction Stop
