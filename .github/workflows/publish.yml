@@ -5,7 +5,7 @@ on:
       - test
 defaults:
   run:
-    shell: powershell
+    shell: pwsh
 
 jobs:
   publish:
@@ -17,7 +17,7 @@ jobs:
       # time to party
       - name: 💻 Set required PowerShell modules
         id: psmodulecache
-        uses: potatoqualitee/psmodulecache@v1
+        uses: potatoqualitee/psmodulecache@test
         with:
           modules-to-cache: PSFramework, PoshRSJob, posh-ssh
       - name: 🧰 Setup PowerShell module cache
