@@ -31,7 +31,7 @@ jobs:
           (Get-Content $psd1.FullName) -replace $version, $NewVersion | Set-Content $psd1.FullName -Encoding UTF8
 
           # Prep for gallery
-          Remove-Item -Recurse C:\gallery -Force
+          Remove-Item -Recurse C:\gallery -Force -ErrorAction Ignore
           $null = New-Item -Type Directory -Path C:\gallery\$modulename
           robocopy $pwd C:\gallery\$modulename /S /XF *.psproj* *.git* *.yml /XD .git .github Tests .vscode | Out-String | Out-Null
 
