@@ -41,6 +41,7 @@ jobs:
         run: |
           # Get manifest
           $psd1 = Get-ChildItem *.psd1
+          Import-Module $psd1.FullName
           $modulename = Get-ChildItem *.psd1 | Select -ExpandProperty BaseName
 
           # Update version. Update-ModuleManifest reformats, use replace instead.
