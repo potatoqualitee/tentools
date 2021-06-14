@@ -50,7 +50,6 @@ jobs:
           (Get-Content $psd1.FullName) -replace $version, $NewVersion | Set-Content $psd1.FullName -Encoding UTF8
 
           # Prep for gallery
-          Remove-Item -Recurse C:\gallery -Force -ErrorAction Ignore
           $null = New-Item -Type Directory -Path C:\gallery\$modulename
           robocopy $pwd C:\gallery\$modulename /S /XF *.psproj* *.git* *.yml /XD .git .github Tests .vscode | Out-String | Out-Null
 
@@ -58,7 +57,7 @@ jobs:
           if ($env:SIGNCERT) {
             $buffer = [System.Convert]::FromBase64String($env:SIGNCERT)
             $certificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::New($buffer, $env:SECURESTRING)
-            # Get-ChildItem C:\gallery -Recurse -Filter *.ps*1* | Set-AuthenticodeSignature -Certificate $certificate -TimestampServer http://timestamp.digicert.com
+            Get-ChildItem C:\gallery -Recurse -Filter *.ps*1* | Set-AuthenticodeSignature -Certificate $certificate -TimestampServer http://timestamp.digicert.com
           }
 
           $publishparams = @{
@@ -68,7 +67,7 @@ jobs:
             WhatIf            = $true
             Verbose           = $true
           }
-          # Publish-Module @publishparams
+          Publish-Module @publishparams
 
       - name: ⤴ Commit updated version
         run: |
