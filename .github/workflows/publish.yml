@@ -1,4 +1,4 @@
-name: Actions Workflow
+name: Publish Module
 on:
   push:
     branches:
