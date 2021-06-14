@@ -5,7 +5,7 @@ on:
       - test
 defaults:
   run:
-    shell: pwsh
+    shell: powershell
 
 jobs:
   publish:
