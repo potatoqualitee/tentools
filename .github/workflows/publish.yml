@@ -17,7 +17,7 @@ jobs:
       # time to party
       - name: 💻 Set required PowerShell modules
         id: psmodulecache
-        uses: potatoqualitee/psmodulecache@test
+        uses: potatoqualitee/psmodulecache@v1.1
         with:
           modules-to-cache: PSFramework, PoshRSJob, posh-ssh
       - name: 🧰 Setup PowerShell module cache
@@ -30,7 +30,7 @@ jobs:
         if: steps.cacher.outputs.cache-hit != 'true'
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
-          Install-Module ${{ steps.psmodulecache.outputs.needed }} -ErrorAction Stop
+          #Install-Module ${{ steps.psmodulecache.outputs.needed }} -ErrorAction Stop
 
       - name: 📝 Sign and publish
         env:
@@ -70,6 +70,7 @@ jobs:
             SkipAutomaticTags = $true
             WhatIf            = $true
             Verbose           = $true
+            Force             = $true
           }
           Publish-Module @publishparams
 
