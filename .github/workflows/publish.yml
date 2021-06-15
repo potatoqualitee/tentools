@@ -30,7 +30,7 @@ jobs:
         if: steps.cacher.outputs.cache-hit != 'true'
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
-          #Install-Module ${{ steps.psmodulecache.outputs.needed }} -ErrorAction Stop
+          Install-Module ${{ steps.psmodulecache.outputs.needed }} -ErrorAction Stop
 
       - name: 📝 Sign and publish
         env:
@@ -72,7 +72,6 @@ jobs:
             SkipAutomaticTags = $true
             WhatIf            = $true
             Verbose           = $true
-            Force             = $true
           }
           Publish-Module @publishparams
 
