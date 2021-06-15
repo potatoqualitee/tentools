@@ -87,7 +87,7 @@ jobs:
 
       - name: 🧪 Test gh powershell
         run: |
-          $env:GITHUB_TOKEN = ${{ secrets.GITHUB_TOKEN }}
+          $env:GITHUB_TOKEN = "${{ secrets.GITHUB_TOKEN }}"
           gh issue list
 
       - name: 🧪 Test gh
