@@ -1,0 +1,83 @@
+name: Publish Module
+on:
+  push:
+    branches:
+      - main
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    if: "!contains(github.event.head_commit.message, 'update version')"
+    steps:
+      - uses: actions/checkout@v2
+
+      # time to party
+      - name: 💻 Set required PowerShell modules
+        id: psmodulecache
+        uses: potatoqualitee/psmodulecache@v1.1
+        with:
+          modules-to-cache: PSFramework, PoshRSJob, posh-ssh
+      - name: 🧰 Setup PowerShell module cache
+        id: cacher
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.psmodulecache.outputs.modulepath }}
+          key: ${{ steps.psmodulecache.outputs.keygen }}
+      - name: 🤩 Install required PowerShell modules
+        if: steps.cacher.outputs.cache-hit != 'true'
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module ${{ steps.psmodulecache.outputs.needed }} -ErrorAction Stop
+
+      - name: 📝 Sign and publish
+        env:
+          NUGETAPIKEY: ${{secrets.NUGETAPIKEY}}
+          SECURESTRING: ${{secrets.SECURESTRING}}
+          SIGNCERT: ${{secrets.SIGNCERT}}
+        run: |
+          # Get manifest
+          $psd1 = Get-ChildItem *.psd1
+          Import-Module $psd1.FullName
+          $modulename = Get-ChildItem *.psd1 | Select -ExpandProperty BaseName
+
+          # Update version. Update-ModuleManifest reformats, use replace instead.
+          $manifest = Import-PowerShellDataFile $psd1.FullName
+          [version]$version = $Manifest.ModuleVersion
+          [version]$newversion = "{0}.{1}.{2}" -f $Version.Major, $Version.Minor, ($Version.Build + 1)
+          (Get-Content $psd1.FullName) -replace $version, $NewVersion | Set-Content $psd1.FullName -Encoding UTF8
+
+          # Prep for gallery
+          $null = New-Item -Type Directory -Path C:\gallery\$modulename
+          robocopy $pwd C:\gallery\$modulename /S /XF *.psproj* *.git* *.yml /XD .git .github Tests .vscode | Out-String | Out-Null
+          # robocopy gives exit codes other than 0, which breaks github actions
+          if ($LASTEXITCODE -eq 1) {
+            $LASTEXITCODE = 0
+          }
+
+          # Sign
+          if ($env:SIGNCERT) {
+            # To get base64 from pfx to create Secret
+            # [convert]::ToBase64String(([IO.File]::ReadAllBytes("C:\temp\cert.pfx")))
+            $buffer = [System.Convert]::FromBase64String($env:SIGNCERT)
+            $certificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::New($buffer, $env:SECURESTRING)
+            Get-ChildItem C:\gallery -Recurse -Filter *.ps*1* | Set-AuthenticodeSignature -Certificate $certificate -TimestampServer http://timestamp.digicert.com
+          }
+
+          $publishparams = @{
+            Path              = "C:\gallery\$modulename"
+            NuGetApiKey       = $env:NUGETAPIKEY
+            SkipAutomaticTags = $true
+            WhatIf            = $true
+            Verbose           = $true
+          }
+          Publish-Module @publishparams
+
+      - name: ⤴ Commit updated version
+        run: |
+          git config user.name github-actions
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git commit -am "update version"
+          git push
