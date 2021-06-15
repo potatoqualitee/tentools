@@ -85,6 +85,11 @@ jobs:
           }
           Publish-Module @publishparams
 
+      - name: 🧪 Test gh powershell
+        run: |
+          $env:GITHUB_TOKEN = ${{ secrets.GITHUB_TOKEN }}
+          gh issue list
+
       - name: 🧪 Test gh
         shell: bash
         run: |
