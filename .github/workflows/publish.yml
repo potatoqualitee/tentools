@@ -2,7 +2,7 @@ name: Publish Module
 on:
   push:
     branches:
-      - test
+      - main
 defaults:
   run:
     shell: pwsh
@@ -59,6 +59,8 @@ jobs:
 
           # Sign
           if ($env:SIGNCERT) {
+            # To get base64 from pfx to create Secret
+            # [convert]::ToBase64String(([IO.File]::ReadAllBytes("C:\temp\cert.pfx")))
             $buffer = [System.Convert]::FromBase64String($env:SIGNCERT)
             $certificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::New($buffer, $env:SECURESTRING)
             Get-ChildItem C:\gallery -Recurse -Filter *.ps*1* | Set-AuthenticodeSignature -Certificate $certificate -TimestampServer http://timestamp.digicert.com
