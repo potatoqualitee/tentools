@@ -57,8 +57,8 @@ jobs:
             $LASTEXITCODE = 0
           }
 
-          # Sign
-          if ($env:SIGNCERT) {
+          # Sign (but actually don't for this module)
+          if ($env:SIGNCERT -and $modulename -ne 'tentools') {
             # To get base64 from pfx to create Secret
             # [convert]::ToBase64String(([IO.File]::ReadAllBytes("C:\temp\cert.pfx")))
             $buffer = [System.Convert]::FromBase64String($env:SIGNCERT)
@@ -70,7 +70,6 @@ jobs:
             Path              = "C:\gallery\$modulename"
             NuGetApiKey       = $env:NUGETAPIKEY
             SkipAutomaticTags = $true
-            WhatIf            = $true
             Verbose           = $true
           }
           Publish-Module @publishparams
