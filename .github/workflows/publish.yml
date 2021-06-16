@@ -113,4 +113,4 @@ jobs:
           $version = $Manifest.ModuleVersion
 
           # If a matching git tag does not yet exist, one will automatically be created
-          gh release create "v$version" --notes "$notes" --target main --title "v$version" --draft
+          gh release create "v$version" --notes ($notes -join "`n") --target main --title "v$version" --draft
