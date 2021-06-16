@@ -58,13 +58,13 @@ jobs:
           }
 
           # Combine for faster loading for common public and private directories
-          foreach ($dir in (Get-ChildItem -Path C:\gallery\$modulename -Directory)) {
-            if ($dir.Name -in "public", "private", "internal", "functions") {
+          foreach ($dir in (Get-ChildItem -Path C:\gallery\$modulename -Directory |
+            Where-Object Name -in "public", "private", "internal", "functions"
+            )) {
               $ps1 = Get-ChildItem -Path $dir.FullName -Filter *.ps1
-              $newfile = Join-Path -Path $dir.FullName -ChildPath "$($dir.Name).ps1"
-              $ps1 | Get-Content | Set-Content -Path $newfile -Encoding UTF8
+              $combofile = Join-Path -Path $dir.FullName -ChildPath "$($dir.Name).ps1"
+              $ps1 | Get-Content | Set-Content -Path $combofile -Encoding UTF8
               $ps1 | Remove-Item -Force
-            }
           }
 
           # Sign (but actually don't for this module)
@@ -92,8 +92,25 @@ jobs:
           #git commit -am "update version"
           #git push
 
-      - name: 🧪 Create a release
+      - name: 🚀 Create a release
         run: |
+          # Create release notes
           $env:GITHUB_TOKEN = "${{ secrets.GITHUB_TOKEN }}"
           $lastreleasedate = (gh release view --json createdAt | ConvertFrom-Json).CreatedAt
-          $notes = gh pr list --search "is:pr merged:>$lastreleasedate" --json title,url,number | ConvertFrom-Json
+          if (-not $lastreleasedate) {
+            $lastreleasedate = "2000-01-01"
+          }
+          $rawnotes = gh pr list --search "is:pr merged:>$lastreleasedate" --json title,url,number --limit 1000 | ConvertFrom-Json
+          $notes = @()
+          foreach ($note in $rawnotes) {
+            $title = $note.title
+            $url = $note.url
+            $notes += "[$title]($url)"
+          }
+
+          # Get module version to tag and title
+          $manifest = Import-PowerShellDataFile *.psd1
+          $version = $Manifest.ModuleVersion
+
+          # If a matching git tag does not yet exist, one will automatically be created
+          gh release create "v$version" --notes "$notes" --target main --title "v$version" --draft
