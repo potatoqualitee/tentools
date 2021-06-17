@@ -13,24 +13,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Extract branch name
-        shell: bash
-        run: |
-          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-          echo "##[set-output name=main;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branches
-
       - name: 💻 Check to see if PowerShell files have been modified
         id: filecheck
         run: |
-          $files = git diff --name-only ${{GITHUB_HEAD_REF}} ${{GITHUB_BASE_REF}}
-          Write-Output $files
-          if ($files -match "yml") {
+          $env:GITHUB_TOKEN = "${{ secrets.GITHUB_TOKEN }}"
+          $files = gh pr list --search "is:pr ${{github.GITHUB_SHA}}" --json files | ConvertFrom-Json
+          $files
+          if ($files.files.path -match "ps*1*") {
             Write-Output '::set-output name=containspowershell::true'
           } else {
             Write-Output '::set-output name=containspowershell::false'
           }
-
       # time to party
       - name: 💻 Set required PowerShell modules
         if: ${{ steps.filecheck.outputs.containspowershell == 'true' }}
