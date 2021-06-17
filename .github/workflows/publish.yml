@@ -11,8 +11,22 @@ jobs:
   publish:
     runs-on: windows-latest
     if: "!contains(github.event.head_commit.message, 'update version')"
+
     steps:
       - uses: actions/checkout@v2
+
+      - name: 💻 Check to see if PowerShell files have been modified
+        run: |
+          $env:GITHUB_TOKEN = "${{ secrets.GITHUB_TOKEN }}"
+          $lastreleasedate = (gh release view --json createdAt | ConvertFrom-Json).CreatedAt
+          if (-not $lastreleasedate) {
+            $lastreleasedate = "2000-01-01"
+          }
+          $files = gh pr list --search "is:pr merged:>$lastreleasedate" --json files --limit 1000 | ConvertFrom-Json
+
+          if ($files.files.path -notmatch "ps*1*") {
+            exit 0
+          }
 
       # time to party
       - name: 💻 Set required PowerShell modules
@@ -89,8 +103,8 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          #git commit -am "update version"
-          #git push
+          git commit -am "update version"
+          git push
 
       - name: 🚀 Create a release
         run: |
@@ -100,7 +114,7 @@ jobs:
           if (-not $lastreleasedate) {
             $lastreleasedate = "2000-01-01"
           }
-          $rawnotes = gh pr list --search "is:pr merged:>$lastreleasedate" --json title,url,number --limit 1000 | ConvertFrom-Json
+          $rawnotes = gh pr list --search "is:pr merged:>$lastreleasedate" --json title,url,number,author,files --limit 1000 | ConvertFrom-Json
           $notes = @()
           foreach ($note in $rawnotes) {
             $title = $note.title
@@ -108,9 +122,11 @@ jobs:
             $notes += "[$title]($url)"
           }
 
-          # Get module version to tag and title
-          $manifest = Import-PowerShellDataFile *.psd1
-          $version = $Manifest.ModuleVersion
+          if ($rawnotes.files.path -match "ps*1*") {
+            # Get module version to tag and title
+            $manifest = Import-PowerShellDataFile *.psd1
+            $version = $Manifest.ModuleVersion
 
-          # If a matching git tag does not yet exist, one will automatically be created
-          gh release create "v$version" --notes ($notes -join "`n") --target main --title "v$version" --draft
+            # If a matching git tag does not yet exist, one will automatically be created
+            gh release create "v$version" --notes ($notes -join "`n") --target main --title "v$version" --draft
+          }
