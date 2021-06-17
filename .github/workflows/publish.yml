@@ -19,7 +19,7 @@ jobs:
         id: filecheck
         run: |
           $env:GITHUB_TOKEN = "${{ secrets.GITHUB_TOKEN }}"
-          $files = gh pr list --search "${{GITHUB_SHA}}" --json files | ConvertFrom-Json
+          $files = gh pr list --search $env:GITHUB_SHA --json files | ConvertFrom-Json
           $files
           if ($files.files.path -like "*ps*1*") {
             Write-Output '::set-output name=containspowershell::true'
