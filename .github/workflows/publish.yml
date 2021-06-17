@@ -1,6 +1,6 @@
 name: Publish Module
 on:
-  push:
+  pull_request:
 defaults:
   run:
     shell: pwsh
