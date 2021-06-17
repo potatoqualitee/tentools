@@ -1,6 +1,8 @@
 name: Publish Module
 on:
-  pull_request:
+  push:
+    branches:
+      - newer
 defaults:
   run:
     shell: pwsh
@@ -19,7 +21,7 @@ jobs:
           $env:GITHUB_TOKEN = "${{ secrets.GITHUB_TOKEN }}"
           $files = gh pr list --search "is:pr ${{github.GITHUB_SHA}}" --json files | ConvertFrom-Json
           $files
-          if ($files.files.path -match "ps*1*") {
+          if ($files.files.path -like "*ps*1*") {
             Write-Output '::set-output name=containspowershell::true'
           } else {
             Write-Output '::set-output name=containspowershell::false'
