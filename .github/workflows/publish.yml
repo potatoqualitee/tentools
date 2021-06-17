@@ -17,13 +17,14 @@ jobs:
 
       - name: Extract branch name
         shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        run: |
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
 
       - name: 💻 Check to see if PowerShell files have been modified
         id: filecheck
         run: |
-          $files = git diff --name-only main ${{ steps.extract_branch.outputs.branch }}
+          $files = git diff --name-only 'refs/heads/main' ${{ steps.extract_branch.outputs.branch }}
           Write-Output $files
           if ($files -match "yml") {
             Write-Output '::set-output name=containspowershell::true'
