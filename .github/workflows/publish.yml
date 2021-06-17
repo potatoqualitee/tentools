@@ -19,8 +19,8 @@ jobs:
         id: filecheck
         run: |
           $files = (git diff --name-only ${GITHUB_HEAD_REF} HEAD) | Out-String
-          $files
-          if ($files -eq "yml") {
+          Write-Output $files
+          if ($files -match "yml") {
             Write-Output '::set-output name=containspowershell::true'
           } else {
             Write-Output '::set-output name=containspowershell::false'
