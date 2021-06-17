@@ -27,26 +27,26 @@ jobs:
 
       # time to party
       - name: 💻 Set required PowerShell modules
-        if: steps.filecheck.outputs.containspowershell = 'true'
+        if: steps.filecheck.outputs.containspowershell == 'true'
         id: psmodulecache
         uses: potatoqualitee/psmodulecache@v1.1
         with:
           modules-to-cache: PSFramework, PoshRSJob, posh-ssh
       - name: 🧰 Setup PowerShell module cache
-        if: steps.filecheck.outputs.containspowershell = 'true'
+        if: steps.filecheck.outputs.containspowershell == 'true'
         id: cacher
         uses: actions/cache@v2
         with:
           path: ${{ steps.psmodulecache.outputs.modulepath }}
           key: ${{ steps.psmodulecache.outputs.keygen }}
       - name: 🤩 Install required PowerShell modules
-        if: steps.cacher.outputs.cache-hit != 'true' && steps.filecheck.outputs.containspowershell = 'true'
+        if: steps.cacher.outputs.cache-hit != 'true' && steps.filecheck.outputs.containspowershell == 'true'
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module ${{ steps.psmodulecache.outputs.needed }} -ErrorAction Stop
 
       - name: 📝 Sign and publish
-        if: steps.filecheck.outputs.containspowershell = 'true'
+        if: steps.filecheck.outputs.containspowershell == 'true'
         env:
           NUGETAPIKEY: ${{secrets.NUGETAPIKEY}}
           SECURESTRING: ${{secrets.SECURESTRING}}
@@ -100,7 +100,7 @@ jobs:
           Publish-Module @publishparams
 
       - name: ⤴ Commit updated version
-        if: steps.filecheck.outputs.containspowershell = 'true'
+        if: steps.filecheck.outputs.containspowershell == 'true'
         run: |
           git config user.name github-actions
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
@@ -108,7 +108,7 @@ jobs:
           #git push
 
       - name: 🚀 Create a release
-        if: steps.filecheck.outputs.containspowershell = 'true'
+        if: steps.filecheck.outputs.containspowershell == 'true'
         run: |
           # Create release notes
           $env:GITHUB_TOKEN = "${{ secrets.GITHUB_TOKEN }}"
