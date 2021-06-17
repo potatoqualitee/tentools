@@ -23,9 +23,7 @@ jobs:
       - name: 💻 Check to see if PowerShell files have been modified
         id: filecheck
         run: |
-          #$files = git diff --name-only main ${{ steps.extract_branch.outputs.branch }}
-          $files = git diff --name-only main ${{ GITHUB_REF#refs/heads/ }}
-
+          $files = git diff --name-only main ${{ steps.extract_branch.outputs.branch }}
           Write-Output $files
           if ($files -match "yml") {
             Write-Output '::set-output name=containspowershell::true'
