@@ -124,7 +124,7 @@ jobs:
             $title = $note.title
             $url = $note.url
             $author = $note.author.login
-            $notes += "[$title]($url) by [$author](http://github.com/$author)"
+            $notes += "[$title]($url) by [@$author](http://github.com/$author)"
           }
 
           # Get module version to tag and title
