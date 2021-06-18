@@ -11,28 +11,45 @@ jobs:
   publish:
     runs-on: windows-latest
     if: "!contains(github.event.head_commit.message, 'update version')"
+
     steps:
       - uses: actions/checkout@v2
 
-      # time to party
+      - name: 🧐 Check to see if PowerShell files have been modified
+        id: filecheck
+        run: |
+          $env:GITHUB_TOKEN = "${{ secrets.GITHUB_TOKEN }}"
+          $files = gh pr list --search $env:GITHUB_SHA --json files | ConvertFrom-Json
+          $files
+          if ($files.files.path -like "*ps*1*") {
+            Write-Output '::set-output name=containspowershell::true'
+          } else {
+            Write-Output '::set-output name=containspowershell::false'
+          }
+
       - name: 💻 Set required PowerShell modules
+        if: steps.filecheck.outputs.containspowershell == 'true'
         id: psmodulecache
         uses: potatoqualitee/psmodulecache@v1.1
         with:
           modules-to-cache: PSFramework, PoshRSJob, posh-ssh
+
       - name: 🧰 Setup PowerShell module cache
+        if: steps.filecheck.outputs.containspowershell == 'true'
         id: cacher
         uses: actions/cache@v2
         with:
           path: ${{ steps.psmodulecache.outputs.modulepath }}
           key: ${{ steps.psmodulecache.outputs.keygen }}
+
       - name: 🤩 Install required PowerShell modules
-        if: steps.cacher.outputs.cache-hit != 'true'
+        if: steps.cacher.outputs.cache-hit != 'true' && steps.filecheck.outputs.containspowershell == 'true'
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module ${{ steps.psmodulecache.outputs.needed }} -ErrorAction Stop
 
       - name: 📝 Sign and publish
+        if: steps.filecheck.outputs.containspowershell == 'true'
         env:
           NUGETAPIKEY: ${{secrets.NUGETAPIKEY}}
           SECURESTRING: ${{secrets.SECURESTRING}}
@@ -57,6 +74,16 @@ jobs:
             $LASTEXITCODE = 0
           }
 
+          # Combine for faster loading for common public and private directories
+          foreach ($dir in (Get-ChildItem -Path C:\gallery\$modulename -Directory |
+            Where-Object Name -in "public", "private", "internal", "functions"
+            )) {
+              $ps1 = Get-ChildItem -Path $dir.FullName -Filter *.ps1
+              $combofile = Join-Path -Path $dir.FullName -ChildPath "$($dir.Name).ps1"
+              $ps1 | Get-Content | Set-Content -Path $combofile -Encoding UTF8
+              $ps1 | Remove-Item -Force
+          }
+
           # Sign (but actually don't for this module)
           if ($env:SIGNCERT -and $modulename -ne 'tentools') {
             # To get base64 from pfx to create Secret
@@ -71,12 +98,39 @@ jobs:
             NuGetApiKey       = $env:NUGETAPIKEY
             SkipAutomaticTags = $true
             Verbose           = $true
+            Whatif            = $true
           }
           Publish-Module @publishparams
 
       - name: ⤴ Commit updated version
+        if: steps.filecheck.outputs.containspowershell == 'true'
         run: |
           git config user.name github-actions
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git commit -am "update version"
           git push
+
+      - name: 🚀 Create a release
+        if: steps.filecheck.outputs.containspowershell == 'true'
+        run: |
+          # Create release notes
+          $env:GITHUB_TOKEN = "${{ secrets.GITHUB_TOKEN }}"
+          $lastreleasedate = (gh release view --json createdAt | ConvertFrom-Json).CreatedAt
+          if (-not $lastreleasedate) {
+            $lastreleasedate = "2000-01-01"
+          }
+          $releasenotes = gh pr list --search "is:pr merged:>$lastreleasedate" --json title,url,number,author,files --limit 1000 | ConvertFrom-Json
+          $notes = @()
+          foreach ($note in $releasenotes) {
+            $title = $note.title
+            $url = $note.url
+            $author = $note.author.login
+            $notes += "[$title]($url) by [@$author](http://github.com/$author)"
+          }
+
+          # Get module version to tag and title
+          $manifest = Import-PowerShellDataFile *.psd1
+          $version = $Manifest.ModuleVersion
+
+          # If a matching git tag does not yet exist, one will automatically be created
+          gh release create "v$version" --notes ($notes -join "`n") --target main --title "v$version" --draft
