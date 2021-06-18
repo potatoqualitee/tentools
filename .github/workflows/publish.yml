@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: 💻 Check to see if PowerShell files have been modified
+      - name: 🧐 Check to see if PowerShell files have been modified
         id: filecheck
         run: |
           $env:GITHUB_TOKEN = "${{ secrets.GITHUB_TOKEN }}"
@@ -26,20 +26,22 @@ jobs:
           } else {
             Write-Output '::set-output name=containspowershell::false'
           }
-      # time to party
+
       - name: 💻 Set required PowerShell modules
-        if: ${{ steps.filecheck.outputs.containspowershell == 'true' }}
+        if: steps.filecheck.outputs.containspowershell == 'true'
         id: psmodulecache
         uses: potatoqualitee/psmodulecache@v1.1
         with:
           modules-to-cache: PSFramework, PoshRSJob, posh-ssh
+
       - name: 🧰 Setup PowerShell module cache
-        if: ${{ steps.filecheck.outputs.containspowershell == 'true' }}
+        if: steps.filecheck.outputs.containspowershell == 'true'
         id: cacher
         uses: actions/cache@v2
         with:
           path: ${{ steps.psmodulecache.outputs.modulepath }}
           key: ${{ steps.psmodulecache.outputs.keygen }}
+
       - name: 🤩 Install required PowerShell modules
         if: steps.cacher.outputs.cache-hit != 'true' && steps.filecheck.outputs.containspowershell == 'true'
         run: |
@@ -47,7 +49,7 @@ jobs:
           Install-Module ${{ steps.psmodulecache.outputs.needed }} -ErrorAction Stop
 
       - name: 📝 Sign and publish
-        if: ${{ steps.filecheck.outputs.containspowershell == 'true' }}
+        if: steps.filecheck.outputs.containspowershell == 'true'
         env:
           NUGETAPIKEY: ${{secrets.NUGETAPIKEY}}
           SECURESTRING: ${{secrets.SECURESTRING}}
@@ -101,15 +103,15 @@ jobs:
           Publish-Module @publishparams
 
       - name: ⤴ Commit updated version
-        if: ${{ steps.filecheck.outputs.containspowershell == 'true' }}
+        if: steps.filecheck.outputs.containspowershell == 'true'
         run: |
           git config user.name github-actions
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          #git commit -am "update version"
-          #git push
+          git commit -am "update version"
+          git push
 
       - name: 🚀 Create a release
-        if: ${{ steps.filecheck.outputs.containspowershell == 'true' }}
+        if: steps.filecheck.outputs.containspowershell == 'true'
         run: |
           # Create release notes
           $env:GITHUB_TOKEN = "${{ secrets.GITHUB_TOKEN }}"
@@ -117,19 +119,18 @@ jobs:
           if (-not $lastreleasedate) {
             $lastreleasedate = "2000-01-01"
           }
-          $rawnotes = gh pr list --search "is:pr merged:>$lastreleasedate" --json title,url,number,author,files --limit 1000 | ConvertFrom-Json
+          $releasenotes = gh pr list --search "is:pr merged:>$lastreleasedate" --json title,url,number,author,files --limit 1000 | ConvertFrom-Json
           $notes = @()
-          foreach ($note in $rawnotes) {
+          foreach ($note in $releasenotes) {
             $title = $note.title
             $url = $note.url
-            $notes += "[$title]($url)"
+            $author = $note.author
+            $notes += "[$title]($url) by [$author](http://github.com/$author)"
           }
 
-          if ($rawnotes.files.path -match "ps*1*") {
-            # Get module version to tag and title
-            $manifest = Import-PowerShellDataFile *.psd1
-            $version = $Manifest.ModuleVersion
+          # Get module version to tag and title
+          $manifest = Import-PowerShellDataFile *.psd1
+          $version = $Manifest.ModuleVersion
 
-            # If a matching git tag does not yet exist, one will automatically be created
-            gh release create "v$version" --notes ($notes -join "`n") --target main --title "v$version" --draft
-          }
+          # If a matching git tag does not yet exist, one will automatically be created
+          gh release create "v$version" --notes ($notes -join "`n") --target main --title "v$version" --draft
