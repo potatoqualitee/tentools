@@ -111,7 +111,6 @@ jobs:
           git push
 
       - name: 🚀 Create a release
-        if: steps.filecheck.outputs.containspowershell == 'true'
         run: |
           # Create release notes
           $env:GITHUB_TOKEN = "${{ secrets.GITHUB_TOKEN }}"
