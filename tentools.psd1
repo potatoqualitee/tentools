@@ -19,7 +19,7 @@
     Copyright          = 'Copyright (c) 2021, licensed under BSD 3'
 
     # Description of the functionality provided by this module
-    Description        = "Automation for DISA ACAS, including tenable.sc, Nessus and more. Based off of Carlos Perez's Posh-Nessus module and commands by Joseph Warren."
+    Description        = "Automation for DISA ACAS, including tenable.sc, Nessus and more. Based off of Carlos Perez's Posh-Nessus module and commands by Joseph Warren (@luzkenin)."
 
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion  = '5.1'
