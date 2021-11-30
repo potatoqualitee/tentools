@@ -156,7 +156,7 @@
                 if ('Id' -in $keys) {
                     $null = $order.Add("Id")
                 }
-                if ($Type) {
+                if ('Type' -in $keys) {
                     $null = $order.Add("Type")
                 }
                 if ('Username' -in $keys) {
